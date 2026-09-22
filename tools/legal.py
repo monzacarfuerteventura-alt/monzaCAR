@@ -124,6 +124,7 @@ cook = HEAD.format(title="Política de cookies", upd=ACTUALIZADO) + f"""
 <tr><th>Nombre</th><th>Para qué</th><th>Duración</th></tr>
 <tr><td>mz_cookies</td><td>Recordar si aceptaste o rechazaste las cookies de medición.</td><td>Hasta que la borres</td></tr>
 <tr><td>mz_int_…</td><td>Evitar contarte dos veces en «personas interesadas» de un mismo coche. No se envía ningún dato personal.</td><td>7 días de efecto</td></tr>
+<tr><td>mz_vis</td><td>Número aleatorio de la pestaña para contar cuántas personas están viendo un coche a la vez. Mientras la ficha está abierta, el servidor lo guarda junto a un resumen cifrado (hash) de la conexión durante menos de un minuto; no permite saber quién eres.</td><td>Se borra al cerrar la pestaña</td></tr>
 </table></div>
 
 <h2>Solo si pulsas «Aceptar»: medición de Google Ads</h2>
@@ -142,7 +143,7 @@ cook = HEAD.format(title="Política de cookies", upd=ACTUALIZADO) + f"""
 """ + FOOT
 
 cond = HEAD.format(title="Condiciones de venta, taller y garantía", upd=ACTUALIZADO) + f"""
-<p class="en" id="en" lang="en"><b>In English:</b> the used cars we sell to consumers come with a 12-month legal warranty from delivery. Workshop repairs are guaranteed for 3 months or 2,000 km. You are entitled to a written quote before any repair. If your car is not ready on the agreed date, we discount 10 % of the labour cost per working day of delay, up to 50 % (see section 4 for exceptions). Online appointments are confirmed instantly; please tell us on WhatsApp if you cannot come. Prices shown are final, taxes included. Nothing is sold online: contracts are signed at our premises in Antigua.</p>
+<p class="en" id="en" lang="en"><b>In English:</b> the used cars we sell to consumers come with a 12-month legal warranty from delivery. Workshop repairs are guaranteed for 3 months or 2,000 km. You are entitled to a written quote before any repair. If your car is not ready on the agreed date, we discount 10 % of the labour cost per working day of delay, up to 50 % (see section 4 for exceptions). Online appointments are confirmed instantly; please tell us on WhatsApp if you cannot come. Prices shown are final, taxes included. Once the sale is signed, we deliver the car free of charge to any address on Fuerteventura. Nothing is sold online: contracts are signed at our premises in Antigua.</p>
 
 <p>Estas condiciones resumen tus derechos al comprar un coche o reparar el tuyo en Monza Car. No sustituyen al contrato ni a la factura, que son los documentos que se firman.</p>
 {TITULAR_BOX}
@@ -153,6 +154,7 @@ cond = HEAD.format(title="Condiciones de venta, taller y garantía", upd=ACTUALI
 <li><b>Reservas:</b> reservar una visita en la web no te obliga a nada ni aparta el coche. Si quieres reservarlo, lo acordamos en el taller y te damos un justificante de la señal con sus condiciones.</li>
 <li><b>Dónde se compra:</b> la compraventa se firma en nuestras instalaciones, con contrato por escrito. Por eso no hay derecho de desistimiento de 14 días, que solo existe en compras a distancia o fuera del establecimiento.</li>
 <li><b>Documentación:</b> te entregamos el permiso de circulación, la ficha técnica con la ITV en vigor, las llaves y el historial que tengamos. Nos encargamos del cambio de titularidad en Tráfico.</li>
+<li><b>Entrega a domicilio gratis:</b> una vez firmada la compraventa, te llevamos el coche sin coste a la dirección que nos digas dentro de la isla de Fuerteventura, el día y a la hora que acordemos contigo. Si lo prefieres, puedes recogerlo en nuestro taller de Antigua. La entrega a domicilio no cambia dónde se firma el contrato, y la garantía empieza a contar el día que recibes el coche.</li>
 </ul>
 
 <h2>2. Garantía de los coches</h2>

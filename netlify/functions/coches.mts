@@ -1,5 +1,5 @@
 import type { Config } from "@netlify/functions";
-import { store, json, isAdmin, cleanCar, esFotoSubida, SEMILLA, type Car } from "../lib/shared.mts";
+import { store, json, isAdmin, cleanCar, esFotoSubida, borrarVideo, SEMILLA, type Car } from "../lib/shared.mts";
 
 const KEY = "coches";
 
@@ -14,6 +14,12 @@ async function load(): Promise<Car[]> {
     await s.set("semilla-v1", new Date().toISOString());
   }
   return list;
+}
+// El vídeo tiene que haber terminado de subirse antes de publicarlo.
+async function videoListo(car: Car): Promise<string | null> {
+  if (!car.video) return null;
+  const meta = (await store("monzacar-videos").get(car.video.key + "/meta", { type: "json" }).catch(() => null)) as { done?: boolean } | null;
+  return meta?.done ? null : "El vídeo 360° no ha terminado de subirse. Espera un momento o vuelve a subirlo.";
 }
 async function save(list: Car[]) {
   await store("monzacar").setJSON(KEY, list);
@@ -53,6 +59,8 @@ export default async (req: Request) => {
   if (req.method === "POST") {
     const { car, error } = cleanCar(body);
     if (error) return json({ error }, 400);
+    const ve = await videoListo(car!);
+    if (ve) return json({ error: ve }, 400);
     list.push(car!);
     await save(list);
     return json(car, 201);
@@ -62,13 +70,22 @@ export default async (req: Request) => {
   if (i < 0) return json({ error: "Ese coche ya no existe." }, 404);
 
   if (req.method === "PUT") {
+    // Los botones Disponible/Reservado/Vendido de la lista mandan el coche entero, vídeo incluido.
     const { car, error } = cleanCar(body, list[i]);
     if (error) return json({ error }, 400);
+    const antes = list[i].video;
+    if (car!.video && car!.video.key !== antes?.key) {
+      const ve = await videoListo(car!);
+      if (ve) return json({ error: ve }, 400);
+    }
     const removed = list[i].fotos.filter((f) => !car!.fotos.includes(f));
     list[i] = car!;
     await save(list);
     const fotos = store("monzacar-fotos");
     await Promise.all(removed.filter(esFotoSubida).map((f) => fotos.delete(f)));
+    // Vídeo quitado o cambiado por otro: se borra el antiguo (y su portada si ya no se usa).
+    if (antes && antes.key !== car!.video?.key) await borrarVideo({ key: antes.key, poster: antes.poster !== car!.video?.poster ? antes.poster : "" });
+    else if (antes?.poster && antes.poster !== car!.video?.poster && esFotoSubida(antes.poster)) await fotos.delete(antes.poster).catch(() => {});
     return json(car);
   }
 
@@ -77,6 +94,7 @@ export default async (req: Request) => {
     await save(list);
     const fotos = store("monzacar-fotos");
     await Promise.all(gone.fotos.filter(esFotoSubida).map((f) => fotos.delete(f)));
+    await borrarVideo(gone.video);
     return json({ ok: true });
   }
 

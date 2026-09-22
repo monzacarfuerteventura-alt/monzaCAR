@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Monza Car · Coches de ocasión con 1 año de garantía, chapa y pintura y mecánica en Fuerteventura</title>
-<meta name="description" content="Monza Car: los mejores coches de ocasión en Fuerteventura, revisados en nuestro taller y con 1 año de garantía. Chapa y pintura y mecánica rápida en Antigua con cita online al momento.">
+<meta name="description" content="Monza Car: los mejores coches de ocasión en Fuerteventura, revisados en nuestro taller y con 1 año de garantía. Entrega a domicilio gratis en toda la isla. Chapa y pintura y mecánica rápida en Antigua con cita online al momento.">
 <meta name="theme-color" content="#0F1113">
 <meta property="og:title" content="Monza Car · Chapa y pintura, mecánica rápida y coches de ocasión">
 <meta property="og:description" content="Opel Astra 1.6 115 CV (2010) por 2.999,99 €. Distribución nueva, aceite y filtros recién cambiados.">
@@ -20,7 +20,7 @@
 <link rel="alternate" hreflang="en" href="https://lestter4th.netlify.app/en/">
 <link rel="alternate" hreflang="x-default" href="https://lestter4th.netlify.app/">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":["AutoRepair","AutoDealer","AutoBodyShop"],"name":"Monza Car","description":"Chapa y pintura, mecánica rápida y compraventa de coches de ocasión revisados con 12 meses de garantía en Antigua, Fuerteventura.","telephone":"+34643668813","email":"monzacarfuerteventura@gmail.com","url":"https://lestter4th.netlify.app/","image":"https://lestter4th.netlify.app/coches/opel-astra-2010/anuncio.jpg","priceRange":"€€",
+{"@context":"https://schema.org","@type":["AutoRepair","AutoDealer","AutoBodyShop"],"name":"Monza Car","description":"Chapa y pintura, mecánica rápida y compraventa de coches de ocasión revisados con 12 meses de garantía y entrega a domicilio gratis en toda Fuerteventura.","telephone":"+34643668813","email":"monzacarfuerteventura@gmail.com","url":"https://lestter4th.netlify.app/","image":"https://lestter4th.netlify.app/coches/opel-astra-2010/anuncio.jpg","priceRange":"€€",
  "address":{"@type":"PostalAddress","streetAddress":"Calle Valle Largo, Nave 8, Polígono Industrial","postalCode":"35610","addressLocality":"Antigua","addressRegion":"Las Palmas","addressCountry":"ES"},
  "areaServed":["Antigua","Caleta de Fuste","Puerto del Rosario","Tuineje","Gran Tarajal","La Oliva","Corralejo","Pájara","Fuerteventura"],
  "availableLanguage":["es","en"],
@@ -684,6 +684,118 @@ footer .logo-tag{color:rgba(243,239,233,.55)}
 .legal a{color:inherit;text-decoration:underline;text-underline-offset:3px}
 .legal a:hover{color:#fff}
 .legal button{background:none;border:0;padding:0;color:inherit;font:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+
+/* =====================================================================
+   ENTREGA GRATIS · INTERES EN VIVO · VIDEO 360°
+   ===================================================================== */
+/* chips de ventajas en la tarjeta */
+.perks{display:flex;flex-wrap:wrap;gap:6px}
+.d-chip{color:#2C63C9;background:#E6EEFB}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .d-chip{color:#8DB4F5;background:#16223A}}
+:root[data-theme="dark"] .d-chip{color:#8DB4F5;background:#16223A}
+/* senales: nuevo · anadido hace · viendo ahora */
+.c-sig{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:13px;color:var(--muted);font-weight:600;min-height:20px}
+.c-sig span{display:inline-flex;align-items:center;gap:6px}
+.c-sig svg{flex-shrink:0;opacity:.8}
+.c-new{font-size:10.5px!important;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#fff!important;background:linear-gradient(135deg,var(--rosso),#F2A65A);padding:3px 8px;border-radius:999px;box-shadow:0 6px 14px -8px var(--rosso)}
+.c-live{color:var(--rosso)!important;animation:liveIn .5s var(--ease)}
+.c-live i,.vivo i{flex-shrink:0;width:8px;height:8px;border-radius:50%;background:var(--rosso);box-shadow:0 0 0 0 color-mix(in srgb,var(--rosso) 55%,transparent);animation:beat 1.8s infinite}
+@keyframes liveIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+/* ficha: senales en vivo */
+.m-sig{display:flex;flex-wrap:wrap;gap:8px}
+.vivo,.m-added{display:inline-flex;align-items:center;gap:9px;font-size:14.5px;font-weight:600;border-radius:999px;padding:9px 14px;line-height:1.25}
+.vivo{color:var(--ink);background:var(--rosso-soft);animation:liveIn .5s var(--ease)}
+.vivo b{color:var(--rosso)}
+.vivo.bump b{animation:bump .6s var(--ease)}
+@keyframes bump{40%{transform:scale(1.35)}}
+.vivo b{display:inline-block}
+.m-added{color:var(--muted);background:var(--surface-2)}
+.m-added svg{flex-shrink:0}
+/* ficha: entrega */
+.m-perk{display:flex;gap:12px;align-items:center;border-radius:14px;padding:12px 14px;font-weight:600;font-size:14.5px;color:#2C63C9;background:#E6EEFB}
+.m-perk svg{flex-shrink:0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .m-perk{color:#8DB4F5;background:#16223A}}
+:root[data-theme="dark"] .m-perk{color:#8DB4F5;background:#16223A}
+
+/* sello 360° en la foto */
+.v360b{position:absolute;z-index:1;left:12px;bottom:12px;display:inline-flex;align-items:center;gap:7px;padding:6px 11px 6px 8px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.06em;color:#fff;
+  background:linear-gradient(135deg,rgba(200,32,43,.92),rgba(242,166,90,.92));box-shadow:0 8px 20px -8px rgba(200,32,43,.8);backdrop-filter:blur(6px)}
+.v360b svg{width:18px;height:18px;animation:giro 2.4s ease-in-out infinite}
+.v360b.play{padding-left:6px}
+.v360b.play svg{animation:none}
+@keyframes giro{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(14deg)}}
+/* vista previa en movimiento dentro de la tarjeta */
+.c-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .6s var(--ease);pointer-events:none}
+.c-vid.esf{transform:scale(1.7)}
+.c-vid.on{opacity:1}
+.car-img:has(.c-vid.on) img{transform:none!important}
+.c-prog{position:absolute;z-index:1;left:0;bottom:0;height:3px;width:0;background:linear-gradient(90deg,var(--rosso),#F2A65A);transition:width .25s linear;opacity:0}
+.car-img:has(.c-vid.on) .c-prog{opacity:1}
+
+/* ficha: galeria con video */
+.gal-360{position:absolute;z-index:2;left:14px;bottom:14px;display:inline-flex;align-items:center;gap:9px;border:0;cursor:pointer;padding:10px 16px 10px 10px;border-radius:999px;font:inherit;font-size:14px;font-weight:800;color:#fff;
+  background:linear-gradient(135deg,#C8202B,#F2A65A);box-shadow:0 12px 30px -10px rgba(200,32,43,.9);transition:transform .25s var(--ease)}
+.gal-360:hover{transform:translateY(-2px) scale(1.03)}
+.gal-360 span.pl{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.22);display:grid;place-items:center}
+.gal-360::before{content:"";position:absolute;inset:-4px;border-radius:inherit;border:2px solid rgba(242,166,90,.7);animation:halo 2.2s infinite;pointer-events:none}
+@keyframes halo{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.18)}}
+.thumbs button.tv{position:relative;opacity:1;border-color:color-mix(in srgb,var(--rosso) 55%,transparent)}
+.thumbs button.tv::after{content:"360°";position:absolute;inset:0;display:grid;place-items:center;font-size:12px;font-weight:800;letter-spacing:.06em;color:#fff;background:linear-gradient(135deg,rgba(200,32,43,.62),rgba(242,166,90,.5))}
+.m-vid{width:100%;height:100%;object-fit:contain;background:#000;display:block}
+/* visor 360° esferico */
+.esf-w{position:relative;width:100%;height:100%;background:#000 center/cover no-repeat;touch-action:none;cursor:grab;outline:none;overflow:hidden}
+.esf-w:active{cursor:grabbing}
+.esf-w canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.esf-w:fullscreen{border-radius:0}
+.esf-hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;justify-items:center;gap:10px;color:#fff;font-weight:700;font-size:14px;text-align:center;pointer-events:none;text-shadow:0 2px 12px rgba(0,0,0,.6);transition:opacity .5s}
+.esf-hint .hand{width:54px;height:54px;border-radius:50%;border:2px solid rgba(255,255,255,.85);display:grid;place-items:center;animation:mano 2.4s var(--ease) infinite}
+@keyframes mano{0%,100%{transform:translateX(-18px)}50%{transform:translateX(18px)}}
+.esf-w.movido .esf-hint{opacity:0}
+.esf-bar{position:absolute;left:12px;right:12px;bottom:12px;display:flex;align-items:center;gap:8px;z-index:2}
+.esf-bar button{width:40px;height:40px;border-radius:50%;border:0;display:grid;place-items:center;color:#fff;background:rgba(10,10,12,.62);backdrop-filter:blur(8px);cursor:pointer;transition:transform .2s var(--ease),background .2s}
+.esf-bar button:hover{transform:scale(1.08);background:rgba(10,10,12,.8)}
+.esf-bar button svg{width:18px;height:18px}
+.esf-bar .tl{flex:1;height:4px;border-radius:4px;background:rgba(255,255,255,.25);overflow:hidden;cursor:pointer}
+.esf-bar .tl i{display:block;height:100%;width:0;background:linear-gradient(90deg,#E0413F,#F2A65A)}
+.esf-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:78px;height:78px;border-radius:50%;border:0;cursor:pointer;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#C8202B,#F2A65A);box-shadow:0 16px 40px -10px rgba(200,32,43,.9);z-index:2}
+.esf-play svg{width:32px;height:32px;margin-left:4px}
+.car-img .v360b svg,.car-img .esf-w svg{opacity:1;color:inherit}
+.esf-hint svg{width:22px;height:22px}
+
+/* banda entrega gratis */
+.entrega{position:relative;overflow:hidden;border-radius:30px;background:var(--night);color:#F3EFE9;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;padding:56px;isolation:isolate}
+.entrega::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(600px 380px at 0% 0%,rgba(59,111,216,.28),transparent 60%),radial-gradient(520px 360px at 100% 100%,rgba(200,32,43,.3),transparent 60%)}
+.entrega::after{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,#1F8B4C 0 33.33%,#F4F1EC 33.33% 66.66%,#C8202B 66.66%)}
+.entrega h2{font-size:clamp(34px,4.6vw,58px);margin:14px 0 16px}
+.entrega h2 .serif{color:#F2A65A}
+.entrega p{color:rgba(243,239,233,.78);font-size:17px;margin:0 0 22px;max-width:52ch}
+.en-pts{list-style:none;margin:0 0 28px;padding:0;display:grid;gap:12px}
+.en-pts li{display:flex;align-items:center;gap:12px;font-weight:600}
+.en-pts .ic{flex-shrink:0;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#F2A65A}
+.en-pts b{font-family:var(--display);font-style:italic;font-stretch:112%;font-size:20px;color:#fff}
+.ruta{position:relative;align-self:center;padding:8px 0 8px 36px}
+.ruta::before{content:"";position:absolute;left:11px;top:14px;bottom:14px;width:3px;border-radius:3px;background:linear-gradient(180deg,#1F8B4C,#F4F1EC 50%,#C8202B)}
+.ruta ol{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ruta li{position:relative;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);font-weight:600;font-size:15px;transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.js .entrega:not(.in) .ruta li{opacity:0;transform:translateX(12px)}
+.ruta li::before{content:"";position:absolute;left:-30px;top:50%;width:11px;height:11px;margin-top:-5.5px;border-radius:50%;background:var(--night);border:2.5px solid #F3EFE9}
+.ruta li small{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#6FD49B}
+.ruta li.base{background:linear-gradient(135deg,rgba(200,32,43,.35),rgba(242,166,90,.18));border-color:rgba(242,166,90,.4)}
+.ruta li.base::before{background:#C8202B;border-color:#fff;box-shadow:0 0 0 5px rgba(200,32,43,.3)}
+.ruta li.base small{color:#F2C07C}
+.ruta .camion{position:absolute;left:-2px;top:0;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#F2A65A;color:#15171A;box-shadow:0 6px 16px -4px rgba(242,166,90,.8);z-index:1;animation:ruta 9s var(--ease) infinite}
+.ruta .camion svg{width:17px;height:17px}
+@keyframes ruta{0%{top:4px}45%,55%{top:calc(100% - 32px)}100%{top:4px}}
+@media (max-width:900px){.entrega{grid-template-columns:1fr;padding:34px 22px;gap:28px;border-radius:24px}}
+/* comprar: aviso de entrega */
+.entrega-mini{display:flex;align-items:center;gap:14px;margin:0 0 22px;padding:14px 18px;border-radius:18px;background:linear-gradient(135deg,#E6EEFB,color-mix(in srgb,#E6EEFB 40%,var(--surface)));border:1px solid color-mix(in srgb,#2C63C9 18%,var(--line))}
+.entrega-mini .em-ic{flex-shrink:0;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#2C63C9,#2FB5C8);box-shadow:0 10px 22px -10px #2C63C9}
+.entrega-mini b{display:block;font-size:15.5px}
+.entrega-mini small{color:var(--muted);font-size:14px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .entrega-mini{background:linear-gradient(135deg,#16223A,var(--surface))}}
+:root[data-theme="dark"] .entrega-mini{background:linear-gradient(135deg,#16223A,var(--surface))}
+.trust li:nth-child(4){animation-delay:.36s}
+@media (prefers-reduced-motion:reduce){.ruta li{opacity:1;transform:none}.ruta .camion{top:4px}}
 </style>
 <script>document.documentElement.classList.add("js")</script>
 </head>
@@ -719,6 +831,13 @@ footer .logo-tag{color:rgba(243,239,233,.55)}
   <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3zM9 12l2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
   <symbol id="i-euro" viewBox="0 0 24 24"><path d="M17 6.5A7 7 0 1 0 17 17.5M5 10.5h8M5 13.5h8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2.5 6.5h11v9.5h-11zM13.5 9.5h4l3 3.2V16h-7M6.5 18.8a1.8 1.8 0 100-3.6 1.8 1.8 0 000 3.6zM17 18.8a1.8 1.8 0 100-3.6 1.8 1.8 0 000 3.6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+  <symbol id="i-360" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9.5" ry="3.8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3.2v4.6M9.8 5.6L12 7.8l2.2-2.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.2 14.6l2.1 1.4-2.2 1.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></symbol>
+  <symbol id="i-vol" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4.5 4.5 0 010 6M18 6.5a8 8 0 010 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-full" viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 7l7.5 6 7.5-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
@@ -772,6 +891,7 @@ footer .logo-tag{color:rgba(243,239,233,.55)}
         <li><svg width="16" height="16"><use href="#i-shield"/></svg>1 año de garantía</li>
         <li><svg width="16" height="16"><use href="#i-check"/></svg>Revisados en nuestro taller</li>
         <li><svg width="16" height="16"><use href="#i-cal"/></svg>Cita online al momento</li>
+        <li><svg width="16" height="16"><use href="#i-truck"/></svg>Entrega gratis en toda la isla</li>
       </ul>
       </div>
       <div class="hero-art" id="hero-sil"><svg class="hero-mark" viewBox="0 0 240 90" aria-hidden="true">
@@ -831,6 +951,37 @@ footer .logo-tag{color:rgba(243,239,233,.55)}
     </div>
   </section>
 
+  <section class="block" id="entrega" style="padding-top:0">
+    <div class="wrap">
+      <div class="entrega rv">
+        <div>
+          <div class="eyebrow">Solo en Monza Car</div>
+          <h2>Te lo llevamos a casa. <span class="serif">Gratis.</span></h2>
+          <p>Compres el coche que compres, te lo entregamos en la puerta de tu casa sin coste, en cualquier punto de Fuerteventura. Con el cambio de nombre hecho y listo para conducir.</p>
+          <ul class="en-pts">
+            <li><span class="ic"><svg width="20" height="20"><use href="#i-truck"/></svg></span><span><b>0 €</b> de entrega, de norte a sur de la isla</span></li>
+            <li><span class="ic"><svg width="20" height="20"><use href="#i-cal"/></svg></span><span>Tú eliges el día y la hora</span></li>
+            <li><span class="ic"><svg width="20" height="20"><use href="#i-shield"/></svg></span><span>Con sus 12 meses de garantía desde el primer kilómetro</span></li>
+          </ul>
+          <a class="btn btn-rosso" href="#comprar" data-go="comprar">Ver coches disponibles <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
+        </div>
+        <div class="ruta" role="img" aria-label="Entrega gratis en toda Fuerteventura, de Corralejo a Morro Jable">
+          <span class="camion" aria-hidden="true"><svg><use href="#i-truck"/></svg></span>
+          <ol aria-hidden="true">
+            <li style="transition-delay:0ms">Corralejo<small>Gratis</small></li>
+            <li style="transition-delay:70ms">La Oliva<small>Gratis</small></li>
+            <li style="transition-delay:140ms">Puerto del Rosario<small>Gratis</small></li>
+            <li class="base" style="transition-delay:210ms">Antigua<small>Nuestro taller</small></li>
+            <li style="transition-delay:280ms">Caleta de Fuste<small>Gratis</small></li>
+            <li style="transition-delay:350ms">Gran Tarajal<small>Gratis</small></li>
+            <li style="transition-delay:420ms">Costa Calma<small>Gratis</small></li>
+            <li style="transition-delay:490ms">Morro Jable<small>Gratis</small></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="block" id="sold-sec" style="padding-top:0" hidden>
     <div class="wrap">
       <div class="sec-head rv"><div><div class="eyebrow">Ya tienen dueño</div><h2>Vendidos <span class="serif">recientemente</span></h2><p>Coches que hemos vendido en los últimos dos meses. Si ves uno que te encaja, no esperes demasiado.</p></div></div>
@@ -868,7 +1019,7 @@ footer .logo-tag{color:rgba(243,239,233,.55)}
         <div class="stat lux s1"><span class="st-ic"><svg width="22" height="22"><use href="#i-shield"/></svg></span><b><em data-cuenta="12">12</em><small>meses</small></b><span>de garantía en los coches que vendemos</span></div>
         <div class="stat lux s2"><span class="st-ic"><svg width="22" height="22"><use href="#i-check"/></svg></span><b>+<em data-cuenta="40">40</em><small>puntos</small></b><span>de revisión en nuestro taller antes de cada venta</span></div>
         <div class="stat lux s3"><span class="st-ic"><svg width="22" height="22"><use href="#i-clock"/></svg></span><b class="num">8–16<small>h</small></b><span>de lunes a viernes, en horario continuado</span></div>
-        <div class="stat lux s4"><span class="st-ic"><svg width="22" height="22"><use href="#i-euro"/></svg></span><b>0<small>€</small></b><span>por pedir presupuesto o tasar tu coche</span></div>
+        <div class="stat lux s4"><span class="st-ic"><svg width="22" height="22"><use href="#i-euro"/></svg></span><b>0<small>€</small></b><span>por llevarte el coche a casa, pedir presupuesto o tasar el tuyo</span></div>
       </div>
     </div>
   </section>
@@ -879,7 +1030,7 @@ footer .logo-tag{color:rgba(243,239,233,.55)}
       <div class="steps" id="buy-steps">
         <div class="step lux rv"><div class="n">01</div><h3>Elige tu coche</h3><p>Mira fotos, kilómetros y equipamiento. Todos los precios son finales, con impuestos incluidos.</p></div>
         <div class="step lux rv d1"><div class="n">02</div><h3>Pruébalo</h3><p>Ven a vernos a Antigua y pruébalo con calma, cuando te venga bien.</p></div>
-        <div class="step lux rv d2"><div class="n">03</div><h3>Llévatelo</h3><p>Pagas al contado y nos encargamos del cambio de nombre y la entrega.</p></div>
+        <div class="step lux rv d2"><div class="n">03</div><h3>Te lo llevamos</h3><p>Pagas al contado, hacemos el cambio de nombre y te lo llevamos gratis a casa, en cualquier punto de Fuerteventura.</p></div>
       </div>
     </div>
   </section>
@@ -910,6 +1061,7 @@ footer .logo-tag{color:rgba(243,239,233,.55)}
   <section class="block">
     <div class="wrap">
       <div class="sec-head"><div><div class="eyebrow">Comprar coche</div><h2 class="page-h">Coches <span class="serif">disponibles</span></h2><p>Todos revisados en nuestro taller y con 12 meses de garantía.</p></div></div>
+      <div class="entrega-mini"><span class="em-ic"><svg width="22" height="22"><use href="#i-truck"/></svg></span><div><b>Entrega a domicilio gratis en toda Fuerteventura</b><small>De Corralejo a Morro Jable, sin coste y el día que tú elijas.</small></div></div>
       <p class="count num" id="count" style="font-weight:600;margin:0 0 18px"></p>
       <div class="grid" id="cat-grid"></div>
       <div id="cat-sold-wrap" hidden style="margin-top:72px">
@@ -1102,6 +1254,7 @@ footer .logo-tag{color:rgba(243,239,233,.55)}
       <div class="car-img m-img" id="m-img"></div>
       <button class="gnav prev" id="m-prev" type="button" aria-label="Foto anterior">‹</button>
       <button class="gnav next" id="m-next" type="button" aria-label="Foto siguiente">›</button>
+      <button class="gal-360" id="m-360" type="button" hidden><span class="pl"><svg width="16" height="16"><use href="#i-play"/></svg></span>Ver vídeo 360°</button>
     </div>
     <div class="thumbs" id="m-thumbs" hidden></div>
     <div class="m-body">
@@ -1109,11 +1262,16 @@ footer .logo-tag{color:rgba(243,239,233,.55)}
         <div><h3 id="m-title"></h3><div class="car-ver" id="m-ver"></div></div>
         <div style="text-align:right"><div class="price num" id="m-price"></div><div class="month num" id="m-month"></div></div>
       </div>
+      <div class="m-sig" id="m-sig">
+        <div class="vivo" id="m-vivo" role="status" aria-live="polite" hidden></div>
+        <div class="m-added" id="m-added" hidden></div>
+      </div>
       <div class="spec-table num" id="m-specs"></div>
       <p id="m-desc" style="margin:0;color:var(--muted);white-space:pre-line"></p>
       <div id="m-eq" hidden><h4 class="eq-h">Equipamiento</h4><ul class="eq"></ul></div>
       <div class="demand m-demand" id="m-demand" hidden></div>
       <div class="guarantee"><svg width="22" height="22"><use href="#i-itv"/></svg><span>12 meses de garantía · revisado en nuestro taller · cambio de nombre incluido · <a href="/condiciones" style="color:inherit">condiciones</a></span></div>
+      <div class="m-perk"><svg width="22" height="22"><use href="#i-truck"/></svg><span>Entrega a domicilio gratis en cualquier punto de Fuerteventura, o recógelo en Antigua</span></div>
       <div class="m-actions">
         <a class="btn btn-wa" id="m-wa" target="_blank" rel="noopener"><svg width="18" height="18"><use href="#i-wa"/></svg>Preguntar por WhatsApp</a>
         <a class="btn btn-ghost" id="m-call"><svg width="18" height="18"><use href="#i-phone"/></svg>Llamar</a>
@@ -1190,7 +1348,9 @@ const COCHES_FIJOS = [
   }
 ];
 const DEMO = false; // true solo para la vista previa sin servidor
-let COCHES = [], VENDIDOS = [], INTERES = {};
+let COCHES = [], VENDIDOS = [], INTERES = {}, VIENDO = {};
+const EN = IDIOMA==="en";
+const VSRC = k => "/api/videos/" + encodeURIComponent(k);
 
 /* SERVICIOS DEL TALLER */
 const SERVICIOS = [
@@ -1248,16 +1408,41 @@ function soldCard(c){
     </div></div>`;
 }
 const GARANTIA_CHIP = `<span class="g-chip"><svg width="13" height="13"><use href="#i-shield"/></svg>${IDIOMA==="en"?"1-year warranty":"1 año de garantía"}</span>`;
+const ENTREGA_CHIP = `<span class="g-chip d-chip"><svg width="14" height="14"><use href="#i-truck"/></svg>${EN?"Free home delivery":"Entrega gratis"}</span>`;
+
+/* Cuándo se publicó (fecha real del panel). Pasado un mes no se muestra. */
+function publicado(c){
+  const t = Date.parse(c.creado); if(!isFinite(t)) return null;
+  const a = new Date(); a.setHours(0,0,0,0); const b = new Date(t); b.setHours(0,0,0,0);
+  const d = Math.round((a-b)/864e5); if(d < 0 || d > 30) return null;
+  const w = Math.round(d/7);
+  const cuando = EN ? (d===0?"today":d===1?"yesterday":d<7?d+" days ago":w===1?"1 week ago":w+" weeks ago")
+                    : (d===0?"hoy":d===1?"ayer":d<7?"hace "+d+" días":w===1?"hace 1 semana":"hace "+w+" semanas");
+  return { d, nuevo: d <= 3,
+    corto: (EN?"Added ":"Añadido ")+cuando,
+    largo: (EN?"Listed on our website ":"Añadido a la web ")+cuando };
+}
+/* Señales de la tarjeta: nuevo, añadido hace…, personas viéndolo ahora (se rellena en vivo) */
+function senales(c){
+  const p = c.estado==="disponible" ? publicado(c) : null;
+  return `<div class="c-sig">${p&&p.nuevo?`<span class="c-new">${EN?"New":"Nuevo"}</span>`:""}${p?`<span><svg width="14" height="14"><use href="#i-clock"/></svg>${p.corto}</span>`:""}<span class="c-live" data-live="${esc(c.id)}" hidden></span></div>`;
+}
+function sello360(c){
+  if(!c.video) return "";
+  return `<span class="v360b"><svg><use href="#i-360"/></svg>${EN?"360° video":"Vídeo 360°"}</span>`+
+    `<video class="c-vid${c.video.tipo==="esferico"?" esf":""}" muted loop playsinline preload="none" data-src="${VSRC(c.video.key)}" aria-hidden="true" tabindex="-1"></video><span class="c-prog"></span>`;
+}
 function card(c){
-  const pic = c.fotos && c.fotos.length ? `<img src="${FOTO(c.fotos[0])}" alt="${esc(c.marca+" "+c.modelo)}" loading="lazy">` : SILUETA;
+  const pic = c.fotos && c.fotos.length ? `<img src="${FOTO(c.fotos[0])}" alt="${esc(c.marca+" "+c.modelo)}" loading="lazy">` : (c.video&&c.video.poster ? `<img src="${FOTO(c.video.poster)}" alt="${esc(c.marca+" "+c.modelo)}" loading="lazy">` : SILUETA);
   const nf = c.fotos && c.fotos.length > 1 ? `<span class="badge cnt">${c.fotos.length} fotos</span>` : "";
-  return `<button class="car lux" type="button" data-id="${esc(c.id)}" aria-label="Ver ${esc(c.marca+" "+c.modelo)}">
-    <div class="car-img">${pic}${badges(c)}${nf}</div>
+  return `<button class="car lux" type="button" data-id="${esc(c.id)}" aria-label="Ver ${esc(c.marca+" "+c.modelo)}${c.video?(EN?", with 360° video":", con vídeo 360°"):""}">
+    <div class="car-img">${pic}${badges(c)}${nf}${sello360(c)}</div>
     <div class="car-body">
       <div><div class="car-title">${esc(c.marca)} ${esc(c.modelo)}</div><div class="car-ver">${esc(c.version)}</div></div>
       <div class="specs num"><span class="chip">${esc(c.anio)}</span><span class="chip">${km(c.km)}</span>${c.combustible?`<span class="chip">${esc(T(c.combustible))}</span>`:""}${c.cambio?`<span class="chip">${esc(T(c.cambio))}</span>`:""}</div>
+      ${senales(c)}
       ${demanda(c)}
-      ${GARANTIA_CHIP}
+      <div class="perks">${GARANTIA_CHIP}${c.estado!=="vendido"?ENTREGA_CHIP:""}</div>
       <div class="price-row num"><div><div class="price">${eur(c.precio)}</div><div class="month">Precio final · impuestos incl.</div></div><span class="ver">${IDIOMA==="en"?"View":"Ver"} <svg width="16" height="16"><use href="#i-arrow"/></svg></span></div>
     </div></button>`;
 }
@@ -1278,7 +1463,7 @@ function render(){
   const vs = VENDIDOS.slice(0,6).map(soldCard).join("");
   $("#sold-grid").innerHTML = $("#cat-sold").innerHTML = vs;
   $("#sold-sec").hidden = $("#cat-sold-wrap").hidden = !VENDIDOS.length;
-  observar();
+  observar(); pintarViendo(); previews();
 }
 const ordenar = l => l.slice().sort((a,b)=>(b.destacado?1:0)-(a.destacado?1:0));
 function cargarInteres(){
@@ -1303,6 +1488,7 @@ function observar(){
 let firma="";
 async function refrescar(){
   if(document.hidden || (typeof modal!=="undefined" && modal.open)) return;
+  cargarViendo();
   try{
     const r=await fetch(API,{cache:"no-store"}); if(!r.ok) return;
     const data=await r.json(); if(!Array.isArray(data)) return;
@@ -1318,7 +1504,7 @@ setInterval(refrescar,20000);
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden) refrescar(); });
 
 async function cargar(){
-  cargarInteres();
+  cargarInteres(); cargarViendo();
   $("#cat-grid").innerHTML = $("#home-grid").innerHTML = cargando;
   try{
     const r = await fetch(API, {cache:"no-store"});
@@ -1336,23 +1522,214 @@ async function cargar(){
   }
 }
 
+/* =====================================================================
+   PERSONAS VIENDO EL COCHE AHORA MISMO (contador real, ver /api/viendo)
+   Mientras la ficha está abierta y a la vista, la pestaña avisa cada 20 s.
+   Nunca se inventa: si no hay nadie más, no se muestra nada.
+   ===================================================================== */
+const SES = (()=>{ const n=()=> (crypto.randomUUID ? crypto.randomUUID() : "s"+Math.random().toString(36).slice(2)+Date.now().toString(36));
+  try{ let v=sessionStorage.getItem("mz_vis"); if(!v){ v=n(); sessionStorage.setItem("mz_vis",v); } return v; }catch(_){ return n(); } })();
+let viendoId=null, viendoT=null, dejado={id:null,t:0};
+function cargarViendo(){
+  fetch("/api/viendo").then(r=>r.ok?r.json():{}).then(m=>{ if(m && typeof m==="object"){ VIENDO=m; pintarViendo(); } }).catch(()=>{});
+}
+function pintarViendo(){
+  document.querySelectorAll("[data-live]").forEach(el=>{
+    const id=el.dataset.live; let n=VIENDO[id]||0;
+    if(dejado.id===id && Date.now()-dejado.t<45000) n=Math.max(0,n-1); // no contarte a ti justo después de cerrar la ficha
+    const c=COCHES.find(x=>String(x.id)===id);
+    if(!n || !c || c.estado!=="disponible"){ el.hidden=true; return; }
+    const t=EN?`${n} viewing now`:`${n} ${n===1?"persona lo ve":"personas lo ven"} ahora`;
+    if(el.textContent!==t){ el.innerHTML=`<i></i>${t}`; }
+    el.hidden=false;
+  });
+}
+function pintarVivo(n){
+  const el=$("#m-vivo"); if(!n){ el.hidden=true; el.dataset.n="0"; return; }
+  const txt = EN ? (n===1?"<b>1</b> other person is viewing this car right now":`<b>${n}</b> people are viewing this car right now`)
+                 : (n===1?"<b>Otra persona</b> está viendo este coche ahora mismo":`<b>${n} personas</b> están viendo este coche ahora mismo`);
+  const antes=+el.dataset.n||0; el.innerHTML=`<i></i><span>${txt}</span>`; el.hidden=false; el.dataset.n=String(n);
+  if(n>antes && antes){ el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
+}
+async function latido(){
+  if(!viendoId || document.hidden) return;
+  const id=viendoId;
+  try{ const r=await fetch("/api/viendo/"+encodeURIComponent(id),{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({s:SES})});
+    if(r.ok && viendoId===id){ const d=await r.json(); pintarVivo(d.otros||0); } }catch(_){}
+}
+function empezarAVer(c){
+  dejarDeVer(); pintarVivo(0);
+  if(!c || c.estado!=="disponible") return;
+  viendoId=c.id; latido(); viendoT=setInterval(latido,20000);
+}
+function dejarDeVer(){
+  if(!viendoId) return;
+  const id=viendoId; viendoId=null; clearInterval(viendoT); dejado={id,t:Date.now()};
+  const url="/api/viendo/"+encodeURIComponent(id), body=JSON.stringify({s:SES,fuera:true});
+  try{ if(!(navigator.sendBeacon && navigator.sendBeacon(url,new Blob([body],{type:"application/json"})))) fetch(url,{method:"POST",headers:{"content-type":"application/json"},body,keepalive:true}).catch(()=>{}); }catch(_){}
+  pintarViendo();
+}
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden && viendoId) latido(); });
+addEventListener("pagehide",()=>{ if(viendoId){ const c=viendoId; dejarDeVer(); viendoId=null; pagehideId=c; } });
+let pagehideId=null;
+addEventListener("pageshow",e=>{ if(e.persisted && pagehideId && typeof modal!=="undefined" && modal.open){ const c=COCHES.find(x=>x.id===pagehideId); pagehideId=null; if(c) empezarAVer(c); } });
+
+/* =====================================================================
+   VISTA PREVIA DEL VÍDEO 360° EN LAS TARJETAS
+   Ordenador: se mueve al pasar el ratón. Móvil: se mueve la tarjeta que tienes
+   delante (salvo con ahorro de datos o conexión lenta). Solo una a la vez.
+   ===================================================================== */
+const HOVER = matchMedia("(hover:hover) and (pointer:fine)").matches;
+const QUIETO = matchMedia("(prefers-reduced-motion:reduce)").matches;
+const LENTO = (()=>{ const k=navigator.connection; return !!(k && (k.saveData || /(^|-)2g|3g/.test(k.effectiveType||""))); })();
+let vActiva=null, ioV=null;
+function jugar(v){
+  if(vActiva && vActiva!==v) parar(vActiva);
+  vActiva=v;
+  if(!v.src) v.src=v.dataset.src;
+  const p=v.play(); if(p && p.catch) p.catch(()=>{});
+}
+function parar(v){ v.pause(); v.classList.remove("on"); if(vActiva===v) vActiva=null; }
+function previews(){
+  if(QUIETO) return;
+  if(ioV){ ioV.disconnect(); } vActiva=null;
+  document.querySelectorAll(".c-vid:not([data-ok])").forEach(v=>{
+    v.dataset.ok="1";
+    v.addEventListener("playing",()=>v.classList.add("on"));
+    v.addEventListener("timeupdate",()=>{ const b=v.nextElementSibling; if(b && v.duration) b.style.width=(v.currentTime/v.duration*100)+"%"; });
+    const card=v.closest(".car");
+    if(HOVER){
+      card.addEventListener("mouseenter",()=>jugar(v));
+      card.addEventListener("mouseleave",()=>parar(v));
+      card.addEventListener("focus",()=>jugar(v)); card.addEventListener("blur",()=>parar(v));
+    } else if(!LENTO && "IntersectionObserver" in window){
+      ioV = ioV || new IntersectionObserver(es=>{
+        es.forEach(e=>{ const vv=e.target.querySelector(".c-vid"); if(!vv) return;
+          if(e.intersectionRatio>=.75){ clearTimeout(vv._t); vv._t=setTimeout(()=>jugar(vv),500); }
+          else { clearTimeout(vv._t); parar(vv); } });
+      },{threshold:[0,.75,1]});
+      ioV.observe(card);
+    }
+  });
+}
+
 /* ficha con galería */
 const modal=$("#car-modal");
-let gal={fotos:[],i:0,c:null};
-function showFoto(i){
-  const f=gal.fotos; if(!f.length){ $("#m-img").innerHTML=SILUETA+badges(gal.c); $("#m-thumbs").hidden=true; $("#m-prev").hidden=$("#m-next").hidden=true; return; }
+/* La galería mezcla el vídeo 360° (si lo hay, primero) y las fotos. Se abre en la foto principal. */
+let gal={fotos:[],i:0,c:null}, visor=null;
+const esVid = it => it && typeof it==="object" && it.v;
+function pararVisor(){ if(visor){ try{ visor.stop(); }catch(_){} visor=null; } }
+function showFoto(i, auto=false){
+  pararVisor();
+  const f=gal.fotos; if(!f.length){ $("#m-img").innerHTML=SILUETA+badges(gal.c); $("#m-thumbs").hidden=true; $("#m-prev").hidden=$("#m-next").hidden=true; $("#m-360").hidden=true; return; }
   gal.i=(i+f.length)%f.length;
-  $("#m-img").innerHTML=`<img src="${FOTO(f[gal.i])}" alt="${esc(gal.c.marca+" "+gal.c.modelo)}, foto ${gal.i+1} de ${f.length}">`+badges(gal.c)+(f.length>1?`<span class="badge cnt num">${gal.i+1} / ${f.length}</span>`:"");
+  const it=f[gal.i], nf=f.filter(x=>!esVid(x)).length, nfo=f.slice(0,gal.i+1).filter(x=>!esVid(x)).length;
+  if(esVid(it)){
+    const v=gal.c.video, sello=`<span class="v360b play" style="top:14px;bottom:auto"><svg><use href="#i-360"/></svg>${v.tipo==="esferico"?(EN?"360° · drag to look around":"360° · arrastra para mirar"):(EN?"360° video":"Vídeo 360°")}</span>`;
+    if(v.tipo==="esferico"){
+      $("#m-img").innerHTML=`<div class="esf-w" tabindex="0" role="img" aria-label="${EN?"360° video of the car. Drag to look around.":"Vídeo 360° del coche. Arrastra para mirar alrededor."}"></div>`+sello;
+      visor=Esfera($("#m-img .esf-w"), VSRC(v.key), v.poster?FOTO(v.poster):"", auto);
+    } else {
+      $("#m-img").innerHTML=`<video class="m-vid" controls playsinline preload="metadata" ${v.poster?`poster="${FOTO(v.poster)}"`:""} src="${VSRC(v.key)}"></video>`+sello;
+      const el=$("#m-img video"); visor={stop(){ el.pause(); el.removeAttribute("src"); el.load(); }};
+      if(auto){ const p=el.play(); if(p && p.catch) p.catch(()=>{}); }
+    }
+  } else {
+    $("#m-img").innerHTML=`<img src="${FOTO(it)}" alt="${esc(gal.c.marca+" "+gal.c.modelo)}, foto ${nfo} de ${nf}">`+badges(gal.c)+(nf>1?`<span class="badge cnt num">${nfo} / ${nf}</span>`:"");
+  }
+  $("#m-360").hidden = !gal.c.video || esVid(it);
   $("#m-prev").hidden=$("#m-next").hidden=f.length<2;
   $("#m-thumbs").hidden=f.length<2;
   [...$("#m-thumbs").children].forEach((t,j)=>t.setAttribute("aria-current",j===gal.i));
 }
+
+/* ---------- Visor 360° esférico (WebGL, sin librerías) ---------- */
+function Esfera(wrap, src, poster, auto){
+  if(poster) wrap.style.backgroundImage=`url("${poster}")`;
+  const v=document.createElement("video"); v.src=src; v.loop=true; v.playsInline=true; v.preload="auto"; v.setAttribute("playsinline","");
+  const cv=document.createElement("canvas"); wrap.appendChild(cv);
+  const gl=cv.getContext("webgl",{antialias:false,alpha:false});
+  // Sin WebGL: se ve como vídeo normal.
+  if(!gl){ cv.remove(); v.controls=true; v.className="m-vid"; wrap.appendChild(v); wrap.style.touchAction="auto"; return {stop(){ v.pause(); v.removeAttribute("src"); v.load(); }}; }
+  const sh=(t,src)=>{ const o=gl.createShader(t); gl.shaderSource(o,src); gl.compileShader(o); return o; };
+  const pr=gl.createProgram();
+  gl.attachShader(pr,sh(gl.VERTEX_SHADER,"attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}"));
+  gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,`#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+uniform sampler2D t;uniform vec2 r;uniform float yw,pt,f;
+void main(){vec2 q=(gl_FragCoord.xy*2.-r)/r.y;vec3 d=normalize(vec3(q,-f));
+float c=cos(pt),s=sin(pt);d=vec3(d.x,d.y*c-d.z*s,d.y*s+d.z*c);
+c=cos(yw);s=sin(yw);d=vec3(d.x*c-d.z*s,d.y,d.x*s+d.z*c);
+gl_FragColor=texture2D(t,vec2(atan(d.x,-d.z)/6.2831853+.5,.5-asin(clamp(d.y,-1.,1.))/3.1415927));}`));
+  gl.linkProgram(pr); gl.useProgram(pr);
+  const b=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,b); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const lp=gl.getAttribLocation(pr,"p"); gl.enableVertexAttribArray(lp); gl.vertexAttribPointer(lp,2,gl.FLOAT,false,0,0);
+  const tex=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,tex);
+  [[gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE],[gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE],[gl.TEXTURE_MIN_FILTER,gl.LINEAR],[gl.TEXTURE_MAG_FILTER,gl.LINEAR]].forEach(([k,x])=>gl.texParameteri(gl.TEXTURE_2D,k,x));
+  const U={r:gl.getUniformLocation(pr,"r"),yw:gl.getUniformLocation(pr,"yw"),pt:gl.getUniformLocation(pr,"pt"),f:gl.getUniformLocation(pr,"f")};
+  let yaw=0, pitch=0, fov=80*Math.PI/180, girar=true, hay=false, raf=0, vivo=true, ultimoT=-1;
+  // controles
+  wrap.insertAdjacentHTML("beforeend",`<div class="esf-hint"><span class="hand"><svg width="22" height="22"><use href="#i-360"/></svg></span>${EN?"Drag to look around":"Arrastra para mirar alrededor"}</div>
+    <button class="esf-play" type="button" aria-label="${EN?"Play":"Reproducir"}"><svg><use href="#i-play"/></svg></button>
+    <div class="esf-bar"><button type="button" data-a="pp" aria-label="${EN?"Play or pause":"Reproducir o pausar"}"><svg><use href="#i-play"/></svg></button>
+    <span class="tl" data-a="tl"><i></i></span>
+    <button type="button" data-a="snd" aria-label="${EN?"Sound":"Sonido"}"><svg><use href="#i-vol"/></svg></button>
+    ${wrap.requestFullscreen?`<button type="button" data-a="fs" aria-label="${EN?"Full screen":"Pantalla completa"}"><svg><use href="#i-full"/></svg></button>`:""}</div>`);
+  const big=wrap.querySelector(".esf-play"), ico=wrap.querySelector('[data-a="pp"] use'), snd=wrap.querySelector('[data-a="snd"] use'), barra=wrap.querySelector(".tl i");
+  let pidio=false;
+  const play=()=>{ pidio=true; const p=v.play(); if(p&&p.catch) p.catch(()=>{ v.muted=true; snd.setAttribute("href","#i-mute"); v.play().catch(()=>{}); }); };
+  v.addEventListener("play",()=>{ big.hidden=true; ico.setAttribute("href","#i-pause"); });
+  v.addEventListener("pause",()=>{ ico.setAttribute("href","#i-play"); });
+  v.addEventListener("timeupdate",()=>{ if(v.duration) barra.style.width=(v.currentTime/v.duration*100)+"%"; });
+  big.onclick=e=>{ e.stopPropagation(); play(); };
+  wrap.querySelector(".esf-bar").addEventListener("pointerdown",e=>e.stopPropagation());
+  wrap.querySelector(".esf-bar").addEventListener("click",e=>{ const a=e.target.closest("[data-a]"); if(!a) return; e.stopPropagation();
+    if(a.dataset.a==="pp") v.paused?play():v.pause();
+    if(a.dataset.a==="snd"){ v.muted=!v.muted; snd.setAttribute("href",v.muted?"#i-mute":"#i-vol"); }
+    if(a.dataset.a==="fs"){ document.fullscreenElement ? document.exitFullscreen() : wrap.requestFullscreen().catch(()=>{}); }
+    if(a.dataset.a==="tl" && v.duration){ const r=a.getBoundingClientRect(); v.currentTime=(e.clientX-r.left)/r.width*v.duration; } });
+  // arrastrar (ratón y dedo), pellizcar o rueda para acercar
+  const pts=new Map(); let dist=0;
+  const tocar=()=>{ girar=false; wrap.classList.add("movido"); };
+  wrap.addEventListener("pointerdown",e=>{ wrap.setPointerCapture(e.pointerId); pts.set(e.pointerId,[e.clientX,e.clientY]); tocar(); });
+  wrap.addEventListener("pointermove",e=>{ if(!pts.has(e.pointerId)) return; const [x,y]=pts.get(e.pointerId);
+    if(pts.size===2){ pts.set(e.pointerId,[e.clientX,e.clientY]); const [a,c]=[...pts.values()]; const d=Math.hypot(a[0]-c[0],a[1]-c[1]); if(dist) fov=Math.min(1.9,Math.max(.6,fov*dist/d)); dist=d; return; }
+    const k=fov/wrap.clientHeight; yaw-=(e.clientX-x)*k; pitch=Math.max(-1.45,Math.min(1.45,pitch+(e.clientY-y)*k)); pts.set(e.pointerId,[e.clientX,e.clientY]); });
+  const soltar=e=>{ pts.delete(e.pointerId); dist=0; };
+  wrap.addEventListener("pointerup",soltar); wrap.addEventListener("pointercancel",soltar);
+  wrap.addEventListener("wheel",e=>{ e.preventDefault(); tocar(); fov=Math.min(1.9,Math.max(.6,fov*(1+e.deltaY*.001))); },{passive:false});
+  wrap.addEventListener("keydown",e=>{ const m={ArrowLeft:[-.12,0],ArrowRight:[.12,0],ArrowUp:[0,.1],ArrowDown:[0,-.1]}[e.key]; if(!m) return; e.preventDefault(); e.stopPropagation(); tocar(); yaw+=m[0]; pitch=Math.max(-1.45,Math.min(1.45,pitch+m[1])); });
+  function frame(){
+    if(!vivo) return;
+    raf=requestAnimationFrame(frame);
+    const dpr=Math.min(2,devicePixelRatio||1), w=Math.round(wrap.clientWidth*dpr), h=Math.round(wrap.clientHeight*dpr);
+    if(cv.width!==w||cv.height!==h){ cv.width=w; cv.height=h; }
+    if(v.readyState>=2 && v.currentTime!==ultimoT){ ultimoT=v.currentTime; gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,v); if(!hay){ hay=true; wrap.style.backgroundImage="none"; } }
+    if(!hay){ gl.clearColor(0,0,0,0); return; }
+    if(girar && !QUIETO) yaw+=.0016;
+    gl.viewport(0,0,w,h); gl.uniform2f(U.r,w,h); gl.uniform1f(U.yw,yaw); gl.uniform1f(U.pt,pitch); gl.uniform1f(U.f,1/Math.tan(fov/2));
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+  }
+  // hasta que el usuario pulse play se ve la portada; cargamos el primer fotograma para poder mirar alrededor ya
+  cv.style.opacity="0"; v.addEventListener("loadeddata",()=>{ cv.style.opacity="1"; },{once:true});
+  v.muted=!auto; if(auto) play(); else { v.muted=true; v.play().then(()=>{ if(pidio) return; v.pause(); v.muted=false; big.hidden=false; }).catch(()=>{}); }
+  frame();
+  return { stop(){ vivo=false; cancelAnimationFrame(raf); v.pause(); v.removeAttribute("src"); v.load(); const x=gl.getExtension("WEBGL_lose_context"); if(x) x.loseContext(); } };
+}
 document.addEventListener("click",e=>{
   const el=e.target.closest(".car"); if(!el) return;
   const c=COCHES.find(x=>String(x.id)===el.dataset.id); if(!c) return;
-  gal={fotos:c.fotos||[],i:0,c};
-  $("#m-thumbs").innerHTML=gal.fotos.map((k,j)=>`<button type="button" data-j="${j}" aria-label="Foto ${j+1}"><img src="${FOTO(k)}" alt="" loading="lazy"></button>`).join("");
-  showFoto(0);
+  const fotos=c.fotos||[];
+  gal={fotos: c.video ? [{v:1}, ...fotos] : fotos.slice(), i:0, c};
+  $("#m-thumbs").innerHTML=gal.fotos.map((k,j)=>esVid(k)
+    ? `<button type="button" class="tv" data-j="${j}" aria-label="${EN?"360° video":"Vídeo 360°"}">${c.video.poster?`<img src="${FOTO(c.video.poster)}" alt="" loading="lazy">`:""}</button>`
+    : `<button type="button" data-j="${j}" aria-label="Foto ${j+(c.video?0:1)}"><img src="${FOTO(k)}" alt="" loading="lazy"></button>`).join("");
+  showFoto(c.video && fotos.length ? 1 : 0);
+  const pub = c.estado==="disponible" ? publicado(c) : null;
+  $("#m-added").hidden=!pub; if(pub) $("#m-added").innerHTML=`<svg width="16" height="16"><use href="#i-clock"/></svg>${pub.largo}`;
   $("#m-title").textContent=c.marca+" "+c.modelo; $("#m-ver").textContent=c.version||"";
   $("#m-price").textContent=eur(c.precio); $("#m-month").textContent=c.estado==="reservado"?"Reservado":"Precio final, impuestos incluidos";
   const rows=[["Año",c.anio],["Kilómetros",km(c.km)],["Combustible",T(c.combustible)],["Cambio",T(c.cambio)],["Potencia",c.cv?c.cv+" CV":""],["Puertas",c.puertas],["Color",c.color],["Etiqueta DGT",c.etiqueta]].filter(r=>r[1]);
@@ -1366,13 +1743,17 @@ document.addEventListener("click",e=>{
   $("#book-form").reset(); $("#book-ok").hidden=true; fallo("b",""); $("#b-conf").hidden=true; $("#book-form").classList.remove("done"); AG_B.st.hora=""; modoVisita();
   const res=c.estado==="reservado"; $("#book-form").hidden=res;
   modal.showModal(); modal.scrollTop=0;
+  empezarAVer(c);
 });
+modal.addEventListener("close",()=>{ pararVisor(); dejarDeVer(); });
+$("#m-360").onclick=()=>showFoto(0,true);
 $("#m-wa").addEventListener("click",()=>apuntarInteres(gal.c));
 $("#m-prev").onclick=()=>showFoto(gal.i-1);
 $("#m-next").onclick=()=>showFoto(gal.i+1);
-$("#m-thumbs").addEventListener("click",e=>{ const b=e.target.closest("[data-j]"); if(b) showFoto(+b.dataset.j); });
-modal.addEventListener("keydown",e=>{ if(e.key==="ArrowLeft") showFoto(gal.i-1); if(e.key==="ArrowRight") showFoto(gal.i+1); });
-let tx=null; $("#m-img").addEventListener("touchstart",e=>{tx=e.touches[0].clientX},{passive:true});
+$("#m-thumbs").addEventListener("click",e=>{ const b=e.target.closest("[data-j]"); if(b) showFoto(+b.dataset.j, true); });
+modal.addEventListener("keydown",e=>{ if(e.target.closest && e.target.closest("input,textarea,select,video")) return; if(e.key==="ArrowLeft") showFoto(gal.i-1); if(e.key==="ArrowRight") showFoto(gal.i+1); });
+// Deslizar para cambiar de foto (no sobre el vídeo: ahí el dedo mueve la vista o la barra del vídeo)
+let tx=null; $("#m-img").addEventListener("touchstart",e=>{tx=esVid(gal.fotos[gal.i])?null:e.touches[0].clientX},{passive:true});
 $("#m-img").addEventListener("touchend",e=>{ if(tx===null) return; const d=e.changedTouches[0].clientX-tx; if(Math.abs(d)>40) showFoto(gal.i+(d<0?1:-1)); tx=null; });
 $("#m-close").onclick=()=>modal.close();
 modal.addEventListener("click",e=>{ if(e.target===modal) modal.close(); });

@@ -199,6 +199,42 @@ legend{display:flex;align-items:center;gap:10px}
 @media (prefers-reduced-motion:reduce){.live i{animation:none}}
 .lead.flash{animation:flash 1.6s ease-out}
 @keyframes flash{from{background:color-mix(in srgb,var(--accent) 16%,var(--surface))}to{background:var(--surface)}}
+/* vídeo 360° */
+.v360{position:relative;overflow:hidden}
+.v360::before{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--accent) 14%,transparent),transparent 70%);pointer-events:none}
+.v-new{font-family:var(--body);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,#C8202B,#F2A65A);padding:3px 8px;border-radius:999px}
+.hint{margin:-4px 0 0;color:var(--muted);font-size:14.5px}
+.lg-ic.v{background:linear-gradient(135deg,#15171A,#3B6FD8)}
+.drop.vd b{display:inline-flex;align-items:center;gap:8px}
+.tips{font-size:14px;color:var(--muted)}
+.tips summary{cursor:pointer;font-weight:700;color:var(--ink);padding:4px 0}
+.tips ul{margin:8px 0 0;padding-left:20px;display:grid;gap:4px}
+.vprog{display:grid;gap:10px;background:var(--surface-2);border-radius:14px;padding:16px}
+.vprog .top1{display:flex;justify-content:space-between;gap:10px;align-items:center;font-weight:700}
+.vprog .top1 span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vbar{height:10px;border-radius:999px;background:var(--surface);overflow:hidden;box-shadow:inset 0 0 0 1px var(--line)}
+.vbar i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#C8202B,#F2A65A);transition:width .3s ease;position:relative;overflow:hidden}
+.vbar i::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);transform:translateX(-100%);animation:brillo 1.4s infinite}
+@keyframes brillo{to{transform:translateX(100%)}}
+.vprog small{color:var(--muted);font-size:13.5px}
+.vprev{position:relative;border-radius:14px;overflow:hidden;background:#000;aspect-ratio:16/9}
+.vprev video{width:100%;height:100%;object-fit:contain;display:block}
+.v-sello{position:absolute;top:10px;left:10px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;letter-spacing:.06em;color:#fff;background:rgba(10,10,12,.62);backdrop-filter:blur(6px);padding:5px 10px;border-radius:999px;pointer-events:none}
+.vmeta{font-size:13.5px;color:var(--muted);font-weight:600}
+.vtipo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:560px){.vtipo{grid-template-columns:1fr}}
+.vtipo label{display:grid;gap:4px;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;transition:border-color .2s,background .2s,box-shadow .2s}
+.vtipo label:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.vtipo input{position:absolute;opacity:0;pointer-events:none}
+.vtipo b{font-size:15px;display:flex;align-items:center;gap:8px}
+.vtipo small{color:var(--muted);font-size:13px;line-height:1.35}
+.vtipo label:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,var(--surface));box-shadow:0 8px 20px -14px var(--accent)}
+.vtipo label:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:2px}
+.vacts{display:flex;gap:8px;flex-wrap:wrap}
+.pill.v3{background:#15171A;color:#fff}
+@media (prefers-color-scheme:dark){.pill.v3{background:#F3EFE9;color:#15171A}}
+.pill.viendo{background:var(--bad-soft);color:var(--accent);display:inline-flex;align-items:center;gap:6px}
+.pill.viendo::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;animation:latido 1.8s infinite}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0));transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:12px 18px;border-radius:12px;font-weight:600;z-index:50;max-width:calc(100vw - 32px)}
 </style>
 </head>
@@ -288,6 +324,41 @@ legend{display:flex;align-items:center;gap:10px}
         <div class="photos" id="photos"></div>
       </fieldset>
 
+      <fieldset class="card v360" id="v360">
+        <legend><span class="lg-ic v"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="3.6"/><path d="M12 3.5v4M10 5.5l2 2 2-2"/><path d="M17.5 14.8l1.8 1.2-1.9 1"/></svg></span>Vídeo 360° <span class="v-new">Opcional</span></legend>
+        <p class="hint">Los coches con vídeo llevan el sello «360°» en la web y se ven en movimiento en su tarjeta. Es lo que más confianza da a quien compra sin venir.</p>
+        <div id="v-empty">
+          <label class="drop vd" id="vdrop" for="vfile">
+            <b><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="3.6"/><path d="M12 3.5v4M10 5.5l2 2 2-2"/><path d="M17.5 14.8l1.8 1.2-1.9 1"/></svg> Añadir vídeo 360°</b>
+            <small>MP4 o MOV, hasta 300 MB. Graba en horizontal, de 30 a 60 segundos.</small>
+          </label>
+          <input id="vfile" type="file" accept="video/mp4,video/quicktime,video/webm,.mp4,.mov,.webm" hidden>
+          <details class="tips" style="margin-top:10px"><summary>Cómo grabarlo para que quede de revista</summary>
+            <ul>
+              <li><b>Vuelta al coche:</b> empieza por el frontal y da una vuelta completa, despacio y a la altura del pecho. Termina dentro: salpicadero, asientos y cuentakilómetros.</li>
+              <li><b>Con cámara 360° (Insta360, Ricoh Theta…):</b> exporta el vídeo «360» sin reencuadrar. La web lo detecta y el cliente podrá mirar alrededor arrastrando.</li>
+              <li><b>iPhone:</b> Ajustes → Cámara → Formatos → «Más compatible». Si no, en Android y Windows puede no verse.</li>
+              <li>Mejor con luz de día, sin contraluz y con el coche limpio. 1080p es suficiente.</li>
+            </ul>
+          </details>
+        </div>
+        <div class="vprog" id="v-up" hidden>
+          <div class="top1"><span id="v-up-n">Preparando…</span><button class="btn b-ghost b-sm" type="button" id="v-cancel">Cancelar</button></div>
+          <div class="vbar"><i id="v-bar"></i></div>
+          <small class="num" id="v-up-t" aria-live="polite">Comprobando el vídeo…</small>
+        </div>
+        <div id="v-ok" hidden style="display:grid;gap:12px">
+          <div class="vprev"><video id="vprev" controls playsinline preload="metadata"></video><span class="v-sello"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="3.6"/><path d="M12 3.5v4M10 5.5l2 2 2-2"/><path d="M17.5 14.8l1.8 1.2-1.9 1"/></svg>360°</span></div>
+          <div class="vmeta num" id="vmeta"></div>
+          <div class="vtipo" role="radiogroup" aria-label="Tipo de vídeo">
+            <label><input type="radio" name="vtipo" value="vuelta" checked><b>Vuelta al coche</b><small>Vídeo normal grabado con el móvil dando la vuelta al coche.</small></label>
+            <label><input type="radio" name="vtipo" value="esferico"><b>360° esférico</b><small>Grabado con cámara 360°: el cliente arrastra para mirar a su alrededor.</small></label>
+          </div>
+          <div class="vacts"><button class="btn b-ghost b-sm" type="button" id="v-change">Cambiar vídeo</button><button class="btn b-bad b-sm" type="button" id="v-rm">Quitar vídeo</button></div>
+        </div>
+        <div class="msg bad" id="v-err" role="alert" hidden></div>
+      </fieldset>
+
       <fieldset class="card">
         <legend><span class="lg-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16h14M6.5 16l1.3-4.3A2 2 0 0 1 9.7 10h4.6a2 2 0 0 1 1.9 1.7L17.5 16M4 16v2.5h2.5V16M17.5 16v2.5H20V16"/></svg></span>El coche</legend>
         <div class="g2">
@@ -346,7 +417,8 @@ const eur = n => { const v=Math.round(Number(n||0)*100)/100, e=Math.trunc(v), c=
 const FOTO = k => String(k).startsWith("/") ? k : "/api/fotos/" + encodeURIComponent(k);
 let PW = "";
 try { PW = sessionStorage.getItem("mz_pw") || ""; } catch(_){}
-let CARS = [], editing = null, fotos = [], uploading = 0, INTERES = {};
+let CARS = [], editing = null, fotos = [], uploading = 0, INTERES = {}, VIENDO = {};
+let video = null, vSubiendo = false, vNuevo = null, vAbort = null;
 
 function toast(t){ const el=$("#toast"); el.textContent=t; el.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>el.hidden=true,2600); }
 const TABS={coches:"s-list",leads:"s-leads",agenda:"s-agenda"};
@@ -383,6 +455,7 @@ async function loadList(quieto){
   if(!quieto) show("s-list");
   $("#list").innerHTML='<div class="empty">Cargando…</div>';
   fetch("/api/interes",{cache:"no-store"}).then(r=>r.ok?r.json():{}).then(m=>{ INTERES=m||{}; if(CARS.length) renderList(); }).catch(()=>{});
+  fetch("/api/viendo").then(r=>r.ok?r.json():{}).then(m=>{ VIENDO=m||{}; if(CARS.length) renderList(); }).catch(()=>{});
   try{ CARS = await api("/api/coches?todos=1"); renderList(); }
   catch(err){ $("#list").innerHTML=`<div class="empty">${esc(err.message)}</div>`; }
 }
@@ -392,8 +465,8 @@ function renderList(){
   if(!CARS.length){ $("#list").innerHTML='<div class="empty"><b style="color:var(--ink)">Todavía no hay coches.</b><br>Pulsa «Añadir coche» para publicar el primero.</div>'; return; }
   $("#list").innerHTML = CARS.map(c=>`
     <div class="row lux ${c.estado}">
-      <div class="th">${c.fotos[0]?`<img src="${FOTO(c.fotos[0])}" alt="" loading="lazy">`:"Sin foto"}</div>
-      <div><b>${esc(c.marca)} ${esc(c.modelo)} ${c.destacado?'<span class="pill" style="font-size:11px;padding:2px 7px;vertical-align:2px">Destacado</span>':""}</b>
+      <div class="th">${c.fotos[0]?`<img src="${FOTO(c.fotos[0])}" alt="" loading="lazy">`:c.video&&c.video.poster?`<img src="${FOTO(c.video.poster)}" alt="" loading="lazy">`:"Sin foto"}</div>
+      <div><b>${esc(c.marca)} ${esc(c.modelo)} ${c.destacado?'<span class="pill" style="font-size:11px;padding:2px 7px;vertical-align:2px">Destacado</span>':""}${c.video?' <span class="pill v3" style="font-size:11px;padding:2px 7px;vertical-align:2px">360°</span>':""}${VIENDO[c.id]&&c.estado!=="vendido"?` <span class="pill viendo" style="font-size:11px;padding:2px 8px;vertical-align:2px">${VIENDO[c.id]} viendo ahora</span>`:""}</b>
         <small class="num">${esc(c.version||"")}${c.version?" · ":""}${c.anio} · ${Number(c.km).toLocaleString("es-ES")} km · <b style="display:inline;color:var(--ink)">${eur(c.precio)}</b>${INTERES[c.id]?` · <b style="display:inline;color:var(--accent)">${INTERES[c.id]} interesado${INTERES[c.id]>1?"s":""} esta semana</b>`:""}</small></div>
       <div class="acts">
         <div class="seg" role="group" aria-label="Estado de ${esc(c.marca+" "+c.modelo)}">
@@ -412,7 +485,9 @@ $("#list").addEventListener("click", async e=>{
 });
 $("#list").addEventListener("click", e=>{ const id=e.target.dataset.edit; if(id) openForm(CARS.find(x=>x.id===id)); });
 $("#add").onclick=()=>openForm(null);
-document.querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>{ if(uploading && !confirm("Hay fotos subiéndose. ¿Salir igualmente?")) return; show("s-list"); });
+document.querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>{
+  if((uploading || vSubiendo) && !confirm("Hay fotos o un vídeo subiéndose. ¿Salir igualmente?")) return;
+  cancelarVideo(); descartarNuevo(); show("s-list"); });
 
 /* ---------- formulario ---------- */
 const F = ["marca","modelo","version","anio","km","precio","combustible","cambio","etiqueta","cv","puertas","color","descripcion","estado"];
@@ -426,7 +501,8 @@ function openForm(c){
   $("#f-title").textContent = c ? `Editar ${c.marca} ${c.modelo}` : "Añadir coche";
   $("#save").textContent = c ? "Guardar cambios" : "Publicar coche";
   $("#del").hidden = !c; $("#form-err").hidden = true;
-  renderPhotos(); show("s-form");
+  video = c && c.video ? {...c.video} : null; vNuevo = null; vSubiendo = false;
+  pintarVideo(); renderPhotos(); show("s-form");
 }
 function renderPhotos(){
   const done = fotos.map((k,i)=>`
@@ -477,18 +553,146 @@ const drop=$("#drop");
 ["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("over")}));
 drop.addEventListener("drop", e=>addFiles(e.dataTransfer.files));
 
+/* ---------- vídeo 360° ---------- */
+const VMAX = 300*1024*1024;
+const MB = b => (b/1048576).toLocaleString("es-ES",{maximumFractionDigits: b<10485760?1:0})+" MB";
+const dur = s => { s=Math.round(s||0); return Math.floor(s/60)+":"+String(s%60).padStart(2,"0"); };
+const VSRC = k => "/api/videos/" + encodeURIComponent(k);
+function vErr(t){ $("#v-err").textContent=t||""; $("#v-err").hidden=!t; }
+function pintarVideo(){
+  $("#v-empty").hidden = !!video || vSubiendo;
+  $("#v-up").hidden = !vSubiendo;
+  $("#v-ok").hidden = !video || vSubiendo;
+  const pv=$("#vprev");
+  if(video && !vSubiendo){
+    const src = video.local || VSRC(video.key);
+    if(pv.dataset.src!==src){ pv.dataset.src=src; pv.src=src; pv.poster = video.poster ? FOTO(video.poster) : ""; }
+    const r = document.querySelector(`input[name="vtipo"][value="${video.tipo||"vuelta"}"]`); if(r) r.checked=true;
+    $("#vmeta").textContent = [video.dur?dur(video.dur):"", video.w?`${video.w}×${video.h}`:"", video.size?MB(video.size):"", video.tipo==="esferico"?"Detectado como 360° esférico":""].filter(Boolean).join(" · ");
+  } else { pv.removeAttribute("src"); pv.dataset.src=""; pv.load(); }
+}
+// El vídeo subido en este formulario y aún sin publicar se borra si se descarta.
+function descartarNuevo(){ if(vNuevo){ api("/api/videos/"+encodeURIComponent(vNuevo),{method:"DELETE"}).catch(()=>{}); vNuevo=null; } }
+function cancelarVideo(){ if(vAbort){ vAbort.abort(); vAbort=null; } }
+
+// Lee duración, tamaño y una portada del propio vídeo (sin subir nada todavía).
+function leerVideo(file){
+  return new Promise((ok,ko)=>{
+    const v=document.createElement("video"); v.muted=true; v.playsInline=true; v.preload="auto";
+    const url=URL.createObjectURL(file); let listo=false;
+    const t=setTimeout(()=>{ if(!listo) ko(new Error("Este navegador no consigue leer el vídeo. Prueba con otro archivo o graba en «Más compatible».")); },15000);
+    v.onerror=()=>{ clearTimeout(t); ko(new Error("Este navegador no puede reproducir el vídeo. Suele pasar con vídeos HEVC del iPhone: graba en «Más compatible» (Ajustes → Cámara → Formatos).")); };
+    v.onloadedmetadata=()=>{
+      if(!v.videoWidth){ clearTimeout(t); ko(new Error("No se ve la imagen del vídeo en este navegador (formato HEVC). Graba en «Más compatible» o expórtalo en H.264.")); return; }
+      v.currentTime=Math.min(1.5, (v.duration||2)*0.1);
+    };
+    v.onseeked=()=>{
+      listo=true; clearTimeout(t);
+      const w=v.videoWidth, h=v.videoHeight, sc=Math.min(1, 1280/w);
+      const cv=document.createElement("canvas"); cv.width=Math.round(w*sc); cv.height=Math.round(h*sc);
+      cv.getContext("2d").drawImage(v,0,0,cv.width,cv.height);
+      cv.toBlob(b=>ok({dur:v.duration, w, h, poster:b, url}),"image/jpeg",0.82);
+    };
+    v.src=url;
+  });
+}
+// Busca el códec de vídeo en la cabecera del archivo (caja «stsd»): avc1 = H.264 (se ve en todas partes), hvc1/hev1 = HEVC.
+async function codec(file){
+  const P=16*1024*1024, dec=new TextDecoder("latin1");
+  for(let off=0; off<file.size; off+=P-32){
+    const txt=dec.decode(await file.slice(off, off+P).arrayBuffer());
+    let i=-1;
+    while((i=txt.indexOf("stsd",i+1))!==-1){
+      const f=txt.substr(i+16,4);
+      if(/^(avc1|avc3|hvc1|hev1|vp09|av01|mp4v)$/.test(f)) return f;
+    }
+  }
+  return "";
+}
+async function subirTrozo(key,n,blob,signal){
+  for(let intento=0;;intento++){
+    try{
+      const r=await fetch(`/api/videos/${encodeURIComponent(key)}/${n}`,{method:"PUT",headers:{authorization:"Bearer "+PW,"content-type":"application/octet-stream"},body:blob,signal});
+      if(r.status===401){ logout(); throw new Error("La sesión ha caducado. Vuelve a entrar."); }
+      if(r.ok) return;
+      if(intento>=3) throw new Error((await r.json().catch(()=>({}))).error || "No se ha podido subir el vídeo.");
+    }catch(e){ if(signal.aborted || intento>=3 || /sesión/.test(e.message)) throw e; }
+    await new Promise(z=>setTimeout(z, 800*(intento+1)));
+  }
+}
+async function addVideo(file){
+  if(!file) return;
+  vErr("");
+  const ext=(file.name.split(".").pop()||"").toLowerCase();
+  const mime = file.type || {mp4:"video/mp4",m4v:"video/mp4",mov:"video/quicktime",webm:"video/webm"}[ext] || "";
+  if(!/^video\/(mp4|quicktime|webm)$/.test(mime)){ vErr("Formato no admitido. Sube un vídeo MP4, MOV o WEBM."); return; }
+  if(file.size>VMAX){ vErr(`El vídeo pesa ${MB(file.size)} y el máximo son 300 MB. Grábalo en 1080p (no en 4K) o recórtalo.`); return; }
+  cancelarVideo();
+  const antes = video, antesNuevo = vNuevo;
+  vSubiendo=true; pintarVideo();
+  $("#v-up-n").textContent=file.name; $("#v-bar").style.width="2%"; $("#v-up-t").textContent="Comprobando el vídeo…";
+  const ac=new AbortController(); vAbort=ac;
+  let key=null;
+  try{
+    const c=await codec(file);
+    if(c==="hvc1"||c==="hev1") throw new Error("Este vídeo está en HEVC: en Android y en ordenadores con Windows no se vería. En el iPhone: Ajustes → Cámara → Formatos → «Más compatible», y vuelve a grabarlo.");
+    const info=await leerVideo(file);
+    const esferico = Math.abs(info.w/info.h - 2) < 0.02;
+    $("#v-up-t").textContent="Preparando la portada…";
+    let poster="";
+    if(info.poster){ try{ poster=(await api("/api/fotos",{method:"POST",headers:{"content-type":"image/jpeg"},body:info.poster})).key; }catch(_){ } }
+    if(ac.signal.aborted) throw new DOMException("","AbortError");
+    const ini=await api("/api/videos",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({size:file.size,mime})});
+    key=ini.key;
+    const T=ini.trozo, n=ini.n, t0=Date.now(); let hechos=0, bytes=0, sig=0;
+    const pintar=()=>{ const p=bytes/file.size, s=(Date.now()-t0)/1000, v=bytes/Math.max(s,.5), q=(file.size-bytes)/Math.max(v,1);
+      $("#v-bar").style.width=Math.max(2,Math.round(p*100))+"%";
+      $("#v-up-t").textContent=`${Math.round(p*100)} % · ${MB(bytes)} de ${MB(file.size)}`+(hechos>0&&hechos<n?` · quedan ${q<60?Math.max(1,Math.round(q))+" s":Math.round(q/60)+" min"}`:""); };
+    pintar();
+    // 2 trozos a la vez: bastante más rápido sin saturar la conexión del móvil.
+    await Promise.all([0,1].map(async()=>{ while(sig<n){ const i=sig++; const b=file.slice(i*T,Math.min(file.size,(i+1)*T));
+      await subirTrozo(key,i,b,ac.signal); hechos++; bytes+=b.size; pintar(); } }));
+    $("#v-up-t").textContent="Comprobando que ha llegado entero…";
+    await api(`/api/videos/${encodeURIComponent(key)}/fin`,{method:"POST"});
+    // Si antes había otro vídeo subido en este mismo formulario y sin publicar, se borra.
+    if(antesNuevo && antesNuevo!==key) api("/api/videos/"+encodeURIComponent(antesNuevo),{method:"DELETE"}).catch(()=>{});
+    vNuevo=key;
+    video={key, tipo: esferico?"esferico":"vuelta", poster, dur:Math.round(info.dur*10)/10, w:info.w, h:info.h, local:info.url, size:file.size};
+    vSubiendo=false; vAbort=null; pintarVideo();
+    toast((esferico ? "Vídeo 360° esférico subido." : "Vídeo subido.") + ` Pulsa «${editing?"Guardar cambios":"Publicar coche"}» para que salga en la web.`);
+  }catch(e){
+    vSubiendo=false; vAbort=null;
+    if(key) api("/api/videos/"+encodeURIComponent(key),{method:"DELETE"}).catch(()=>{});
+    video=antes; vNuevo=antesNuevo; pintarVideo();
+    if(e.name!=="AbortError") vErr(e.message || "No se ha podido subir el vídeo.");
+  }
+}
+$("#vfile").addEventListener("change", e=>{ addVideo(e.target.files[0]); e.target.value=""; });
+const vdrop=$("#vdrop");
+["dragenter","dragover"].forEach(ev=>vdrop.addEventListener(ev,e=>{e.preventDefault();vdrop.classList.add("over")}));
+["dragleave","drop"].forEach(ev=>vdrop.addEventListener(ev,e=>{e.preventDefault();vdrop.classList.remove("over")}));
+vdrop.addEventListener("drop", e=>addVideo(e.dataTransfer.files[0]));
+$("#v-cancel").onclick=()=>{ cancelarVideo(); toast("Subida cancelada"); };
+$("#v-change").onclick=()=>$("#vfile").click();
+$("#v-rm").onclick=()=>{ if(!confirm("¿Quitar el vídeo 360° de este coche?")) return; descartarNuevo(); video=null; pintarVideo(); toast(editing?"Pulsa «Guardar cambios» para quitarlo de la web.":"Vídeo quitado"); };
+document.querySelectorAll('input[name="vtipo"]').forEach(r=>r.addEventListener("change",()=>{ if(video){ video.tipo=r.value; pintarVideo(); } }));
+window.addEventListener("beforeunload",e=>{ if(vSubiendo){ e.preventDefault(); e.returnValue=""; } });
+
 $("#car-form").addEventListener("submit", async e=>{
   e.preventDefault();
   const err=$("#form-err"); err.hidden=true;
   if(uploading){ err.textContent="Espera a que terminen de subir las fotos."; err.hidden=false; return; }
+  if(vSubiendo){ err.textContent="Espera a que termine de subir el vídeo 360°."; err.hidden=false; $("#v360").scrollIntoView({behavior:"smooth",block:"center"}); return; }
   const miss = ["marca","modelo","anio","km","precio"].filter(k=>!$("#"+k).value.trim());
   if(miss.length){ err.textContent="Rellena: "+miss.map(k=>$(`label[for=${k}]`).textContent.replace(" *","")).join(", ")+"."; err.hidden=false; $("#"+miss[0]).focus(); return; }
   const data = Object.fromEntries(F.map(k=>[k,$("#"+k).value]));
   data.equipamiento = $("#equipamiento").value; data.destacado=$("#destacado").checked; data.fotos=fotos;
+  data.video = video ? {...video, tipo: document.querySelector('input[name="vtipo"]:checked').value} : null;
   const btn=$("#save"); btn.disabled=true;
   try{
     if(editing) await api("/api/coches/"+editing.id,{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(data)});
     else await api("/api/coches",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(data)});
+    vNuevo = null; // ya está publicado: no hay que borrarlo al salir
     toast(editing ? "Cambios guardados" : "Coche publicado en la web");
     await loadList();
   }catch(e2){ err.textContent=e2.message; err.hidden=false; }
@@ -645,10 +849,11 @@ async function tick(){
   if(!PW) return;
   const editando = !$("#s-form").hidden;
   try{
-    const [cars, leads, int] = await Promise.all([
+    const [cars, leads, int, vi] = await Promise.all([
       editando ? null : api("/api/coches?todos=1"),
       api("/api/solicitudes"),
-      fetch("/api/interes",{cache:"no-store"}).then(r=>r.ok?r.json():{}).catch(()=>({}))
+      fetch("/api/interes",{cache:"no-store"}).then(r=>r.ok?r.json():{}).catch(()=>({})),
+      editando ? null : fetch("/api/viendo").then(r=>r.ok?r.json():{}).catch(()=>({}))
     ]);
     vivoOk=true; ultimo=Date.now();
     const ids=new Set(leads.map(l=>l.id));
@@ -658,7 +863,7 @@ async function tick(){
     if(sl!==sigLeads){ sigLeads=sl; LEADS=leads; const n=LEADS.filter(x=>x.estado==="nueva").length;
       $("#n-new").hidden=!n; $("#n-new").textContent=n; document.title=(n?`(${n}) `:"")+"Panel Monza Car";
       const foco=document.activeElement; if(!(foco && foco.matches && foco.matches("[data-notas]"))) renderLeads(); renderAgenda(); }
-    if(cars){ const sc=JSON.stringify([cars,int]); if(sc!==sigCars){ sigCars=sc; CARS=cars; INTERES=int||{};
+    if(cars){ const sc=JSON.stringify([cars,int,vi]); if(sc!==sigCars){ sigCars=sc; CARS=cars; INTERES=int||{}; VIENDO=vi||{};
       const foco=document.activeElement; if(!(foco && foco.closest && foco.closest("#list"))) renderList(); } }
   }catch(_){ vivoOk=false; }
   pintarVivo();

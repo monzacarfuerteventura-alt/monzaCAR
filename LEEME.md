@@ -18,3 +18,13 @@ Mientras el ID esté vacío no se carga nada de Google ni sale el aviso de cooki
 ## Publicar la web (desde un ordenador con Node.js instalado)
     npm install
     npx -p netlify-cli netlify deploy --prod   (la carpeta ya está conectada a lestter4th con «netlify link»)
+
+## Vídeo 360° de los coches
+En el panel, al añadir o editar un coche, sección **Vídeo 360°**. Admite MP4, MOV o WEBM de hasta 300 MB.
+- Vídeo normal dando la vuelta al coche, o vídeo de cámara 360° (se detecta solo si es 2:1; el cliente lo mueve arrastrando).
+- En iPhone, graba en «Más compatible» (Ajustes → Cámara → Formatos): el panel rechaza los vídeos HEVC porque en Android y Windows no se ven.
+- Se sube en trozos de 4 MB y se sirve por partes (`netlify/functions/videos.mts`).
+
+## «X personas están viendo este coche»
+Contador real (`netlify/functions/viendo.mts`): cuenta las pestañas con la ficha abierta en el último minuto,
+una por persona. Si no hay nadie más, no se muestra nada. No lo cambies por un número inventado: es publicidad engañosa.

@@ -43,10 +43,28 @@ export type Car = {
   fotos: string[];
   estado: "disponible" | "reservado" | "vendido";
   destacado: boolean;
+  video?: Video | null;
   creado: string;
   actualizado: string;
   vendidoEn?: string;
 };
+
+// Vídeo 360° del coche. «vuelta»: vídeo normal dando la vuelta al coche.
+// «esferico»: grabado con cámara 360°, el cliente mueve la vista arrastrando.
+export type Video = { key: string; tipo: "vuelta" | "esferico"; poster: string; dur: number; w: number; h: number };
+export const esVideo = (k: string) => /^[0-9a-f-]{36}\.(mp4|webm|mov)$/.test(k);
+export const VIDEO_TROZO = 4 * 1024 * 1024; // 4 MB por trozo: las funciones no aceptan cuerpos de más de 6 MB
+
+// Borra todos los trozos de un vídeo (y su portada).
+export async function borrarVideo(v?: { key?: string; poster?: string } | null) {
+  if (!v?.key || !esVideo(v.key)) return;
+  const s = store("monzacar-videos");
+  const meta = (await s.get(v.key + "/meta", { type: "json" }).catch(() => null)) as { n?: number } | null;
+  const n = Math.min(meta?.n ?? 0, 200);
+  await Promise.all([...Array(n).keys()].map((i) => s.delete(`${v.key}/${i}`).catch(() => {})));
+  await s.delete(v.key + "/meta").catch(() => {});
+  if (v.poster && esFotoSubida(v.poster)) await store("monzacar-fotos").delete(v.poster).catch(() => {});
+}
 
 const ESTADOS = ["disponible", "reservado", "vendido"];
 
@@ -86,6 +104,19 @@ const money = (v: unknown) => {
   return Number.isFinite(n) ? Math.round(n * 100) / 100 : null;
 };
 
+function cleanVideo(v: any): Video | null {
+  if (!v || typeof v !== "object") return null;
+  const key = str(v.key, 60);
+  if (!esVideo(key)) return null;
+  const num = (x: unknown, max: number) => { const n = Number(x); return Number.isFinite(n) && n > 0 ? Math.min(Math.round(n * 10) / 10, max) : 0; };
+  return {
+    key,
+    tipo: v.tipo === "esferico" ? "esferico" : "vuelta",
+    poster: esFotoSubida(str(v.poster, 100)) ? str(v.poster, 100) : "",
+    dur: num(v.dur, 3600), w: num(v.w, 16384), h: num(v.h, 16384),
+  };
+}
+
 // Limpia y valida lo que llega del panel.
 export function cleanCar(input: any, prev?: Car): { car?: Car; error?: string } {
   const now = new Date().toISOString();
@@ -109,6 +140,7 @@ export function cleanCar(input: any, prev?: Car): { car?: Car; error?: string } 
     fotos: (Array.isArray(input.fotos) ? input.fotos : []).map((x: unknown) => str(x, 100)).filter((k: string) => esFotoSubida(k) || esFotoFija(k)).slice(0, 30),
     estado: ESTADOS.includes(input.estado) ? input.estado : "disponible",
     destacado: !!input.destacado,
+    video: cleanVideo(input.video),
     creado: prev?.creado || now,
     actualizado: now,
   };
