@@ -1,0 +1,290 @@
+import type { Config, Context } from "@netlify/functions";
+import { createHash } from "node:crypto";
+import { store, json, isAdmin } from "../lib/shared.mts";
+
+/*
+  SOLICITUDES DE CLIENTES (mini CRM)
+  - POST   /api/solicitudes        → la web guarda una solicitud (coche, taller, tasación o contacto)
+  - GET    /api/solicitudes        → el panel lista todas (requiere contraseña)
+  - PATCH  /api/solicitudes/:id    → el panel cambia el estado o añade notas
+  - DELETE /api/solicitudes/:id    → el panel borra una solicitud (derecho de supresión RGPD)
+  Cada solicitud se guarda como una entrada independiente: dos clientes a la vez nunca se pisan.
+  Las solicitudes con más de 2 años se borran solas (así lo dice la política de privacidad).
+
+  CITAS EN TIEMPO REAL
+  - GET  /api/citas?agenda=taller|visita  → huecos libres de los próximos 30 días (público)
+  - POST /api/solicitudes con "cita": {fecha, hora} → reserva el hueco y confirma al momento
+  - GET/PUT /api/citas/bloqueos            → días cerrados (vacaciones, festivos), solo el panel
+  Un coche por hora en cada agenda, de lunes a viernes, de 8:00 a 15:00 (el taller cierra a las 16:00).
+*/
+
+const TIPOS = ["coche", "taller", "tasacion", "contacto"] as const;
+const ESTADOS = ["nueva", "contactado", "cita", "ganada", "perdida"] as const;
+const FRANJAS = ["8:00-10:00", "10:00-12:00", "12:00-14:00", "14:00-16:00", ""];
+const CONSENTIMIENTO_VERSION = "2026-09-22";
+const RETENCION = 730 * 864e5; // 2 años
+const LIMITE_HORA = 6; // solicitudes por persona y hora (anti-spam)
+const HORAS = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00"];
+const AGENDAS = ["taller", "visita"] as const;
+const HORIZONTE = 30; // días que se pueden reservar por adelantado
+const ANTELACION = 120; // minutos mínimos entre ahora y la cita
+
+type Solicitud = {
+  id: string;
+  creado: string;
+  tipo: (typeof TIPOS)[number];
+  estado: (typeof ESTADOS)[number];
+  nombre: string;
+  telefono: string;
+  email: string;
+  mensaje: string;
+  coche: { id: string; titulo: string; precio: number | null } | null;
+  servicios: string[];
+  dia: string;
+  franja: string;
+  vehiculo: Record<string, string>;
+  origen: { canal: string; gclid: string; utm_source: string; utm_medium: string; utm_campaign: string; utm_term: string; referrer: string; landing: string };
+  idioma: string;
+  consentimiento: { version: string; fecha: string };
+  cita?: { agenda: string; fecha: string; hora: string } | null;
+  notas: string;
+  historial: { t: string; estado: string }[];
+};
+
+const str = (v: unknown, max = 200) => String(v ?? "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").trim().slice(0, max);
+const soloDigitos = (v: string) => v.replace(/[^\d+]/g, "");
+const fechaISO = (v: unknown) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v ?? "")) ? String(v) : "");
+
+// ---------- calendario (hora de Canarias) ----------
+function ahoraCanarias() {
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-CA", { timeZone: "Atlantic/Canary", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" })
+    .formatToParts(new Date()).map((x) => [x.type, x.value]));
+  return { fecha: `${p.year}-${p.month}-${p.day}`, minutos: +p.hour * 60 + +p.minute };
+}
+const sumarDias = (f: string, n: number) => new Date(Date.parse(f + "T12:00:00Z") + n * 864e5).toISOString().slice(0, 10);
+const diaSemana = (f: string) => new Date(f + "T12:00:00Z").getUTCDay();
+const minutos = (h: string) => +h.slice(0, 2) * 60 + +h.slice(3, 5);
+
+async function bloqueos(): Promise<string[]> {
+  return (((await store("solicitudes").get("config/bloqueos", { type: "json" })) as string[] | null) || []);
+}
+function huecoValido(fecha: string, hora: string, cerrados: string[]): boolean {
+  const { fecha: hoy, minutos: ahora } = ahoraCanarias();
+  if (!fechaISO(fecha) || !HORAS.includes(hora)) return false;
+  const w = diaSemana(fecha);
+  if (w === 0 || w === 6 || cerrados.includes(fecha)) return false;
+  if (fecha < hoy || fecha > sumarDias(hoy, HORIZONTE)) return false;
+  if (fecha === hoy && minutos(hora) < ahora + ANTELACION) return false;
+  return true;
+}
+async function ocupados(agenda: string): Promise<Set<string>> {
+  const { blobs } = await store("solicitudes").list({ prefix: `slot/${agenda}/` });
+  return new Set(blobs.map((b) => b.key.slice(`slot/${agenda}/`.length)));
+}
+async function liberar(sol: Solicitud) {
+  if (!sol.cita) return;
+  const s = store("solicitudes");
+  const key = `slot/${sol.cita.agenda}/${sol.cita.fecha}/${sol.cita.hora}`;
+  const v = (await s.get(key, { type: "json" })) as { id: string } | null;
+  if (v && v.id === sol.id) await s.delete(key);
+}
+
+function canal(o: Record<string, string>): string {
+  const src = (o.utm_source || "").toLowerCase();
+  const med = (o.utm_medium || "").toLowerCase();
+  const ref = (o.referrer || "").toLowerCase();
+  if (o.gclid || (src.includes("google") && /cpc|ppc|paid|ads/.test(med))) return "Google Ads";
+  if (/portal|wallapop|coches\.net|milanuncios|autocasion|autoscout/.test(src + " " + ref)) return "Portal de coches";
+  if (/facebook|instagram|fb\.|meta/.test(src + " " + ref)) return "Redes sociales";
+  if (src.includes("gbp") || src.includes("maps") || med.includes("organic_local")) return "Ficha de Google";
+  if (/google\./.test(ref)) return "Google (búsqueda)";
+  if (src) return src.slice(0, 40);
+  if (ref && !ref.includes("monzacar")) return "Otra web";
+  return "Directo";
+}
+
+function limpiar(input: any): { s?: Solicitud; error?: string } {
+  const tipo = TIPOS.includes(input?.tipo) ? input.tipo : null;
+  if (!tipo) return { error: "Tipo de solicitud no válido." };
+  const nombre = str(input.nombre, 80);
+  const telefono = str(input.telefono, 30);
+  const email = str(input.email, 120);
+  if (nombre.length < 2) return { error: "Escribe tu nombre." };
+  if (soloDigitos(telefono).replace(/^\+/, "").length < 9) return { error: "Revisa el teléfono." };
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: "Revisa el email." };
+  if (input.acepta !== true) return { error: "Tienes que aceptar la política de privacidad." };
+
+  const o = input.origen && typeof input.origen === "object" ? input.origen : {};
+  const origen = {
+    gclid: str(o.gclid, 200),
+    utm_source: str(o.utm_source, 60),
+    utm_medium: str(o.utm_medium, 60),
+    utm_campaign: str(o.utm_campaign, 100),
+    utm_term: str(o.utm_term, 100),
+    referrer: str(o.referrer, 300),
+    landing: str(o.landing, 300),
+    canal: "",
+  };
+  origen.canal = canal(origen);
+
+  const c = input.coche && typeof input.coche === "object" ? input.coche : null;
+  const precio = c ? Number(c.precio) : NaN;
+  const v = input.vehiculo && typeof input.vehiculo === "object" ? input.vehiculo : {};
+  const vehiculo: Record<string, string> = {};
+  for (const k of ["marca", "modelo", "anio", "km", "combustible", "estado", "matricula", "coche"]) {
+    const val = str(v[k], 80);
+    if (val) vehiculo[k] = val;
+  }
+
+  const ahora = new Date().toISOString();
+  const s: Solicitud = {
+    id: ahora.replace(/[-:.TZ]/g, "") + "-" + crypto.randomUUID().slice(0, 8),
+    creado: ahora,
+    tipo,
+    estado: "nueva",
+    nombre,
+    telefono,
+    email,
+    mensaje: str(input.mensaje, 1500),
+    coche: c ? { id: str(c.id, 64), titulo: str(c.titulo, 140), precio: Number.isFinite(precio) ? precio : null } : null,
+    servicios: (Array.isArray(input.servicios) ? input.servicios : []).map((x: unknown) => str(x, 60)).filter(Boolean).slice(0, 15),
+    dia: fechaISO(input.dia),
+    franja: FRANJAS.includes(input.franja) ? input.franja : "",
+    vehiculo,
+    origen,
+    idioma: input.idioma === "en" ? "en" : "es",
+    consentimiento: { version: CONSENTIMIENTO_VERSION, fecha: ahora },
+    notas: "",
+    historial: [{ t: ahora, estado: "nueva" }],
+    cita: null,
+  };
+  const ci = input.cita && typeof input.cita === "object" ? input.cita : null;
+  if (ci) {
+    const agenda = tipo === "taller" ? "taller" : tipo === "coche" ? "visita" : "";
+    if (!agenda) return { error: "Este tipo de solicitud no admite cita." };
+    s.cita = { agenda, fecha: fechaISO(ci.fecha), hora: str(ci.hora, 5) };
+    s.dia = s.cita.fecha;
+    s.franja = s.cita.hora;
+    s.estado = "cita";
+    s.historial = [{ t: ahora, estado: "cita" }];
+  }
+  return { s };
+}
+
+async function dentroDelLimite(ip: string, ua: string): Promise<boolean> {
+  const s = store("solicitudes");
+  const quien = createHash("sha256").update(ip + "|" + ua + "|mz-sol").digest("hex").slice(0, 24);
+  const key = "rl/" + quien;
+  const hace1h = Date.now() - 3600e3;
+  const lista = (((await s.get(key, { type: "json" })) as number[] | null) || []).filter((t) => t > hace1h);
+  if (lista.length >= LIMITE_HORA) return false;
+  lista.push(Date.now());
+  await s.setJSON(key, lista);
+  return true;
+}
+
+export default async (req: Request, context: Context) => {
+  const s = store("solicitudes");
+  const url = new URL(req.url);
+  const partes = url.pathname.split("/").filter(Boolean);
+
+  // ---------- calendario ----------
+  if (partes[1] === "citas") {
+    if (partes[2] === "bloqueos") {
+      if (!isAdmin(req)) return json({ error: "No autorizado" }, 401);
+      if (req.method === "GET") return json(await bloqueos());
+      if (req.method === "PUT") {
+        const input = (await req.json().catch(() => ({}))) as any;
+        const fechas = [...new Set((Array.isArray(input.fechas) ? input.fechas : []).map(fechaISO).filter(Boolean))].sort().slice(-200);
+        await s.setJSON("config/bloqueos", fechas);
+        return json(fechas);
+      }
+      return json({ error: "Método no permitido" }, 405);
+    }
+    if (req.method !== "GET") return json({ error: "Método no permitido" }, 405);
+    const agenda = AGENDAS.includes(url.searchParams.get("agenda") as any) ? url.searchParams.get("agenda")! : "taller";
+    const [cerrados, ocup] = await Promise.all([bloqueos(), ocupados(agenda)]);
+    const { fecha: hoy } = ahoraCanarias();
+    const dias = [];
+    for (let i = 0; i <= HORIZONTE; i++) {
+      const f = sumarDias(hoy, i);
+      const w = diaSemana(f);
+      if (w === 0 || w === 6) continue;
+      const horas = HORAS.map((h) => ({ hora: h, libre: huecoValido(f, h, cerrados) && !ocup.has(`${f}/${h}`) }));
+      dias.push({ fecha: f, cerrado: cerrados.includes(f), horas });
+    }
+    return new Response(JSON.stringify({ agenda, dias }), { headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
+  }
+
+  const id = partes[2] || "";
+
+  // ---------- la web guarda una solicitud ----------
+  if (req.method === "POST" && !id) {
+    const len = Number(req.headers.get("content-length") || 0);
+    if (len > 20000) return json({ error: "Solicitud demasiado grande." }, 413);
+    const input = await req.json().catch(() => null);
+    if (!input || typeof input !== "object") return json({ error: "Datos no válidos." }, 400);
+    // Campo trampa: las personas no lo ven; los robots lo rellenan.
+    if (str(input.web, 50)) return json({ ok: true });
+    const { s: sol, error } = limpiar(input);
+    if (error || !sol) return json({ error }, 400);
+    if (sol.cita && !huecoValido(sol.cita.fecha, sol.cita.hora, await bloqueos())) {
+      return json({ error: "Esa hora ya no está disponible. Elige otra.", ocupada: true }, 409);
+    }
+    if (!(await dentroDelLimite(context.ip || "", req.headers.get("user-agent") || ""))) {
+      return json({ error: "Has enviado varias solicitudes seguidas. Escríbenos por WhatsApp o llámanos." }, 429);
+    }
+    if (sol.cita) {
+      const key = `slot/${sol.cita.agenda}/${sol.cita.fecha}/${sol.cita.hora}`;
+      if (await s.get(key)) return json({ error: "Esa hora se acaba de ocupar. Elige otra.", ocupada: true }, 409);
+      await s.setJSON(key, { id: sol.id });
+      // Si dos personas reservan a la vez, gana la última escritura: la otra recibe «ocupada».
+      const v = (await s.get(key, { type: "json" })) as { id: string } | null;
+      if (!v || v.id !== sol.id) return json({ error: "Esa hora se acaba de ocupar. Elige otra.", ocupada: true }, 409);
+    }
+    await s.setJSON("s/" + sol.id, sol);
+    return json({ ok: true, id: sol.id, cita: sol.cita });
+  }
+
+  // ---------- a partir de aquí, solo el panel ----------
+  if (!isAdmin(req)) return json({ error: "No autorizado" }, 401);
+
+  if (req.method === "GET" && !id) {
+    const { blobs } = await s.list({ prefix: "s/" });
+    const limite = Date.now() - RETENCION;
+    const todas = (await Promise.all(blobs.map((b) => s.get(b.key, { type: "json" }) as Promise<Solicitud | null>))).filter(Boolean) as Solicitud[];
+    const viejas = todas.filter((x) => Date.parse(x.creado) < limite);
+    await Promise.all(viejas.map((x) => s.delete("s/" + x.id)));
+    const vivas = todas.filter((x) => Date.parse(x.creado) >= limite).sort((a, b) => b.creado.localeCompare(a.creado));
+    return json(vivas);
+  }
+
+  if (!/^[0-9]{14,20}-[a-f0-9]{8}$/.test(id)) return json({ error: "Solicitud no encontrada" }, 404);
+  const actual = (await s.get("s/" + id, { type: "json" })) as Solicitud | null;
+  if (!actual) return json({ error: "Solicitud no encontrada" }, 404);
+
+  if (req.method === "PATCH") {
+    const input = (await req.json().catch(() => ({}))) as any;
+    if (input.estado !== undefined) {
+      if (!ESTADOS.includes(input.estado)) return json({ error: "Estado no válido" }, 400);
+      if (input.estado !== actual.estado) {
+        if (input.estado === "perdida") await liberar(actual);
+        actual.estado = input.estado;
+        actual.historial = [...(actual.historial || []), { t: new Date().toISOString(), estado: input.estado }].slice(-30);
+      }
+    }
+    if (input.notas !== undefined) actual.notas = str(input.notas, 2000);
+    await s.setJSON("s/" + id, actual);
+    return json(actual);
+  }
+
+  if (req.method === "DELETE") {
+    await liberar(actual);
+    await s.delete("s/" + id);
+    return json({ ok: true });
+  }
+
+  return json({ error: "Método no permitido" }, 405);
+};
+
+export const config: Config = { path: ["/api/solicitudes", "/api/solicitudes/:id", "/api/citas", "/api/citas/bloqueos"] };
