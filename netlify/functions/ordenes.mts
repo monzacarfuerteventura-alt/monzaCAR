@@ -1,5 +1,5 @@
 import type { Config } from "@netlify/functions";
-import { store, json, isAdmin, enviarAviso, waNum } from "../lib/shared.mts";
+import { store, json, isAdmin, enviarAviso, waNum, mismoOrigen } from "../lib/shared.mts";
 
 /*
   ÓRDENES DE TRABAJO: SEGUIMIENTO EN VIVO + PRESUPUESTO ONLINE
@@ -93,6 +93,7 @@ export default async (req: Request) => {
     if (!o) return json({ error: "Enlace no válido o caducado" }, 404);
     if (req.method === "GET" && !partes[3]) return json(publica(o));
     if (req.method === "POST" && partes[3] === "respuesta") {
+      if (!mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
       const input = (await req.json().catch(() => ({}))) as any;
       const p = o.presupuesto;
       if (!p || p.estado !== "enviado") return json({ error: "Este presupuesto ya no admite respuesta." }, 409);
@@ -122,7 +123,7 @@ export default async (req: Request) => {
   }
 
   // ---------- panel ----------
-  if (!isAdmin(req)) return json({ error: "No autorizado" }, 401);
+  if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
 
   if (req.method === "GET" && !token) {
     const { blobs } = await s.list({ prefix: "o/" });
@@ -194,4 +195,7 @@ export default async (req: Request) => {
   return json({ error: "Método no permitido" }, 405);
 };
 
-export const config: Config = { path: ["/api/ordenes", "/api/ordenes/:token", "/api/seguimiento/:token", "/api/seguimiento/:token/respuesta"] };
+export const config: Config = {
+  path: ["/api/ordenes", "/api/ordenes/:token", "/api/seguimiento/:token", "/api/seguimiento/:token/respuesta"],
+  rateLimit: { windowLimit: 60, windowSize: 60, aggregateBy: ["ip", "domain"] },
+};

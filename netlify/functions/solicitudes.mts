@@ -1,6 +1,6 @@
 import type { Config, Context } from "@netlify/functions";
 import { createHash } from "node:crypto";
-import { store, json, isAdmin, canalDe, enviarAviso, waNum } from "../lib/shared.mts";
+import { store, json, isAdmin, canalDe, enviarAviso, waNum, mismoOrigen } from "../lib/shared.mts";
 
 /*
   SOLICITUDES DE CLIENTES (mini CRM)
@@ -204,7 +204,7 @@ export default async (req: Request, context: Context) => {
   // ---------- calendario ----------
   if (partes[1] === "citas") {
     if (partes[2] === "bloqueos") {
-      if (!isAdmin(req)) return json({ error: "No autorizado" }, 401);
+      if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
       if (req.method === "GET") return json(await bloqueos());
       if (req.method === "PUT") {
         const input = (await req.json().catch(() => ({}))) as any;
@@ -232,7 +232,7 @@ export default async (req: Request, context: Context) => {
   const id = partes[2] || "";
 
   // ---------- el panel apunta un cliente a mano ----------
-  if (req.method === "POST" && !id && isAdmin(req)) {
+  if (req.method === "POST" && !id && (await isAdmin(req))) {
     const input = await req.json().catch(() => null);
     if (input && input.manual === true) {
       const { s: sol, error } = limpiar(input, true);
@@ -245,6 +245,7 @@ export default async (req: Request, context: Context) => {
 
   // ---------- la web guarda una solicitud ----------
   if (req.method === "POST" && !id) {
+    if (!mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
     const len = Number(req.headers.get("content-length") || 0);
     if (len > 20000) return json({ error: "Solicitud demasiado grande." }, 413);
     const input = await req.json().catch(() => null);
@@ -274,7 +275,7 @@ export default async (req: Request, context: Context) => {
   }
 
   // ---------- a partir de aquí, solo el panel ----------
-  if (!isAdmin(req)) return json({ error: "No autorizado" }, 401);
+  if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
 
   if (req.method === "GET" && !id) {
     const { blobs } = await s.list({ prefix: "s/" });
@@ -330,7 +331,10 @@ export default async (req: Request, context: Context) => {
   return json({ error: "Método no permitido" }, 405);
 };
 
-export const config: Config = { path: ["/api/solicitudes", "/api/solicitudes/:id", "/api/citas", "/api/citas/bloqueos"] };
+export const config: Config = {
+  path: ["/api/solicitudes", "/api/solicitudes/:id", "/api/citas", "/api/citas/bloqueos"],
+  rateLimit: { windowLimit: 60, windowSize: 60, aggregateBy: ["ip", "domain"] },
+};
 
 // ---------- aviso por email de cada solicitud nueva ----------
 const TIPO_TXT: Record<string, string> = { coche: "Interesado en un coche", taller: "Cita de taller", tasacion: "Tasación", contacto: "Consulta" };

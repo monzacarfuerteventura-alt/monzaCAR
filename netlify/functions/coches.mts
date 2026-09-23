@@ -31,7 +31,7 @@ export default async (req: Request) => {
 
   if (req.method === "GET") {
     const all = url.searchParams.get("todos") === "1";
-    if (all && !isAdmin(req)) return json({ error: "No autorizado" }, 401);
+    if (all && !(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
     const list = await load();
     // Público: coches a la venta + vendidos en los últimos 60 días (para «Vendidos recientemente»).
     const limite = Date.now() - 60 * 864e5;
@@ -45,7 +45,7 @@ export default async (req: Request) => {
     });
   }
 
-  if (!isAdmin(req)) {
+  if (!(await isAdmin(req))) {
     await new Promise((r) => setTimeout(r, 600));
     return json({ error: "No autorizado" }, 401);
   }
@@ -101,4 +101,7 @@ export default async (req: Request) => {
   return json({ error: "Método no permitido" }, 405);
 };
 
-export const config: Config = { path: ["/api/coches", "/api/coches/:id"] };
+export const config: Config = {
+  path: ["/api/coches", "/api/coches/:id"],
+  rateLimit: { windowLimit: 120, windowSize: 60, aggregateBy: ["ip", "domain"] },
+};

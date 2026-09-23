@@ -1,5 +1,5 @@
 import { getStore, getDeployStore } from "@netlify/blobs";
-import { timingSafeEqual, createHash } from "node:crypto";
+import { timingSafeEqual, createHash, createHmac, randomBytes } from "node:crypto";
 
 // Datos reales solo en producción; las vistas previas usan un almacén aparte.
 export function store(name: string) {
@@ -11,17 +11,63 @@ export function store(name: string) {
 export const json = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
-    headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" },
+    headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", "cross-origin-resource-policy": "same-origin", "x-content-type-options": "nosniff" },
   });
 
-// Comprueba la contraseña del panel (variable de entorno ADMIN_PASSWORD).
-export function isAdmin(req: Request): boolean {
-  const expected = (globalThis as any).Netlify?.env?.get("ADMIN_PASSWORD") || "";
-  if (!expected) return false;
-  const given = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
-  const a = createHash("sha256").update(given).digest();
-  const b = createHash("sha256").update(expected).digest();
-  return timingSafeEqual(a, b);
+// ---------------------------------------------------------------------------
+// ACCESO AL PANEL
+// La contraseña (variable ADMIN_PASSWORD) solo viaja una vez, al entrar. A cambio el servidor entrega
+// una «sesión» firmada (HMAC-SHA256) que caduca a las 12 horas. La firma usa una clave derivada de la
+// contraseña y de SESSION_SECRET: si cambias cualquiera de las dos, todas las sesiones abiertas mueren.
+// «Cerrar sesión en todos los dispositivos» invalida además todo lo emitido antes de ese momento.
+// ---------------------------------------------------------------------------
+const envGet = (k: string) => (globalThis as any).Netlify?.env?.get(k) || "";
+const claveSesion = () => createHash("sha256").update("vc-sesion|" + envGet("ADMIN_PASSWORD") + "|" + envGet("SESSION_SECRET")).digest();
+export const SESION_HORAS = 12;
+export function crearSesion(horas = SESION_HORAS) {
+  const iat = Date.now(), exp = iat + horas * 3600e3, n = randomBytes(12).toString("base64url");
+  const cuerpo = `v1.${iat}.${exp}.${n}`;
+  return { token: cuerpo + "." + createHmac("sha256", claveSesion()).update(cuerpo).digest("base64url"), exp };
+}
+export function leerSesion(token: string): { iat: number; exp: number } | null {
+  const p = String(token || "").split(".");
+  if (p.length !== 5 || p[0] !== "v1" || !envGet("ADMIN_PASSWORD")) return null;
+  const esperada = createHmac("sha256", claveSesion()).update(p.slice(0, 4).join(".")).digest();
+  let dada: Buffer;
+  try { dada = Buffer.from(p[4], "base64url"); } catch { return null; }
+  if (dada.length !== esperada.length || !timingSafeEqual(dada, esperada)) return null;
+  const iat = Number(p[1]), exp = Number(p[2]);
+  if (!Number.isFinite(exp) || exp < Date.now() || iat > Date.now() + 60e3) return null;
+  return { iat, exp };
+}
+let cacheMinIat = { v: 0, t: 0 };
+export async function minIat(forzar = false) {
+  if (!forzar && Date.now() - cacheMinIat.t < 15000) return cacheMinIat.v;
+  const v = Number(await store("seguridad").get("config/min-iat").catch(() => 0)) || 0;
+  cacheMinIat = { v, t: Date.now() };
+  return v;
+}
+export async function cerrarTodasLasSesiones() {
+  const v = Date.now();
+  await store("seguridad").set("config/min-iat", String(v));
+  cacheMinIat = { v, t: Date.now() };
+}
+// ¿La petición viene del panel con una sesión válida?
+export async function isAdmin(req: Request): Promise<boolean> {
+  const s = leerSesion((req.headers.get("authorization") || "").replace(/^Bearer\s+/i, ""));
+  if (!s) return false;
+  return s.iat >= (await minIat());
+}
+// Compara dos textos sin que el tiempo de respuesta dé pistas
+export function igualSeguro(a: string, b: string) {
+  const x = createHash("sha256").update(String(a)).digest(), y = createHash("sha256").update(String(b)).digest();
+  return timingSafeEqual(x, y);
+}
+// Rechaza envíos que vienen de otra web (el navegador siempre manda Origin en un POST desde JS)
+export function mismoOrigen(req: Request) {
+  const o = req.headers.get("origin");
+  if (!o) return true;
+  try { return new URL(o).host === new URL(req.url).host; } catch { return false; }
 }
 
 export type Car = {

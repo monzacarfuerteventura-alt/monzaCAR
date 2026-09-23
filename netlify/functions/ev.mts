@@ -1,6 +1,6 @@
 import type { Config, Context } from "@netlify/functions";
 import { createHash } from "node:crypto";
-import { store, json, isAdmin, canarias, canalDe, sumarDias } from "../lib/shared.mts";
+import { store, json, isAdmin, canarias, canalDe, sumarDias, mismoOrigen } from "../lib/shared.mts";
 import { TIPOS, BOT, FUENTE, limpio, salDelDia, diaResumido, type Dia } from "../lib/analitica.mts";
 
 /*
@@ -17,11 +17,20 @@ import { TIPOS, BOT, FUENTE, limpio, salDelDia, diaResumido, type Dia } from "..
   Cada noche la función «stats-compactar» resume el día en «agg/AAAA-MM-DD» y borra lo detallado.
 */
 
+// Freno anti-spam: como mucho 150 eventos cada 10 minutos por visitante (en memoria de cada servidor).
+const cuenta = new Map<string, { n: number; t: number }>();
+function demasiados(vh: string) {
+  const ahora = Date.now(), c = cuenta.get(vh);
+  if (!c || ahora - c.t > 10 * 60e3) { if (cuenta.size > 5000) cuenta.clear(); cuenta.set(vh, { n: 1, t: ahora }); return false; }
+  c.n++;
+  return c.n > 150;
+}
+
 export default async (req: Request, context: Context) => {
   const url = new URL(req.url);
 
   if (url.pathname === "/api/stats") {
-    if (!isAdmin(req)) return json({ error: "No autorizado" }, 401);
+    if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
     const { fecha: hoy } = canarias();
     const ok = (f: string | null) => (f && /^\d{4}-\d{2}-\d{2}$/.test(f) ? f : "");
     let desde = ok(url.searchParams.get("desde")) || sumarDias(hoy, -29);
@@ -41,6 +50,7 @@ export default async (req: Request, context: Context) => {
   }
 
   if (req.method !== "POST") return json({ error: "Método no permitido" }, 405);
+  if (!mismoOrigen(req)) return new Response(null, { status: 403 });
   const ua = req.headers.get("user-agent") || "";
   if (!ua || BOT.test(ua) || req.headers.get("sec-purpose")?.includes("prefetch")) return new Response(null, { status: 204 });
   const raw = await req.text();
@@ -55,6 +65,7 @@ export default async (req: Request, context: Context) => {
   const hhmmss = new Intl.DateTimeFormat("en-GB", { timeZone: "Atlantic/Canary", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" }).format(ahora).replace(/:/g, "");
   const sal = await salDelDia(dia);
   const vh = createHash("sha256").update(sal + "|" + (context.ip || "") + "|" + ua).digest("hex").slice(0, 12);
+  if (demasiados(vh)) return new Response(null, { status: 204 });
   const entrada = e.e ? "e" : "";
   let fuente = "";
   if (entrada) {
@@ -68,4 +79,7 @@ export default async (req: Request, context: Context) => {
   return new Response(null, { status: 204 });
 };
 
-export const config: Config = { path: ["/api/ev", "/api/stats"] };
+export const config: Config = {
+  path: ["/api/ev", "/api/stats"],
+  rateLimit: { windowLimit: 60, windowSize: 60, aggregateBy: ["ip", "domain"] },
+};

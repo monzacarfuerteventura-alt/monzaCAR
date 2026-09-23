@@ -19,7 +19,7 @@ export default async (req: Request) => {
   }
 
   if (req.method === "POST" && !key) {
-    if (!isAdmin(req)) return json({ error: "No autorizado" }, 401);
+    if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
     const type = (req.headers.get("content-type") || "").split(";")[0];
     const ext = TYPES[type];
     if (!ext) return json({ error: "Formato de foto no admitido. Usa JPG, PNG o WEBP." }, 415);
@@ -34,4 +34,7 @@ export default async (req: Request) => {
   return json({ error: "Método no permitido" }, 405);
 };
 
-export const config: Config = { path: ["/api/fotos", "/api/fotos/:key"] };
+export const config: Config = {
+  path: ["/api/fotos", "/api/fotos/:key"],
+  rateLimit: { windowLimit: 300, windowSize: 60, aggregateBy: ["ip", "domain"] },
+};

@@ -56,7 +56,7 @@ export default async (req: Request) => {
   }
 
   // ---------- panel ----------
-  if (!isAdmin(req)) {
+  if (!(await isAdmin(req))) {
     await new Promise((r) => setTimeout(r, 600));
     return json({ error: "No autorizado" }, 401);
   }
@@ -113,4 +113,7 @@ export default async (req: Request) => {
   return json({ error: "Método no permitido" }, 405);
 };
 
-export const config: Config = { path: ["/api/videos", "/api/videos/:key", "/api/videos/:key/:parte"] };
+export const config: Config = {
+  path: ["/api/videos", "/api/videos/:key", "/api/videos/:key/:parte"],
+  rateLimit: { windowLimit: 300, windowSize: 60, aggregateBy: ["ip", "domain"] },
+};

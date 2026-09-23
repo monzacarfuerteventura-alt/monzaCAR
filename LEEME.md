@@ -54,3 +54,16 @@ Cuando tengas dominio propio (p. ej. volcanocars.es), verifícalo en Resend y po
 Sin cookies y sin guardar IPs: cada visitante cuenta una vez al día con un código que cambia a diario.
 Tus propias visitas no cuentan en el ordenador o móvil donde hayas entrado al panel.
 El Dashboard compara siempre con los mismos días del mes anterior y tiene «Informe PDF» y «Excel».
+
+## Seguridad (muro)
+- **Entrada al panel**: la contraseña (`ADMIN_PASSWORD` en Netlify) solo viaja al entrar; después se usa una sesión firmada
+  que caduca a las 12 h y se cierra sola tras 60 min sin uso. Usa una contraseña de 14 caracteres o más.
+- **Bloqueo automático**: 5 fallos → esa conexión queda bloqueada 15 min (24 h si reincide).
+- **Verificación en dos pasos**: Panel → Seguridad → «Activar verificación en dos pasos» (Google Authenticator).
+  Si pierdes el móvil: usa un código de recuperación, o pon en Netlify la variable `DESACTIVAR_2FA` = `1`, entra y quítala.
+- **Cerrar sesión en todos los dispositivos**: Panel → Seguridad. Cambiar `ADMIN_PASSWORD` también las cierra todas.
+- **Límites por conexión** en todas las funciones (Netlify rate limiting) y **trampas** para robots (/wp-login.php, /.env…)
+  que bloquean 24 h a quien las pisa.
+- **Cabeceras**: CSP (solo se carga código de la web y de Google), HSTS, anti-iframe, sin fugas de enlaces privados.
+- **Registro de seguridad** de 30 días en el panel y avisos por email (con Resend) de bloqueos y accesos nuevos.
+- Variable opcional `SESSION_SECRET` (texto largo al azar): refuerza la firma de las sesiones.

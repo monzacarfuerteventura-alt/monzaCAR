@@ -1,6 +1,16 @@
 import type { Config, Context } from "@netlify/functions";
 import { createHash } from "node:crypto";
-import { store, json } from "../lib/shared.mts";
+import { store, json, mismoOrigen } from "../lib/shared.mts";
+// Solo se aceptan coches que existen (evita que alguien llene el registro con coches inventados).
+let cacheIds = { ids: new Set<string>(), t: 0 };
+async function cocheExiste(id: string) {
+  if (Date.now() - cacheIds.t > 60e3) {
+    const l = ((await store("monzacar").get("coches", { type: "json" }).catch(() => null)) as { id: string }[] | null) || [];
+    cacheIds = { ids: new Set(l.map((c) => c.id)), t: Date.now() };
+  }
+  return cacheIds.ids.has(id);
+}
+
 
 // Contador REAL de interesados: cada vez que alguien pulsa «Me interesa este coche»
 // se apunta una visita (una por persona y coche cada 7 días). La web solo enseña lo que hay aquí.
@@ -32,6 +42,8 @@ export default async (req: Request, context: Context) => {
   if (req.method === "POST") {
     const id = new URL(req.url).pathname.split("/").filter(Boolean)[2] || "";
     if (!/^[a-z0-9-]{1,64}$/i.test(id)) return json({ error: "Coche no válido" }, 400);
+    if (!mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
+    if (!(await cocheExiste(id))) return json({ error: "Coche no válido" }, 404);
     const quien = createHash("sha256").update((context.ip || "") + "|" + (req.headers.get("user-agent") || "") + "|mz").digest("hex").slice(0, 20);
     const l = (r[id] ||= []);
     if (!l.some((x) => x.h === quien)) {
@@ -44,4 +56,7 @@ export default async (req: Request, context: Context) => {
   return json({ error: "Método no permitido" }, 405);
 };
 
-export const config: Config = { path: ["/api/interes", "/api/interes/:id"] };
+export const config: Config = {
+  path: ["/api/interes", "/api/interes/:id"],
+  rateLimit: { windowLimit: 60, windowSize: 60, aggregateBy: ["ip", "domain"] },
+};

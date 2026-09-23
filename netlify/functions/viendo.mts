@@ -1,6 +1,16 @@
 import type { Config, Context } from "@netlify/functions";
 import { createHash } from "node:crypto";
-import { store, json } from "../lib/shared.mts";
+import { store, json, mismoOrigen } from "../lib/shared.mts";
+// Solo se aceptan coches que existen (evita que alguien llene el registro con coches inventados).
+let cacheIds = { ids: new Set<string>(), t: 0 };
+async function cocheExiste(id: string) {
+  if (Date.now() - cacheIds.t > 60e3) {
+    const l = ((await store("monzacar").get("coches", { type: "json" }).catch(() => null)) as { id: string }[] | null) || [];
+    cacheIds = { ids: new Set(l.map((c) => c.id)), t: Date.now() };
+  }
+  return cacheIds.ids.has(id);
+}
+
 
 // «X personas están viendo este coche ahora mismo» — contador REAL.
 // Mientras alguien tiene abierta la ficha de un coche, su pestaña avisa cada 20 s.
@@ -44,6 +54,8 @@ export default async (req: Request, context: Context) => {
   if (req.method === "POST") {
     const id = new URL(req.url).pathname.split("/").filter(Boolean)[2] || "";
     if (!/^[a-z0-9-]{1,64}$/i.test(id)) return json({ error: "Coche no válido" }, 400);
+    if (!mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
+    if (!(await cocheExiste(id))) return json({ error: "Coche no válido" }, 404);
     let body: any = {};
     try { body = JSON.parse((await req.text()) || "{}"); } catch { /* sendBeacon puede llegar vacío */ }
     const ses = String(body.s || "");
@@ -68,4 +80,7 @@ export default async (req: Request, context: Context) => {
   return json({ error: "Método no permitido" }, 405);
 };
 
-export const config: Config = { path: ["/api/viendo", "/api/viendo/:id"] };
+export const config: Config = {
+  path: ["/api/viendo", "/api/viendo/:id"],
+  rateLimit: { windowLimit: 60, windowSize: 60, aggregateBy: ["ip", "domain"] },
+};

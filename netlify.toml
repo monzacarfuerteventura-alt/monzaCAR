@@ -7,11 +7,6 @@
   to = "/admin.html"
   status = 200
 
-[[headers]]
-  for = "/admin.html"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
-    Cache-Control = "no-store"
 
 [[redirects]]
   from = "/aviso-legal"
@@ -33,15 +28,57 @@
   to = "/condiciones.html"
   status = 200
 
-# Cabeceras de seguridad para toda la web
+# =====================================================================
+# MURO DE SEGURIDAD: cabeceras para toda la web
+#  - HSTS: siempre HTTPS (incluso si alguien escribe http://)
+#  - CSP: el navegador solo carga código, estilos e imágenes de esta web y de Google (fuentes, mapa,
+#    anuncios). Aunque alguien consiguiera colar código, no podría mandar datos a otra web.
+#  - Nadie puede meter la web dentro de otra página (clickjacking) ni hacer pasar un archivo por otro.
+# =====================================================================
 [[headers]]
   for = "/*"
   [headers.values]
-    Strict-Transport-Security = "max-age=31536000"
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
     X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
-    Content-Security-Policy = "frame-ancestors 'none'; object-src 'none'; base-uri 'self'"
+    Cross-Origin-Opener-Policy = "same-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), serial=(), hid=(), browsing-topics=()"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://www.google.com https://www.google.es https://www.googletagmanager.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://*.gstatic.com; media-src 'self' blob:; worker-src 'self' blob:; connect-src 'self' https://www.google.com https://www.googletagmanager.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://*.google-analytics.com https://*.analytics.google.com; frame-src https://www.google.com https://maps.google.com https://www.googletagmanager.com https://td.doubleclick.net https://bid.g.doubleclick.net; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; upgrade-insecure-requests"
+
+# Panel: todavía más estricto (solo habla con su propio servidor), sin caché y fuera de Google
+[[headers]]
+  for = "/admin"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; frame-src 'none'; worker-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    Cache-Control = "no-store"
+    Referrer-Policy = "no-referrer"
+
+[[headers]]
+  for = "/admin.html"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; frame-src 'none'; worker-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    Cache-Control = "no-store"
+    Referrer-Policy = "no-referrer"
+
+# Enlace privado de seguimiento: que no se filtre a otras webs ni lo guarde Google
+[[headers]]
+  for = "/s/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    Referrer-Policy = "no-referrer"
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/seguimiento.html"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    Referrer-Policy = "no-referrer"
+    Cache-Control = "no-cache"
 
 # Seguimiento de la reparación: enlace corto que se manda al cliente (/s/XXXXXXXXXXXXXXXX)
 [[redirects]]
@@ -49,8 +86,3 @@
   to = "/seguimiento.html"
   status = 200
 
-[[headers]]
-  for = "/seguimiento.html"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
-    Cache-Control = "no-cache"

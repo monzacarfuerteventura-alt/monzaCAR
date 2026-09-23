@@ -447,6 +447,21 @@ dialog.dlg form{display:grid;gap:12px;padding:20px}
 
 @media (max-width:560px){.dw-body .g2{grid-template-columns:1fr}.t-v{font-size:24px}.tile{padding:12px}.tarea{padding:10px}.tarea b{font-size:26px;min-width:22px}.tarea span{font-size:13.5px}#reload-leads{display:none}}
 @media (max-width:480px){.tabs button{flex:0 0 auto!important;min-width:auto!important;padding:9px 12px!important}.tabs button svg{display:none}}
+
+/* seguridad */
+.muro-top{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.muro-top b{font-family:var(--display);font-stretch:80%;font-size:40px;color:var(--ok);line-height:1}
+.muro-top span{color:var(--muted);font-size:14px}.muro-top em{font-style:normal;color:var(--accent);font-weight:700}
+.checks-seg{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.checks-seg li{display:flex;gap:10px;align-items:flex-start;font-weight:700;font-size:14.5px}
+.checks-seg li b{flex-shrink:0;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;color:#fff;background:var(--ok)}
+.checks-seg li.warn b{background:var(--accent)}
+.checks-seg small{display:block;font-weight:500;color:var(--muted);font-size:13px}
+.qr{display:grid;place-items:center;margin:8px 0}.qr svg{border-radius:10px;border:1px solid var(--line)}
+.pasos2{margin:10px 0 0;padding-left:20px;font-size:14.5px}
+.codigos{background:var(--surface-2);border-radius:10px;padding:12px 14px;font-size:16px;letter-spacing:.08em;columns:2;margin:0 0 8px}
+.tabla.reg tr.mal td:first-child b{color:var(--bad)}.tabla.reg tr.ok td:first-child b{color:var(--ok)}
+@media (max-width:480px){.seg-t{display:none}}
 </style>
 </head>
 <body>
@@ -456,6 +471,7 @@ dialog.dlg form{display:grid;gap:12px;padding:20px}
     <span class="tag">Panel</span>
     <div class="sp" id="topacts" hidden>
       <a class="btn b-ghost b-sm" href="/#comprar" target="_blank" rel="noopener">Ver web</a>
+      <button class="btn b-ghost b-sm" id="btn-seg" type="button" aria-label="Seguridad"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg><span class="seg-t">Seguridad</span></button>
       <button class="btn b-ghost b-sm" id="logout" type="button">Salir</button>
     </div>
   </div>
@@ -468,7 +484,8 @@ dialog.dlg form{display:grid;gap:12px;padding:20px}
       <div class="login-mark"><svg viewBox="-6 -6 122 112" width="84" aria-hidden="true"><path d="M0 100 L28 0 L44 0 L55 14 L66 0 L82 0 L110 100 Z" fill="currentColor"/><path d="M40.9 36 L69.1 36 L80.8 78 L29.2 78 Z" fill="#D9481C"/></svg></div>
       <h1 style="font-size:26px">Entrar al panel</h1>
       <p style="margin:0;color:var(--muted)">Desde aquí publicas, editas y marcas como vendidos los coches de la web.</p>
-      <div class="field"><label for="pw">Contraseña</label><input class="in" id="pw" type="password" autocomplete="current-password" required></div>
+      <div class="field"><label for="pw">Contraseña</label><input class="in" id="pw" type="password" autocomplete="current-password" required maxlength="200"></div>
+      <div class="field" id="f-2fa" hidden><label for="pw2">Código de verificación (app del móvil)</label><input class="in num" id="pw2" inputmode="numeric" autocomplete="one-time-code" maxlength="12" placeholder="123456" style="font-size:22px;letter-spacing:.2em"><small class="hint" style="margin:0">¿Sin móvil? Escribe un código de recuperación (XXXX-XXXX).</small></div>
       <div class="msg bad" id="login-err" hidden></div>
       <button class="btn b-brand" type="submit" id="login-btn">Entrar</button>
     </form>
@@ -679,7 +696,6 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt
 const eur = n => { const v=Math.round(Number(n||0)*100)/100, e=Math.trunc(v), c=Math.round((v-e)*100); return String(e).replace(/\B(?=(\d{3})+(?!\d))/g,".")+(c?","+String(c).padStart(2,"0"):"")+" €"; };
 const FOTO = k => String(k).startsWith("/") ? k : "/api/fotos/" + encodeURIComponent(k);
 let PW = "";
-try { PW = sessionStorage.getItem("mz_pw") || ""; } catch(_){}
 let CARS = [], editing = null, fotos = [], uploading = 0, INTERES = {}, VIENDO = {};
 let video = null, vSubiendo = false, vNuevo = null, vAbort = null;
 
@@ -692,26 +708,12 @@ function show(id){ ["s-login","s-list","s-form","s-leads","s-agenda","s-dash","s
 
 async function api(path, opts={}){
   const r = await fetch(path, {...opts, headers:{...(opts.headers||{}), authorization:"Bearer "+PW}});
-  if(r.status===401){ logout(); throw new Error("La sesión ha caducado. Vuelve a entrar."); }
+  if(r.status===401){ logout("Tu sesión ha caducado. Vuelve a entrar."); throw new Error("La sesión ha caducado. Vuelve a entrar."); }
   const data = await r.json().catch(()=>({}));
   if(!r.ok) throw new Error(data.error || "Algo ha fallado ("+r.status+"). Inténtalo de nuevo.");
   return data;
 }
 
-/* ---------- login ---------- */
-$("#login-form").addEventListener("submit", async e=>{
-  e.preventDefault();
-  const btn=$("#login-btn"); btn.disabled=true; $("#login-err").hidden=true;
-  try{
-    const r = await fetch("/api/login",{method:"POST",headers:{authorization:"Bearer "+$("#pw").value}});
-    if(!r.ok) throw new Error((await r.json().catch(()=>({}))).error || "No se ha podido entrar.");
-    PW = $("#pw").value; try{ sessionStorage.setItem("mz_pw",PW); }catch(_){}
-    $("#pw").value=""; try{ localStorage.setItem("vc_admin","1"); }catch(_){} await loadList(true); await loadLeads(false); abrirTab("dash");
-  }catch(err){ $("#login-err").textContent=err.message; $("#login-err").hidden=false; }
-  btn.disabled=false;
-});
-function logout(){ PW=""; try{ sessionStorage.removeItem("mz_pw"); }catch(_){}; show("s-login"); }
-$("#logout").onclick=logout;
 
 /* ---------- lista ---------- */
 async function loadList(quieto){
@@ -876,7 +878,7 @@ async function subirTrozo(key,n,blob,signal){
   for(let intento=0;;intento++){
     try{
       const r=await fetch(`/api/videos/${encodeURIComponent(key)}/${n}`,{method:"PUT",headers:{authorization:"Bearer "+PW,"content-type":"application/octet-stream"},body:blob,signal});
-      if(r.status===401){ logout(); throw new Error("La sesión ha caducado. Vuelve a entrar."); }
+      if(r.status===401){ logout("Tu sesión ha caducado. Vuelve a entrar."); throw new Error("La sesión ha caducado. Vuelve a entrar."); }
       if(r.ok) return;
       if(intento>=3) throw new Error((await r.json().catch(()=>({}))).error || "No se ha podido subir el vídeo.");
     }catch(e){ if(signal.aborted || intento>=3 || /sesión/.test(e.message)) throw e; }
@@ -1173,7 +1175,7 @@ function abrirDrawer(html){ $("#dw-body").innerHTML=html; $("#drawer").hidden=fa
 function cerrarDrawer(){ $("#drawer").hidden=true; document.body.classList.remove("dw-open"); DW=null; }
 $("#dw-bg").onclick=cerrarDrawer;
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("#drawer").hidden&&!document.querySelector("dialog[open]")) cerrarDrawer(); });
-function refrescarDrawer(){ if(!DW||$("#drawer").hidden) return; const foco=document.activeElement; if(foco&&foco.closest&&foco.closest("#dw-body")&&foco.matches("input,textarea,select")) return;
+function refrescarDrawer(){ if(!DW||$("#drawer").hidden||DW.tipo==="seguridad") return; const foco=document.activeElement; if(foco&&foco.closest&&foco.closest("#dw-body")&&foco.matches("input,textarea,select")) return;
   const st=$("#dw-body").scrollTop; if(DW.tipo==="lead"){ const x=LEADS.find(l=>l.id===DW.id); if(x) $("#dw-body").innerHTML=htmlLead(x); } else { const o=ORDENES.find(z=>z.token===DW.id); if(o) $("#dw-body").innerHTML=htmlOrden(o); } $("#dw-body").scrollTop=st; }
 
 function plantillas(x){
@@ -1244,6 +1246,7 @@ $("#dw-body").addEventListener("click",async e=>{
   if(t.closest("[data-cerrar]")){ cerrarDrawer(); return; }
   if(!DW) return;
   try{
+    if(DW.tipo==="seguridad"){ await clickSeguridad(e); return; }
     if(DW.tipo==="lead"){
       const x=LEADS.find(l=>l.id===DW.id); if(!x) return;
       const log=t.closest("[data-log]"); if(log){ actividad(x.id,log.dataset.log,({whatsapp:"WhatsApp abierto",llamada:"Llamada",email:"Email abierto"})[log.dataset.log]).then(()=>{ refrescarDrawer(); contadores(); renderLeads(); }); return; }
@@ -1494,7 +1497,7 @@ function renderDash(){
   const tips=[];
   if(M.mediana!==null&&M.mediana>15) tips.push("Contesta antes: los clientes a los que se responde en menos de 5–15 minutos cierran mucho más. Activa los avisos en el móvil.");
   if(hayWeb&&movil/Math.max(1,t.v)>.6) tips.push(`El ${pct(movil,t.v)} de las visitas son desde el móvil: los botones de WhatsApp y llamar son lo más importante.`);
-  if(M.perd.length>=3){ const m=orden(M.motivos)[0]; if(m) tips.push(`Motivo de pérdida más repetido: «${m[0]}» (${m[1]}).`); }
+  if(M.perd.length>=3){ const m=orden(M.motivos)[0]; if(m) tips.push(`Motivo de pérdida más repetido: «${esc(m[0])}» (${m[1]}).`); }
   if(!M.gan.some(x=>x.importe)&&M.gan.length) tips.push("Apunta el importe de cada venta o trabajo cerrado en la ficha del cliente para ver la facturación y el ticket medio.");
   // funnel
   const vieron=(t.vistas.comprar||0)+(t.vistas.taller||0)>0?Math.min(t.v,Object.values(t.cochesV).reduce((a,b)=>a+b,0)+(t.vistas.taller||0)):0;
@@ -1668,8 +1671,158 @@ $("#notif").onclick=async()=>{ try{ const r=await Notification.requestPermission
 document.addEventListener("pointermove",e=>{ const el=e.target.closest&&e.target.closest(".lux"); if(!el) return; const r=el.getBoundingClientRect();
   el.style.setProperty("--mx",(e.clientX-r.left)+"px"); el.style.setProperty("--my",(e.clientY-r.top)+"px"); },{passive:true});
 
+/* ---------- código QR propio (ISO/IEC 18004, modo byte, versiones 1-10). Sin librerías externas ---------- */
+const QR=(()=>{
+  const EC={1:{M:[10,[[1,16]]]},2:{M:[16,[[1,28]]]},3:{M:[26,[[1,44]]]},4:{M:[18,[[2,32]]]},5:{M:[24,[[2,43]]]},6:{M:[16,[[4,27]]]},7:{M:[18,[[4,31]]]},8:{M:[22,[[2,38],[2,39]]]},9:{M:[22,[[3,36],[2,37]]]},10:{M:[26,[[4,43],[1,44]]]}};
+  const AL={1:[],2:[6,18],3:[6,22],4:[6,26],5:[6,30],6:[6,34],7:[6,22,38],8:[6,24,42],9:[6,26,46],10:[6,28,50]};
+  const gmul=(x,y)=>{ let z=0; for(let i=7;i>=0;i--){ z=(z<<1)^((z>>7)*0x11D); z^=((y>>i)&1)*x; } return z; };
+  const div=d=>{ const r=Array(d-1).fill(0).concat([1]); let root=1; for(let k=0;k<d;k++){ for(let j=0;j<d;j++){ r[j]=gmul(r[j],root); if(j+1<d) r[j]^=r[j+1]; } root=gmul(root,2); } return r; };
+  const rem=(data,dv)=>{ const r=Array(dv.length).fill(0); for(const b of data){ const f=b^r.shift(); r.push(0); dv.forEach((c,i)=>r[i]^=gmul(c,f)); } return r; };
+  function encode(text){
+    const data=[...new TextEncoder().encode(text)]; let ver=1, eccn, groups, cap;
+    for(ver=1;ver<=10;ver++){ [eccn,groups]=EC[ver].M; cap=groups.reduce((a,[n,d])=>a+n*d,0); if(4+(ver<10?8:16)+8*data.length<=cap*8) break; }
+    if(ver>10) throw new Error("texto largo");
+    const bits=[]; const put=(v,n)=>{ for(let i=n-1;i>=0;i--) bits.push((v>>i)&1); };
+    put(4,4); put(data.length,ver<10?8:16); data.forEach(b=>put(b,8)); put(0,Math.min(4,cap*8-bits.length)); while(bits.length%8) bits.push(0);
+    const cw=[]; for(let i=0;i<bits.length;i+=8) cw.push(parseInt(bits.slice(i,i+8).join(""),2));
+    for(let k=0;cw.length<cap;k++) cw.push(k%2?0x11:0xEC);
+    const blocks=[]; let pos=0; const dv=div(eccn);
+    for(const [n,d] of groups) for(let i=0;i<n;i++){ const b=cw.slice(pos,pos+d); pos+=d; blocks.push([b,rem(b,dv)]); }
+    const fin=[]; const mx=Math.max(...blocks.map(b=>b[0].length));
+    for(let i=0;i<mx;i++) for(const [b] of blocks) if(i<b.length) fin.push(b[i]);
+    for(let i=0;i<eccn;i++) for(const [,e] of blocks) fin.push(e[i]);
+    return build(ver,fin);
+  }
+  function build(ver,cws){
+    const n=ver*4+17, M=[...Array(n)].map(()=>Array(n).fill(false)), F=[...Array(n)].map(()=>Array(n).fill(false));
+    const set=(x,y,v)=>{ M[y][x]=v; F[y][x]=true; };
+    for(let i=0;i<n;i++){ set(6,i,i%2===0); set(i,6,i%2===0); }
+    const finder=(cx,cy)=>{ for(let dy=-4;dy<=4;dy++) for(let dx=-4;dx<=4;dx++){ const x=cx+dx,y=cy+dy; if(x>=0&&x<n&&y>=0&&y<n){ const d=Math.max(Math.abs(dx),Math.abs(dy)); set(x,y,d!==2&&d!==4); } } };
+    finder(3,3); finder(n-4,3); finder(3,n-4);
+    const al=AL[ver], na=al.length;
+    for(let i=0;i<na;i++) for(let j=0;j<na;j++){ if((i===0&&j===0)||(i===0&&j===na-1)||(i===na-1&&j===0)) continue;
+      for(let dy=-2;dy<=2;dy++) for(let dx=-2;dx<=2;dx++) set(al[i]+dx,al[j]+dy,Math.max(Math.abs(dx),Math.abs(dy))!==1); }
+    const fmt=m=>{ const d=(0<<3)|m; let r=d; for(let k=0;k<10;k++) r=(r<<1)^((r>>9)*0x537); return ((d<<10)|r)^0x5412; };
+    const drawF=m=>{ const b=fmt(m), g=i=>((b>>i)&1)===1;
+      for(let i=0;i<6;i++) set(8,i,g(i)); set(8,7,g(6)); set(8,8,g(7)); set(7,8,g(8));
+      for(let i=9;i<15;i++) set(14-i,8,g(i)); for(let i=0;i<8;i++) set(n-1-i,8,g(i)); for(let i=8;i<15;i++) set(8,n-15+i,g(i)); set(8,n-8,true); };
+    drawF(0);
+    if(ver>=7){ let r=ver; for(let k=0;k<12;k++) r=(r<<1)^((r>>11)*0x1F25); const b=(ver<<12)|r;
+      for(let i=0;i<18;i++){ const bit=((b>>i)&1)===1, a=n-11+i%3, c=Math.floor(i/3); set(a,c,bit); set(c,a,bit); } }
+    let i=0; const total=cws.length*8;
+    for(let right=n-1;right>=1;right-=2){ if(right===6) right=5;
+      for(let v=0;v<n;v++) for(let j=0;j<2;j++){ const x=right-j, up=((right+1)&2)===0, y=up?n-1-v:v;
+        if(!F[y][x]&&i<total){ M[y][x]=((cws[i>>3]>>(7-(i&7)))&1)===1; i++; } } }
+    const MK=[(x,y)=>(x+y)%2===0,(x,y)=>y%2===0,(x,y)=>x%3===0,(x,y)=>(x+y)%3===0,(x,y)=>(Math.floor(x/3)+Math.floor(y/2))%2===0,(x,y)=>x*y%2+x*y%3===0,(x,y)=>(x*y%2+x*y%3)%2===0,(x,y)=>((x+y)%2+x*y%3)%2===0];
+    const apply=m=>{ for(let y=0;y<n;y++) for(let x=0;x<n;x++) if(!F[y][x]&&MK[m](x,y)) M[y][x]=!M[y][x]; };
+    const pen=()=>{ let p=0; const T=M[0].map((_,c)=>M.map(r=>r[c]));
+      for(const g of [M,T]) for(const row of g){ let run=1; for(let k=1;k<n;k++){ if(row[k]===row[k-1]) run++; else { if(run>=5) p+=run-2; run=1; } } if(run>=5) p+=run-2;
+        const s=row.map(v=>v?"1":"0").join(""); p+=40*((s.match(/10111010000/g)||[]).length+(s.match(/00001011101/g)||[]).length); }
+      for(let y=0;y<n-1;y++) for(let x=0;x<n-1;x++) if(M[y][x]===M[y][x+1]&&M[y][x]===M[y+1][x]&&M[y][x]===M[y+1][x+1]) p+=3;
+      const dark=M.flat().filter(Boolean).length; p+=Math.floor(Math.abs(dark*100/(n*n)-50)/5)*10; return p; };
+    let best=null; for(let m=0;m<8;m++){ apply(m); drawF(m); const sc=pen(); if(!best||sc<best[0]) best=[sc,m]; apply(m); }
+    apply(best[1]); drawF(best[1]); return M;
+  }
+  function svg(text,px=220){ const M=encode(text), n=M.length, q=4, t=n+q*2; let d="";
+    M.forEach((row,y)=>{ let x=0; while(x<n){ if(row[x]){ const s=x; while(x<n&&row[x]) x++; d+=`M${s+q} ${y+q}h${x-s}v1h${s-x}z`; } else x++; } });
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${t} ${t}" width="${px}" height="${px}" shape-rendering="crispEdges" role="img" aria-label="Código QR"><rect width="${t}" height="${t}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`; }
+  return {encode,svg};
+})();
+
+/* =====================================================================
+   SEGURIDAD: entrada con sesión firmada, 2 pasos, cierre por inactividad y centro de seguridad
+   ===================================================================== */
+const TOK_KEY="vc_tok";
+try{ sessionStorage.removeItem("mz_pw"); }catch(_){}          // la contraseña ya no se guarda nunca
+try{ PW=sessionStorage.getItem(TOK_KEY)||""; }catch(_){ PW=""; }
+const guardarToken=t=>{ PW=t; try{ sessionStorage.setItem(TOK_KEY,t); }catch(_){} };
+function logout(msg){ PW=""; try{ sessionStorage.removeItem(TOK_KEY); }catch(_){}
+  if(typeof cerrarDrawer==="function") cerrarDrawer(); show("s-login");
+  if(typeof msg==="string"){ $("#login-err").textContent=msg; $("#login-err").hidden=false; } }
+$("#logout").onclick=()=>logout();
+$("#login-form").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const btn=$("#login-btn"); btn.disabled=true; $("#login-err").hidden=true;
+  try{
+    const r=await fetch("/api/login",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({clave:$("#pw").value,codigo:$("#pw2").value})});
+    const d=await r.json().catch(()=>({}));
+    if(d.necesita2fa){ $("#f-2fa").hidden=false; setTimeout(()=>$("#pw2").focus(),30); if($("#pw2").value) throw new Error(d.error||"Código incorrecto."); btn.disabled=false; return; }
+    if(r.status===429 && !d.error) throw new Error("Demasiados intentos. Espera un minuto.");
+    if(!r.ok||!d.token) throw new Error(d.error||"No se ha podido entrar.");
+    guardarToken(d.token); $("#pw").value=""; $("#pw2").value=""; $("#f-2fa").hidden=true;
+    try{ localStorage.setItem("vc_admin","1"); }catch(_){}
+    await loadList(true); await loadLeads(false); abrirTab("dash");
+  }catch(err){ $("#login-err").textContent=err.message; $("#login-err").hidden=false; }
+  btn.disabled=false;
+});
+// Cierre automático tras 60 minutos sin tocar nada
+(()=>{ let ultimo=Date.now(); const act=()=>ultimo=Date.now();
+  ["pointerdown","keydown","scroll","touchstart"].forEach(ev=>addEventListener(ev,act,{passive:true,capture:true}));
+  setInterval(()=>{ if(PW && Date.now()-ultimo>60*60e3) logout("Sesión cerrada por seguridad tras 60 minutos sin actividad."); },30e3); })();
+
+/* ---------- centro de seguridad ---------- */
+const EVT={"login-ok":["Entrada al panel","ok"],"login-fallo":["Contraseña incorrecta","mal"],"2fa-fallo":["Código de verificación incorrecto","mal"],"bloqueo":["Conexión bloqueada","mal"],"trampa":["Robot atrapado en una trampa","mal"],"recuperacion":["Entrada con código de recuperación","aviso"],"sesiones-cerradas":["Sesiones cerradas en todos los dispositivos","aviso"],"desbloqueo":["Conexión desbloqueada","aviso"],"2fa-activada":["Verificación en dos pasos activada","ok"],"2fa-desactivada":["Verificación en dos pasos desactivada","aviso"]};
+let SEG=null, seg2fa=null;
+async function abrirSeguridad(){ DW={tipo:"seguridad",id:"s"}; abrirDrawer('<div class="empty">Cargando…</div>'); try{ SEG=await api("/api/seguridad"); pintarSeguridad(); }catch(err){ $("#dw-body").innerHTML=`<div class="empty">${esc(err.message)}</div>`; } }
+function pintarSeguridad(){
+  const e=SEG.estado, fila=(ok,t,sub)=>`<li class="${ok?"ok":"warn"}"><b>${ok?"✓":"!"}</b><span>${t}<small>${sub}</small></span></li>`;
+  const puntos=[e.claveLarga,e.dosPasos,e.avisosEmail,true,true,true,true].filter(Boolean).length;
+  const reg=SEG.registro||[];
+  const fallos24=reg.filter(x=>["login-fallo","2fa-fallo","trampa"].includes(x.tipo)&&Date.now()-Date.parse(x.t)<864e5).length;
+  $("#dw-body").innerHTML=`<div class="dw-head"><div><span class="tipo">Seguridad</span><h2 class="dw-nombre" style="margin:0">Muro de seguridad</h2></div><button class="x" type="button" data-cerrar aria-label="Cerrar">✕</button></div>
+    <section class="dw-box muro"><div class="muro-top"><b class="num">${puntos}/7</b><span>defensas activas${fallos24?` · <em>${fallos24} ataques frenados en 24 h</em>`:" · sin ataques en 24 h"}</span></div>
+      <ul class="checks-seg">
+        ${fila(e.claveLarga,"Contraseña fuerte",e.claveLarga?"14 caracteres o más":"Pon en Netlify una ADMIN_PASSWORD de 14 caracteres o más")}
+        ${fila(e.dosPasos,"Verificación en dos pasos",e.dosPasos?"Hace falta el código del móvil para entrar":"Actívala abajo: aunque roben la contraseña, no podrán entrar")}
+        ${fila(e.avisosEmail,"Avisos por email",e.avisosEmail?"Te avisamos de bloqueos y accesos nuevos":"Configura RESEND_API_KEY en Netlify para recibirlos")}
+        ${fila(true,"Bloqueo automático","5 fallos → 15 min bloqueada; si repite, 24 h")}
+        ${fila(true,"Sesiones firmadas que caducan","12 h como máximo y cierre tras 60 min sin uso")}
+        ${fila(true,"Límite de peticiones y trampas para robots","Netlify frena a quien abusa; quien busca fallos queda bloqueado")}
+        ${fila(true,"Cabeceras de seguridad (CSP, HSTS…)","El navegador no carga nada que no sea de la web o de Google")}
+      </ul></section>
+    <section class="dw-box" id="s2fa"><h3>Verificación en dos pasos</h3>${e.dosPasos
+      ?`<p class="hint" style="margin:0 0 10px">Activada. Para entrar hace falta la contraseña y el código de tu app (Google Authenticator o similar).</p><div class="quick"><input class="in" id="c2fa" inputmode="numeric" autocomplete="one-time-code" placeholder="Código actual" style="max-width:170px"><button type="button" class="btn b-ghost b-sm" data-2fa="cambiar">Cambiar de móvil</button><button type="button" class="btn b-bad b-sm" data-2fa="desactivar">Desactivar</button></div>`
+      :`<p class="hint" style="margin:0 0 10px">Instala <b>Google Authenticator</b> o <b>Microsoft Authenticator</b> en tu móvil y pulsa el botón. Tarda 1 minuto.</p><button type="button" class="btn b-acc b-sm" data-2fa="iniciar">Activar verificación en dos pasos</button>`}
+      <div id="s2fa-paso"></div></section>
+    <section class="dw-box"><h3>Sesiones</h3><p class="hint" style="margin:0 0 10px">Si has entrado desde un ordenador ajeno o crees que alguien ha visto tu contraseña, cierra todas las sesiones y cambia ADMIN_PASSWORD en Netlify.${e.sesionesDesde?` Último cierre general: ${esc(fechaHora(e.sesionesDesde))}.`:""}</p><button type="button" class="btn b-brand b-sm" data-cerrar-todas>Cerrar sesión en todos los dispositivos</button></section>
+    <section class="dw-box"><h3>Conexiones bloqueadas ahora</h3>${(SEG.bloqueos||[]).length?`<div class="tabla-wrap"><table class="tabla"><tbody>${SEG.bloqueos.map(b=>`<tr><td class="num">${esc(b.ip)}</td><td>${esc(b.motivo)}<br><small>hasta ${esc(fechaHora(b.hasta))}</small></td><td class="n"><button type="button" class="chipb" data-desbloquear="${esc(b.id)}">Desbloquear</button></td></tr>`).join("")}</tbody></table></div>`:'<p class="hint" style="margin:0">Ninguna.</p>'}</section>
+    <section class="dw-box"><h3>Copia de seguridad</h3><p class="hint" style="margin:0 0 10px">Descarga todos tus datos (coches, clientes, órdenes de taller) en un archivo. Guárdalo en tu ordenador una vez al mes.</p><button type="button" class="btn b-ghost b-sm" data-backup>Descargar copia de seguridad</button></section>
+    <section class="dw-box"><h3>Registro de seguridad (30 días)</h3>${reg.length?`<div class="tabla-wrap"><table class="tabla reg"><tbody>${reg.map(x=>{ const [t,c]=EVT[x.tipo]||[x.tipo,""]; return `<tr class="${c}"><td><b>${esc(t)}</b>${x.txt&&x.txt!==t?`<br><small>${esc(x.txt)}</small>`:""}</td><td><small>${esc(x.disp)}${x.pais?" · "+esc(x.pais):""}<br>${esc(x.ip)}</small></td><td class="n"><small>${esc(fechaHora(x.t))}</small></td></tr>`; }).join("")}</tbody></table></div>`:'<p class="hint" style="margin:0">Sin actividad todavía.</p>'}</section>
+    <p class="hint" style="padding-bottom:30px">Las conexiones se guardan recortadas (p. ej. 83.45.x.x) y se borran a los 30 días.</p>`;
+}
+async function accionSeg(body){ return api("/api/seguridad",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)}); }
+async function clickSeguridad(e){
+  const t=e.target;
+  if(t.closest("[data-cerrar-todas]")){ if(!confirm("¿Cerrar la sesión en todos los ordenadores y móviles? En este seguirás dentro.")) return; const r=await accionSeg({accion:"cerrar-sesiones"}); guardarToken(r.token); toast("Hecho: las demás sesiones ya no sirven"); SEG=await api("/api/seguridad"); pintarSeguridad(); return; }
+  const d=t.closest("[data-desbloquear]"); if(d){ await accionSeg({accion:"desbloquear",id:d.dataset.desbloquear}); SEG=await api("/api/seguridad"); pintarSeguridad(); toast("Desbloqueada"); return; }
+  if(t.closest("[data-backup]")){ const datos={generado:new Date().toISOString(),coches:CARS,clientes:LEADS,ordenes:ORDENES};
+    const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([JSON.stringify(datos,null,1)],{type:"application/json"})); a.download=`volcano-cars-copia-${hoyC()}.json`; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500); toast("Copia descargada"); return; }
+  const f=t.closest("[data-2fa]"); if(!f) return;
+  const acc=f.dataset["2fa"];
+  if(acc==="iniciar"||acc==="cambiar"){ const r=await accionSeg({accion:"2fa-iniciar",codigo:$("#c2fa")?$("#c2fa").value:""}); seg2fa=r;
+    $("#s2fa-paso").innerHTML=`<ol class="pasos2">
+      <li>Abre la app, pulsa <b>+</b> y elige <b>Escanear un código QR</b>:</li></ol>
+      <div class="qr">${QR.svg(r.uri,210)}</div>
+      <p class="hint" style="text-align:center">¿No puedes escanear? Elige «Introducir clave» y escribe:<br><b class="num" style="letter-spacing:.06em">${esc(r.secreto)}</b></p>
+      <ol class="pasos2" start="2"><li>Escribe aquí el código de 6 dígitos que aparece en la app:</li></ol>
+      <div class="quick"><input class="in" id="c2fa-ok" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456" style="max-width:160px;font-size:20px;letter-spacing:.2em"><button type="button" class="btn b-acc b-sm" data-2fa="confirmar">Confirmar</button></div>`;
+    $("#c2fa-ok").focus(); return; }
+  if(acc==="confirmar"){ const r=await accionSeg({accion:"2fa-confirmar",codigo:$("#c2fa-ok").value}).catch(err=>({error:err.message}));
+    if(r.error){ toast(r.error); return; }
+    const txt="Volcano Cars · códigos de recuperación del panel\nCada código sirve UNA vez si pierdes el móvil.\n\n"+r.codigos.join("\n");
+    $("#s2fa-paso").innerHTML=`<div class="msg ok" style="margin-top:10px">Verificación activada. A partir de ahora te pedirá el código al entrar.</div>
+      <p style="margin:12px 0 6px"><b>Guarda estos códigos de recuperación</b> (fuera del móvil). Si pierdes el teléfono, cada uno te deja entrar una vez:</p>
+      <pre class="codigos">${esc(r.codigos.join("\n"))}</pre>
+      <div class="quick"><button type="button" class="btn b-brand b-sm" data-descargar-codigos>Descargar los códigos</button></div>`;
+    $("#s2fa-paso").dataset.txt=txt; SEG.estado.dosPasos=true; toast("Verificación en dos pasos activada"); return; }
+  if(acc==="desactivar"){ if(!confirm("¿Seguro? El panel volverá a abrirse solo con la contraseña.")) return; const r=await accionSeg({accion:"2fa-desactivar",codigo:$("#c2fa").value}).catch(err=>({error:err.message})); if(r.error) return toast(r.error); SEG=await api("/api/seguridad"); pintarSeguridad(); toast("Verificación desactivada"); }
+}
+document.addEventListener("click",e=>{ const b=e.target.closest("[data-descargar-codigos]"); if(!b) return; const txt=$("#s2fa-paso").dataset.txt||"";
+  const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([txt],{type:"text/plain"})); a.download="volcano-cars-codigos-recuperacion.txt"; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500); });
+$("#btn-seg").onclick=abrirSeguridad;
+
 /* inicio */
-if(PW){ fetch("/api/login",{method:"POST",headers:{authorization:"Bearer "+PW}}).then(async r=>{ if(!r.ok) return logout();
+if(PW){ fetch("/api/login",{headers:{authorization:"Bearer "+PW}}).then(async r=>{ if(!r.ok) return logout("Tu sesión ha caducado. Vuelve a entrar.");
   try{ localStorage.setItem("vc_admin","1"); }catch(_){}
   const h=location.hash.slice(1), tab={crm:"leads",solicitudes:"leads",taller:"ordenes",agenda:"agenda",coches:"coches",dashboard:"dash"}[h]||"dash";
   await loadList(true); await loadLeads(false); abrirTab(tab,false); }).catch(()=>show("s-login")); }
