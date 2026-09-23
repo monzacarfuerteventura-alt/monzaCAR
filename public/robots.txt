@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: /admin
 Disallow: /api/
-Sitemap: https://lestter4th.netlify.app/sitemap.xml
+Sitemap: https://lestter5th.netlify.app/sitemap.xml

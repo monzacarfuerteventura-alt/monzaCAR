@@ -15,9 +15,12 @@ Cuando tengas la cuenta, abre `public/index.html`, busca `const ADS = {` y pega 
 de conversión. Después ejecuta `python3 tools/build-en.py` para que la versión inglesa también las tenga, y publica.
 Mientras el ID esté vacío no se carga nada de Google ni sale el aviso de cookies.
 
-## Publicar la web (desde un ordenador con Node.js instalado)
-    npm install
-    npx -p netlify-cli netlify deploy --prod   (la carpeta ya está conectada a lestter4th con «netlify link»)
+## Publicar la web
+La web está en https://lestter5th.netlify.app y se publica sola desde GitHub (repositorio monzaCAR, rama master).
+Desde esta carpeta, en PowerShell:
+    git add -A
+    git commit -m "Describe el cambio"
+    git push
 
 ## Vídeo 360° de los coches
 En el panel, al añadir o editar un coche, sección **Vídeo 360°**. Admite MP4, MOV o WEBM de hasta 300 MB.
