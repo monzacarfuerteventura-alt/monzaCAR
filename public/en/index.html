@@ -22,7 +22,7 @@
 <link rel="alternate" hreflang="en" href="https://lestter5th.netlify.app/en/">
 <link rel="alternate" hreflang="x-default" href="https://lestter5th.netlify.app/">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":["AutoRepair","AutoDealer","AutoBodyShop"],"name":"Volcano Cars","description":"Body repair and paint, quick servicing and checked used cars with a 12-month warranty and free home delivery anywhere on Fuerteventura, from Antigua.","telephone":"+34643668813","email":"monzacarfuerteventura@gmail.com","url":"https://lestter5th.netlify.app/en/","image":"https://lestter5th.netlify.app/coches/opel-astra-2010/anuncio.jpg","priceRange":"€€",
+{"@context":"https://schema.org","@type":["AutoRepair","AutoDealer","AutoBodyShop"],"name":"Volcano Cars","description":"Body repair and paint, quick servicing and checked used cars with a 12-month warranty and free home delivery anywhere on Fuerteventura, from Antigua.","telephone":"+34643668813","email":"volcanocars2026@gmail.com","url":"https://lestter5th.netlify.app/en/","image":"https://lestter5th.netlify.app/coches/opel-astra-2010/anuncio.jpg","priceRange":"€€",
  "address":{"@type":"PostalAddress","streetAddress":"Calle Valle Largo, Nave 8, Polígono Industrial","postalCode":"35610","addressLocality":"Antigua","addressRegion":"Las Palmas","addressCountry":"ES"},
  "areaServed":["Antigua","Caleta de Fuste","Puerto del Rosario","Tuineje","Gran Tarajal","La Oliva","Corralejo","Pájara","Fuerteventura"],
  "availableLanguage":["es","en"],
@@ -947,7 +947,6 @@ footer .logo svg.vc-logo{height:62px}
     </a>
     <nav class="tabs" aria-label="Sections">
       <a href="#comprar" data-go="comprar">Buy a car</a>
-      <a href="#vender" data-go="vender">Sell your car</a>
       <a href="#taller" data-go="taller">Workshop</a>
       <a href="#contacto" data-go="contacto">Contact</a>
     </nav>
@@ -960,8 +959,8 @@ footer .logo svg.vc-logo{height:62px}
 <nav class="mtabs" aria-label="Sections">
   <a href="#inicio" data-go="inicio"><svg><use href="#i-home"/></svg>Home</a>
   <a href="#comprar" data-go="comprar"><svg><use href="#i-car"/></svg>Buy</a>
-  <a href="#vender" data-go="vender"><svg><use href="#i-tag"/></svg>Sell</a>
   <a href="#taller" data-go="taller"><svg><use href="#i-wrench"/></svg>Workshop</a>
+  <a href="#contacto" data-go="contacto"><svg><use href="#i-phone"/></svg>Contact</a>
 </nav>
 
 <main>
@@ -1116,7 +1115,7 @@ footer .logo svg.vc-logo{height:62px}
         <div class="stat lux s1"><span class="st-ic"><svg width="22" height="22"><use href="#i-shield"/></svg></span><b><em data-cuenta="12">12</em><small>months</small></b><span>warranty on the cars we sell</span></div>
         <div class="stat lux s2"><span class="st-ic"><svg width="22" height="22"><use href="#i-check"/></svg></span><b>+<em data-cuenta="40">40</em><small>points</small></b><span>-point check in our workshop before every sale</span></div>
         <div class="stat lux s3"><span class="st-ic"><svg width="22" height="22"><use href="#i-clock"/></svg></span><b class="num">8–16<small>h</small></b><span>Monday to Friday, open all day</span></div>
-        <div class="stat lux s4"><span class="st-ic"><svg width="22" height="22"><use href="#i-euro"/></svg></span><b>0<small>€</small></b><span>to deliver your car, quote a repair or value yours</span></div>
+        <div class="stat lux s4"><span class="st-ic"><svg width="22" height="22"><use href="#i-euro"/></svg></span><b>0<small>€</small></b><span>to deliver your car or quote a repair</span></div>
       </div>
     </div>
   </section>
@@ -1165,69 +1164,6 @@ footer .logo svg.vc-logo{height:62px}
         <div class="sec-head"><div><div class="eyebrow">Already sold</div><h2>Recently <span class="serif">sold</span></h2></div></div>
         <div class="grid" id="cat-sold"></div>
       </div>
-    </div>
-  </section>
-</div>
-
-<!-- ================= VENDER ================= -->
-<div class="view" id="v-vender" hidden>
-  <section class="block">
-    <div class="wrap split">
-      <div>
-        <div class="eyebrow">Sell your car</div>
-        <h2 class="page-h">We'll buy your car. <span class="serif">No hassle.</span></h2>
-        <p class="page-lead">Tell us about your car and we'll make you an offer with no obligation. If you're happy with it, we pay by bank transfer the same day.</p>
-        <ul class="checks">
-          <li>Free valuation at our premises</li>
-          <li>We handle all the DGT (traffic office) paperwork</li>
-          <li>We take your car in part exchange for another</li>
-          <li>Immediate payment by bank transfer</li>
-        </ul>
-        <div class="ficha" id="s-ficha" aria-live="polite">
-          <div class="ficha-top"><span class="ficha-ic"><svg viewBox="0 0 320 120" aria-hidden="true"><use href="#car-side"/></svg></span><span class="ficha-tag">Your car</span></div>
-          <b id="f-title">Make and model</b>
-          <div class="ficha-specs" id="f-specs"><span>Year</span><span>Mileage (km)</span><span>Fuel</span></div>
-          <div class="ficha-state" id="f-state"></div>
-          <p class="ficha-note">We'll call you with a no-obligation offer. Free valuation.</p>
-        </div>
-      </div>
-      <form class="panel" id="sell-form">
-        <h3>Your car</h3>
-        <ol class="pasos dos" id="s-pasos" aria-label="Valuation progress">
-          <li data-paso="1"><i>1</i><span>Your car</span></li>
-          <li data-paso="2"><i>2</i><span>Your details</span></li>
-        </ol>
-        <div class="row2">
-          <div class="field"><label for="s-brand">Make</label><input class="input" id="s-brand" required placeholder="e.g. Seat"></div>
-          <div class="field"><label for="s-model">Model</label><input class="input" id="s-model" required placeholder="e.g. León"></div>
-        </div>
-        <div class="row2">
-          <div class="field"><label for="s-year">Year</label><input class="input num" id="s-year" type="number" min="1990" max="2027" required placeholder="2018"></div>
-          <div class="field"><label for="s-km">Mileage (km)</label><input class="input num" id="s-km" type="number" min="0" required placeholder="95000"></div>
-        </div>
-        <div class="row1">
-          <div class="field"><label for="s-fuel">Fuel</label><select class="input" id="s-fuel"><option>Petrol</option><option>Diesel</option><option>Hybrid</option><option>Electric</option><option>GLP</option></select></div>
-        </div>
-        <div class="field"><span class="flabel">Condition</span>
-          <div class="estados" id="s-states" role="radiogroup" aria-label="Car condition">
-            <label class="e1"><input type="radio" name="s-state" checked><span>Very good</span></label>
-            <label class="e2"><input type="radio" name="s-state"><span>Good</span></label>
-            <label class="e3"><input type="radio" name="s-state"><span>A few small marks</span></label>
-            <label class="e4"><input type="radio" name="s-state"><span>Needs repair</span></label>
-          </div>
-        </div>
-        <div class="row2">
-          <div class="field"><label for="s-name">Your name</label><input class="input" id="s-name" required autocomplete="name"></div>
-          <div class="field"><label for="s-phone">Phone</label><input class="input" id="s-phone" type="tel" required autocomplete="tel"></div>
-        </div>
-        <div class="field"><label for="s-notes">Anything else we should know? (optional)</label><textarea class="input" id="s-notes" placeholder="Extras, faults, ITV (MOT), number of owners…"></textarea></div>
-        <input class="hp" type="text" name="web" id="s-web" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <label class="consent"><input type="checkbox" id="s-ok" required><span>I agree that Volcano Cars may use these details only to answer my request. I can ask for them to be deleted at any time. <a href="/privacidad#en" target="_blank" rel="noopener">Privacy policy</a>.</span></label>
-        <div class="form-err" id="s-err" role="alert" hidden></div>
-        <button class="btn btn-rosso" type="submit">Get a free valuation <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></button>
-        <p class="note">We receive your request straight away. WhatsApp will also open with your details filled in, in case you want to send us photos of the car.</p>
-        <div class="ok-msg" id="sell-ok" role="status" hidden>Request received. We'll call you with our offer during opening hours (Monday to Friday, 8:00 to 16:00).</div>
-      </form>
     </div>
   </section>
 </div>
@@ -1298,7 +1234,7 @@ footer .logo svg.vc-logo{height:62px}
       <div>
         <div class="eyebrow">Contact</div>
         <h2 class="page-h">Come and <span class="serif">see us</span></h2>
-        <p class="page-lead">We can help you buy or sell a car, repair bodywork or service your car.</p>
+        <p class="page-lead">We can help you find your next car, repair bodywork or service your car.</p>
         <div style="margin-top:22px"><span class="status light" data-status><i></i><span>…</span></span></div>
         <div class="info">
           <div class="wide"><span>Address</span><b id="c-addr"></b></div>
@@ -1330,7 +1266,7 @@ footer .logo svg.vc-logo{height:62px}
       <a class="logo" href="#inicio" data-go="inicio"><svg class="vc-logo" viewBox="0 0 662 162" aria-hidden="true" style="color:#F2EFEA"><use href="#vc-logo"/></svg></a>
       <p>Body repair and paint shop, quick servicing and used car sales in Antigua, Fuerteventura.</p>
     </div>
-    <div><h4>Cars</h4><a href="#comprar" data-go="comprar">Buy a car</a><a href="#vender" data-go="vender">Sell your car</a></div>
+    <div><h4>Cars</h4><a href="#comprar" data-go="comprar">Buy a car</a><a href="#contacto" data-go="contacto">Ask us anything</a></div>
     <div><h4>Workshop</h4><a href="#taller" data-go="taller">Body repair and paint</a><a href="#taller" data-go="taller">Quick servicing</a><a href="#taller" data-go="taller">Get a quote</a></div>
     <div><h4>Visit us</h4><a data-map target="_blank" rel="noopener" data-addr-link></a><a href="#contacto" data-go="contacto" data-hours-short></a></div>
   </div>
@@ -1403,7 +1339,7 @@ const EMPRESA = {
   telefono: "643 66 88 13",          // se muestra así
   telefonoLlamar: "+34643668813",    // para el botón de llamar
   whatsapp: "34643668813",           // solo números, con prefijo 34
-  email: "monzacarfuerteventura@gmail.com",
+  email: "volcanocars2026@gmail.com",
   direccion: "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua, Las Palmas",
   horario: "Monday to Friday, 8:00 to 16:00, open all day. Closed Saturday and Sunday.",
   horarioCorto: "Mon–Fri · 8:00 to 16:00",
@@ -1620,7 +1556,7 @@ async function cargar(){
 }
 
 /* La etiqueta «Powered by Netlify» del plan gratuito se coloca abajo a la derecha:
-   en el móvil subimos la barra de secciones para que no tape «Vender» y «Taller». */
+   en el móvil subimos la barra de secciones para que no tape «Contacto» y «Taller». */
 (function(){ const mira=()=>{ const f=document.getElementById("nl-badge-frame");
   document.documentElement.style.setProperty("--badge", f && f.offsetHeight ? "56px" : "0px"); };
   mira(); new MutationObserver(mira).observe(document.body,{childList:true}); })();
@@ -1847,6 +1783,7 @@ document.addEventListener("click",e=>{
   const res=c.estado==="reservado"; $("#book-form").hidden=res;
   modal.showModal(); modal.scrollTop=0;
   empezarAVer(c);
+  TRK("car",c.id);
 });
 modal.addEventListener("close",()=>{ pararVisor(); dejarDeVer(); });
 $("#m-360").onclick=()=>showFoto(0,true);
@@ -2013,26 +1950,6 @@ document.addEventListener("pointermove",e=>{ const el=e.target.closest&&e.target
     el.textContent="0"; requestAnimationFrame(paso); }),{threshold:.6});
   els.forEach(el=>io2.observe(el)); })();
 
-/* ---------- vender: ficha en vivo, pasos y estado ---------- */
-const estadoTxt=()=>{ const r=document.querySelector("input[name=s-state]:checked"); return r ? r.nextElementSibling.textContent : ""; };
-function fichaVender(){
-  const v=id=>$(id).value.trim();
-  const t=[v("#s-brand"),v("#s-model")].filter(Boolean).join(" ");
-  $("#f-title").textContent=t||L("Marca y modelo","Make and model");
-  const sp=[[v("#s-year"),L("Año","Year")],[v("#s-km")?Number(v("#s-km")).toLocaleString(LOC)+" km":"",L("Kilómetros","Mileage")],[$("#s-fuel").value,""]];
-  $("#f-specs").innerHTML=sp.map(([x,ph])=>`<span class="${x?"on":""}">${esc(x||ph)}</span>`).join("");
-  const r=document.querySelector("input[name=s-state]:checked");
-  $("#f-state").textContent=estadoTxt(); $("#f-state").style.setProperty("--ec", r?getComputedStyle(r.parentElement).getPropertyValue("--ec"):"");
-  $("#s-ficha").classList.toggle("viva",!!t);
-  const p1=!!(v("#s-brand")&&v("#s-model")&&v("#s-year")&&v("#s-km")), p2=!!(v("#s-name")&&telValido(v("#s-phone")));
-  const h=[p1,p2], a=h.indexOf(false);
-  document.querySelectorAll("#s-pasos li").forEach((li,i)=>{ li.classList.toggle("hecho",h[i]); li.classList.toggle("actual",i===a); });
-}
-["#s-brand","#s-model","#s-year","#s-km","#s-name","#s-phone"].forEach(id=>$(id).addEventListener("input",fichaVender));
-$("#s-fuel").addEventListener("change",fichaVender);
-document.querySelectorAll("input[name=s-state]").forEach(r=>r.addEventListener("change",fichaVender));
-fichaVender();
-
 /* ---------- resumen en vivo, pasos y barra móvil ---------- */
 function pintarResumen(){
   const sel=[...document.querySelectorAll("#services input:checked")].map(i=>SERVICIOS.find(s=>s.k===i.dataset.k)).filter(Boolean);
@@ -2071,19 +1988,6 @@ function barra(){
 }
 $("#barra-btn").onclick=()=>$("#shop-form .panel").scrollIntoView({behavior:"smooth",block:"start"});
 pintarResumen();
-
-/* vender */
-$("#sell-form").addEventListener("submit",async e=>{
-  e.preventDefault();
-  const v=id=>$(id).value;
-  if(!comprobar("s",[["#s-brand","Tell us the make."],["#s-model","Tell us the model."],["#s-year","Tell us the year."],["#s-km","Tell us the mileage."],["#s-name","Please enter your name."],["#s-phone","Please enter your phone number."]])) return;
-  if(!telValido(v("#s-phone"))){ fallo("s","Please check the phone number."); return; }
-  const t=`Hi Volcano Cars, I'd like to sell my car.\n\n${v("#s-brand")} ${v("#s-model")} · ${v("#s-year")} · ${Number(v("#s-km")).toLocaleString("en-GB")} km\nFuel: ${v("#s-fuel")}\nCondition: ${estadoTxt()}\n${v("#s-notes")?"Notes: "+v("#s-notes")+"\n":""}\nName: ${v("#s-name")}\nPhone: ${v("#s-phone")}\n(Customer speaks English)`;
-  window.open(wa(t),"_blank","noopener");
-  const r=await guardar("s",{tipo:"tasacion",nombre:v("#s-name"),telefono:v("#s-phone"),mensaje:v("#s-notes"),
-    vehiculo:{marca:v("#s-brand"),modelo:v("#s-model"),anio:v("#s-year"),km:v("#s-km"),combustible:v("#s-fuel"),estado:estadoTxt()}},e.submitter||$("#sell-form button[type=submit]"));
-  $("#sell-ok").hidden=!r.ok;
-});
 
 /* visita a un coche (desde su ficha) */
 const AG_B = Agenda($("#b-agenda"),"visita",msg=>fallo("b",msg||""));
@@ -2163,13 +2067,39 @@ function pintarEstado(){ const e=estado(); document.querySelectorAll("[data-stat
 pintarEstado(); setInterval(pintarEstado,60000);
 $("#c-wa").href=wa("Hi Volcano Cars, I have a question: ");
 document.querySelectorAll("[data-tel-txt]").forEach(e=>e.textContent=EMPRESA.telefono);
-$("#c-call").href=tel; $("#c-email").href="mailto:"+EMPRESA.email;
+$("#c-call").href=tel; $("#c-email").href="mailto:"+EMPRESA.email+"?subject="+encodeURIComponent(L("Consulta desde la web","Enquiry from the website"))+"&body="+encodeURIComponent(L("Hola Volcano Cars,\n\n","Hi Volcano Cars,\n\n"));
 $("#head-call").href=tel; $("#phone-top").href=tel;
 $("#yr").textContent=new Date().getFullYear();
 
+/* ---------- analítica propia (sin cookies, sin datos personales) ---------- */
+const TRK=(()=>{
+  let off=!!navigator.webdriver||/bot|crawl|spider|headless|lighthouse/i.test(navigator.userAgent);
+  try{ if(localStorage.getItem("vc_admin")==="1") off=true; }catch(_){}
+  const q=new URLSearchParams(location.search); let entrada=true;
+  return (t,a="",b="")=>{
+    if(off) return;
+    const d={t,a:String(a).slice(0,64),b:String(b).slice(0,20),l:IDIOMA,w:innerWidth};
+    if(entrada){ entrada=false; d.e=1; d.r=document.referrer||""; d.us=q.get("utm_source")||""; d.um=q.get("utm_medium")||""; d.g=q.get("gclid")?1:0; }
+    const body=JSON.stringify(d);
+    try{ if(navigator.sendBeacon && navigator.sendBeacon("/api/ev",new Blob([body],{type:"application/json"}))) return; }catch(_){}
+    fetch("/api/ev",{method:"POST",body,keepalive:true,headers:{"content-type":"application/json"}}).catch(()=>{});
+  };
+})();
+document.addEventListener("click",e=>{
+  const a=e.target.closest("a"); if(!a) return;
+  const h=a.getAttribute("href")||"", zona=(a.closest("[id^=v-]")||{}).id||"";
+  const ctx=a.closest("#car-modal")?"coche":zona.replace("v-","");
+  if(/wa\.me|whatsapp/.test(h)) TRK("clk","wa",ctx);
+  else if(h.startsWith("tel:")) TRK("clk","tel",ctx);
+  else if(h.startsWith("mailto:")) TRK("clk","mail",ctx);
+  else if(a.hasAttribute("data-map")||/google\.[a-z.]+\/maps|maps\.app/.test(h)) TRK("clk","mapa",ctx);
+},{capture:true});
+[["#shop-form","taller"],["#book-form","coche"]].forEach(([f,n])=>{ const el=$(f); if(el) el.addEventListener("focusin",()=>TRK("frm",n),{once:true}); });
+
 /* pestañas */
-const VIEWS=["inicio","comprar","vender","taller","contacto"];
+const VIEWS=["inicio","comprar","taller","contacto"];
 function go(v,push=true){
+  if(v==="vender") v="contacto";
   if(!VIEWS.includes(v)) v="inicio";
   const swap=()=>{ VIEWS.forEach(x=>$("#v-"+x).hidden = x!==v); };
   if(push && document.startViewTransition && !matchMedia("(prefers-reduced-motion: reduce)").matches) document.startViewTransition(swap); else swap();
@@ -2178,6 +2108,7 @@ function go(v,push=true){
   window.scrollTo({top:0});
   if(v==="taller") modoTaller();
   if(typeof barra==="function") barra();
+  TRK("pv",v);
 }
 document.addEventListener("click",e=>{ const a=e.target.closest("[data-go]"); if(!a) return; e.preventDefault(); go(a.dataset.go); });
 go((location.hash||"#inicio").slice(1),false);

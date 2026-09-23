@@ -5,7 +5,7 @@ NIF = "[NIF/CIF]"
 REGISTRO = "[Solo si es sociedad: Registro Mercantil de Las Palmas, tomo, folio, hoja]"
 REG_TALLER = "[Nº de inscripción del taller en el Registro Industrial de Canarias]"
 DIRECCION = "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua, Las Palmas"
-EMAIL = "monzacarfuerteventura@gmail.com"
+EMAIL = "volcanocars2026@gmail.com"
 TEL = "643 66 88 13"
 ACTUALIZADO = "23 de septiembre de 2026"
 
@@ -87,7 +87,7 @@ aviso = HEAD.format(title="Aviso legal", upd=ACTUALIZADO) + f"""
 """ + FOOT
 
 priv = HEAD.format(title="Política de privacidad", upd=ACTUALIZADO) + f"""
-<p class="en" id="en" lang="en"><b>In English:</b> Volcano Cars only uses the details you send us (name, phone, car details, preferred day) to answer your request. We keep them for up to 2 years and never sell them. You can ask us to delete them at any time by writing to <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>
+<p class="en" id="en" lang="en"><b>In English:</b> Volcano Cars only uses the details you send us (name, phone, car details, preferred day) to answer your request and, if your car is in our workshop, to show you its progress and quote on a private link. We count visits anonymously, without cookies or IP addresses. We keep your details for up to 2 years and never sell them. You can ask us to delete them at any time by writing to <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>
 
 <h2>Quién trata tus datos</h2>
 {TITULAR_BOX}
@@ -96,7 +96,7 @@ priv = HEAD.format(title="Política de privacidad", upd=ACTUALIZADO) + f"""
 <p>Los que escribes en los formularios de la web: nombre, teléfono, y según el caso los datos de tu coche (marca, modelo, año, kilómetros, matrícula), los servicios que necesitas, el día y la hora que prefieres y tu mensaje. También guardamos, junto a tu solicitud, de dónde llegaste a la web (por ejemplo, un anuncio de Google o un portal de coches) para saber qué publicidad funciona. No pedimos datos especialmente protegidos.</p>
 
 <h2>Para qué los usamos</h2>
-<p>Solo para responder a tu solicitud: darte presupuesto, confirmar tu cita o tu visita para ver un coche, o hacerte una oferta por tu coche. No te enviaremos publicidad y no tomamos decisiones automatizadas sobre ti.</p>
+<p>Solo para responder a tu solicitud y gestionar tu servicio: darte presupuesto, confirmar tu cita o tu visita para ver un coche, y, si dejas tu coche en el taller, enseñarte cómo va la reparación y el presupuesto en un enlace privado que solo tienes tú. Guardamos un registro de las gestiones que hacemos contigo (llamadas, mensajes, presupuestos) para atenderte bien. No te enviaremos publicidad y no tomamos decisiones automatizadas sobre ti.</p>
 
 <h2>Base legal</h2>
 <p>Tu consentimiento, que das al marcar la casilla del formulario (art. 6.1.a del RGPD), y la aplicación de medidas precontractuales que tú solicitas (art. 6.1.b del RGPD). Puedes retirar el consentimiento cuando quieras, sin que afecte a lo tratado antes.</p>
@@ -105,7 +105,10 @@ priv = HEAD.format(title="Política de privacidad", upd=ACTUALIZADO) + f"""
 <p>Hasta 2 años desde tu solicitud; después se borran automáticamente. Si llegas a ser cliente (compra o reparación), los datos de la factura y del contrato se conservan el tiempo que exigen las leyes fiscales y mercantiles.</p>
 
 <h2>Quién más puede verlos</h2>
-<p>No cedemos tus datos a nadie. Para que la web funcione usamos proveedores que actúan por cuenta nuestra: <b>Netlify, Inc.</b> (alojamiento de la web y almacenamiento de las solicitudes, con garantías del Marco de Privacidad de Datos UE-EE. UU. y cláusulas contractuales tipo). Si decides enviarnos el mensaje por <b>WhatsApp</b>, ese envío lo gestiona WhatsApp Ireland Ltd. según sus propias condiciones. Si aceptas las cookies de medición, <b>Google Ireland Ltd.</b> recibe los datos descritos en la <a href="/cookies">política de cookies</a>. Para mostrar los tipos de letra, tu navegador los descarga de <b>Google Fonts</b>, que recibe tu dirección IP (no instala cookies). El mapa de Google Maps solo se carga si pulsas «Ver el mapa aquí».</p>
+<p>No cedemos tus datos a nadie. Para que la web funcione usamos proveedores que actúan por cuenta nuestra: <b>Netlify, Inc.</b> (alojamiento de la web y almacenamiento de las solicitudes, con garantías del Marco de Privacidad de Datos UE-EE. UU. y cláusulas contractuales tipo) y <b>Resend</b> (Plus Five Five, Inc.), que nos reenvía cada solicitud a nuestro correo interno para poder contestarte enseguida, con cláusulas contractuales tipo. Si decides enviarnos el mensaje por <b>WhatsApp</b>, ese envío lo gestiona WhatsApp Ireland Ltd. según sus propias condiciones. Si aceptas las cookies de medición, <b>Google Ireland Ltd.</b> recibe los datos descritos en la <a href="/cookies">política de cookies</a>. Para mostrar los tipos de letra, tu navegador los descarga de <b>Google Fonts</b>, que recibe tu dirección IP (no instala cookies). El mapa de Google Maps solo se carga si pulsas «Ver el mapa aquí».</p>
+
+<h2>Estadísticas de visitas (sin cookies)</h2>
+<p>Para saber cuántas personas visitan la web, desde dónde llegan (por ejemplo, Google o redes sociales), qué páginas y coches miran y si usan el móvil, contamos las visitas de forma anónima: no usamos cookies ni guardamos tu dirección IP. Para no contar dos veces a la misma persona en un día se calcula un código que cambia cada día y se borra al día siguiente, así que es imposible saber quién eres ni seguirte de un día a otro. Base legal: nuestro interés legítimo en mejorar la web (art. 6.1.f del RGPD).</p>
 
 <h2>Solicitudes por WhatsApp y teléfono</h2>
 <p>Si nos escribes por WhatsApp o nos llamas, usamos tu número y lo que nos cuentes solo para atenderte. Borramos las conversaciones que ya no necesitamos. En el taller, los datos de la ficha de recepción (nombre, DNI y vehículo) se usan para gestionar la reparación, emitir la factura y cumplir la normativa de talleres.</p>

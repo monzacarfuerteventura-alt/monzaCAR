@@ -42,3 +42,15 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
     Content-Security-Policy = "frame-ancestors 'none'; object-src 'none'; base-uri 'self'"
+
+# Seguimiento de la reparación: enlace corto que se manda al cliente (/s/XXXXXXXXXXXXXXXX)
+[[redirects]]
+  from = "/s/*"
+  to = "/seguimiento.html"
+  status = 200
+
+[[headers]]
+  for = "/seguimiento.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-cache"

@@ -1,6 +1,6 @@
 import type { Config, Context } from "@netlify/functions";
 import { createHash } from "node:crypto";
-import { store, json, isAdmin } from "../lib/shared.mts";
+import { store, json, isAdmin, canalDe, enviarAviso, waNum } from "../lib/shared.mts";
 
 /*
   SOLICITUDES DE CLIENTES (mini CRM)
@@ -8,6 +8,10 @@ import { store, json, isAdmin } from "../lib/shared.mts";
   - GET    /api/solicitudes        → el panel lista todas (requiere contraseña)
   - PATCH  /api/solicitudes/:id    → el panel cambia el estado o añade notas
   - DELETE /api/solicitudes/:id    → el panel borra una solicitud (derecho de supresión RGPD)
+  - POST   /api/solicitudes con contraseña y "manual": true → el panel apunta un cliente que llamó o vino en persona
+  CRM: cada solicitud guarda importe (€), próximo seguimiento, motivo si se pierde, primera respuesta
+  (para medir el tiempo de contestación) y un registro de actividad (notas, llamadas, WhatsApp…).
+  Si existe la variable RESEND_API_KEY, cada solicitud nueva llega también por email.
   Cada solicitud se guarda como una entrada independiente: dos clientes a la vez nunca se pisan.
   Las solicitudes con más de 2 años se borran solas (así lo dice la política de privacidad).
 
@@ -49,7 +53,16 @@ type Solicitud = {
   cita?: { agenda: string; fecha: string; hora: string } | null;
   notas: string;
   historial: { t: string; estado: string }[];
+  importe?: number | null;
+  seguimiento?: string;
+  motivo?: string;
+  primerContacto?: string;
+  actividad?: { t: string; tipo: string; txt: string }[];
+  orden?: string;
+  manual?: boolean;
 };
+const ACTIVIDAD = ["nota", "llamada", "whatsapp", "email", "visita", "presupuesto", "orden", "sistema"];
+const MOTIVOS = ["", "Precio", "No contesta", "Compró en otro sitio", "Ya no lo necesita", "Sin financiación", "Coche vendido", "Otro"];
 
 const str = (v: unknown, max = 200) => String(v ?? "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").trim().slice(0, max);
 const soloDigitos = (v: string) => v.replace(/[^\d+]/g, "");
@@ -89,21 +102,9 @@ async function liberar(sol: Solicitud) {
   if (v && v.id === sol.id) await s.delete(key);
 }
 
-function canal(o: Record<string, string>): string {
-  const src = (o.utm_source || "").toLowerCase();
-  const med = (o.utm_medium || "").toLowerCase();
-  const ref = (o.referrer || "").toLowerCase();
-  if (o.gclid || (src.includes("google") && /cpc|ppc|paid|ads/.test(med))) return "Google Ads";
-  if (/portal|wallapop|coches\.net|milanuncios|autocasion|autoscout/.test(src + " " + ref)) return "Portal de coches";
-  if (/facebook|instagram|fb\.|meta/.test(src + " " + ref)) return "Redes sociales";
-  if (src.includes("gbp") || src.includes("maps") || med.includes("organic_local")) return "Ficha de Google";
-  if (/google\./.test(ref)) return "Google (búsqueda)";
-  if (src) return src.slice(0, 40);
-  if (ref && !ref.includes("monzacar")) return "Otra web";
-  return "Directo";
-}
+const canal = (o: Record<string, string>) => canalDe(o);
 
-function limpiar(input: any): { s?: Solicitud; error?: string } {
+function limpiar(input: any, manual = false): { s?: Solicitud; error?: string } {
   const tipo = TIPOS.includes(input?.tipo) ? input.tipo : null;
   if (!tipo) return { error: "Tipo de solicitud no válido." };
   const nombre = str(input.nombre, 80);
@@ -112,7 +113,7 @@ function limpiar(input: any): { s?: Solicitud; error?: string } {
   if (nombre.length < 2) return { error: "Escribe tu nombre." };
   if (soloDigitos(telefono).replace(/^\+/, "").length < 9) return { error: "Revisa el teléfono." };
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: "Revisa el email." };
-  if (input.acepta !== true) return { error: "Tienes que aceptar la política de privacidad." };
+  if (!manual && input.acepta !== true) return { error: "Tienes que aceptar la política de privacidad." };
 
   const o = input.origen && typeof input.origen === "object" ? input.origen : {};
   const origen = {
@@ -125,7 +126,7 @@ function limpiar(input: any): { s?: Solicitud; error?: string } {
     landing: str(o.landing, 300),
     canal: "",
   };
-  origen.canal = canal(origen);
+  origen.canal = manual ? str(input.canal, 40) || "En persona" : canal(origen);
 
   const c = input.coche && typeof input.coche === "object" ? input.coche : null;
   const precio = c ? Number(c.precio) : NaN;
@@ -153,11 +154,23 @@ function limpiar(input: any): { s?: Solicitud; error?: string } {
     vehiculo,
     origen,
     idioma: input.idioma === "en" ? "en" : "es",
-    consentimiento: { version: CONSENTIMIENTO_VERSION, fecha: ahora },
-    notas: "",
+    consentimiento: { version: manual ? "presencial" : CONSENTIMIENTO_VERSION, fecha: ahora },
+    notas: manual ? str(input.notas, 2000) : "",
     historial: [{ t: ahora, estado: "nueva" }],
     cita: null,
+    importe: null,
+    seguimiento: "",
+    motivo: "",
+    actividad: [],
   };
+  if (manual) {
+    s.manual = true;
+    s.estado = "contactado";
+    s.primerContacto = ahora;
+    s.historial = [{ t: ahora, estado: "contactado" }];
+    s.actividad = [{ t: ahora, tipo: "sistema", txt: "Cliente apuntado a mano (" + s.origen.canal + ")" }];
+    return { s };
+  }
   const ci = input.cita && typeof input.cita === "object" ? input.cita : null;
   if (ci) {
     const agenda = tipo === "taller" ? "taller" : tipo === "coche" ? "visita" : "";
@@ -218,6 +231,18 @@ export default async (req: Request, context: Context) => {
 
   const id = partes[2] || "";
 
+  // ---------- el panel apunta un cliente a mano ----------
+  if (req.method === "POST" && !id && isAdmin(req)) {
+    const input = await req.json().catch(() => null);
+    if (input && input.manual === true) {
+      const { s: sol, error } = limpiar(input, true);
+      if (error || !sol) return json({ error }, 400);
+      await s.setJSON("s/" + sol.id, sol);
+      return json(sol, 201);
+    }
+    return json({ error: "Datos no válidos." }, 400);
+  }
+
   // ---------- la web guarda una solicitud ----------
   if (req.method === "POST" && !id) {
     const len = Number(req.headers.get("content-length") || 0);
@@ -243,6 +268,8 @@ export default async (req: Request, context: Context) => {
       if (!v || v.id !== sol.id) return json({ error: "Esa hora se acaba de ocupar. Elige otra.", ocupada: true }, 409);
     }
     await s.setJSON("s/" + sol.id, sol);
+    const envio = avisar(sol, url.origin).catch(() => {});
+    if (typeof (context as any).waitUntil === "function") (context as any).waitUntil(envio); else await envio;
     return json({ ok: true, id: sol.id, cita: sol.cita });
   }
 
@@ -274,6 +301,22 @@ export default async (req: Request, context: Context) => {
       }
     }
     if (input.notas !== undefined) actual.notas = str(input.notas, 2000);
+    const t = new Date().toISOString();
+    if (input.importe !== undefined) {
+      const n = input.importe === "" || input.importe === null ? null : Number(String(input.importe).replace(/\./g, "").replace(",", "."));
+      actual.importe = n === null || !Number.isFinite(n) ? null : Math.round(n * 100) / 100;
+    }
+    if (input.seguimiento !== undefined) actual.seguimiento = fechaISO(input.seguimiento);
+    if (input.motivo !== undefined) actual.motivo = MOTIVOS.includes(input.motivo) ? input.motivo : str(input.motivo, 60);
+    for (const k of ["nombre", "telefono", "email"] as const) if (input[k] !== undefined && str(input[k], 120)) actual[k] = str(input[k], 120);
+    if (input.orden !== undefined) actual.orden = str(input.orden, 40);
+    if (input.actividad && typeof input.actividad === "object") {
+      const tipo = ACTIVIDAD.includes(input.actividad.tipo) ? input.actividad.tipo : "nota";
+      const txt = str(input.actividad.txt, 1500);
+      if (txt || tipo !== "nota") actual.actividad = [...(actual.actividad || []), { t, tipo, txt }].slice(-200);
+      if (["llamada", "whatsapp", "email", "visita"].includes(tipo) && !actual.primerContacto) actual.primerContacto = t;
+    }
+    if (actual.estado !== "nueva" && !actual.primerContacto) actual.primerContacto = t;
     await s.setJSON("s/" + id, actual);
     return json(actual);
   }
@@ -288,3 +331,33 @@ export default async (req: Request, context: Context) => {
 };
 
 export const config: Config = { path: ["/api/solicitudes", "/api/solicitudes/:id", "/api/citas", "/api/citas/bloqueos"] };
+
+// ---------- aviso por email de cada solicitud nueva ----------
+const TIPO_TXT: Record<string, string> = { coche: "Interesado en un coche", taller: "Cita de taller", tasacion: "Tasación", contacto: "Consulta" };
+function fechaBonita(f: string) {
+  return f ? new Date(f + "T12:00:00Z").toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }) : "";
+}
+async function avisar(x: Solicitud, origin: string) {
+  const cuando = x.cita ? `${fechaBonita(x.cita.fecha)} a las ${x.cita.hora}` : x.dia ? `${fechaBonita(x.dia)} ${x.franja}` : "";
+  const asunto = x.cita
+    ? `Nueva cita${x.tipo === "taller" ? " de taller" : " para ver coche"}: ${x.nombre} · ${cuando}`
+    : `Nueva solicitud (${TIPO_TXT[x.tipo] || x.tipo}): ${x.nombre}`;
+  const saludo = x.idioma === "en" ? `Hi ${x.nombre.split(" ")[0]}, this is Volcano Cars. ` : `Hola ${x.nombre.split(" ")[0]}, te escribimos de Volcano Cars. `;
+  const v = x.vehiculo || {};
+  await enviarAviso(asunto, [
+    ["Tipo", TIPO_TXT[x.tipo] || x.tipo],
+    ["Nombre", x.nombre],
+    ["Teléfono", x.telefono],
+    ["Email", x.email],
+    ["Cita", cuando],
+    ["Coche", x.coche ? `${x.coche.titulo}${x.coche.precio ? " · " + x.coche.precio.toLocaleString("es-ES") + " €" : ""}` : (v.coche || [v.marca, v.modelo, v.anio].filter(Boolean).join(" ")) + (v.matricula ? ` (${v.matricula})` : "")],
+    ["Servicios", (x.servicios || []).join(", ")],
+    ["Mensaje", x.mensaje],
+    ["Idioma", x.idioma === "en" ? "Inglés" : ""],
+    ["Viene de", x.origen?.canal || "Directo"],
+  ], [
+    { txt: "WhatsApp al cliente", url: `https://wa.me/${waNum(x.telefono)}?text=${encodeURIComponent(saludo)}`, color: "#1F8B4C" },
+    { txt: "Llamar", url: `tel:${x.telefono.replace(/[^\d+]/g, "")}`, color: "#1B1B1A" },
+    { txt: "Abrir el CRM", url: `${origin}/admin#crm` },
+  ], x.email);
+}

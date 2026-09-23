@@ -151,3 +151,66 @@ export function cleanCar(input: any, prev?: Car): { car?: Car; error?: string } 
   if (!car.precio) return { error: "Falta el precio." };
   return { car };
 }
+
+// ---------------------------------------------------------------------------
+// Utilidades comunes: fecha de Canarias, canal de entrada y avisos por email
+// ---------------------------------------------------------------------------
+export function canarias(d = new Date()) {
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-CA", { timeZone: "Atlantic/Canary", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" })
+    .formatToParts(d).map((x) => [x.type, x.value]));
+  return { fecha: `${p.year}-${p.month}-${p.day}`, hora: +p.hour, minutos: +p.hour * 60 + +p.minute };
+}
+export const sumarDias = (f: string, n: number) => new Date(Date.parse(f + "T12:00:00Z") + n * 864e5).toISOString().slice(0, 10);
+
+// De dónde viene un visitante o un cliente. host = dominio propio (para no contarse a sí mismo).
+export function canalDe(o: { gclid?: string; utm_source?: string; utm_medium?: string; referrer?: string }, host = ""): string {
+  const src = (o.utm_source || "").toLowerCase();
+  const med = (o.utm_medium || "").toLowerCase();
+  let ref = (o.referrer || "").toLowerCase();
+  if (host && ref.includes(host.toLowerCase())) ref = "";
+  if (o.gclid || (src.includes("google") && /cpc|ppc|paid|ads/.test(med))) return "Google Ads";
+  if (/portal|wallapop|coches\.net|milanuncios|autocasion|autoscout/.test(src + " " + ref)) return "Portal de coches";
+  if (/facebook|instagram|fb\.|meta|tiktok|t\.co|twitter|x\.com|youtube/.test(src + " " + ref)) return "Redes sociales";
+  if (src.includes("gbp") || src.includes("maps") || med.includes("organic_local") || /maps\.google|google\.[a-z.]+\/maps/.test(ref)) return "Ficha de Google";
+  if (src === "qr" || med === "qr") return "Código QR";
+  if (/mail|gmail|outlook/.test(src + " " + med)) return "Email";
+  if (/google\.|bing\.|duckduckgo|yahoo|ecosia/.test(ref)) return "Buscadores";
+  if (src) return src.slice(0, 40);
+  if (ref && !/lestter|netlify\.app|volcanocars|monzacar/.test(ref)) return "Otra web";
+  return "Directo";
+}
+
+const escH = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
+
+// Aviso por email con Resend (https://resend.com). Solo se envía si existe la variable RESEND_API_KEY.
+// Sin dominio propio verificado, Resend solo deja enviar a la dirección con la que se creó la cuenta.
+export async function enviarAviso(asunto: string, filas: [string, string][], botones: { txt: string; url: string; color?: string }[] = [], replyTo = "") {
+  const env = (globalThis as any).Netlify?.env;
+  const key = env?.get("RESEND_API_KEY") || "";
+  if (!key) return false;
+  const to = (env?.get("AVISOS_EMAIL") || "volcanocars2026@gmail.com").split(",").map((x: string) => x.trim()).filter(Boolean);
+  const from = env?.get("AVISOS_REMITENTE") || "Volcano Cars <onboarding@resend.dev>";
+  const html = `<!doctype html><html><body style="margin:0;background:#F2EFEA;font-family:Arial,Helvetica,sans-serif;color:#1B1B1A">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F2EFEA;padding:24px 12px"><tr><td align="center">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#fff;border-radius:14px;overflow:hidden">
+<tr><td style="background:#1B1B1A;padding:18px 22px;border-bottom:5px solid #D9481C"><span style="font-weight:900;font-size:20px;letter-spacing:2px;color:#F2EFEA">VOLCANO</span> <span style="background:#D9481C;color:#1B1B1A;font-weight:900;font-size:12px;letter-spacing:3px;padding:3px 7px">CARS</span></td></tr>
+<tr><td style="padding:22px 22px 6px"><h1 style="margin:0 0 14px;font-size:21px;line-height:1.25">${escH(asunto)}</h1>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:15px;line-height:1.45">
+${filas.filter(([, v]) => v).map(([k, v]) => `<tr><td style="padding:6px 10px 6px 0;color:#67635D;white-space:nowrap;vertical-align:top;width:120px">${escH(k)}</td><td style="padding:6px 0;font-weight:bold">${escH(v).replace(/\n/g, "<br>")}</td></tr>`).join("")}
+</table></td></tr>
+<tr><td style="padding:14px 22px 24px">${botones.map((b) => `<a href="${escH(b.url)}" style="display:inline-block;margin:6px 8px 0 0;background:${b.color || "#D9481C"};color:#fff;text-decoration:none;font-weight:bold;padding:12px 18px;border-radius:999px;font-size:15px">${escH(b.txt)}</a>`).join("")}</td></tr>
+</table><p style="color:#8C867D;font-size:12px">Aviso automático de la web de Volcano Cars.</p></td></tr></table></body></html>`;
+  try {
+    const r = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
+      body: JSON.stringify({ from, to, subject: asunto, html, ...(replyTo ? { reply_to: replyTo } : {}) }),
+      signal: AbortSignal.timeout(8000),
+    });
+    return r.ok;
+  } catch {
+    return false;
+  }
+}
+
+export const waNum = (t: string) => { let d = String(t || "").replace(/[^\d]/g, ""); if (d.startsWith("00")) d = d.slice(2); if (d.length === 9) d = "34" + d; return d; };

@@ -2,9 +2,10 @@
 
 - `public/index.html` es la web pública en español (Inicio, Comprar, Vender, Taller y Contacto).
 - `public/en/index.html` es la versión en inglés. Se genera sola con `python3 tools/build-en.py`: no la edites a mano.
-- `public/admin.html` es el panel de administración (tudominio/admin), con dos pestañas: **Coches** y **Solicitudes**.
+- `public/admin.html` es el panel (tudominio/admin): **Dashboard**, **CRM**, **Taller**, **Agenda** y **Coches**.
+- `public/seguimiento.html` es la página que ve el cliente con su enlace `/s/XXXX`: estado de su coche, fotos y presupuesto para aceptar.
 - `public/aviso-legal.html`, `privacidad.html` y `cookies.html` son las páginas legales. Cambia `[NOMBRE…]` y `[NIF/CIF]` por tus datos.
-- `netlify/functions/` es el servidor: guarda los coches, las fotos, los interesados y las solicitudes de clientes en Netlify Blobs.
+- `netlify/functions/` es el servidor: coches, fotos, solicitudes (CRM), órdenes de taller (`ordenes.mts`), analítica sin cookies (`ev.mts`) y su resumen nocturno (`stats-compactar.mts`). Todo se guarda en Netlify Blobs.
 
 ## Contraseña del panel
 Está guardada en Netlify, en la variable de entorno `ADMIN_PASSWORD` del proyecto monzacar-web
@@ -40,3 +41,16 @@ En el panel, al añadir o editar un coche, sección **Vídeo 360°**. Admite MP4
 ## «X personas están viendo este coche»
 Contador real (`netlify/functions/viendo.mts`): cuenta las pestañas con la ficha abierta en el último minuto,
 una por persona. Si no hay nadie más, no se muestra nada. No lo cambies por un número inventado: es publicidad engañosa.
+
+## Avisos por email de cada cliente nuevo (Resend)
+1. Crea una cuenta gratis en https://resend.com **con el correo volcanocars2026@gmail.com** (sin dominio propio, Resend solo deja enviar al correo de la cuenta).
+2. En Resend: API Keys → Create API Key → copia la clave (empieza por `re_`).
+3. En Netlify, proyecto de la web → Project configuration → Environment variables → Add a variable:
+   `RESEND_API_KEY` = la clave. (Opcional: `AVISOS_EMAIL` para mandar los avisos a otro correo.)
+4. Vuelve a publicar la web. Desde ese momento cada cita, solicitud o presupuesto aceptado llega también por email.
+Cuando tengas dominio propio (p. ej. volcanocars.es), verifícalo en Resend y pon `AVISOS_REMITENTE` = `Volcano Cars <avisos@volcanocars.es>`.
+
+## Analítica
+Sin cookies y sin guardar IPs: cada visitante cuenta una vez al día con un código que cambia a diario.
+Tus propias visitas no cuentan en el ordenador o móvil donde hayas entrado al panel.
+El Dashboard compara siempre con los mismos días del mes anterior y tiene «Informe PDF» y «Excel».

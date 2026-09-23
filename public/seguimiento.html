@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1B1B1A">
+<title>Seguimiento de tu coche · Volcano Cars</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231B1B1A'/%3E%3Cpath d='M8 54 L22 10 L29 10 L32 16 L35 10 L42 10 L56 54 Z' fill='%23F2EFEA'/%3E%3Cpath d='M26.5 26 L37.5 26 L42.6 45 L21.4 45 Z' fill='%23D9481C'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,600..900&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --ground:#F2EFEA; --surface:#FFFFFF; --surface-2:#E9E5DF; --line:#DCD8D1; --ink:#1B1B1A; --muted:#67635D;
+  --magma:#D9481C; --magma-text:#B83A12; --magma-soft:#FBE4DA; --ok:#1F8B4C; --ok-soft:#E3F2E9; --bad:#B3261E;
+  --display:"Archivo","Arial Narrow",Arial,sans-serif; --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --shadow:0 1px 2px rgba(27,27,26,.05),0 12px 32px rgba(27,27,26,.08); color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#121211; --surface:#1B1B1A; --surface-2:#252523; --line:#35342F; --ink:#F2EFEA; --muted:#A9A49B;
+  --magma:#E5562A; --magma-text:#FF8A5E; --magma-soft:#3A1D12; --ok:#3DBF76; --ok-soft:#14291D; --bad:#F2918A;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px rgba(0,0,0,.35); color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --ground:#121211; --surface:#1B1B1A; --surface-2:#252523; --line:#35342F; --ink:#F2EFEA; --muted:#A9A49B;
+  --magma:#E5562A; --magma-text:#FF8A5E; --magma-soft:#3A1D12; --ok:#3DBF76; --ok-soft:#14291D; --bad:#F2918A; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);font:16px/1.55 var(--body);-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom,0)}
+[hidden]{display:none!important}
+button,input,textarea{font:inherit;color:inherit}
+a{color:inherit}
+.wrap{max-width:720px;margin:0 auto;padding-inline:16px}
+header{background:#1B1B1A;color:#F2EFEA;border-bottom:6px solid #D9481C;padding-top:env(safe-area-inset-top,0)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;height:66px}
+header svg{height:38px;width:auto;display:block;color:#F2EFEA;--logo-inv:#1B1B1A}
+header .tag{font:700 11px var(--body);letter-spacing:.16em;text-transform:uppercase;color:rgba(242,239,234,.6);text-align:right}
+h1,h2,h3{font-family:var(--display);font-stretch:78%;font-weight:800;line-height:1;margin:0;text-transform:uppercase}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--shadow);margin-top:16px}
+.hero{background:#1B1B1A;color:#F2EFEA;border:0;position:relative;overflow:hidden;isolation:isolate}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(70% 90% at 100% 110%,rgba(217,72,28,.55),transparent 60%),radial-gradient(50% 60% at 0% 0%,rgba(220,216,209,.08),transparent 70%)}
+.hola{font-size:15px;color:rgba(242,239,234,.72)}
+.coche{font-family:var(--display);font-stretch:82%;font-weight:800;font-size:clamp(26px,7vw,36px);line-height:1.05;margin-top:4px;text-transform:uppercase}
+.mat{display:inline-block;margin-top:8px;font:700 13px/1 var(--body);letter-spacing:.1em;background:#F2EFEA;color:#1B1B1A;border-left:8px solid #2F55A4;padding:6px 10px;border-radius:4px}
+.estado-now{display:flex;gap:14px;align-items:center;margin-top:20px;padding:16px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)}
+.estado-now .ic{flex-shrink:0;width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:#D9481C;color:#fff}
+.estado-now.listo .ic{background:#1F8B4C}
+.estado-now b{display:block;font-family:var(--display);font-stretch:82%;font-size:22px;text-transform:uppercase;line-height:1.05}
+.estado-now span{font-size:14.5px;color:rgba(242,239,234,.75)}
+.entrega{display:flex;gap:10px;align-items:center;margin-top:14px;font-size:15px;color:rgba(242,239,234,.85)}
+.entrega b{color:#fff}
+.sec-t{font-size:22px;margin-bottom:14px}
+/* línea de tiempo */
+.pasos{list-style:none;margin:0;padding:0;position:relative}
+.pasos li{position:relative;padding:0 0 22px 44px;min-height:30px}
+.pasos li:last-child{padding-bottom:0}
+.pasos li::before{content:"";position:absolute;left:13px;top:28px;bottom:-2px;width:2px;background:var(--line)}
+.pasos li:last-child::before{display:none}
+.pasos li.hecho::before{background:var(--magma)}
+.pasos .dot{position:absolute;left:0;top:0;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);color:var(--muted);border:2px solid var(--line)}
+.pasos li.hecho .dot{background:var(--magma);border-color:var(--magma);color:#fff}
+.pasos li.actual .dot{background:var(--surface);border-color:var(--magma);color:var(--magma);box-shadow:0 0 0 6px color-mix(in srgb,var(--magma) 18%,transparent);animation:pulse 2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 10px color-mix(in srgb,var(--magma) 6%,transparent)}}
+@media (prefers-reduced-motion:reduce){.pasos li.actual .dot{animation:none}}
+.pasos b{display:block;font-size:16px;line-height:1.3}
+.pasos li.pend b{color:var(--muted);font-weight:600}
+.pasos small{display:block;color:var(--muted);font-size:13.5px;margin-top:2px}
+.pasos .nota{margin-top:6px;font-size:14.5px;background:var(--surface-2);border-radius:10px;padding:8px 12px}
+/* presupuesto */
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{text-align:left;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0 0 8px;border-bottom:1px solid var(--line)}
+td{padding:10px 0;border-bottom:1px solid var(--line);vertical-align:top}
+td.n,th.n{text-align:right;white-space:nowrap;padding-left:12px;font-variant-numeric:tabular-nums}
+tfoot td{border:0;padding:6px 0}
+tfoot tr.total td{font-family:var(--display);font-stretch:82%;font-weight:800;font-size:26px;padding-top:12px}
+.p-estado{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:13px;padding:6px 12px;border-radius:999px;background:var(--magma-soft);color:var(--magma-text)}
+.p-estado.ok{background:var(--ok-soft);color:var(--ok)}
+.p-estado.no{background:var(--surface-2);color:var(--muted)}
+.p-nota{margin:14px 0 0;color:var(--muted);font-size:14.5px;white-space:pre-line}
+.resp{display:grid;gap:12px;margin-top:18px;padding-top:18px;border-top:1px dashed var(--line)}
+.in{width:100%;padding:13px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-size:16px}
+.in:focus{outline:none;border-color:var(--magma);box-shadow:0 0 0 4px color-mix(in srgb,var(--magma) 16%,transparent)}
+label.chk{display:flex;gap:10px;align-items:flex-start;font-size:14.5px}
+label.chk input{width:20px;height:20px;accent-color:var(--magma);flex-shrink:0;margin-top:1px}
+.btns{display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;cursor:pointer;border-radius:999px;padding:14px 22px;font-weight:700;font-size:16px;text-decoration:none;transition:transform .2s}
+.btn:active{transform:scale(.98)}
+.btn[disabled]{opacity:.6;cursor:wait}
+.b-magma{background:var(--magma);color:#fff;flex:1 1 220px}
+.b-ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.b-wa{background:#1F8B4C;color:#fff;flex:1 1 180px}
+.b-ink{background:var(--ink);color:var(--ground);flex:1 1 140px}
+.err{color:var(--bad);font-weight:600;font-size:14.5px}
+/* fotos */
+.fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.fotos button{padding:0;border:0;border-radius:14px;overflow:hidden;cursor:zoom-in;background:var(--surface-2);aspect-ratio:4/3;position:relative}
+.fotos img{width:100%;height:100%;object-fit:cover;display:block}
+.fotos span{position:absolute;left:0;right:0;bottom:0;padding:18px 10px 8px;font-size:12.5px;font-weight:600;color:#fff;text-align:left;background:linear-gradient(transparent,rgba(0,0,0,.65))}
+dialog{border:0;padding:0;background:transparent;max-width:min(960px,96vw);max-height:92dvh}
+dialog::backdrop{background:rgba(10,10,10,.85)}
+dialog img{max-width:100%;max-height:84dvh;display:block;border-radius:12px}
+dialog p{color:#fff;margin:10px 0 0;text-align:center}
+dialog button{position:fixed;top:14px;right:14px;width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.14);color:#fff;font-size:22px;cursor:pointer}
+.msg{white-space:pre-line}
+.foot{color:var(--muted);font-size:13px;text-align:center;padding:26px 0 40px}
+.skel{height:220px;border-radius:22px;background:linear-gradient(90deg,var(--surface-2),var(--surface),var(--surface-2));background-size:200% 100%;animation:sk 1.2s infinite;margin-top:16px}
+@keyframes sk{to{background-position:-200% 0}}
+.vacio{text-align:center;padding:40px 20px}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="vc-logo" viewBox="0 0 662 162">
+    <path d="M0 0 L22 0 L40 74 L58 0 L80 0 L54 100 L26 100 Z M112 0 L160 0 Q176 0 176 16 L176 84 Q176 100 160 100 L112 100 Q96 100 96 84 L96 16 Q96 0 112 0 Z M122 22 L150 22 Q154 22 154 26 L154 74 Q154 78 150 78 L122 78 Q118 78 118 74 L118 26 Q118 22 122 22 Z M192 0 L214 0 L214 78 L256 78 L256 100 L192 100 Z M288 0 L348 0 L348 22 L298 22 Q294 22 294 26 L294 74 Q294 78 298 78 L348 78 L348 100 L288 100 Q272 100 272 84 L272 16 Q272 0 288 0 Z M364 100 L364 16 Q364 0 380 0 L428 0 Q444 0 444 16 L444 100 L422 100 L422 68 L386 68 L386 100 Z M386 22 L422 22 L422 48 L386 48 Z M460 0 L484 0 L518 62 L518 0 L540 0 L540 100 L516 100 L482 38 L482 100 L460 100 Z" fill="currentColor" fill-rule="evenodd"/>
+    <path d="M552 100 L580 0 L596 0 L607 14 L618 0 L634 0 L662 100 Z" fill="currentColor" fill-rule="evenodd"/>
+    <path d="M592.9 36 L621.1 36 L632.8 78 L581.2 78 Z" fill="#D9481C"/>
+    <path d="M0 122 L170 122 L170 162 L0 162 Z" fill="#D9481C"/>
+    <path d="M29 134.52 Q29 131 32.52 131 L45.28 131 L45.28 135.84 L34.72 135.84 Q33.84 135.84 33.84 136.72 L33.84 147.28 Q33.84 148.16 34.72 148.16 L45.28 148.16 L45.28 153 L32.52 153 Q29 153 29 149.48 Z M60.907 153 L60.907 134.52 Q60.907 131 64.427 131 L73.667 131 Q77.187 131 77.187 134.52 L77.187 153 L72.347 153 L72.347 148.16 L65.747 148.16 L65.747 153 Z M65.747 136.72 Q65.747 135.84 66.627 135.84 L71.467 135.84 Q72.347 135.84 72.347 136.72 L72.347 143.32 L65.747 143.32 Z M92.813 153 L92.813 131 L105.573 131 Q109.093 131 109.093 134.52 L109.093 139.8 Q109.093 143.32 105.573 143.32 L97.653 143.32 L97.653 153 Z M97.653 135.84 L103.373 135.84 Q104.253 135.84 104.253 136.72 L104.253 137.6 Q104.253 138.48 103.373 138.48 L97.653 138.48 Z M97.697 143.32 L103.263 143.32 L109.093 153 L103.527 153 Z M124.72 134.52 Q124.72 131 128.24 131 L141 131 L141 135.84 L130.44 135.84 Q129.56 135.84 129.56 136.72 L129.56 139.58 L137.48 139.58 Q141 139.58 141 143.1 L141 149.48 Q141 153 137.48 153 L124.72 153 L124.72 148.16 L135.28 148.16 Q136.16 148.16 136.16 147.28 L136.16 144.42 L128.24 144.42 Q124.72 144.42 124.72 140.9 Z" fill="#1B1B1A"/>
+    <path d="M178 122 L662 122 L662 162 L178 162 Z" fill="currentColor"/>
+    <path d="M200 134.5 L209.6 134.5 L209.6 137.35 L206.225 137.35 L206.225 149.5 L203.375 149.5 L203.375 137.35 L200 137.35 Z M214.759 149.5 L214.759 136.9 Q214.759 134.5 217.159 134.5 L221.959 134.5 Q224.359 134.5 224.359 136.9 L224.359 149.5 L221.509 149.5 L221.509 145.75 L217.609 145.75 L217.609 149.5 Z M217.609 137.95 Q217.609 137.35 218.209 137.35 L220.909 137.35 Q221.509 137.35 221.509 137.95 L221.509 142.9 L217.609 142.9 Z M229.519 134.5 L232.369 134.5 L232.369 146.65 L238.159 146.65 L238.159 149.5 L229.519 149.5 Z M243.318 134.5 L246.168 134.5 L246.168 146.65 L251.958 146.65 L251.958 149.5 L243.318 149.5 Z M257.118 134.5 L266.718 134.5 L266.718 137.35 L259.968 137.35 L259.968 140.575 L265.374 140.575 L265.374 143.425 L259.968 143.425 L259.968 146.65 L266.718 146.65 L266.718 149.5 L257.118 149.5 Z M271.877 149.5 L271.877 134.5 L279.077 134.5 Q281.477 134.5 281.477 136.9 L281.477 140.5 Q281.477 142.9 279.077 142.9 L274.727 142.9 L274.727 149.5 Z M274.727 137.35 L278.027 137.35 Q278.627 137.35 278.627 137.95 L278.627 139.45 Q278.627 140.05 278.027 140.05 L274.727 140.05 Z M274.757 142.9 L278.035 142.9 L281.477 149.5 L278.2 149.5 Z M296.596 134.5 L299.446 134.5 L303.316 140.5 L307.186 134.5 L310.036 134.5 L310.036 149.5 L307.186 149.5 L307.186 139.139 L303.316 145.139 L299.446 139.139 L299.446 149.5 L296.596 149.5 Z M315.196 134.5 L324.796 134.5 L324.796 137.35 L318.046 137.35 L318.046 140.575 L323.452 140.575 L323.452 143.425 L318.046 143.425 L318.046 146.65 L324.796 146.65 L324.796 149.5 L315.196 149.5 Z M329.955 136.9 Q329.955 134.5 332.355 134.5 L339.555 134.5 L339.555 137.35 L333.405 137.35 Q332.805 137.35 332.805 137.95 L332.805 146.05 Q332.805 146.65 333.405 146.65 L339.555 146.65 L339.555 149.5 L332.355 149.5 Q329.955 149.5 329.955 147.1 Z M344.715 149.5 L344.715 136.9 Q344.715 134.5 347.115 134.5 L351.915 134.5 Q354.315 134.5 354.315 136.9 L354.315 149.5 L351.465 149.5 L351.465 145.75 L347.565 145.75 L347.565 149.5 Z M347.565 137.95 Q347.565 137.35 348.165 137.35 L350.865 137.35 Q351.465 137.35 351.465 137.95 L351.465 142.9 L347.565 142.9 Z M347.947 133.15 L350.512 133.15 L353.077 130.75 L350.512 130.75 Z M359.474 134.5 L362.609 134.5 L366.224 142.887 L366.224 134.5 L369.074 134.5 L369.074 149.5 L365.939 149.5 L362.324 141.113 L362.324 149.5 L359.474 149.5 Z M374.233 134.5 L377.083 134.5 L377.083 149.5 L374.233 149.5 Z M382.243 136.9 Q382.243 134.5 384.643 134.5 L391.843 134.5 L391.843 137.35 L385.693 137.35 Q385.093 137.35 385.093 137.95 L385.093 146.05 Q385.093 146.65 385.693 146.65 L391.843 146.65 L391.843 149.5 L384.643 149.5 Q382.243 149.5 382.243 147.1 Z M397.002 136.9 Q397.002 134.5 399.402 134.5 L404.202 134.5 Q406.602 134.5 406.602 136.9 L406.602 147.1 Q406.602 149.5 404.202 149.5 L399.402 149.5 Q397.002 149.5 397.002 147.1 Z M400.452 137.35 Q399.852 137.35 399.852 137.95 L399.852 146.05 Q399.852 146.65 400.452 146.65 L403.152 146.65 Q403.752 146.65 403.752 146.05 L403.752 137.95 Q403.752 137.35 403.152 137.35 Z M421.721 140.361 L424.999 140.361 L424.999 143.639 L421.721 143.639 Z M440.118 136.9 Q440.118 134.5 442.518 134.5 L449.718 134.5 L449.718 137.35 L443.568 137.35 Q442.968 137.35 442.968 137.95 L442.968 146.05 Q442.968 146.65 443.568 146.65 L449.718 146.65 L449.718 149.5 L442.518 149.5 Q440.118 149.5 440.118 147.1 Z M454.877 134.5 L457.727 134.5 L457.727 140.575 L461.627 140.575 L461.627 134.5 L464.477 134.5 L464.477 149.5 L461.627 149.5 L461.627 143.425 L457.727 143.425 L457.727 149.5 L454.877 149.5 Z M469.637 149.5 L469.637 136.9 Q469.637 134.5 472.037 134.5 L476.837 134.5 Q479.237 134.5 479.237 136.9 L479.237 149.5 L476.387 149.5 L476.387 145.75 L472.487 145.75 L472.487 149.5 Z M472.487 137.95 Q472.487 137.35 473.087 137.35 L475.787 137.35 Q476.387 137.35 476.387 137.95 L476.387 142.9 L472.487 142.9 Z M484.396 149.5 L484.396 134.5 L491.596 134.5 Q493.996 134.5 493.996 136.9 L493.996 140.8 Q493.996 143.2 491.596 143.2 L487.246 143.2 L487.246 149.5 Z M487.246 137.35 L490.546 137.35 Q491.146 137.35 491.146 137.95 L491.146 139.75 Q491.146 140.35 490.546 140.35 L487.246 140.35 Z M499.155 149.5 L499.155 136.9 Q499.155 134.5 501.555 134.5 L506.355 134.5 Q508.755 134.5 508.755 136.9 L508.755 149.5 L505.905 149.5 L505.905 145.75 L502.005 145.75 L502.005 149.5 Z M502.005 137.95 Q502.005 137.35 502.605 137.35 L505.305 137.35 Q505.905 137.35 505.905 137.95 L505.905 142.9 L502.005 142.9 Z M523.874 134.5 L527.152 134.5 L528.674 138.289 L530.197 134.5 L533.474 134.5 L530.099 142.9 L530.099 149.5 L527.249 149.5 L527.249 142.9 Z M548.593 149.5 L548.593 134.5 L555.793 134.5 Q558.193 134.5 558.193 136.9 L558.193 140.8 Q558.193 143.2 555.793 143.2 L551.443 143.2 L551.443 149.5 Z M551.443 137.35 L554.743 137.35 Q555.343 137.35 555.343 137.95 L555.343 139.75 Q555.343 140.35 554.743 140.35 L551.443 140.35 Z M563.353 134.5 L566.203 134.5 L566.203 149.5 L563.353 149.5 Z M571.362 134.5 L574.497 134.5 L578.112 142.887 L578.112 134.5 L580.962 134.5 L580.962 149.5 L577.827 149.5 L574.212 141.113 L574.212 149.5 L571.362 149.5 Z M586.122 134.5 L595.722 134.5 L595.722 137.35 L592.347 137.35 L592.347 149.5 L589.497 149.5 L589.497 137.35 L586.122 137.35 Z M600.881 134.5 L603.731 134.5 L603.731 146.05 Q603.731 146.65 604.331 146.65 L607.031 146.65 Q607.631 146.65 607.631 146.05 L607.631 134.5 L610.481 134.5 L610.481 147.1 Q610.481 149.5 608.081 149.5 L603.281 149.5 Q600.881 149.5 600.881 147.1 Z M615.641 149.5 L615.641 134.5 L622.841 134.5 Q625.241 134.5 625.241 136.9 L625.241 140.5 Q625.241 142.9 622.841 142.9 L618.491 142.9 L618.491 149.5 Z M618.491 137.35 L621.791 137.35 Q622.391 137.35 622.391 137.95 L622.391 139.45 Q622.391 140.05 621.791 140.05 L618.491 140.05 Z M618.521 142.9 L621.798 142.9 L625.241 149.5 L621.963 149.5 Z M630.4 149.5 L630.4 136.9 Q630.4 134.5 632.8 134.5 L637.6 134.5 Q640 134.5 640 136.9 L640 149.5 L637.15 149.5 L637.15 145.75 L633.25 145.75 L633.25 149.5 Z M633.25 137.95 Q633.25 137.35 633.85 137.35 L636.55 137.35 Q637.15 137.35 637.15 137.95 L637.15 142.9 L633.25 142.9 Z" style="fill:var(--logo-inv,#F2EFEA)"/>
+  </symbol>
+</svg>
+<header><div class="wrap"><a href="/" aria-label="Volcano Cars"><svg viewBox="0 0 662 162"><use href="#vc-logo"/></svg></a><span class="tag" id="t-tag">Seguimiento<br>de tu coche</span></div></header>
+<main class="wrap" id="app"><div class="skel"></div><div class="skel" style="height:320px"></div></main>
+<dialog id="lb"><button type="button" id="lb-x" aria-label="Cerrar">✕</button><img id="lb-img" alt=""><p id="lb-t"></p></dialog>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const TOKEN=(location.pathname.match(/\/s\/([A-Za-z0-9]{16})/)||[])[1]||new URLSearchParams(location.search).get("t")||"";
+const TEL="+34643668813", WA="34643668813";
+let D=null, EN=false;
+const L=(es,en)=>EN?en:es;
+const eur=n=>Number(n||0).toLocaleString(EN?"en-GB":"es-ES",{minimumFractionDigits:2,maximumFractionDigits:2})+" €";
+const fechaL=f=>{ if(!f) return ""; const t=new Date(f+"T12:00:00Z").toLocaleDateString(EN?"en-GB":"es-ES",{weekday:"long",day:"numeric",month:"long",timeZone:"UTC"}); return t[0].toUpperCase()+t.slice(1); };
+const cuando=iso=>new Date(iso).toLocaleString(EN?"en-GB":"es-ES",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit",timeZone:"Atlantic/Canary"});
+const IC={
+  recibido:'<path d="M5 16h14M3.5 16v-3.2c0-.6.2-1.1.6-1.5L6.8 8.5c.4-.3.9-.5 1.4-.5h7.3c.6 0 1.1.2 1.5.6l2.6 2.7c.4.4.9.6 1.4.7l.5.1c.3.1.5.4.5.7V16M7.5 18.5a2 2 0 100-4 2 2 0 000 4zM16.5 18.5a2 2 0 100-4 2 2 0 000 4z"/>',
+  diagnostico:'<path d="M4 8V5h3M17 5h3v3M20 16v3h-3M7 19H4v-3M8 12h2l1.5-3 2 6 1.5-3h1"/>',
+  presupuesto:'<path d="M6 3h9l4 4v14H6zM9 12h6M9 16h4M14 3v4h4"/>',
+  reparacion:'<path d="M14.7 6.3a4 4 0 00-5.4 5.2L3.5 17.3a1.8 1.8 0 002.5 2.5l5.8-5.8a4 4 0 005.2-5.4l-2.5 2.5-2.1-.4-.4-2.1 2.7-2.3z"/>',
+  calidad:'<path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3zM9 12l2 2 4-4"/>',
+  listo:'<path d="M5 12.5l4.2 4.2L19 7"/>',
+  entregado:'<path d="M4 11l8-6.5 8 6.5V20h-5v-5H9v5H4z"/>'
+};
+const svg=k=>`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[k]||IC.recibido}</svg>`;
+const PASOS=["recibido","diagnostico","presupuesto","reparacion","calidad","listo","entregado"];
+const TXT=()=>({
+  recibido:[L("Coche recibido","Car received"),L("Tu coche ya está en nuestro taller.","Your car is at our workshop.")],
+  diagnostico:[L("Diagnóstico","Inspection"),L("Estamos revisando el coche para saber qué necesita.","We're checking the car to see what it needs.")],
+  presupuesto:[L("Presupuesto","Quote"),L("Te hemos preparado el presupuesto. No tocamos nada sin tu aprobación.","Your quote is ready. We won't touch anything without your approval.")],
+  reparacion:[L("En reparación","Being repaired"),L("Estamos trabajando en tu coche.","We're working on your car.")],
+  calidad:[L("Control de calidad","Quality check"),L("Otra persona del taller revisa el trabajo y prueba el coche.","A second person checks the work and road-tests the car.")],
+  listo:[L("Listo para recoger","Ready for collection"),L("¡Ya puedes venir a por él! Lunes a viernes, de 8:00 a 16:00.","You can pick it up! Monday to Friday, 8:00 to 16:00.")],
+  entregado:[L("Entregado","Handed over"),L("Gracias por confiar en Volcano Cars.","Thank you for trusting Volcano Cars.")]
+});
+
+async function cargar(silencioso){
+  if(!TOKEN){ pintarError(); return; }
+  try{
+    const r=await fetch("/api/seguimiento/"+TOKEN,{cache:"no-store"});
+    if(!r.ok) throw 0;
+    const d=await r.json();
+    const cambio=JSON.stringify(d)!==JSON.stringify(D);
+    D=d; EN=d.idioma==="en"; document.documentElement.lang=EN?"en":"es";
+    if(cambio){ const foco=document.activeElement; if(!(silencioso && foco && foco.closest && foco.closest(".resp"))) pintar(); }
+  }catch(_){ if(!D) pintarError(); }
+}
+function pintarError(){
+  $("#app").innerHTML=`<div class="card vacio"><h2 class="sec-t">${L("Enlace no válido","Invalid link")}</h2><p style="color:var(--muted)">${L("Revisa que el enlace esté completo o escríbenos y te lo reenviamos.","Please check the link is complete, or message us and we'll resend it.")}</p><div class="btns" style="justify-content:center;margin-top:16px"><a class="btn b-wa" href="https://wa.me/${WA}">WhatsApp</a></div></div>`;
+}
+function pintar(){
+  const d=D, T=TXT();
+  document.title=L("Seguimiento de tu coche","Your car's progress")+" · Volcano Cars";
+  $("#t-tag").innerHTML=L("Seguimiento<br>de tu coche","Your car's<br>progress");
+  const idx=PASOS.indexOf(d.estado);
+  const hechos={}; (d.pasos||[]).forEach(p=>{ if(PASOS.includes(p.estado)) hechos[p.estado]=p; });
+  const aprob=d.presupuesto&&d.presupuesto.estado==="aceptado";
+  const est=T[d.estado]||T.recibido;
+  let estTxt=est[1];
+  if(d.estado==="presupuesto" && aprob) estTxt=L("Has aprobado el presupuesto. Empezamos enseguida.","You've approved the quote. We'll start shortly.");
+  const wtxt=encodeURIComponent(L(`Hola, os escribo por mi coche ${d.vehiculo.coche||""} ${d.vehiculo.matricula||""}. `,`Hi, I'm writing about my car ${d.vehiculo.coche||""} ${d.vehiculo.matricula||""}. `));
+  let h=`<section class="card hero">
+    <div class="hola">${L("Hola","Hi")} ${esc(d.nombre)}</div>
+    <div class="coche">${esc(d.vehiculo.coche||L("Tu coche","Your car"))}</div>
+    ${d.vehiculo.matricula?`<span class="mat">${esc(d.vehiculo.matricula.toUpperCase())}</span>`:""}
+    <div class="estado-now ${d.estado==="listo"||d.estado==="entregado"?"listo":""}"><span class="ic">${svg(d.estado)}</span><div><b>${esc(est[0])}</b><span>${esc(estTxt)}</span></div></div>
+    ${d.entrega&&idx<5?`<div class="entrega"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5.5" width="16" height="14" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/></svg><span>${L("Entrega prevista:","Expected ready:")} <b>${esc(fechaL(d.entrega))}</b></span></div>`:""}
+  </section>`;
+  // presupuesto
+  const p=d.presupuesto;
+  if(p){
+    const est2=p.estado==="aceptado"?`<span class="p-estado ok">✓ ${L("Aprobado","Approved")}${p.respuesta?" · "+esc(cuando(p.respuesta.t)):""}</span>`:p.estado==="rechazado"?`<span class="p-estado no">${L("No aprobado","Declined")}</span>`:`<span class="p-estado">${L("Pendiente de tu aprobación","Waiting for your approval")}</span>`;
+    h+=`<section class="card" id="presu"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px"><h2 class="sec-t" style="margin:0">${L("Presupuesto","Quote")}</h2>${est2}</div>
+      <table><thead><tr><th>${L("Concepto","Item")}</th><th class="n">${L("Cant.","Qty")}</th><th class="n">${L("Importe","Amount")}</th></tr></thead><tbody>
+      ${p.lineas.map(l=>`<tr><td>${esc(l.c)}</td><td class="n">${String(l.n).replace(".",EN?".":",")}</td><td class="n">${eur(l.n*l.p)}</td></tr>`).join("")}
+      </tbody><tfoot><tr><td colspan="2">${L("Base imponible","Subtotal")}</td><td class="n">${eur(p.base)}</td></tr><tr><td colspan="2">IGIC ${String(p.igic).replace(".",",")} %</td><td class="n">${eur(p.igicImporte)}</td></tr><tr class="total"><td colspan="2">${L("Total","Total")}</td><td class="n">${eur(p.total)}</td></tr></tfoot></table>
+      ${p.nota?`<p class="p-nota">${esc(p.nota)}</p>`:""}
+      ${p.validez&&p.estado==="enviado"?`<p class="p-nota">${L("Válido hasta el","Valid until")} ${esc(fechaL(p.validez).toLowerCase())}.</p>`:""}
+      ${p.estado==="enviado"?`<form class="resp" id="resp" novalidate>
+        <b style="font-size:17px">${L("¿Damos luz verde?","Shall we go ahead?")}</b>
+        <input class="in" id="r-nombre" autocomplete="name" placeholder="${L("Tu nombre y apellidos","Your full name")}" required>
+        <textarea class="in" id="r-com" rows="2" placeholder="${L("Comentario (opcional)","Comment (optional)")}"></textarea>
+        <label class="chk"><input type="checkbox" id="r-ok"><span>${L("He leído el presupuesto y autorizo a Volcano Cars a hacer estos trabajos por el importe indicado.","I have read the quote and authorise Volcano Cars to carry out this work for the amount shown.")}</span></label>
+        <div class="err" id="r-err" role="alert" hidden></div>
+        <div class="btns"><button class="btn b-magma" type="submit" data-acc="aceptar">${L("Aceptar presupuesto","Accept quote")}</button><button class="btn b-ghost" type="button" data-acc="rechazar">${L("No, gracias","No, thanks")}</button></div>
+      </form>`:""}
+    </section>`;
+  }
+  // línea de tiempo
+  h+=`<section class="card"><h2 class="sec-t">${L("Cómo va","Progress")}</h2><ol class="pasos">`+PASOS.map((k,i)=>{
+    const cls=i<idx?"hecho":i===idx?(k==="entregado"?"hecho":"actual"):"pend";
+    const p0=hechos[k];
+    return `<li class="${cls}"><span class="dot">${i<idx||k==="entregado"&&i===idx?svg("listo"):svg(k)}</span><b>${esc(T[k][0])}</b>${p0&&i<=idx?`<small>${esc(cuando(p0.t))}</small>`:""}${p0&&p0.nota&&i<=idx?`<div class="nota">${esc(p0.nota)}</div>`:""}</li>`;
+  }).join("")+`</ol></section>`;
+  if(d.mensaje) h+=`<section class="card"><h2 class="sec-t">${L("Mensaje del taller","Message from the workshop")}</h2><p class="msg" style="margin:0">${esc(d.mensaje)}</p></section>`;
+  if(d.fotos&&d.fotos.length) h+=`<section class="card"><h2 class="sec-t">${L("Fotos de tu coche","Photos of your car")}</h2><div class="fotos">${d.fotos.map((f,i)=>`<button type="button" data-f="${i}"><img src="/api/fotos/${encodeURIComponent(f.k)}" alt="${esc(f.txt)}" loading="lazy">${f.txt?`<span>${esc(f.txt)}</span>`:""}</button>`).join("")}</div></section>`;
+  h+=`<section class="card"><h2 class="sec-t">${L("¿Alguna duda?","Any questions?")}</h2><div class="btns"><a class="btn b-wa" href="https://wa.me/${WA}?text=${wtxt}" target="_blank" rel="noopener">WhatsApp</a><a class="btn b-ink" href="tel:${TEL}">${L("Llamar","Call")}</a></div></section>
+  <p class="foot">Volcano Cars · Calle Valle Largo, Nave 8, Antigua · ${L("Esta página se actualiza sola.","This page updates automatically.")}<br>${L("Última actualización","Last update")}: ${esc(cuando(d.actualizado))}</p>`;
+  $("#app").innerHTML=h;
+}
+document.addEventListener("click",async e=>{
+  const f=e.target.closest("[data-f]");
+  if(f){ const x=D.fotos[+f.dataset.f]; $("#lb-img").src="/api/fotos/"+encodeURIComponent(x.k); $("#lb-t").textContent=x.txt||""; $("#lb").showModal(); return; }
+  const b=e.target.closest("[data-acc]"); if(!b) return;
+  e.preventDefault();
+  const acc=b.dataset.acc, err=$("#r-err"); err.hidden=true;
+  const nombre=$("#r-nombre").value.trim();
+  if(acc==="aceptar" && (nombre.length<2 || !$("#r-ok").checked)){ err.textContent=L("Escribe tu nombre y marca la casilla para aceptar.","Please enter your name and tick the box to accept."); err.hidden=false; return; }
+  if(acc==="rechazar" && !confirm(L("¿Seguro que no quieres hacer la reparación? Te llamaremos para comentarlo.","Are you sure you don't want the repair? We'll call you to talk it through."))) return;
+  document.querySelectorAll("[data-acc]").forEach(x=>x.disabled=true);
+  try{
+    const r=await fetch("/api/seguimiento/"+TOKEN+"/respuesta",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({accion:acc,nombre,comentario:$("#r-com").value,acepta:$("#r-ok").checked})});
+    const j=await r.json(); if(!r.ok) throw new Error(j.error||"Error");
+    D=j; pintar(); document.getElementById("presu").scrollIntoView({behavior:"smooth",block:"start"});
+  }catch(x){ err.textContent=x.message||L("No se ha podido enviar. Inténtalo otra vez o escríbenos.","Couldn't send it. Try again or message us."); err.hidden=false; document.querySelectorAll("[data-acc]").forEach(y=>y.disabled=false); }
+});
+$("#resp")?.addEventListener("submit",e=>e.preventDefault());
+document.addEventListener("submit",e=>{ if(e.target.id==="resp"){ e.preventDefault(); e.target.querySelector('[data-acc="aceptar"]').click(); } });
+$("#lb-x").onclick=()=>$("#lb").close();
+$("#lb").addEventListener("click",e=>{ if(e.target.id==="lb") $("#lb").close(); });
+cargar();
+setInterval(()=>{ if(!document.hidden) cargar(true); },30000);
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden) cargar(true); });
+</script>
+</body>
+</html>
