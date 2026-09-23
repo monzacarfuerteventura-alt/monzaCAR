@@ -235,6 +235,29 @@ legend{display:flex;align-items:center;gap:10px}
 @media (prefers-color-scheme:dark){.pill.v3{background:#F3EFE9;color:#15171A}}
 .pill.viendo{background:var(--bad-soft);color:var(--accent);display:inline-flex;align-items:center;gap:6px}
 .pill.viendo::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;animation:latido 1.8s infinite}
+/* ---------- móvil (Android e iPhone, 320–440 px) ---------- */
+.row small b{white-space:nowrap}
+html{overflow-x:hidden}
+.logo em{white-space:nowrap}
+img,video{max-width:100%}
+@media (max-width:480px){
+  .bar{gap:8px}
+  .logo svg{width:42px}
+  .logo em{font-size:16px}
+  .bar .sp .btn{padding:8px 10px;font-size:13.5px}
+  .tabsrow{gap:10px}
+  .tabs{width:100%}
+  .tabs button{flex:1 1 0;justify-content:center;padding:10px 6px;font-size:14px;gap:6px;min-width:0}
+  .head .btn{width:100%}
+  .foot{gap:8px}
+}
+@media (max-width:374px){
+  .wrap{padding-inline:12px}
+  .tabs button svg{display:none}
+  .tabs button{font-size:13.5px}
+  .card{padding:16px}
+  .g2{grid-template-columns:1fr}
+}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0));transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:12px 18px;border-radius:12px;font-weight:600;z-index:50;max-width:calc(100vw - 32px)}
 </style>
 </head>

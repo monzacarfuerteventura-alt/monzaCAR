@@ -227,6 +227,7 @@ TEXT = {
 
 # ---------- 2. Atributos (placeholder, aria-label, alt, title) ----------
 ATTR = {
+    "Llamar a Monza Car": "Call Monza Car",
     "Entrega gratis en toda Fuerteventura, de Corralejo a Morro Jable": "Free delivery anywhere on Fuerteventura, from Corralejo to Morro Jable",
     "Por qué Monza Car": "Why Monza Car",
     "Progreso de tu tasación": "Valuation progress",

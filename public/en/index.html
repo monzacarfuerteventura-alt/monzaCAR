@@ -200,7 +200,7 @@ section.block{padding-block:88px}
 .sec-head p{margin:12px 0 0;color:var(--muted);max-width:58ch;font-size:17.5px}
 
 /* ---------- Car cards ---------- */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(290px,100%),1fr));gap:24px}
 @media (min-width:980px){#home-grid,#cat-grid{grid-template-columns:repeat(3,1fr)}}
 .car{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;text-align:left;padding:0;transition:transform .45s var(--ease),box-shadow .45s var(--ease),border-color .3s}
 .car:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:transparent}
@@ -797,6 +797,58 @@ footer .logo-tag{color:rgba(243,239,233,.55)}
 :root[data-theme="dark"] .entrega-mini{background:linear-gradient(135deg,#16223A,var(--surface))}
 .trust li:nth-child(4){animation-delay:.36s}
 @media (prefers-reduced-motion:reduce){.ruta li{opacity:1;transform:none}.ruta .camion{top:4px}}
+
+/* =====================================================================
+   MOVIL (Android e iPhone, de 320 a 440 px de ancho)
+   ===================================================================== */
+:root{--badge:0px}
+/* Red de seguridad: nada puede ensanchar la pagina hacia los lados.
+   Va solo en <html> para no romper la cabecera fija. */
+html{overflow-x:hidden}
+img,video,canvas{max-width:100%}
+.hero h1{margin-top:0}
+@media (max-width:900px){
+  .bar{gap:10px}
+  .logo{min-width:0;flex-shrink:1;gap:8px}
+  .logo svg{width:clamp(38px,11.5vw,52px);flex-shrink:0}
+  .logo-word{font-size:clamp(14.5px,4.4vw,18px)}
+  .phone-top{flex-shrink:0;min-height:40px;padding:0 14px}
+  .lang{flex-shrink:0;margin-left:0;height:40px}
+  .hero h1.h1-long{font-size:clamp(31px,9.4vw,52px);letter-spacing:-.02em}
+  .hero p.lead{font-size:clamp(16px,4.3vw,18px)}
+  .hero-ctas .btn{flex:1 1 100%}
+  /* la barra de abajo deja sitio a la etiqueta de Netlify (plan gratuito) */
+  nav.mtabs{bottom:calc(10px + var(--badge) + env(safe-area-inset-bottom,0px))}
+  .barra-cita{bottom:calc(84px + var(--badge) + env(safe-area-inset-bottom,0px))}
+  .ck{bottom:calc(92px + var(--badge) + env(safe-area-inset-bottom,0px))}
+  main{padding-bottom:calc(96px + var(--badge))}
+  footer{padding-bottom:calc(96px + var(--badge))}
+  .entrega h2{font-size:clamp(30px,8.6vw,46px)}
+  .ruta li{font-size:14.5px;padding:8px 12px}
+}
+.split>*,.duo>*,.steps>*,.grid>*,.row2>*,.entrega>*,.hero-in>*,.visit>*,.stats>*{min-width:0}
+.btn{max-width:100%}
+@media (max-width:420px){
+  .entrega{padding:30px 18px}
+  .ruta{padding-left:30px}
+  .ruta::before{left:8px}
+  .ruta .camion{left:-5px}
+  .ruta li::before{left:-26px}
+  .ruta li small{letter-spacing:.05em;font-size:11px}
+  .btn{white-space:normal;text-align:center}
+}
+@media (max-width:374px){
+  .wrap{padding-inline:14px}
+  .phone-top{width:40px;padding:0;justify-content:center}
+  .phone-top .pt-txt{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .lang{min-width:40px;padding:0 8px}
+  nav.mtabs a{font-size:10.5px}
+  .price{font-size:24px}
+  .m-top h3{font-size:26px}
+  .stat{padding:22px 12px}
+  .stat:nth-child(3){padding-left:0}
+  .stat b{font-size:30px}
+}
 </style>
 <script>document.documentElement.classList.add("js")</script>
 </head>
@@ -859,7 +911,7 @@ footer .logo-tag{color:rgba(243,239,233,.55)}
       <a href="#contacto" data-go="contacto">Contact</a>
     </nav>
     <a class="head-cta" id="head-call" href="tel:+34643668813"><svg width="17" height="17"><use href="#i-phone"/></svg>Call us</a>
-    <a class="phone-top" id="phone-top" href="tel:+34643668813"><svg width="17" height="17"><use href="#i-phone"/></svg>Call</a>
+    <a class="phone-top" id="phone-top" href="tel:+34643668813" aria-label="Call Monza Car"><svg width="17" height="17"><use href="#i-phone"/></svg><span class="pt-txt">Call</span></a>
     <a class="lang" href="/" hreflang="es" lang="es" aria-label="Versión en español">ES</a>
   </div>
 </header>
@@ -877,7 +929,6 @@ footer .logo-tag{color:rgba(243,239,233,.55)}
   <section class="hero">
     <div class="wrap hero-in">
       <div>
-        <div class="eyebrow">Body & paint · Quick servicing · Used cars</div>
         <h1 class="h1-long">The best used cars in <span class="rs">Fuerteventura,</span> with <span class="s serif">a 1-year warranty.</span></h1>
         <p class="lead">We repair, paint and look after your car with an Italian passion for motoring. And if you're looking for a car, our used cars are checked in our own workshop and ready to drive.</p>
         <div class="hero-ctas">
@@ -1522,6 +1573,12 @@ async function cargar(){
     $("#cat-grid").innerHTML = $("#home-grid").innerHTML = msg;
   }
 }
+
+/* La etiqueta «Powered by Netlify» del plan gratuito se coloca abajo a la derecha:
+   en el móvil subimos la barra de secciones para que no tape «Vender» y «Taller». */
+(function(){ const mira=()=>{ const f=document.getElementById("nl-badge-frame");
+  document.documentElement.style.setProperty("--badge", f && f.offsetHeight ? "56px" : "0px"); };
+  mira(); new MutationObserver(mira).observe(document.body,{childList:true}); })();
 
 /* =====================================================================
    PERSONAS VIENDO EL COCHE AHORA MISMO (contador real, ver /api/viendo)
