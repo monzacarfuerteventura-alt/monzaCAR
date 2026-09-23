@@ -138,7 +138,7 @@ body{background:radial-gradient(900px 500px at 100% -10%,color-mix(in srgb,var(-
 /* solicitudes */
 #leads .lead,#agenda .lead{border-left:5px solid var(--c1)}
 .lead{--c1:#3B6FD8;transition:transform .3s,box-shadow .3s}
-.lead.t-taller{--c1:#1F9D6B}.lead.t-tasacion{--c1:#E08A2E}.lead.t-contacto{--c1:#67635D}
+.lead.t-taller{--c1:#1F9D6B}.lead.t-tasacion{--c1:#E08A2E}.lead.t-contacto{--c1:#67635D}.lead.t-financiacion{--c1:#7A3FC4}
 .lead:hover{transform:translateY(-2px);box-shadow:0 16px 32px -20px var(--c1)}
 #leads .lead.nueva{border-left-color:var(--c1)}
 .lead.nueva{box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 35%,transparent)}
@@ -187,7 +187,7 @@ legend{display:flex;align-items:center;gap:10px}
 .lead select{padding:8px;border-radius:9px;border:1.5px solid var(--line);background:var(--surface);font-size:14px;font-weight:600}
 .lead textarea{min-height:60px;font-size:15px}
 .tipo{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--surface-2);margin-right:6px;vertical-align:2px}
-.tipo.coche{background:#E3ECFA;color:#1D4E9E}.tipo.taller{background:#FDEBD3;color:#8A4B00}.tipo.tasacion{background:var(--ok-soft);color:var(--ok)}
+.tipo.coche{background:#E3ECFA;color:#1D4E9E}.tipo.financiacion{background:#EFE6FB;color:#5B2A9E}.tipo.taller{background:#FDEBD3;color:#8A4B00}.tipo.tasacion{background:var(--ok-soft);color:var(--ok)}
 @media (prefers-color-scheme:dark){.tipo.coche{background:#17243A;color:#9CC0F5}.tipo.taller{background:#33240F;color:#F2C07C}}
 .b-wa{background:#1F8B4C;color:#fff}
 .tabsrow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
@@ -291,7 +291,7 @@ h1,h2,h3{font-stretch:80%}
 .filters button .num{opacity:.6;font-size:12.5px;margin-left:2px}
 /* filas del CRM */
 .lr{--c1:#5E5A54;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--c1);border-radius:14px;padding:12px 14px;cursor:pointer;transition:transform .2s,box-shadow .2s}
-.lr.t-coche{--c1:#2F55A4}.lr.t-taller{--c1:#D9481C}.lr.t-tasacion{--c1:#E08A2E}
+.lr.t-coche{--c1:#2F55A4}.lr.t-financiacion{--c1:#7A3FC4}.kb-card.t-financiacion{--c1:#7A3FC4}.lr.t-taller{--c1:#D9481C}.lr.t-tasacion{--c1:#E08A2E}
 .lr:hover,.lr:focus-visible{transform:translateY(-1px);box-shadow:0 12px 26px -18px var(--c1);outline:none}
 .lr.perdida{opacity:.6}
 .lr.venc{box-shadow:0 0 0 2px color-mix(in srgb,var(--bad) 35%,transparent)}
@@ -462,6 +462,21 @@ dialog.dlg form{display:grid;gap:12px;padding:20px}
 .codigos{background:var(--surface-2);border-radius:10px;padding:12px 14px;font-size:16px;letter-spacing:.08em;columns:2;margin:0 0 8px}
 .tabla.reg tr.mal td:first-child b{color:var(--bad)}.tabla.reg tr.ok td:first-child b{color:var(--ok)}
 @media (max-width:480px){.seg-t{display:none}}
+
+/* ajustes de financiación */
+.fin-cfg{margin:0 0 16px;padding:0}
+.fin-cfg summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;cursor:pointer}
+.fin-cfg summary::-webkit-details-marker{display:none}
+.fin-cfg summary b{display:block;font-size:16px}
+.fin-cfg summary small{display:block;color:var(--muted);font-size:13.5px;margin-top:2px}
+.fin-ab{font-weight:700;font-size:14px;color:var(--accent,#D9481C)}
+.fin-cfg[open] .fin-ab{visibility:hidden}
+.fin-grid{display:grid;gap:14px;padding:0 20px 20px;border-top:1px solid var(--line);padding-top:16px}
+.fin-sw{display:flex;gap:10px;align-items:center;font-weight:600;cursor:pointer}
+.fin-sw input{width:20px;height:20px;accent-color:#D9481C}
+.fin-pls{display:flex;flex-wrap:wrap;gap:6px}
+.fin-pls label{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:999px;padding:6px 12px;font-weight:700;font-size:14px;cursor:pointer}
+.fin-pls input{accent-color:#D9481C}
 </style>
 </head>
 <body>
@@ -521,7 +536,7 @@ dialog.dlg form{display:grid;gap:12px;padding:20px}
     <div class="tareas" id="tareas"></div>
     <div class="tools">
       <input class="in" id="busq" type="search" placeholder="Buscar nombre, teléfono, matrícula, coche…" aria-label="Buscar">
-      <select class="in" id="tipoF" aria-label="Tipo"><option value="">Todos</option><option value="taller">Taller</option><option value="coche">Coches</option><option value="contacto">Consultas</option><option value="tasacion">Tasaciones (antiguas)</option></select>
+      <select class="in" id="tipoF" aria-label="Tipo"><option value="">Todos</option><option value="taller">Taller</option><option value="coche">Coches</option><option value="financiacion">Financiación</option><option value="contacto">Consultas</option><option value="tasacion">Tasaciones (antiguas)</option></select>
       <div class="segv" id="vistas" role="group" aria-label="Vista"><button type="button" data-vista="lista">Lista</button><button type="button" data-vista="embudo">Embudo</button><button type="button" data-vista="clientes">Clientes</button></div>
     </div>
     <div class="filters" id="filters"></div>
@@ -557,6 +572,29 @@ dialog.dlg form{display:grid;gap:12px;padding:20px}
       <button class="btn b-acc" id="add" type="button">+ Añadir coche</button>
     </div>
     <div class="stats num" id="stats"></div>
+    <details class="card fin-cfg" id="fin-cfg">
+      <summary><span><b>Financiación en la web</b><small id="fin-res">Cargando…</small></span><span class="fin-ab">Cambiar</span></summary>
+      <form id="fin-f" class="fin-grid">
+        <label class="fin-sw"><input type="checkbox" id="fc-activa"> <span>Mostrar la calculadora de cuotas en la web</span></label>
+        <div class="field"><label for="fc-entidad">Entidad financiera</label><input class="in" id="fc-entidad" placeholder="Ej. Cetelem, Santander Consumer, Lendrock…" maxlength="80"></div>
+        <div class="g2">
+          <div class="field"><label for="fc-tin">TIN (% anual)</label><input class="in num" id="fc-tin" inputmode="decimal"></div>
+          <div class="field"><label for="fc-com">Comisión de apertura (%)</label><input class="in num" id="fc-com" inputmode="decimal"></div>
+        </div>
+        <div class="field"><label>Plazos que puede elegir el cliente (meses)</label><div class="fin-pls" id="fc-plazos"></div></div>
+        <div class="g2">
+          <div class="field"><label for="fc-def">Plazo que sale marcado</label><select class="in" id="fc-def"></select></div>
+          <div class="field"><label for="fc-ent">Entrada que sale marcada (%)</label><input class="in num" id="fc-ent" inputmode="decimal"></div>
+        </div>
+        <div class="g2">
+          <div class="field"><label for="fc-min">Importe mínimo a financiar (€)</label><input class="in num" id="fc-min" inputmode="numeric"></div>
+          <div class="field"><label for="fc-edad">Antigüedad máxima del coche (años, 0 = sin límite)</label><input class="in num" id="fc-edad" inputmode="numeric"></div>
+        </div>
+        <label class="fin-sw"><input type="checkbox" id="fc-tarjeta"> <span>Enseñar «desde X €/mes» en las tarjetas de los coches</span></label>
+        <p class="hint" style="margin:0">Pon aquí las condiciones exactas que te dé la financiera. La web calcula con ellas la cuota, la TAE y el ejemplo representativo que exige la ley. Las solicitudes de pre-estudio te llegan al CRM como «Financiación».</p>
+        <div><button class="btn b-brand" type="submit" id="fc-save">Guardar condiciones</button></div>
+      </form>
+    </details>
     <div class="list" id="list"></div>
   </section>
 
@@ -715,9 +753,34 @@ async function api(path, opts={}){
 }
 
 
+/* ---------- financiación: condiciones de la calculadora de la web ---------- */
+const eurA=n=>{ const v=Math.round(Number(n||0)*100)/100, e=Math.trunc(v), c=Math.round((v-e)*100); return String(e).replace(/\B(?=(\d{3})+(?!\d))/g,".")+(c?","+String(c).padStart(2,"0"):"")+" €"; };
+const PLAZOS_FIN=[12,18,24,36,48,60,72,84,96,108,120];
+let FINC=null;
+function finResumen(){ if(!FINC) return; $("#fin-res").textContent=FINC.activa?`Activa · TIN ${String(FINC.tin).replace(".",",")} % · hasta ${Math.max(...FINC.plazos)} meses · desde ${eurA(FINC.min)}${FINC.antiguedadMax?` · coches de hasta ${FINC.antiguedadMax} años`:""}${FINC.entidad?" · "+FINC.entidad:" · falta poner la entidad"}`:"Desactivada: la web no enseña cuotas"; }
+function finRellenar(){
+  const f=FINC; $("#fc-activa").checked=f.activa; $("#fc-entidad").value=f.entidad; $("#fc-tin").value=String(f.tin).replace(".",","); $("#fc-com").value=String(f.comision).replace(".",",");
+  $("#fc-plazos").innerHTML=PLAZOS_FIN.map(p=>`<label><input type="checkbox" value="${p}" ${f.plazos.includes(p)?"checked":""}>${p}</label>`).join("");
+  $("#fc-def").innerHTML=f.plazos.map(p=>`<option value="${p}" ${p===f.plazoDef?"selected":""}>${p} meses</option>`).join("");
+  $("#fc-ent").value=String(f.entradaDef).replace(".",","); $("#fc-min").value=f.min; $("#fc-edad").value=f.antiguedadMax; $("#fc-tarjeta").checked=f.enTarjeta; finResumen();
+}
+async function finCargar(){ try{ const r=await fetch("/api/financiacion",{cache:"no-store"}); if(r.ok){ FINC=await r.json(); finRellenar(); } }catch(_){ $("#fin-res").textContent="No se han podido cargar las condiciones."; } }
+$("#fc-plazos").addEventListener("change",()=>{ const sel=[...$("#fc-plazos").querySelectorAll("input:checked")].map(i=>+i.value), cur=+$("#fc-def").value;
+  $("#fc-def").innerHTML=sel.map(p=>`<option value="${p}" ${p===cur?"selected":""}>${p} meses</option>`).join(""); });
+$("#fin-f").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const plazos=[...$("#fc-plazos").querySelectorAll("input:checked")].map(i=>+i.value);
+  if(!plazos.length){ toast("Marca al menos un plazo"); return; }
+  const n=v=>String(v).replace(",",".");
+  try{ FINC=await api("/api/financiacion",{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify({activa:$("#fc-activa").checked,entidad:$("#fc-entidad").value,tin:n($("#fc-tin").value),comision:n($("#fc-com").value),plazos,plazoDef:+$("#fc-def").value,entradaDef:n($("#fc-ent").value),min:n($("#fc-min").value),antiguedadMax:$("#fc-edad").value,enTarjeta:$("#fc-tarjeta").checked})});
+    finRellenar(); $("#fin-cfg").open=false; toast("Condiciones guardadas: ya se ven en la web"); }
+  catch(err){ toast(err.message); }
+});
+
 /* ---------- lista ---------- */
 async function loadList(quieto){
   if(!quieto) show("s-list");
+  finCargar();
   $("#list").innerHTML='<div class="empty">Cargando…</div>';
   fetch("/api/interes",{cache:"no-store"}).then(r=>r.ok?r.json():{}).then(m=>{ INTERES=m||{}; if(CARS.length) renderList(); }).catch(()=>{});
   fetch("/api/viendo").then(r=>r.ok?r.json():{}).then(m=>{ VIENDO=m||{}; if(CARS.length) renderList(); }).catch(()=>{});
@@ -976,7 +1039,7 @@ $("#del").onclick = async ()=>{
 const hoyC=()=>{ try{ return new Intl.DateTimeFormat("en-CA",{timeZone:"Atlantic/Canary"}).format(new Date()); }catch(_){ return new Date().toISOString().slice(0,10); } };
 const fechaLarga=d=>{ const t=new Date(d+"T12:00:00Z").toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long",timeZone:"UTC"}); return t[0].toUpperCase()+t.slice(1); };
 const EST={nueva:"Nueva",contactado:"Contactado",cita:"Cita",ganada:"Ganada",perdida:"Perdida"};
-const TIPO={coche:"Coche",taller:"Taller",tasacion:"Tasación",contacto:"Consulta"};
+const TIPO={coche:"Coche",taller:"Taller",tasacion:"Tasación",contacto:"Consulta",financiacion:"Financiación"};
 const REVIEW="https://g.page/r/Caeh6Wr6CwtNECE/review";
 const MOTIVOS=["Precio","No contesta","Compró en otro sitio","Ya no lo necesita","Sin financiación","Coche vendido","Otro"];
 const CANALES_MANUAL=["Teléfono","En persona","WhatsApp","Recomendación","Redes sociales","Otro"];
@@ -996,7 +1059,7 @@ const sumaDias=(f,n)=>new Date(Date.parse(f+"T12:00:00Z")+n*864e5).toISOString()
 const abiertas=x=>["nueva","contactado","cita"].includes(x.estado);
 const cierre=x=>{ const h=(x.historial||[]).filter(e=>e.estado==="ganada").pop(); return h?h.t:(x.estado==="ganada"?x.creado:null); };
 function queEs(x){
-  if(x.coche) return x.coche.titulo;
+  if(x.coche) return (x.tipo==="financiacion"?"Financiación del ":"")+x.coche.titulo;
   const v=x.vehiculo||{}, s=(x.servicios||[]).join(", "), c=v.coche||[v.marca,v.modelo,v.anio].filter(Boolean).join(" ");
   return [s,c+(v.matricula?" ("+v.matricula+")":"")].filter(t=>t&&t.trim()).join(" · ")||(x.mensaje||"").slice(0,80)||TIPO[x.tipo]||x.tipo;
 }
@@ -1183,6 +1246,8 @@ function plantillas(x){
   const L=[["Primer contacto",en?`Hi ${n}, this is Volcano Cars. Thanks for your request: ${queEs(x)}. When is a good time to call you?`:`Hola ${n}, te escribimos de Volcano Cars por tu solicitud: ${queEs(x)}. ¿Cuándo te viene bien que te llamemos?`]];
   if(x.cita) L.push(["Recordar la cita",en?`Hi ${n}, a quick reminder of your appointment at Volcano Cars on ${fechaLarga(x.cita.fecha)} at ${x.cita.hora}. Calle Valle Largo, Unit 8, Antigua. See you soon!`:`Hola ${n}, te recordamos tu cita en Volcano Cars el ${fechaLarga(x.cita.fecha).toLowerCase()} a las ${x.cita.hora}. Calle Valle Largo, Nave 8, Antigua. ¡Te esperamos!`]);
   if(x.coche) L.push(["Seguimiento del coche",en?`Hi ${n}, did you get a chance to think about the ${x.coche.titulo}? We can reserve it for you or send you more photos and the 360° video.`:`Hola ${n}, ¿pudiste pensar lo del ${x.coche.titulo}? Si quieres te lo reservamos o te mandamos más fotos y el vídeo 360°.`]);
+  if(x.financiacion){ const f=x.financiacion; L.push(["Documentos para financiar",en?`Hi ${n}, thanks for your finance request for the ${x.coche?x.coche.titulo:"car"} (${eurA(f.importe)} over ${f.plazo} months). To send it to the lender we need: ID card/NIE (both sides), your last 2 payslips (or last tax return if self-employed) and a bank certificate with your IBAN. You can bring them to the workshop or we can call you to explain.`:`Hola ${n}, gracias por tu solicitud de financiación del ${x.coche?x.coche.titulo:"coche"} (${eurA(f.importe)} a ${f.plazo} meses). Para enviarla a la financiera necesitamos: DNI o NIE por las dos caras, las 2 últimas nóminas (o la última declaración de la renta si eres autónomo) y un certificado de titularidad de tu cuenta. Puedes traerlos al taller o te llamamos y te lo explicamos.`]);
+    L.push(["Financiación aprobada",en?`Great news ${n}: your finance for the ${x.coche?x.coche.titulo:"car"} has been approved! When would you like to come and sign?`:`¡Buenas noticias, ${n}! Tu financiación del ${x.coche?x.coche.titulo:"coche"} está aprobada. ¿Cuándo te viene bien venir a firmar?`]); }
   if(link) L.push(["Enlace de seguimiento",en?`Hi ${n}, you can follow your car live and approve the quote here: ${link}`:`Hola ${n}, aquí puedes ver en vivo cómo va tu coche y aprobar el presupuesto: ${link}`]);
   if(x.tipo==="taller") L.push(["Coche listo",en?`Hi ${n}, your car is ready! You can pick it up Monday to Friday, 8:00 to 16:00.`:`Hola ${n}, ¡tu coche ya está listo! Puedes recogerlo de lunes a viernes, de 8:00 a 16:00.`]);
   L.push(["Pedir reseña en Google",en?`Hi ${n}, thanks for trusting Volcano Cars! Would you leave us a quick Google review? It takes less than a minute: ${REVIEW}`:`Hola ${n}, ¡gracias por confiar en Volcano Cars! ¿Nos dejas una reseña en Google? Te lleva menos de un minuto: ${REVIEW}`]);
@@ -1209,6 +1274,8 @@ function htmlLead(x){
     <dl class="dw-dl">
       ${d("Qué quiere",esc(queEs(x)))}
       ${x.cita?d(x.estado==="perdida"?"Cita (cancelada)":"Cita",`<b>${esc(fechaLarga(x.cita.fecha))} · ${esc(x.cita.hora)} h</b>`):(x.dia||x.franja?d("Quiere venir",esc((fecha(x.dia)||"cualquier día")+(x.franja?" · "+x.franja:""))):"")}
+      ${x.financiacion?d("Financiación",`<b>${eurA(x.financiacion.importe)} a ${x.financiacion.plazo} meses · ${eurA(x.financiacion.cuota)}/mes</b><br><small>Precio ${eurA(x.financiacion.precio)} · entrada ${eurA(x.financiacion.entrada)} · TIN ${String(x.financiacion.tin).replace(".",",")} % · TAE ${String(x.financiacion.tae).replace(".",",")} %${x.financiacion.entidad?" · "+esc(x.financiacion.entidad):""}</small>`):""}
+      ${x.financiacion?d("Perfil",esc(x.financiacion.situacion+" · ingresos "+x.financiacion.ingresos)):""}
       ${d("Mensaje",esc(x.mensaje||""))}
       ${d("Viene de",esc(((x.origen&&x.origen.canal)||"Directo")+(x.origen&&x.origen.utm_campaign?" · "+x.origen.utm_campaign:"")))}
       ${d("Recibida",esc(fechaHora(x.creado))+" · "+hace(x.creado))}
@@ -1501,7 +1568,7 @@ function renderDash(){
   if(!M.gan.some(x=>x.importe)&&M.gan.length) tips.push("Apunta el importe de cada venta o trabajo cerrado en la ficha del cliente para ver la facturación y el ticket medio.");
   // funnel
   const vieron=(t.vistas.comprar||0)+(t.vistas.taller||0)>0?Math.min(t.v,Object.values(t.cochesV).reduce((a,b)=>a+b,0)+(t.vistas.taller||0)):0;
-  const contacto=Math.min(t.v,t.clkV+Object.values(t.frm).reduce((a,b)=>a+b,0));
+  const contacto=Math.min(t.v,t.clkV+(t.frm.taller||0)+(t.frm.coche||0)+(t.frm.financiacion||0));
   const embudo=[["Visitas",t.v],["Vieron un coche o el taller",vieron],["Pulsaron WhatsApp, llamar o empezaron a reservar",contacto],["Enviaron una solicitud",M.web.length],["Con cita",M.citas.filter(x=>!x.manual).length],["Cerradas (ganadas)",M.gan.filter(x=>!x.manual).length]];
   // fuentes con conversión
   const fuentes=[...new Set([...Object.keys(t.fuentes),...Object.keys(M.porCanal)])].map(k=>[k,t.fuentes[k]||0,`${M.porCanal[k]||0} solicitudes${t.fuentes[k]?" · "+pct(M.porCanal[k]||0,t.fuentes[k]):""}`]).sort((a,b)=>b[1]-a[1]);
@@ -1549,7 +1616,7 @@ function renderDash(){
         ${tile("Desde el móvil",hayWeb?pct(movil,t.v):"—",`${nfmt(movil)} visitas`,"")}
         ${tile("En inglés",hayWeb?pct(ingles,t.v):"—",`${nfmt(ingles)} visitas`,"")}
         ${tile("Clics en WhatsApp",nfmt(t.clk.wa||0),`llamar ${nfmt(t.clk.tel||0)} · email ${nfmt(t.clk.mail||0)} · mapa ${nfmt(t.clk.mapa||0)}`,"")}
-        ${tile("Empezaron a reservar",nfmt((t.frm.taller||0)+(t.frm.coche||0)),`taller ${nfmt(t.frm.taller||0)} · coches ${nfmt(t.frm.coche||0)}`,"")}
+        ${tile("Empezaron a reservar",nfmt((t.frm.taller||0)+(t.frm.coche||0)+(t.frm.financiacion||0)),`taller ${nfmt(t.frm.taller||0)} · coches ${nfmt(t.frm.coche||0)} · financiación ${nfmt(t.frm.financiacion||0)} · usaron filtros ${nfmt(t.frm.filtros||0)}`,"")}
       </div>${M.perd.length?`<h3 style="margin-top:18px">Por qué se pierden</h3>${barrasH(orden(M.motivos))}`:""}</section>
       <section class="card ancho"><h3>Promedios del mes</h3><div class="tabla-wrap"><table class="tabla"><thead><tr><th>Indicador</th><th class="n">${esc(nombreMes(MES))}</th><th class="n">${esc(etqP)}</th><th class="n">Cambio</th></tr></thead><tbody>${prom.map(([l,a,b,f,inv])=>`<tr><td>${l}</td><td class="n"><b>${f(a)}</b></td><td class="n">${f(b)}</td><td class="n">${a===null||b===null||b===undefined?"—":delta(a,b,!!inv).replace(/ vs\. mes anterior.*?(?=<)/,"")}</td></tr>`).join("")}</tbody></table></div>
         <p class="hint" style="margin-top:12px">Las visitas se cuentan sin cookies ni datos personales: una persona cuenta una vez al día. ${esActual?`Mes en curso: ${t.nDias} días.`:""}</p></section>

@@ -22,7 +22,7 @@ import { store, json, isAdmin, canalDe, enviarAviso, waNum, mismoOrigen } from "
   Un coche por hora en cada agenda, de lunes a viernes, de 8:00 a 15:00 (el taller cierra a las 16:00).
 */
 
-const TIPOS = ["coche", "taller", "tasacion", "contacto"] as const;
+const TIPOS = ["coche", "taller", "tasacion", "contacto", "financiacion"] as const;
 const ESTADOS = ["nueva", "contactado", "cita", "ganada", "perdida"] as const;
 const FRANJAS = ["8:00-10:00", "10:00-12:00", "12:00-14:00", "14:00-16:00", ""];
 const CONSENTIMIENTO_VERSION = "2026-09-22";
@@ -60,7 +60,13 @@ type Solicitud = {
   actividad?: { t: string; tipo: string; txt: string }[];
   orden?: string;
   manual?: boolean;
+  financiacion?: Fin | null;
 };
+// Pre-estudio de financiación pedido desde la ficha de un coche
+type Fin = { precio: number; entrada: number; importe: number; plazo: number; cuota: number; tin: number; tae: number; situacion: string; ingresos: string; entidad: string };
+const SITUACIONES = ["Asalariado fijo", "Asalariado temporal", "Autónomo", "Pensionista", "Otra"];
+const INGRESOS = ["Menos de 1.000 €", "1.000 – 1.500 €", "1.500 – 2.000 €", "2.000 – 3.000 €", "Más de 3.000 €"];
+const dinero = (v: unknown) => { const n = Number(v); return Number.isFinite(n) && n >= 0 && n < 1e7 ? Math.round(n * 100) / 100 : 0; };
 const ACTIVIDAD = ["nota", "llamada", "whatsapp", "email", "visita", "presupuesto", "orden", "sistema"];
 const MOTIVOS = ["", "Precio", "No contesta", "Compró en otro sitio", "Ya no lo necesita", "Sin financiación", "Coche vendido", "Otro"];
 
@@ -163,6 +169,19 @@ function limpiar(input: any, manual = false): { s?: Solicitud; error?: string } 
     motivo: "",
     actividad: [],
   };
+  if (tipo === "financiacion") {
+    const f = input.financiacion && typeof input.financiacion === "object" ? input.financiacion : {};
+    if (!s.coche) return { error: "Falta el coche." };
+    const situacion = SITUACIONES.includes(f.situacion) ? f.situacion : "";
+    const ingresos = INGRESOS.includes(f.ingresos) ? f.ingresos : "";
+    if (!manual && (!situacion || !ingresos)) return { error: "Dinos tu situación laboral y tus ingresos aproximados." };
+    s.financiacion = {
+      precio: dinero(f.precio), entrada: dinero(f.entrada), importe: dinero(f.importe),
+      plazo: Math.min(120, Math.max(0, Math.round(Number(f.plazo) || 0))), cuota: dinero(f.cuota),
+      tin: Math.min(30, dinero(f.tin)), tae: Math.min(60, dinero(f.tae)), situacion, ingresos, entidad: str(f.entidad, 80),
+    };
+    if (!manual) s.consentimiento.version = CONSENTIMIENTO_VERSION + "+financiera";
+  }
   if (manual) {
     s.manual = true;
     s.estado = "contactado";
@@ -337,7 +356,8 @@ export const config: Config = {
 };
 
 // ---------- aviso por email de cada solicitud nueva ----------
-const TIPO_TXT: Record<string, string> = { coche: "Interesado en un coche", taller: "Cita de taller", tasacion: "Tasación", contacto: "Consulta" };
+const TIPO_TXT: Record<string, string> = { coche: "Interesado en un coche", taller: "Cita de taller", tasacion: "Tasación", contacto: "Consulta", financiacion: "Pre-estudio de financiación" };
+const eurTxt = (n: number) => { const v = Math.round(n * 100) / 100, e = Math.trunc(v), c = Math.round((v - e) * 100); return String(e).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (c ? "," + String(c).padStart(2, "0") : "") + " €"; };
 function fechaBonita(f: string) {
   return f ? new Date(f + "T12:00:00Z").toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }) : "";
 }
@@ -356,6 +376,8 @@ async function avisar(x: Solicitud, origin: string) {
     ["Cita", cuando],
     ["Coche", x.coche ? `${x.coche.titulo}${x.coche.precio ? " · " + x.coche.precio.toLocaleString("es-ES") + " €" : ""}` : (v.coche || [v.marca, v.modelo, v.anio].filter(Boolean).join(" ")) + (v.matricula ? ` (${v.matricula})` : "")],
     ["Servicios", (x.servicios || []).join(", ")],
+    ["Financiación", x.financiacion ? `${eurTxt(x.financiacion.importe)} a ${x.financiacion.plazo} meses · cuota ${eurTxt(x.financiacion.cuota)} · entrada ${eurTxt(x.financiacion.entrada)}` : ""],
+    ["Situación", x.financiacion ? `${x.financiacion.situacion} · ingresos ${x.financiacion.ingresos}` : ""],
     ["Mensaje", x.mensaje],
     ["Idioma", x.idioma === "en" ? "Inglés" : ""],
     ["Viene de", x.origen?.canal || "Directo"],

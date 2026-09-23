@@ -1,4 +1,8 @@
 User-agent: *
 Disallow: /admin
 Disallow: /api/
+Disallow: /s/
+Disallow: /seguimiento.html
+Allow: /api/fotos/
+
 Sitemap: https://lestter5th.netlify.app/sitemap.xml

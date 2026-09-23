@@ -48,7 +48,7 @@ export function resumir(keys: string[]): Dia {
     } else if (t === "car") {
       inc(d.coches, a); if (!cv.has(a)) cv.set(a, new Set()); cv.get(a)!.add(vh);
     } else if (t === "clk") {
-      inc(d.clk, a); visClk.add(vh);
+      inc(d.clk, a); if (["wa", "tel", "mail", "mapa"].includes(a)) visClk.add(vh); // compartir no cuenta como contacto
     } else if (t === "frm") {
       if (!frm.has(a)) frm.set(a, new Set()); frm.get(a)!.add(vh);
     } else if (t === "vid") d.vid++;

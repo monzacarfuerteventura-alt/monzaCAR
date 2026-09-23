@@ -7,7 +7,7 @@
 <meta name="description" content="Volcano Cars: the best used cars in Fuerteventura, checked in our own workshop with a 1-year warranty and free home delivery anywhere on the island. Body repair, paint and quick servicing in Antigua, near Caleta de Fuste, with instant online booking. We speak English.">
 <meta name="theme-color" content="#1B1B1A">
 <meta property="og:title" content="Volcano Cars · Body repair, paint, servicing and used cars in Fuerteventura">
-<meta property="og:description" content="Used cars checked in our own workshop with a 12-month warranty, in Antigua, Fuerteventura.">
+<meta property="og:description" content="Used cars checked in our own workshop with a 1-year warranty and free delivery anywhere on Fuerteventura. Mechanical workshop, body repair and paint in Antigua with instant online booking.">
 <meta property="og:image" content="https://lestter5th.netlify.app/coches/opel-astra-2010/anuncio.jpg">
 <meta property="og:url" content="https://lestter5th.netlify.app/en/">
 <meta property="og:locale" content="en_GB">
@@ -22,7 +22,7 @@
 <link rel="alternate" hreflang="en" href="https://lestter5th.netlify.app/en/">
 <link rel="alternate" hreflang="x-default" href="https://lestter5th.netlify.app/">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":["AutoRepair","AutoDealer","AutoBodyShop"],"name":"Volcano Cars","description":"Body repair and paint, quick servicing and checked used cars with a 12-month warranty and free home delivery anywhere on Fuerteventura, from Antigua.","telephone":"+34643668813","email":"volcanocars2026@gmail.com","url":"https://lestter5th.netlify.app/en/","image":"https://lestter5th.netlify.app/coches/opel-astra-2010/anuncio.jpg","priceRange":"€€",
+{"@context":"https://schema.org","@type":["AutoRepair","AutoDealer","AutoBodyShop"],"@id":"https://lestter5th.netlify.app/#negocio","name":"Volcano Cars","logo":"https://lestter5th.netlify.app/marca/logo-oscuro.svg","hasMap":"https://www.google.com/maps/search/?api=1&query=Calle%20Valle%20Largo%2C%20Nave%208%2C%20Pol%C3%ADgono%20Industrial%2C%2035610%20Antigua%2C%20Las%20Palmas","description":"Body repair and paint, quick servicing and checked used cars with a 12-month warranty and free home delivery anywhere on Fuerteventura, from Antigua.","telephone":"+34643668813","email":"volcanocars2026@gmail.com","url":"https://lestter5th.netlify.app/en/","image":"https://lestter5th.netlify.app/coches/opel-astra-2010/anuncio.jpg","priceRange":"€€",
  "address":{"@type":"PostalAddress","streetAddress":"Calle Valle Largo, Nave 8, Polígono Industrial","postalCode":"35610","addressLocality":"Antigua","addressRegion":"Las Palmas","addressCountry":"ES"},
  "areaServed":["Antigua","Caleta de Fuste","Puerto del Rosario","Tuineje","Gran Tarajal","La Oliva","Corralejo","Pájara","Fuerteventura"],
  "availableLanguage":["es","en"],
@@ -361,7 +361,9 @@ dialog::backdrop{background:rgba(8,9,10,.66);backdrop-filter:blur(6px)}
 .spec-table b{font-size:16px}
 .x{position:absolute;top:14px;right:14px;width:42px;height:42px;border-radius:50%;border:0;background:rgba(255,255,255,.94);color:#1B1B1A;font-size:24px;line-height:1;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.2);z-index:3;transition:transform .25s var(--ease)}
 .x:hover{transform:rotate(90deg)}
-.m-actions{display:flex;gap:12px;flex-wrap:wrap}
+.m-actions{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:10px}
+@media (max-width:620px){.m-actions{grid-template-columns:1fr 1fr}.m-actions #m-wa{grid-column:1/-1}}
+.m-actions .btn{padding-inline:14px}
 .gal{position:relative}
 .gal .m-img{background:#0b0c0d}
 .gal .m-img img{object-fit:contain;animation:fade .45s var(--ease)}
@@ -909,6 +911,185 @@ footer .logo svg.vc-logo{height:62px}
 .ruta .camion{left:2px;width:32px;height:32px;background:#D9481C;color:#fff;box-shadow:0 0 0 4px var(--night),0 8px 22px -4px rgba(217,72,28,.9)}
 .ruta .camion svg{width:17px;height:17px}
 @media (prefers-reduced-motion:reduce){.ruta::before,.ruta li.base::before{animation:none}}
+
+/* =====================================================================
+   BUSCADOR DEL CATÁLOGO (filtros y orden)
+   ===================================================================== */
+.fx{display:grid;gap:12px;margin:0 0 20px}
+.fx-top{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+.fx-q{flex:1 1 280px;display:flex;align-items:center;gap:10px;padding:0 8px 0 18px;min-height:54px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);transition:border-color .25s,box-shadow .25s}
+.fx-q:focus-within{border-color:var(--rosso);box-shadow:0 0 0 5px color-mix(in srgb,var(--rosso) 14%,transparent)}
+.fx-q svg{color:var(--muted);flex-shrink:0}
+.fx-q input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:16px;color:var(--ink);outline:none;padding:14px 0}
+.fx-q input::-webkit-search-cancel-button{display:none}
+.fx-x{border:0;background:var(--surface-2);color:var(--ink);width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:18px;line-height:1;display:grid;place-items:center}
+.fx-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:0 22px;min-height:54px;border-radius:999px;border:0;background:var(--ink);color:var(--ground);font:inherit;font-weight:700;font-size:15px;cursor:pointer;transition:transform .25s var(--ease)}
+.fx-btn:hover{transform:translateY(-2px)}
+.fx-n{min-width:22px;height:22px;padding:0 6px;border-radius:999px;background:var(--rosso);color:#fff;font-size:12.5px;font-weight:800;display:grid;place-items:center}
+.fx-sort{position:relative;display:flex;align-items:center;gap:8px;padding:0 42px 0 18px;min-height:54px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);font-size:13.5px;color:var(--muted);font-weight:600;cursor:pointer}
+.fx-sort select{appearance:none;-webkit-appearance:none;border:0;background:none;font:inherit;font-weight:700;color:var(--ink);font-size:15px;cursor:pointer;outline:none;padding:0}
+.fx-sort::after{content:"";position:absolute;right:20px;top:50%;width:7px;height:7px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.fx-sort:focus-within{border-color:var(--rosso)}
+.fx-quick{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:3px;margin:-3px;scroll-snap-type:x proximity}
+.fx-quick::-webkit-scrollbar{display:none}
+.fq{flex-shrink:0;scroll-snap-align:start;display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:background-color .2s,border-color .2s,color .2s,transform .2s var(--ease)}
+.fq:hover{border-color:var(--ink)}
+.fq:active{transform:scale(.97)}
+.fq small{color:var(--muted);font-weight:700;font-size:12px}
+.fq[aria-pressed="true"]{background:var(--rosso);border-color:var(--rosso);color:#fff}
+.fq[aria-pressed="true"] small{color:rgba(255,255,255,.85)}
+.fq:disabled{opacity:.42;cursor:default}
+.fx-act{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.fa{display:inline-flex;align-items:center;gap:6px;padding:6px 8px 6px 12px;border-radius:999px;border:0;background:var(--rosso-soft);color:var(--rosso-text);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.fa b{font-size:15px;line-height:1;opacity:.75}
+.fa-clear{border:0;background:none;color:var(--muted);font:inherit;font-size:13px;font-weight:700;text-decoration:underline;cursor:pointer;padding:6px}
+.fx-empty .fx-empty-acts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+@media (min-width:641px){.fx-quick{flex-wrap:wrap;overflow:visible}}
+.fx-top>*{min-width:0}
+.fx-sort select{min-width:0;flex:1;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}
+@media (max-width:640px){
+  .fx-top{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px}
+  .fx-sort>span{display:none}
+  .fx-q{grid-column:1/-1;min-height:50px}
+  .fx-btn,.fx-sort{min-height:48px}
+  .fx-btn{padding:0 18px}
+  .fx-sort{padding:0 36px 0 14px;justify-content:space-between}
+  .fx-sort::after{right:16px}
+  .fx-quick{margin-inline:-16px;padding-inline:16px;scroll-padding-inline:16px}
+}
+
+/* panel de filtros: lateral en ordenador, hoja inferior en el móvil */
+dialog.fx-dlg{padding:0;border:0;margin:0 0 0 auto;width:min(440px,100vw);max-width:100vw;height:100dvh;max-height:100dvh;background:var(--ground);color:var(--ink);box-shadow:var(--shadow-lg);display:none;flex-direction:column}
+dialog.fx-dlg[open]{display:flex;animation:fxIn .38s var(--ease)}
+dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
+@keyframes fxIn{from{transform:translateX(40px);opacity:0}}
+.fx-h{display:flex;align-items:center;justify-content:space-between;padding:20px 22px 14px;border-bottom:1px solid var(--line)}
+.fx-h h3{margin:0;font-family:var(--display);font-stretch:112%;font-weight:800;font-size:22px}
+.fx-h .x{position:static;width:40px;height:40px;border-radius:50%;border:0;background:var(--surface-2);color:var(--ink);font-size:22px;cursor:pointer}
+.fx-b{flex:1;overflow:auto;padding:6px 22px 24px;overscroll-behavior:contain}
+.fx-g{padding:18px 0;border-bottom:1px solid var(--line);display:grid;gap:12px}
+.fx-g:last-child{border-bottom:0}
+.fx-g h4{margin:0;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:800}
+.fx-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fx-2 label{display:grid;gap:6px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.fx-2 select{padding:12px 14px;font-size:15.5px;font-weight:600}
+.fx-chips{display:flex;flex-wrap:wrap;gap:8px}
+.fx-chips .fq{padding:10px 14px}
+.dgt{width:20px;height:20px;border-radius:50%;display:inline-grid;place-items:center;font-size:8.5px;font-weight:900;color:#fff;letter-spacing:-.02em;box-shadow:inset 0 0 0 2px rgba(255,255,255,.85)}
+.dgt-0{background:#1D6FD1}.dgt-ECO{background:linear-gradient(135deg,#2E9E4F 50%,#1D6FD1 50%)}.dgt-C{background:#2E9E4F}.dgt-B{background:#F2C230;color:#1B1B1A}.dgt-x{background:var(--mech-2)}
+.fx-f{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:14px 22px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
+.fx-f .btn{padding:14px 20px}
+@media (max-width:640px){
+  dialog.fx-dlg{margin:auto 0 0;width:100vw;height:auto;max-height:90dvh;border-radius:24px 24px 0 0}
+  dialog.fx-dlg[open]{animation:fxUp .38s var(--ease)}
+  .fx-h{padding:12px 18px 12px;position:relative}
+  .fx-h::before{content:"";position:absolute;left:50%;top:7px;width:40px;height:4px;border-radius:4px;background:var(--line);transform:translateX(-50%)}
+  .fx-b{padding:4px 18px 18px}
+  .fx-f{padding-inline:18px}
+}
+@keyframes fxUp{from{transform:translateY(60px);opacity:0}}
+
+/* =====================================================================
+   FINANCIACIÓN: cuota en la tarjeta y calculadora en la ficha
+   ===================================================================== */
+.c-fin{font-size:13px;color:var(--muted);text-align:left;margin-top:3px}
+.c-fin b{color:var(--rosso-text);font-weight:800}
+.fin-nota{font-size:12px;line-height:1.5;color:var(--muted);margin:22px 0 0;max-width:110ch}
+.fin{border:1px solid var(--line);border-radius:20px;background:var(--surface);overflow:hidden}
+.fin-head{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 20px;background:var(--night);color:#F2EFEA;position:relative;overflow:hidden}
+.fin-head::after{content:"";position:absolute;right:-40px;top:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(217,72,28,.45),transparent 70%);pointer-events:none}
+.fin-head small{display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#F2994A;font-weight:800}
+.fin-head h4{margin:4px 0 0;font-family:var(--display);font-stretch:112%;font-weight:800;font-size:20px}
+.fin-cuota{text-align:right;position:relative;z-index:1}
+.fin-cuota b{display:block;white-space:nowrap;font-family:var(--display);font-stretch:82%;font-weight:900;font-size:clamp(28px,8vw,36px);line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.fin-cuota span{font-size:12.5px;color:rgba(242,239,234,.7)}
+.fin-b{padding:18px 20px 20px;display:grid;gap:16px}
+.fin-row{display:grid;gap:9px}
+.fin-lab{display:flex;justify-content:space-between;align-items:baseline;font-size:13.5px;font-weight:700;color:var(--muted)}
+.fin-lab b{color:var(--ink);font-size:15.5px;font-variant-numeric:tabular-nums}
+.fin input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:none;margin:0;cursor:pointer;--p:0%}
+.fin input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:6px;background:linear-gradient(90deg,var(--rosso) var(--p),var(--surface-2) var(--p))}
+.fin input[type=range]::-moz-range-track{height:6px;border-radius:6px;background:linear-gradient(90deg,var(--rosso) var(--p),var(--surface-2) var(--p))}
+.fin input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-10px;border-radius:50%;background:#fff;border:3px solid var(--rosso);box-shadow:0 3px 10px rgba(0,0,0,.2)}
+.fin input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--rosso);box-shadow:0 3px 10px rgba(0,0,0,.2)}
+.fin input[type=range]:focus-visible{outline:3px solid color-mix(in srgb,var(--rosso) 40%,transparent);outline-offset:4px;border-radius:8px}
+.fin-pl{display:grid;grid-template-columns:repeat(auto-fit,minmax(58px,1fr));gap:6px}
+.fin-pl button{padding:10px 4px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:700;font-size:14px;cursor:pointer;font-variant-numeric:tabular-nums;transition:all .2s}
+.fin-pl button small{display:block;font-size:10.5px;color:var(--muted);font-weight:600}
+.fin-pl button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--ground)}
+.fin-pl button[aria-pressed="true"] small{color:rgba(242,239,234,.7)}
+.fin-dl{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:0}
+.fin-dl div{background:var(--surface);padding:10px 12px}
+.fin-dl dt{font-size:11.5px;color:var(--muted);font-weight:700}
+.fin-dl dd{margin:2px 0 0;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums}
+@media (max-width:460px){.fin-dl{grid-template-columns:1fr 1fr}}
+.fin-legal{font-size:11.5px;line-height:1.5;color:var(--muted);margin:0}
+.fin-no{padding:16px 20px;font-size:14px;color:var(--muted);display:flex;gap:12px;align-items:flex-start}
+.fin-no svg{flex-shrink:0;color:var(--rosso)}
+.fin-cta{display:grid;gap:8px}
+.fin-cta .btn{width:100%}
+.fin-cta p{margin:0;text-align:center;font-size:12.5px;color:var(--muted)}
+.fin-form{display:grid;gap:12px;border-top:1px dashed var(--line);padding-top:16px}
+.fin-form h5{margin:0;font-size:16px;font-weight:800}
+.fin-form .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:460px){.fin-form .row2{grid-template-columns:1fr}}
+
+/* =====================================================================
+   ASISTENTE (chat 24/7)
+   ===================================================================== */
+.bot-fab{position:fixed;right:22px;bottom:calc(22px + var(--badge,0px));z-index:60;width:62px;height:62px;border-radius:50%;border:0;cursor:pointer;background:var(--rosso);color:#fff;display:grid;place-items:center;box-shadow:0 12px 30px color-mix(in srgb,var(--rosso) 45%,transparent),0 2px 6px rgba(0,0,0,.2);transition:transform .35s var(--ease),opacity .3s}
+.bot-fab:hover{transform:translateY(-3px) scale(1.04)}
+.bot-fab::before{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--rosso);animation:botPulse 2.8s var(--ease) infinite;pointer-events:none}
+.bot-fab .dot{position:absolute;top:4px;right:4px;width:14px;height:14px;border-radius:50%;background:#9C958A;border:2.5px solid var(--ground)}
+.bot-fab .dot.on{background:#2FBF6B}
+.bot-fab.oculto{transform:scale(.6);opacity:0;pointer-events:none}
+@keyframes botPulse{0%{transform:scale(1);opacity:.7}70%,100%{transform:scale(1.45);opacity:0}}
+.bot-tip{position:fixed;right:96px;bottom:calc(34px + var(--badge,0px));z-index:60;background:var(--surface);color:var(--ink);border:1px solid var(--line);box-shadow:var(--shadow-lg);border-radius:16px 16px 4px 16px;padding:10px 14px;font-size:14px;font-weight:600;max-width:240px;animation:botTip .5s var(--ease);cursor:pointer}
+.bot-tip button{border:0;background:none;color:var(--muted);font-size:16px;cursor:pointer;margin-left:6px;padding:0 2px}
+@keyframes botTip{from{opacity:0;transform:translateY(8px)}}
+.bot{position:fixed;right:22px;bottom:calc(22px + var(--badge,0px));z-index:70;width:min(390px,calc(100vw - 24px));height:min(620px,calc(100dvh - 44px - var(--badge,0px)));display:flex;flex-direction:column;background:var(--ground);border:1px solid var(--line);border-radius:26px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.28),0 4px 12px rgba(0,0,0,.08);transform-origin:bottom right;animation:botIn .42s var(--ease)}
+.bot[hidden]{display:none}
+@keyframes botIn{from{opacity:0;transform:translateY(16px) scale(.96)}}
+.bot-h{display:flex;align-items:center;gap:12px;padding:16px 16px 14px 18px;background:var(--night);color:#F2EFEA;position:relative}
+.bot-h::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--rosso),#F2994A)}
+.bot-av{width:42px;height:42px;border-radius:14px;background:var(--rosso);display:grid;place-items:center;flex-shrink:0}
+.bot-av svg{width:26px;height:24px;color:#F2EFEA}
+.bot-h b{display:block;font-family:var(--display);font-stretch:112%;font-weight:800;font-size:16.5px;letter-spacing:.01em}
+.bot-h small{display:flex;align-items:center;gap:6px;font-size:12.5px;color:rgba(242,239,234,.72);white-space:nowrap}
+.bot-h>div{min-width:0}
+.bot-h small i{width:8px;height:8px;border-radius:50%;background:#9C958A}
+.bot-h small i.on{background:#2FBF6B;box-shadow:0 0 0 3px rgba(47,191,107,.25)}
+.bot-h .x{margin-left:auto;position:static;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.1);color:#fff;font-size:20px;cursor:pointer}
+.bot-m{flex:1;overflow-y:auto;padding:18px 16px 8px;display:flex;flex-direction:column;gap:10px;overscroll-behavior:contain;scroll-behavior:smooth}
+.bm{max-width:86%;padding:11px 14px;border-radius:18px;font-size:14.5px;line-height:1.45;animation:bm .3s var(--ease);white-space:pre-line;word-wrap:break-word}
+@keyframes bm{from{opacity:0;transform:translateY(6px)}}
+.bm.b{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:6px}
+.bm.u{align-self:flex-end;background:var(--ink);color:var(--ground);border-bottom-right-radius:6px}
+.bm a{color:inherit;font-weight:700}
+.bm.typing{display:flex;gap:4px;padding:14px 16px}
+.bm.typing i{width:7px;height:7px;border-radius:50%;background:var(--mech-2);animation:bt 1s infinite}
+.bm.typing i:nth-child(2){animation-delay:.15s}.bm.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bt{0%,60%,100%{transform:none;opacity:.5}30%{transform:translateY(-4px);opacity:1}}
+.b-acts{display:flex;flex-wrap:wrap;gap:7px;align-self:flex-start;max-width:100%;animation:bm .35s var(--ease)}
+.b-acts button,.b-acts a{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;text-decoration:none;transition:border-color .2s,background-color .2s}
+.b-acts button:hover,.b-acts a:hover{border-color:var(--rosso)}
+.b-acts .wa{background:#1F8B4C;border-color:#1F8B4C;color:#fff}
+.b-acts .pri{background:var(--rosso);border-color:var(--rosso);color:#fff}
+.b-car{display:flex!important;width:100%;justify-content:space-between;border-radius:14px!important;padding:10px 12px!important}
+.b-car span{color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
+.bot-f{padding:10px 12px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface);display:grid;gap:8px}
+.bot-f form{display:flex;gap:8px}
+.bot-f input{flex:1;min-width:0;padding:12px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--ground);color:var(--ink);font:inherit;font-size:16px;outline:none}
+.bot-f input:focus{border-color:var(--rosso)}
+.bot-f form button{width:46px;height:46px;border-radius:50%;border:0;background:var(--rosso);color:#fff;display:grid;place-items:center;cursor:pointer;flex-shrink:0}
+.bot-asesor{display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:700;color:#1F8B4C;text-decoration:none;padding:2px}
+@media (max-width:900px){
+  .bot-fab{right:14px;bottom:calc(88px + var(--badge,0px) + env(safe-area-inset-bottom,0px));width:56px;height:56px}
+  .bot-tip{right:80px;bottom:calc(98px + var(--badge,0px) + env(safe-area-inset-bottom,0px))}
+  body.con-barra .bot-fab,body.con-barra .bot-tip{transform:translateY(-72px)}
+  .bot{right:8px;left:8px;width:auto;bottom:calc(8px + env(safe-area-inset-bottom,0px));height:min(640px,calc(100dvh - 16px - env(safe-area-inset-top,0px)));border-radius:24px}
+}
+@media (prefers-reduced-motion:reduce){.bot-fab::before{animation:none}.bot,.bm,.b-acts,dialog.fx-dlg[open]{animation:none}}
 </style>
 <script>document.documentElement.classList.add("js")</script>
 </head>
@@ -1183,8 +1364,10 @@ footer .logo svg.vc-logo{height:62px}
     <div class="wrap">
       <div class="sec-head"><div><div class="eyebrow">Buy a car</div><h2 class="page-h">Cars <span class="serif">for sale</span></h2><p>All checked in our workshop and with a 12-month warranty.</p></div></div>
       <div class="entrega-mini"><span class="em-ic"><svg width="22" height="22"><use href="#i-truck"/></svg></span><div><b>Free home delivery anywhere on Fuerteventura</b><small>From Corralejo to Morro Jable, free of charge, on the day you choose.</small></div></div>
+      <div class="fx" id="fx" hidden></div>
       <p class="count num" id="count" style="font-weight:600;margin:0 0 18px"></p>
       <div class="grid" id="cat-grid"></div>
+      <p class="fin-nota" id="fin-nota" hidden></p>
       <div id="cat-sold-wrap" hidden style="margin-top:72px">
         <div class="sec-head"><div><div class="eyebrow">Already sold</div><h2>Recently <span class="serif">sold</span></h2></div></div>
         <div class="grid" id="cat-sold"></div>
@@ -1291,8 +1474,8 @@ footer .logo svg.vc-logo{height:62px}
       <a class="logo" href="#inicio" data-go="inicio"><svg class="vc-logo" viewBox="0 0 662 162" aria-hidden="true" style="color:#F2EFEA"><use href="#vc-logo"/></svg></a>
       <p>Body repair and paint shop, quick servicing and used car sales in Antigua, Fuerteventura.</p>
     </div>
-    <div><h4>Cars</h4><a href="#comprar" data-go="comprar">Buy a car</a><a href="#contacto" data-go="contacto">Ask us anything</a></div>
-    <div><h4>Workshop</h4><a href="#taller" data-go="taller">Body repair and paint</a><a href="#taller" data-go="taller">Quick servicing</a><a href="#taller" data-go="taller">Get a quote</a></div>
+    <div><h4>Cars</h4><a href="#comprar" data-go="comprar">Buy a car</a><a href="/coches-segunda-mano-fuerteventura/">Used cars</a><a href="/financiacion-coches-fuerteventura/">Finance</a><a href="#contacto" data-go="contacto">Ask us anything</a></div>
+    <div><h4>Workshop</h4><a href="/chapa-y-pintura-fuerteventura/">Body repair and paint</a><a href="/taller-mecanico-fuerteventura/">Mechanical workshop</a><a href="/pre-itv-fuerteventura/">Pre-ITV (MOT) check</a><a href="#taller" data-go="taller">Get a quote</a></div>
     <div><h4>Visit us</h4><a data-map target="_blank" rel="noopener" data-addr-link></a><a href="#contacto" data-go="contacto" data-hours-short></a></div>
   </div>
   <div class="wrap legal"><span>© <span id="yr"></span> Volcano Cars · <a href="/aviso-legal">Legal notice</a> · <a href="/condiciones">Terms and warranty</a> · <a href="/privacidad#en">Privacy</a> · <a href="/cookies#en">Cookies</a> · <button type="button" id="ck-open">Cookie settings</button></span><span>Made in Fuerteventura, land of volcanoes</span></div>
@@ -1328,11 +1511,13 @@ footer .logo svg.vc-logo{height:62px}
       <p id="m-desc" style="margin:0;color:var(--muted);white-space:pre-line"></p>
       <div id="m-eq" hidden><h4 class="eq-h">Equipment</h4><ul class="eq"></ul></div>
       <div class="demand m-demand" id="m-demand" hidden></div>
+      <section class="fin" id="m-fin" hidden></section>
       <div class="guarantee"><svg width="22" height="22"><use href="#i-itv"/></svg><span>12-month warranty · checked in our own workshop · ownership transfer included · <a href="/condiciones" style="color:inherit">terms</a></span></div>
       <div class="m-perk"><svg width="22" height="22"><use href="#i-truck"/></svg><span>Free home delivery anywhere on Fuerteventura, or collect it in Antigua</span></div>
       <div class="m-actions">
         <a class="btn btn-wa" id="m-wa" target="_blank" rel="noopener"><svg width="18" height="18"><use href="#i-wa"/></svg>Ask on WhatsApp</a>
         <a class="btn btn-ghost" id="m-call"><svg width="18" height="18"><use href="#i-phone"/></svg>Call</a>
+        <a class="btn btn-ghost" id="m-share" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="M8.2 10.8l7.6-4.1M8.2 13.2l7.6 4.1"/></svg>Share</a>
       </div>
       <form class="m-book" id="book-form" novalidate>
         <h4>Come and see it, test drive it</h4>
@@ -1501,7 +1686,7 @@ function card(c){
       ${senales(c)}
       ${demanda(c)}
       <div class="perks">${GARANTIA_CHIP}${c.estado!=="vendido"?ENTREGA_CHIP:""}</div>
-      <div class="price-row num"><div><div class="price">${eur(c.precio)}</div><div class="month">Final price · taxes incl.</div></div><span class="ver">${IDIOMA==="en"?"View":"Ver"} <svg width="16" height="16"><use href="#i-arrow"/></svg></span></div>
+      <div class="price-row num"><div><div class="price">${eur(c.precio)}</div><div class="month">Final price · taxes incl.</div>${cuotaTarjeta(c)}</div><span class="ver">${IDIOMA==="en"?"View":"Ver"} <svg width="16" height="16"><use href="#i-arrow"/></svg></span></div>
     </div></button>`;
 }
 const vacio = `<div class="empty" style="grid-column:1/-1"><b style="color:var(--ink)">New cars are on their way.</b><br>Message us on <a href="${wa("Hi Volcano Cars, I'm looking for a car: ")}" target="_blank" rel="noopener">WhatsApp</a> and we'll let you know as soon as one comes in that suits you.</div>`;
@@ -1509,9 +1694,7 @@ const cargando = '<div class="empty" style="grid-column:1/-1">Loading cars…</d
 
 /* catálogo */
 function render(){
-  const n = COCHES.filter(c=>c.estado!=="reservado").length;
-  $("#count").textContent = COCHES.length ? (n===1 ? "1 car for sale" : n+" cars for sale") : "";
-  $("#cat-grid").innerHTML = COCHES.length ? COCHES.map(card).join("") : vacio;
+  pintarCatalogo();
   const d = COCHES.find(c=>c.destacado && c.estado!=="reservado");
   const resto = COCHES.filter(c=>c!==d).slice(0,3);
   $("#home-grid").innerHTML = resto.length ? resto.map(card).join("") : (d ? "" : vacio);
@@ -1521,7 +1704,7 @@ function render(){
   const vs = VENDIDOS.slice(0,6).map(soldCard).join("");
   $("#sold-grid").innerHTML = $("#cat-sold").innerHTML = vs;
   $("#sold-sec").hidden = $("#cat-sold-wrap").hidden = !VENDIDOS.length;
-  observar(); pintarViendo(); previews();
+  observar(); pintarViendo(); previews(); listaParaGoogle(); abrirDesdeEnlace();
 }
 const ordenar = l => l.slice().sort((a,b)=>(b.destacado?1:0)-(a.destacado?1:0));
 function cargarInteres(){
@@ -1806,6 +1989,7 @@ document.addEventListener("click",e=>{
   $("#m-call").href=tel;
   $("#book-form").reset(); $("#book-ok").hidden=true; fallo("b",""); $("#b-conf").hidden=true; $("#book-form").classList.remove("done"); AG_B.st.hora=""; modoVisita();
   const res=c.estado==="reservado"; $("#book-form").hidden=res;
+  finAbrir(c);
   modal.showModal(); modal.scrollTop=0;
   empezarAVer(c);
   TRK("car",c.id);
@@ -1853,7 +2037,7 @@ function comprobar(pref, campos){
 }
 function telValido(v){ return String(v).replace(/[^\d]/g,"").length>=9; }
 /* guarda la solicitud en el panel. conWhatsApp = ya se abrió WhatsApp con los datos */
-async function guardar(pref, datos, btn, conWhatsApp=true){
+async function guardar(pref, datos, btn, conWhatsApp=true, msgError=""){
   btn.disabled=true;
   try{
     const r=await fetch("/api/solicitudes",{method:"POST",headers:{"content-type":"application/json"},keepalive:true,
@@ -1864,7 +2048,7 @@ async function guardar(pref, datos, btn, conWhatsApp=true){
     return {ok:true, data:j};
   }catch(err){
     if(err.ocupada){ fallo(pref,L("Esa hora se acaba de ocupar. Elige otra, por favor.","That time has just been taken. Please choose another one.")); return {ok:false, ocupada:true}; }
-    fallo(pref, conWhatsApp
+    fallo(pref, msgError ? msgError : conWhatsApp
       ? L("We couldn't save your request, but the WhatsApp message has all your details: send it and we'll help you just the same.","We couldn't save your request, but the WhatsApp message has all your details: send it and we'll help you just the same.")
       : L("No hemos podido reservar la cita. Inténtalo de nuevo o llámanos al ","We couldn't book the appointment. Please try again or call us on ")+EMPRESA.telefono+".");
     return {ok:false};
@@ -2178,6 +2362,460 @@ function decidir(si){
 $("#ck-yes").onclick=()=>decidir(true); $("#ck-no").onclick=()=>decidir(false);
 $("#ck-open").hidden=!ADS.id; $("#ck-open").onclick=()=>{ $("#ck").hidden=false; };
 if(ADS.id){ const d=leerCk(); if(d==="si") cargarAds(); else if(!d) $("#ck").hidden=false; }
+
+
+/* =====================================================================
+   BUSCADOR DEL CATÁLOGO: filtros (precio, año, km, combustible, cambio,
+   etiqueta) y orden. Los filtros van en la dirección de la página
+   (?pmax=10000&cambio=Automático#comprar), así se pueden compartir.
+   ===================================================================== */
+const FX={q:"",pmin:0,pmax:0,amin:0,amax:0,kmax:0,comb:[],cambio:[],etq:[],orden:"rec"};
+const norm=s=>String(s??"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+const ETQ=c=>c.etiqueta||"-";
+const ORDENES={
+  rec:(a,b)=>(a.estado==="reservado")-(b.estado==="reservado")||(b.destacado?1:0)-(a.destacado?1:0)||String(b.creado).localeCompare(String(a.creado)),
+  barato:(a,b)=>a.precio-b.precio,
+  caro:(a,b)=>b.precio-a.precio,
+  nuevo:(a,b)=>b.anio-a.anio||a.km-b.km,
+  km:(a,b)=>a.km-b.km,
+  recientes:(a,b)=>String(b.creado).localeCompare(String(a.creado))
+};
+const ORDEN_TXT=()=>[["rec",L("Recomendados","Recommended")],["barato",L("Precio más bajo","Lowest price")],["caro",L("Precio más alto","Highest price")],["nuevo",L("Año más nuevo","Newest year")],["km",L("Menos kilómetros","Lowest mileage")],["recientes",L("Recién llegados","Just arrived")]];
+const COMB_TXT=v=>T(v)||v, ETQ_TXT=v=>v==="-"?L("Sin etiqueta","No label"):v;
+function pasa(c, sin=""){
+  if(FX.q){ const t=norm([c.marca,c.modelo,c.version,c.color,c.combustible,T(c.combustible),c.cambio,T(c.cambio),c.anio].join(" "));
+    if(!norm(FX.q).split(/\s+/).filter(Boolean).every(w=>t.includes(w))) return false; }
+  if(sin!=="precio"){ if(FX.pmin && c.precio<FX.pmin) return false; if(FX.pmax && c.precio>FX.pmax) return false; }
+  if(sin!=="anio"){ if(FX.amin && c.anio<FX.amin) return false; if(FX.amax && c.anio>FX.amax) return false; }
+  if(sin!=="km" && FX.kmax && c.km>FX.kmax) return false;
+  if(sin!=="comb" && FX.comb.length && !FX.comb.includes(c.combustible)) return false;
+  if(sin!=="cambio" && FX.cambio.length && !FX.cambio.includes(c.cambio)) return false;
+  if(sin!=="etq" && FX.etq.length && !FX.etq.includes(ETQ(c))) return false;
+  return true;
+}
+const filtrados=()=>COCHES.filter(c=>pasa(c)).sort(ORDENES[FX.orden]||ORDENES.rec);
+const nFiltros=()=>(FX.q?1:0)+(FX.pmin||FX.pmax?1:0)+(FX.amin||FX.amax?1:0)+(FX.kmax?1:0)+FX.comb.length+FX.cambio.length+FX.etq.length;
+const alterna=(arr,v)=>arr.includes(v)?arr.filter(x=>x!==v):[...arr,v];
+const QUICK=[
+  {k:"p5",t:()=>L("Hasta 5.000 €","Up to €5,000"),on:()=>FX.pmax===5000,set:v=>{FX.pmax=v?5000:0},n:c=>c.precio<=5000},
+  {k:"p10",t:()=>L("Hasta 10.000 €","Up to €10,000"),on:()=>FX.pmax===10000,set:v=>{FX.pmax=v?10000:0},n:c=>c.precio<=10000},
+  {k:"km",t:()=>L("Menos de 100.000 km","Under 100,000 km"),on:()=>FX.kmax===100000,set:v=>{FX.kmax=v?100000:0},n:c=>c.km<=100000},
+  {k:"auto",t:()=>L("Automático","Automatic"),on:()=>FX.cambio.includes("Automático"),set:()=>{FX.cambio=alterna(FX.cambio,"Automático")},n:c=>c.cambio==="Automático"},
+  {k:"diesel",t:()=>L("Diésel","Diesel"),on:()=>FX.comb.includes("Diésel"),set:()=>{FX.comb=alterna(FX.comb,"Diésel")},n:c=>c.combustible==="Diésel"},
+  {k:"gasolina",t:()=>L("Gasolina","Petrol"),on:()=>FX.comb.includes("Gasolina"),set:()=>{FX.comb=alterna(FX.comb,"Gasolina")},n:c=>c.combustible==="Gasolina"},
+  {k:"eco",t:()=>L("Etiqueta ECO o 0","ECO or 0 label"),on:()=>FX.etq.includes("ECO")&&FX.etq.includes("0"),set:v=>{FX.etq=FX.etq.filter(x=>x!=="ECO"&&x!=="0"); if(v) FX.etq.push("ECO","0");},n:c=>c.etiqueta==="ECO"||c.etiqueta==="0"},
+  {k:"a2018",t:()=>L("Desde 2018","2018 or newer"),on:()=>FX.amin===2018,set:v=>{FX.amin=v?2018:0},n:c=>c.anio>=2018}
+];
+/* dirección de la página */
+function fxLeerURL(){
+  const q=new URLSearchParams(location.search), n=k=>Math.max(0,parseInt(q.get(k)||"0",10)||0), l=k=>(q.get(k)||"").split(",").map(x=>x.trim()).filter(Boolean).slice(0,8);
+  FX.q=(q.get("q")||"").slice(0,60); FX.pmin=n("pmin"); FX.pmax=n("pmax"); FX.amin=n("amin"); FX.amax=n("amax"); FX.kmax=n("kmax");
+  FX.comb=l("comb"); FX.cambio=l("cambio"); FX.etq=l("etq"); FX.orden=ORDENES[q.get("orden")]?q.get("orden"):"rec";
+}
+function fxURL(){
+  try{
+    const q=new URLSearchParams(location.search);
+    const put=(k,v)=>{ if(v && (!Array.isArray(v)||v.length)) q.set(k,Array.isArray(v)?v.join(","):v); else q.delete(k); };
+    put("q",FX.q); put("pmin",FX.pmin); put("pmax",FX.pmax); put("amin",FX.amin); put("amax",FX.amax); put("kmax",FX.kmax);
+    put("comb",FX.comb); put("cambio",FX.cambio); put("etq",FX.etq); put("orden",FX.orden==="rec"?"":FX.orden);
+    const s=q.toString(); history.replaceState(null,"",location.pathname+(s?"?"+s:"")+location.hash);
+  }catch(_){}
+}
+fxLeerURL();
+/* barra de búsqueda (se crea una vez) */
+const ICO_BUSCA='<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>';
+const ICO_FILTRO='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/></svg>';
+(function(){
+  const box=$("#fx"); if(!box) return;
+  box.innerHTML=`<div class="fx-top">
+      <label class="fx-q">${ICO_BUSCA}<input id="fx-q" type="search" enterkeyhint="search" autocomplete="off" placeholder="${L("Busca marca o modelo","Search make or model")}" aria-label="${L("Buscar coche","Search cars")}"><button type="button" class="fx-x" id="fx-qx" aria-label="${L("Borrar búsqueda","Clear search")}" hidden>×</button></label>
+      <button type="button" class="fx-btn" id="fx-more" aria-haspopup="dialog">${ICO_FILTRO}${L("Filtros","Filters")}<span class="fx-n" id="fx-n" hidden></span></button>
+      <label class="fx-sort"><span>${L("Ordenar","Sort")}</span><select id="fx-sort" aria-label="${L("Ordenar coches","Sort cars")}">${ORDEN_TXT().map(([k,t])=>`<option value="${k}">${t}</option>`).join("")}</select></label>
+    </div>
+    <div class="fx-quick" id="fx-quick" role="group" aria-label="${L("Filtros rápidos","Quick filters")}"></div>
+    <div class="fx-act" id="fx-act" hidden></div>`;
+  const q=$("#fx-q"); q.value=FX.q; $("#fx-sort").value=FX.orden;
+  let tq; q.addEventListener("input",()=>{ clearTimeout(tq); tq=setTimeout(()=>{ FX.q=q.value.trim().slice(0,60); fxAplicar(); },160); });
+  q.addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); q.blur(); } });
+  $("#fx-qx").onclick=()=>{ q.value=""; FX.q=""; fxAplicar(); q.focus(); };
+  $("#fx-sort").onchange=e=>{ FX.orden=e.target.value; fxAplicar(); };
+  $("#fx-more").onclick=fxAbrir;
+  box.addEventListener("click",e=>{
+    const b=e.target.closest("[data-fq]"); if(b){ const d=QUICK.find(x=>x.k===b.dataset.fq); d.set(!d.on()); fxAplicar(); return; }
+    const a=e.target.closest("[data-fa]"); if(a){ fxQuitar(a.dataset.fa); return; }
+    if(e.target.closest("[data-fx-reset]")) fxReset();
+  });
+})();
+function fxReset(){ Object.assign(FX,{q:"",pmin:0,pmax:0,amin:0,amax:0,kmax:0,comb:[],cambio:[],etq:[]}); const q=$("#fx-q"); if(q) q.value=""; fxAplicar(); if(fxDlg.open) fxPintarPanel(); }
+function fxQuitar(k){
+  const [t,v]=k.split(":");
+  if(t==="q"){ FX.q=""; $("#fx-q").value=""; }
+  else if(t==="precio"){ FX.pmin=FX.pmax=0; } else if(t==="anio"){ FX.amin=FX.amax=0; } else if(t==="km") FX.kmax=0;
+  else if(FX[t]) FX[t]=FX[t].filter(x=>x!==v);
+  fxAplicar();
+}
+function fxEtiquetas(){
+  const out=[], rango=(a,b,f,desde,hasta)=>a&&b?`${f(a)} – ${f(b)}`:a?`${desde} ${f(a)}`:`${hasta} ${f(b)}`;
+  if(FX.q) out.push(["q",`“${FX.q}”`]);
+  if(FX.pmin||FX.pmax) out.push(["precio",rango(FX.pmin,FX.pmax,eur,L("Desde","From"),L("Hasta","Up to"))]);
+  if(FX.amin||FX.amax) out.push(["anio",rango(FX.amin,FX.amax,String,L("Desde","From"),L("Hasta","Up to"))]);
+  if(FX.kmax) out.push(["km",L("Hasta ","Up to ")+km(FX.kmax)]);
+  FX.comb.forEach(v=>out.push(["comb:"+v,COMB_TXT(v)])); FX.cambio.forEach(v=>out.push(["cambio:"+v,T(v)]));
+  FX.etq.forEach(v=>out.push(["etq:"+v,v==="-"?ETQ_TXT(v):L("Etiqueta ","Label ")+v]));
+  return out;
+}
+function fxPintarBarra(){
+  const box=$("#fx"); if(!box) return;
+  box.hidden=!COCHES.length;
+  const n=nFiltros(); $("#fx-n").textContent=n; $("#fx-n").hidden=!n; $("#fx-qx").hidden=!FX.q;
+  const base=COCHES.filter(c=>pasa(c));
+  $("#fx-quick").innerHTML=QUICK.map(d=>{ const on=d.on(), cnt=COCHES.filter(d.n).length; if(!cnt && !on) return "";
+    return `<button type="button" class="fq" data-fq="${d.k}" aria-pressed="${on}">${d.t()} <small>${on?base.length:cnt}</small></button>`; }).join("");
+  const et=fxEtiquetas();
+  $("#fx-act").hidden=!et.length;
+  $("#fx-act").innerHTML=et.map(([k,t])=>`<button type="button" class="fa" data-fa="${esc(k)}" aria-label="${L("Quitar filtro","Remove filter")} ${esc(t)}">${esc(t)} <b aria-hidden="true">×</b></button>`).join("")+(et.length>1?`<button type="button" class="fa-clear" data-fx-reset>${L("Quitar todos","Clear all")}</button>`:"");
+}
+function descripcionBusqueda(){
+  const et=fxEtiquetas().map(x=>x[1].replace(/[“”]/g,""));
+  return et.length?et.join(", "):"";
+}
+function pintarCatalogo(){
+  const lista=filtrados(), n=COCHES.filter(c=>c.estado!=="reservado").length, f=nFiltros();
+  $("#count").textContent = !COCHES.length ? "" : f ? (lista.length===1?L("1 coche encontrado","1 car found"):lista.length+" "+L("coches encontrados","cars found"))+" "+L("de","of")+" "+COCHES.length
+    : (n===1 ? "1 car for sale" : n+" cars for sale");
+  if(!COCHES.length){ $("#cat-grid").innerHTML=vacio; }
+  else if(!lista.length){
+    const d=descripcionBusqueda();
+    $("#cat-grid").innerHTML=`<div class="empty fx-empty" style="grid-column:1/-1"><b style="color:var(--ink)">${L("Ningún coche coincide con tu búsqueda.","No cars match your search.")}</b><br>${L("Quita algún filtro o dinos qué buscas: te avisamos en cuanto entre uno así.","Remove a filter or tell us what you're after: we'll let you know as soon as one comes in.")}
+      <div class="fx-empty-acts"><button type="button" class="btn btn-ghost" data-fx-reset>${L("Quitar filtros","Clear filters")}</button><a class="btn btn-wa" target="_blank" rel="noopener" href="${wa(L("Hola Volcano Cars, busco un coche","Hi Volcano Cars, I'm looking for a car")+(d?": "+d:"")+L(". ¿Me avisáis si entra alguno?",". Could you let me know if one comes in?"))}"><svg width="18" height="18"><use href="#i-wa"/></svg>${L("Avisadme por WhatsApp","Let me know on WhatsApp")}</a></div></div>`;
+  } else $("#cat-grid").innerHTML=lista.map(card).join("");
+  fxPintarBarra(); pintarNotaFin();
+}
+function fxAplicar(){ fxURL(); pintarCatalogo(); observar(); pintarViendo(); previews(); if(fxDlg.open) fxContar(); }
+$("#cat-grid").addEventListener("click",e=>{ if(e.target.closest("[data-fx-reset]")) fxReset(); });
+/* panel con todos los filtros */
+const fxDlg=document.createElement("dialog"); fxDlg.className="fx-dlg"; fxDlg.setAttribute("aria-labelledby","fx-h"); document.body.appendChild(fxDlg);
+fxDlg.addEventListener("click",e=>{ if(e.target===fxDlg) fxDlg.close(); });
+function fxAbrir(){ fxPintarPanel(); fxDlg.showModal(); TRK("frm","filtros"); }
+const PRECIOS=[2000,3000,4000,5000,6000,8000,10000,12000,15000,20000,25000,30000,40000];
+function opts(lista,sel,fmt,vacio){ return `<option value="0">${vacio}</option>`+lista.map(v=>`<option value="${v}" ${+sel===v?"selected":""}>${fmt(v)}</option>`).join(""); }
+function fxChips(tipo,valores,txt,pre=v=>""){
+  return valores.map(v=>{ const cnt=COCHES.filter(c=>pasa(c,tipo)&&(tipo==="etq"?ETQ(c):tipo==="comb"?c.combustible:c.cambio)===v).length, on=FX[tipo].includes(v);
+    return `<button type="button" class="fq" data-fc="${tipo}" data-v="${esc(v)}" aria-pressed="${on}" ${!cnt&&!on?"disabled":""}>${pre(v)}${esc(txt(v))} <small>${cnt}</small></button>`; }).join("");
+}
+function fxPintarPanel(){
+  const hoy=new Date().getFullYear(), anios=[]; const minA=Math.min(hoy-25,...COCHES.map(c=>c.anio||hoy)); for(let y=hoy;y>=minA;y--) anios.push(y);
+  const combs=["Gasolina","Diésel","Híbrido","Híbrido enchufable","Eléctrico","GLP"], extra=COCHES.map(c=>c.combustible).filter(v=>v&&!combs.includes(v));
+  const kms=[[50000,"50.000 km"],[100000,"100.000 km"],[150000,"150.000 km"],[200000,"200.000 km"]];
+  fxDlg.innerHTML=`<div class="fx-h"><h3 id="fx-h">${L("Filtrar coches","Filter cars")}</h3><button type="button" class="x" data-fx-cerrar aria-label="${L("Cerrar","Close")}">×</button></div>
+  <div class="fx-b">
+    <div class="fx-g"><h4>${L("Precio","Price")}</h4><div class="fx-2">
+      <label>${L("Desde","From")}<select class="input" data-fs="pmin">${opts(PRECIOS,FX.pmin,eur,L("Sin mínimo","No minimum"))}</select></label>
+      <label>${L("Hasta","Up to")}<select class="input" data-fs="pmax">${opts(PRECIOS,FX.pmax,eur,L("Sin máximo","No maximum"))}</select></label></div></div>
+    <div class="fx-g"><h4>${L("Año","Year")}</h4><div class="fx-2">
+      <label>${L("Desde","From")}<select class="input" data-fs="amin">${opts(anios.slice().reverse(),FX.amin,String,L("Cualquiera","Any"))}</select></label>
+      <label>${L("Hasta","Up to")}<select class="input" data-fs="amax">${opts(anios,FX.amax,String,L("Cualquiera","Any"))}</select></label></div></div>
+    <div class="fx-g"><h4>${L("Kilómetros","Mileage")}</h4><div class="fx-chips">
+      <button type="button" class="fq" data-fk="0" aria-pressed="${!FX.kmax}">${L("Cualquiera","Any")}</button>
+      ${kms.map(([v,t])=>`<button type="button" class="fq" data-fk="${v}" aria-pressed="${FX.kmax===v}">${L("Hasta ","Up to ")}${t} <small>${COCHES.filter(c=>pasa(c,"km")&&c.km<=v).length}</small></button>`).join("")}</div></div>
+    <div class="fx-g"><h4>${L("Combustible","Fuel")}</h4><div class="fx-chips">${fxChips("comb",[...combs,...new Set(extra)],COMB_TXT)}</div></div>
+    <div class="fx-g"><h4>${L("Cambio","Gearbox")}</h4><div class="fx-chips">${fxChips("cambio",["Manual","Automático"],v=>T(v))}</div></div>
+    <div class="fx-g"><h4>${L("Etiqueta ambiental DGT","DGT environmental label")}</h4><div class="fx-chips">${fxChips("etq",["0","ECO","C","B","-"],ETQ_TXT,v=>`<span class="dgt dgt-${v==="-"?"x":v}" aria-hidden="true">${v==="-"?"":v==="ECO"?"":v}</span>`)}</div></div>
+  </div>
+  <div class="fx-f"><button type="button" class="btn btn-ghost" data-fx-reset>${L("Borrar","Clear")}</button><button type="button" class="btn btn-rosso" data-fx-cerrar id="fx-ver"></button></div>`;
+  fxContar();
+}
+function fxContar(){ const n=filtrados().length, b=fxDlg.querySelector("#fx-ver"); if(b) b.textContent=n===1?L("Ver 1 coche","Show 1 car"):L("Ver "+n+" coches","Show "+n+" cars"); }
+fxDlg.addEventListener("change",e=>{ const s=e.target.closest("[data-fs]"); if(!s) return; FX[s.dataset.fs]=+s.value||0;
+  if(FX.pmin&&FX.pmax&&FX.pmin>FX.pmax) [FX.pmin,FX.pmax]=[FX.pmax,FX.pmin]; if(FX.amin&&FX.amax&&FX.amin>FX.amax) [FX.amin,FX.amax]=[FX.amax,FX.amin];
+  fxAplicar(); fxPintarPanel(); });
+fxDlg.addEventListener("click",e=>{
+  if(e.target.closest("[data-fx-cerrar]")){ fxDlg.close(); return; }
+  if(e.target.closest("[data-fx-reset]")){ fxReset(); return; }
+  const k=e.target.closest("[data-fk]"); if(k){ FX.kmax=+k.dataset.fk; fxAplicar(); fxPintarPanel(); return; }
+  const c=e.target.closest("[data-fc]"); if(c){ FX[c.dataset.fc]=alterna(FX[c.dataset.fc],c.dataset.v); fxAplicar(); fxPintarPanel(); }
+});
+fxDlg.addEventListener("close",()=>{ if(!$("#v-comprar").hidden) $("#fx").scrollIntoView({block:"start",behavior:"smooth"}); });
+
+/* =====================================================================
+   FINANCIACIÓN: cuota en cada coche, calculadora y pre-estudio.
+   Las condiciones (TIN, comisión, plazos…) se cambian en el panel → Coches.
+   ===================================================================== */
+let FIN=null;
+const pct=n=>Number(n||0).toLocaleString(LOC,{minimumFractionDigits:2,maximumFractionDigits:2})+" %";
+function cuotaDe(C,n,tin){ const i=tin/1200; const q=i?C*i/(1-Math.pow(1+i,-n)):C/n; return Math.round(q*100)/100; }
+function taeDe(C,n,q,com){
+  const neto=C-com; if(neto<=0||n<=0) return 0;
+  if(Math.abs(q*n-neto)<0.005) return 0;
+  let j=0.008;
+  for(let k=0;k<80;k++){ let f=-neto,d=0; for(let t=1;t<=n;t++){ const v=Math.pow(1+j,-t); f+=q*v; d-=t*q*v/(1+j); }
+    const nj=j-f/d; if(!isFinite(nj)||nj<=-0.99) break; if(Math.abs(nj-j)<1e-12){ j=nj; break; } j=nj; }
+  return Math.round((Math.pow(1+j,12)-1)*10000)/100;
+}
+function simular(precio,entrada,n){
+  const C=Math.round((precio-entrada)*100)/100, com=Math.round(C*FIN.comision)/100, q=cuotaDe(C,n,FIN.tin), total=Math.round((q*n+com)*100)/100;
+  return {precio,entrada,C,n,q,com,tae:taeDe(C,n,q,com),total,aplazado:Math.round((entrada+total)*100)/100};
+}
+/* ¿se puede financiar este coche? devuelve el motivo si no */
+function finMotivo(c){
+  if(!FIN||!FIN.activa||c.estado==="vendido") return "off";
+  const edad=new Date().getFullYear()-(c.anio||0);
+  if(FIN.antiguedadMax && edad>FIN.antiguedadMax) return L(`Las financieras solo aceptan coches de hasta ${FIN.antiguedadMax} años y este tiene ${edad}.`,`Lenders only accept cars up to ${FIN.antiguedadMax} years old and this one is ${edad}.`);
+  if(c.precio<FIN.min) return L(`El importe mínimo a financiar es ${eur(FIN.min)}.`,`The minimum amount to finance is ${eur(FIN.min)}.`);
+  return "";
+}
+const entradaMax=c=>Math.max(0,Math.floor(Math.min(c.precio*0.8,c.precio-FIN.min)/100)*100);
+const entradaIni=c=>Math.min(entradaMax(c),Math.round(c.precio*FIN.entradaDef/10000)*100);
+function desde(c){ if(finMotivo(c)) return null; return simular(c.precio,entradaIni(c),Math.max(...FIN.plazos)); }
+function cuotaTarjeta(c){
+  if(!FIN||!FIN.enTarjeta) return ""; const s=desde(c); if(!s) return "";
+  return `<div class="c-fin">${L("o desde","or from")} <b>${eur(Math.ceil(s.q))}${L("/mes","/month")}</b>*</div>`;
+}
+function pintarNotaFin(){
+  const el=$("#fin-nota"); if(!el) return;
+  const hay=FIN&&FIN.enTarjeta&&COCHES.some(c=>!finMotivo(c));
+  el.hidden=!hay; if(!hay) return;
+  const n=Math.max(...FIN.plazos), ej=simular(10000+(FIN.min>10000?FIN.min:0),0,n);
+  el.textContent=L(`* Cuota orientativa sin entrada${FIN.entradaDef?` (o con el ${FIN.entradaDef} % de entrada)`:""} a ${n} meses, con TIN ${pct(FIN.tin)}. Ejemplo representativo: importe financiado ${eur(ej.C)} a ${n} meses, ${n} cuotas de ${eur(ej.q)}, TIN ${pct(FIN.tin)}, TAE ${pct(ej.tae)}, comisión de apertura ${eur(ej.com)}, importe total adeudado ${eur(ej.total)}. Financiación sujeta a estudio y aprobación por ${FIN.entidad||"la entidad financiera"}. Volcano Cars no concede préstamos: te ayuda a tramitar la solicitud.`,
+    `* Indicative payment with no deposit${FIN.entradaDef?` (or a ${FIN.entradaDef} % deposit)`:""} over ${n} months at a ${pct(FIN.tin)} borrowing rate. Representative example: amount financed ${eur(ej.C)} over ${n} months, ${n} payments of ${eur(ej.q)}, borrowing rate ${pct(FIN.tin)}, APR ${pct(ej.tae)}, arrangement fee ${eur(ej.com)}, total amount payable ${eur(ej.total)}. Finance subject to approval by ${FIN.entidad||"the lender"}. Volcano Cars does not lend money: we help you apply.`);
+}
+fetch("/api/financiacion").then(r=>r.ok?r.json():null).then(f=>{ if(f&&typeof f==="object"&&Array.isArray(f.plazos)&&f.plazos.length){ FIN=f; if(COCHES.length) render(); } }).catch(()=>{});
+
+/* calculadora dentro de la ficha */
+const FS={c:null,entrada:0,n:0};
+const SITS=[["Asalariado fijo",L("Asalariado fijo","Permanent employee")],["Asalariado temporal",L("Asalariado temporal","Temporary employee")],["Autónomo",L("Autónomo","Self-employed")],["Pensionista",L("Pensionista","Pensioner")],["Otra",L("Otra situación","Other")]];
+const INGS=["Menos de 1.000 €","1.000 – 1.500 €","1.500 – 2.000 €","2.000 – 3.000 €","Más de 3.000 €"];
+const INGS_EN={"Menos de 1.000 €":"Under €1,000","Más de 3.000 €":"Over €3,000"};
+function finAbrir(c){
+  const box=$("#m-fin"); FS.c=c;
+  const mot=finMotivo(c);
+  if(mot==="off"||c.estado==="reservado"){ box.hidden=true; return; }
+  box.hidden=false;
+  if(mot){
+    box.innerHTML=`<div class="fin-no"><svg width="22" height="22"><use href="#i-euro"/></svg><span><b style="color:var(--ink)">${L("Este coche no entra en financiación bancaria.","This car can't be financed through a bank.")}</b><br>${esc(mot)} ${L("Pregúntanos por otras formas de pago:","Ask us about other ways to pay:")} <a href="${wa(L(`Hola, me interesa el ${c.marca} ${c.modelo} (${c.anio}). ¿Qué formas de pago tenéis?`,`Hi, I'm interested in the ${c.marca} ${c.modelo} (${c.anio}). What payment options do you have?`))}" target="_blank" rel="noopener" style="color:var(--ink);font-weight:700">WhatsApp</a>.</span></div>`;
+    return;
+  }
+  FS.entrada=entradaIni(c); FS.n=FIN.plazos.includes(FIN.plazoDef)?FIN.plazoDef:FIN.plazos[0];
+  const max=entradaMax(c);
+  box.innerHTML=`<div class="fin-head"><div><small>${L("Financiación","Finance")}</small><h4>${L("Calcula tu cuota","Work out your payment")}</h4></div><div class="fin-cuota" aria-live="polite"><b id="fin-q"></b><span>${L("al mes","per month")}</span></div></div>
+    <div class="fin-b">
+      <div class="fin-row"><div class="fin-lab"><label for="fin-ent">${L("Entrada","Deposit")}</label><b id="fin-ent-v"></b></div>
+        <input type="range" id="fin-ent" min="0" max="${max}" step="100" value="${FS.entrada}" ${max?"":"disabled"} aria-describedby="fin-ent-v"></div>
+      <div class="fin-row"><div class="fin-lab"><span id="fin-pl-l">${L("Plazo","Term")}</span></div>
+        <div class="fin-pl" role="radiogroup" aria-labelledby="fin-pl-l">${FIN.plazos.map(p=>`<button type="button" role="radio" data-pl="${p}" aria-pressed="${p===FS.n}" aria-checked="${p===FS.n}">${p}<small>${L("meses","months")}</small></button>`).join("")}</div></div>
+      <dl class="fin-dl" id="fin-dl"></dl>
+      <p class="fin-legal" id="fin-legal"></p>
+      <div class="fin-cta" id="fin-cta"><button type="button" class="btn btn-ink" id="fin-pedir">${L("Pedir pre-estudio sin compromiso","Request a free pre-approval")} <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></button><p>${L("Gratis · te llamamos con la respuesta · no firmas nada","Free · we call you with the answer · you don't sign anything")}</p></div>
+      <form class="fin-form" id="fin-form" novalidate hidden>
+        <h5>${L("Pre-estudio de financiación","Finance pre-approval")}</h5>
+        <div class="row2">
+          <div class="field"><label for="fin-sit">${L("Situación laboral","Employment")}</label><select class="input" id="fin-sit"><option value="">${L("Elige…","Choose…")}</option>${SITS.map(([v,t])=>`<option value="${v}">${t}</option>`).join("")}</select></div>
+          <div class="field"><label for="fin-ing">${L("Ingresos netos al mes","Net monthly income")}</label><select class="input" id="fin-ing"><option value="">${L("Elige…","Choose…")}</option>${INGS.map(v=>`<option value="${v}">${IDIOMA==="en"?(INGS_EN[v]||v.replace(/\./g,",")):v}</option>`).join("")}</select></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label for="fin-name">${L("Tu nombre","Your name")}</label><input class="input" id="fin-name" autocomplete="name"></div>
+          <div class="field"><label for="fin-phone">${L("Teléfono","Phone")}</label><input class="input" id="fin-phone" type="tel" autocomplete="tel"></div>
+        </div>
+        <div class="field"><label for="fin-mail">${L("Email (opcional)","Email (optional)")}</label><input class="input" id="fin-mail" type="email" autocomplete="email"></div>
+        <input class="hp" type="text" name="web" id="fin-web" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" id="fin-ok"><span>${L("Acepto que Volcano Cars use estos datos para estudiar mi financiación y que los comparta solo con la entidad financiera que la estudie. Puedo pedir que los borren cuando quiera.","I agree that Volcano Cars may use this data to assess my finance and share it only with the lender that assesses it. I can ask for it to be deleted at any time.")} <a href="/privacidad#en" target="_blank" rel="noopener">${L("Política de privacidad","Privacy policy")}</a>.</span></label>
+        <div class="form-err" id="fin-err" role="alert" hidden></div>
+        <button class="btn btn-rosso" type="submit" id="fin-btn">${L("Enviar pre-estudio","Send pre-approval request")} <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></button>
+      </form>
+      <div class="ok-msg" id="fin-okm" role="status" hidden></div>
+    </div>`;
+  finCalc();
+}
+function finCalc(){
+  const c=FS.c; if(!c) return; const s=simular(c.precio,FS.entrada,FS.n), r=$("#fin-ent");
+  if(r) r.style.setProperty("--p",(r.max>0?FS.entrada/r.max*100:0)+"%");
+  $("#fin-q").textContent=eur(s.q); $("#fin-ent-v").textContent=eur(FS.entrada);
+  const d=(a,b)=>`<div><dt>${a}</dt><dd>${b}</dd></div>`;
+  $("#fin-dl").innerHTML=d(L("A financiar","Financed"),eur(s.C))+d("TIN",pct(FIN.tin))+d(L("TAE","APR"),pct(s.tae))+d(L("Cuotas","Payments"),s.n)+d(L("Total adeudado","Total payable"),eur(s.total))+d(L("Precio a plazos","Total price"),eur(s.aplazado));
+  $("#fin-legal").textContent=L(`Ejemplo para este coche: precio al contado ${eur(s.precio)}, entrada ${eur(s.entrada)}, importe financiado ${eur(s.C)}, ${s.n} cuotas mensuales de ${eur(s.q)}, TIN ${pct(FIN.tin)}, TAE ${pct(s.tae)}, comisión de apertura ${eur(s.com)}, importe total adeudado ${eur(s.total)}, precio total a plazos ${eur(s.aplazado)}. Cálculo orientativo sin valor contractual. Financiación sujeta a estudio y aprobación por ${FIN.entidad||"la entidad financiera"}. Volcano Cars no concede préstamos: te ayuda a tramitar la solicitud.`,
+    `Example for this car: cash price ${eur(s.precio)}, deposit ${eur(s.entrada)}, amount financed ${eur(s.C)}, ${s.n} monthly payments of ${eur(s.q)}, borrowing rate ${pct(FIN.tin)}, APR ${pct(s.tae)}, arrangement fee ${eur(s.com)}, total amount payable ${eur(s.total)}, total price ${eur(s.aplazado)}. Indicative only, not a binding offer. Finance subject to approval by ${FIN.entidad||"the lender"}. Volcano Cars does not lend money: we help you apply.`);
+  return s;
+}
+$("#m-fin").addEventListener("input",e=>{ if(e.target.id==="fin-ent"){ FS.entrada=+e.target.value; finCalc(); } });
+$("#m-fin").addEventListener("click",e=>{
+  const p=e.target.closest("[data-pl]"); if(p){ FS.n=+p.dataset.pl; $("#m-fin").querySelectorAll("[data-pl]").forEach(b=>{ const on=b===p; b.setAttribute("aria-pressed",on); b.setAttribute("aria-checked",on); }); finCalc(); return; }
+  if(e.target.closest("#fin-pedir")){ $("#fin-cta").hidden=true; $("#fin-form").hidden=false; $("#fin-sit").focus(); $("#fin-form").scrollIntoView({block:"nearest",behavior:"smooth"}); TRK("frm","financiacion"); }
+});
+$("#m-fin").addEventListener("submit",async e=>{
+  if(e.target.id!=="fin-form") return; e.preventDefault();
+  const c=FS.c; if(!c) return;
+  if(!$("#fin-sit").value){ fallo("fin",L("Dinos tu situación laboral.","Please tell us your employment status.")); $("#fin-sit").focus(); return; }
+  if(!$("#fin-ing").value){ fallo("fin",L("Dinos tus ingresos aproximados.","Please tell us your approximate income.")); $("#fin-ing").focus(); return; }
+  if(!comprobar("fin",[["#fin-name",L("Please enter your name.","Please enter your name.")],["#fin-phone",L("Please enter your phone number.","Please enter your phone number.")]])) return;
+  if(!telValido($("#fin-phone").value)){ fallo("fin",L("Please check the phone number.","Please check the phone number.")); return; }
+  const s=finCalc(), titulo=`${c.marca} ${c.modelo} ${c.version||""}`.trim();
+  const r=await guardar("fin",{tipo:"financiacion",nombre:$("#fin-name").value,telefono:$("#fin-phone").value,email:$("#fin-mail").value.trim(),
+    coche:{id:c.id,titulo:`${titulo} · ${c.anio} · ${km(c.km)}`,precio:c.precio},
+    financiacion:{precio:s.precio,entrada:s.entrada,importe:s.C,plazo:s.n,cuota:s.q,tin:FIN.tin,tae:s.tae,situacion:$("#fin-sit").value,ingresos:$("#fin-ing").value,entidad:FIN.entidad}},
+    $("#fin-btn"),false,L("No hemos podido enviar la solicitud. Inténtalo de nuevo o llámanos al ","We couldn't send your request. Please try again or call us on ")+EMPRESA.telefono+".");
+  if(!r.ok) return;
+  apuntarInteres(c);
+  $("#fin-form").hidden=true;
+  const ok=$("#fin-okm"); ok.hidden=false;
+  ok.innerHTML=`<span><b>${L("¡Recibido!","Got it!")}</b> ${L(`Estudiamos tu financiación de ${eur(s.C)} a ${s.n} meses y te llamamos en horario de apertura con la respuesta. Te diremos qué documentos hacen falta.`,`We'll look at your ${eur(s.C)} finance over ${s.n} months and call you during opening hours with the answer. We'll tell you which documents we need.`)}</span>`;
+  ok.scrollIntoView({block:"nearest",behavior:"smooth"});
+});
+
+/* =====================================================================
+   ASISTENTE 24/7: responde lo más habitual al momento y pasa a un
+   asesor por WhatsApp con el mensaje ya escrito. Sin IA ni coste:
+   todo sale de los datos de la web (horario, dirección, coches…).
+   ===================================================================== */
+const BOT=(()=>{
+  const ISO='<svg viewBox="0 0 110 100" aria-hidden="true"><use href="#vc-iso"/></svg>';
+  const ICO_CHAT='<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12.5a7.5 7.5 0 01-10.9 6.7L4.5 20l1-4.1A7.5 7.5 0 1120 12.5z"/><path d="M9 11.5h.01M12.5 11.5h.01M16 11.5h.01" stroke-width="2.6"/></svg>';
+  const ICO_SEND='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>';
+  const fab=document.createElement("button"); fab.type="button"; fab.className="bot-fab"; fab.setAttribute("aria-label",L("Abrir el asistente de Volcano Cars","Open the Volcano Cars assistant"));
+  fab.innerHTML=ICO_CHAT+'<span class="dot" aria-hidden="true"></span>';
+  const box=document.createElement("section"); box.className="bot"; box.hidden=true; box.setAttribute("role","dialog"); box.setAttribute("aria-label",L("Asistente de Volcano Cars","Volcano Cars assistant"));
+  box.innerHTML=`<div class="bot-h"><span class="bot-av">${ISO}</span><div><b>${L("Asistente Volcano Cars","Volcano Cars assistant")}</b><small><i id="bot-dot"></i><span id="bot-st"></span></small></div><button type="button" class="x" id="bot-x" aria-label="${L("Cerrar","Close")}">×</button></div>
+    <div class="bot-m" id="bot-m" aria-live="polite"></div>
+    <div class="bot-f"><form id="bot-form" autocomplete="off"><input id="bot-in" maxlength="300" enterkeyhint="send" placeholder="${L("Escribe tu pregunta…","Type your question…")}" aria-label="${L("Tu pregunta","Your question")}"><button type="submit" aria-label="${L("Enviar","Send")}">${ICO_SEND}</button></form>
+      <a class="bot-asesor" id="bot-asesor" target="_blank" rel="noopener"><svg width="16" height="16"><use href="#i-wa"/></svg>${L("Hablar con un asesor por WhatsApp","Talk to an adviser on WhatsApp")}</a></div>`;
+  document.body.append(fab,box);
+  const M=$("#bot-m"); let empezado=false, espera="", ultimo="";
+  const abierto=()=>estado().open;
+  function cabecera(){ const on=abierto(); $("#bot-dot").classList.toggle("on",on); fab.querySelector(".dot").classList.toggle("on",on);
+    $("#bot-st").textContent=on?L("En línea · asesores conectados","Online · advisers available"):L("En línea · respondo al momento","Online · instant replies"); }
+  cabecera(); setInterval(cabecera,60000);
+  $("#bot-asesor").href=wa(L("Hola Volcano Cars, tengo una consulta: ","Hi Volcano Cars, I have a question: "));
+  const baja=()=>requestAnimationFrame(()=>{ M.scrollTop=M.scrollHeight; });
+  function yo(t){ const d=document.createElement("div"); d.className="bm u"; d.textContent=t; M.appendChild(d); baja(); }
+  function dice(html,acts){
+    const t=document.createElement("div"); t.className="bm b typing"; t.innerHTML="<i></i><i></i><i></i>"; M.appendChild(t); baja();
+    return new Promise(res=>setTimeout(()=>{ t.remove();
+      const d=document.createElement("div"); d.className="bm b"; d.innerHTML=html; M.appendChild(d);
+      if(acts&&acts.length){ const a=document.createElement("div"); a.className="b-acts"; a.innerHTML=acts.join(""); M.appendChild(a); }
+      baja(); res(); }, matchMedia("(prefers-reduced-motion: reduce)").matches?50:Math.min(900,350+html.length*3)));
+  }
+  const btn=(k,t,cls="")=>`<button type="button" data-b="${k}" class="${cls}">${t}</button>`;
+  const waB=(txt,t=L("Enviar por WhatsApp","Send on WhatsApp"))=>`<a class="wa" href="${wa(txt)}" target="_blank" rel="noopener"><svg width="15" height="15"><use href="#i-wa"/></svg>${t}</a>`;
+  const MENU=()=>[btn("horario",L("Horario","Opening hours")),btn("donde",L("Cómo llegar","Directions")),btn("coches",L("Ver un coche","See a car")),btn("urgente",L("Presupuesto urgente","Urgent quote"),"pri"),btn("financiacion",L("Financiación","Finance")),btn("garantia",L("Garantía","Warranty")),btn("reparacion",L("Estado de mi reparación","My repair status")),btn("asesor",L("Hablar con un asesor","Talk to an adviser"))];
+  const MAS=()=>[btn("menu",L("Otra pregunta","Another question")),btn("asesor",L("Hablar con un asesor","Talk to an adviser"))];
+  const R={
+    hola:()=>dice(L("¡Hola! Soy el asistente de Volcano Cars. Te respondo al momento, a cualquier hora. ¿En qué te ayudo?","Hi! I'm the Volcano Cars assistant. I answer instantly, any time. How can I help?"),MENU()),
+    menu:()=>dice(L("Claro, dime. Puedes escribir tu pregunta o elegir una opción:","Sure. Type your question or pick an option:"),MENU()),
+    horario:()=>dice(`<b>${esc(estado().txt)}</b>\n${esc(EMPRESA.horario)}`,[btn("donde",L("Cómo llegar","Directions")),btn("urgente",L("Presupuesto urgente","Urgent quote")),...MAS()]),
+    donde:()=>dice(L(`Estamos en <b>${esc(EMPRESA.direccion)}</b>, en Antigua, en el centro de la isla.`,`We're at <b>${esc(EMPRESA.direccion)}</b>, in Antigua, in the middle of the island.`),[`<a href="${MAPA}" target="_blank" rel="noopener" data-map>${L("Abrir en Google Maps","Open in Google Maps")}</a>`,btn("horario",L("Horario","Opening hours")),...MAS()]),
+    garantia:()=>dice(L(`<b>Coches:</b> 12 meses de garantía desde la entrega, revisados en nuestro taller.\n<b>Reparaciones:</b> 3 meses o 2.000 km, lo que llegue antes.\nPara usarla, escríbenos con tu contrato o factura y lo revisamos.`,`<b>Cars:</b> 12-month warranty from delivery, checked in our own workshop.\n<b>Repairs:</b> 3 months or 2,000 km, whichever comes first.\nTo use it, message us with your contract or invoice and we'll check it.`),
+      [`<a href="/condiciones" target="_blank" rel="noopener">${L("Ver condiciones","See terms")}</a>`,waB(L("Hola Volcano Cars, quiero consultar la garantía de mi coche. ","Hi Volcano Cars, I'd like to ask about my car's warranty. "),L("Consultar mi garantía","Ask about my warranty")),...MAS()]),
+    coches:()=>{
+      const disp=COCHES.filter(c=>c.estado==="disponible").slice(0,5);
+      if(!disp.length) return dice(L("Ahora mismo estamos preparando coches nuevos. Dinos qué buscas y te avisamos en cuanto entre uno que encaje.","We're preparing new cars right now. Tell us what you're after and we'll let you know as soon as one comes in."),[waB(L("Hola Volcano Cars, busco un coche: ","Hi Volcano Cars, I'm looking for a car: "),L("Decir qué busco","Tell you what I want")),...MAS()]);
+      return dice(L(`Tenemos <b>${disp.length===1?"1 coche":disp.length+" coches"}</b> a la venta, todos revisados y con 1 año de garantía. Toca uno para ver fotos, calcular la cuota o reservar día y hora para verlo y probarlo:`,`We have <b>${disp.length===1?"1 car":disp.length+" cars"}</b> for sale, all checked and with a 1-year warranty. Tap one to see photos, work out the payment or book a day and time to see and test drive it:`),
+        [...disp.map(c=>`<button type="button" class="b-car" data-car="${esc(c.id)}">${esc(c.marca+" "+c.modelo)} · ${esc(c.anio)}<span>${eur(c.precio)}</span></button>`),btn("vertodos",L("Ver todos y filtrar","See all and filter")),btn("asesor",L("Hablar con un asesor","Talk to an adviser"))]);
+    },
+    urgente:()=>{ espera="urgente"; return dice(L("Vamos rápido. Cuéntame en una frase qué le pasa al coche (y la matrícula si la tienes a mano):","Let's be quick. Tell me in one sentence what's wrong with the car (and the registration if you have it):")); },
+    financiacion:()=>{
+      const ok=FIN&&FIN.activa, n=ok?Math.max(...FIN.plazos):0, ej=COCHES.find(c=>c.estado==="disponible"&&!finMotivo(c)), s=ej?desde(ej):null;
+      if(!ok) return dice(L("Pregúntanos por las formas de pago: te lo explicamos sin compromiso.","Ask us about payment options: no obligation."),[waB(L("Hola Volcano Cars, quiero información sobre financiación. ","Hi Volcano Cars, I'd like information about finance. ")),...MAS()]);
+      return dice(L(`Sí, financiamos tu coche hasta en <b>${n} meses</b>, con o sin entrada.${s?` Por ejemplo, el ${esc(ej.marca+" "+ej.modelo)} sale desde <b>${eur(Math.ceil(s.q))}/mes</b>.`:""}\nEn la ficha de cada coche tienes la calculadora y puedes pedir un <b>pre-estudio gratis</b>: te llamamos con la respuesta y no firmas nada.`,
+        `Yes, we can finance your car over up to <b>${n} months</b>, with or without a deposit.${s?` For example, the ${esc(ej.marca+" "+ej.modelo)} starts from <b>${eur(Math.ceil(s.q))}/month</b>.`:""}\nEach car's page has a calculator and you can request a <b>free pre-approval</b>: we call you with the answer and you don't sign anything.`),
+        [btn("coches",L("Ver coches","See cars"),"pri"),...MAS()]);
+    },
+    reparacion:()=>dice(L("Cuando dejas el coche te mandamos por WhatsApp un <b>enlace privado</b> donde ves en tiempo real el estado, las fotos y el presupuesto. Si lo has perdido, te lo reenviamos:","When you drop off your car we send you a <b>private link</b> on WhatsApp where you can see its status, photos and quote in real time. If you've lost it, we'll resend it:"),
+      [waB(L("Hola Volcano Cars, tengo el coche en el taller. ¿Me reenviáis el enlace de seguimiento? Matrícula: ","Hi Volcano Cars, my car is in the workshop. Could you resend the tracking link? Registration: "),L("Pedir mi enlace","Ask for my link")),...MAS()]),
+    cita:()=>dice(L("Puedes reservar cita en el taller ahora mismo: eliges el servicio, el día y la hora, y queda confirmada al momento.","You can book the workshop right now: pick the service, day and time and it's confirmed instantly."),[btn("irtaller",L("Reservar cita","Book an appointment"),"pri"),btn("urgente",L("Es urgente","It's urgent")),...MAS()]),
+    entrega:()=>dice(L("Sí: una vez firmada la compra, <b>te llevamos el coche gratis</b> a cualquier punto de Fuerteventura, de Corralejo a Morro Jable, el día que tú elijas.","Yes: once the sale is signed, <b>we deliver the car free</b> anywhere on Fuerteventura, from Corralejo to Morro Jable, on the day you choose."),[btn("coches",L("Ver coches","See cars")),...MAS()]),
+    vender:()=>dice(L("Ahora mismo no compramos coches: solo vendemos coches revisados y reparamos el tuyo en el taller.","We don't buy cars at the moment: we only sell checked cars and repair yours in the workshop."),[btn("coches",L("Ver coches a la venta","See cars for sale")),btn("irtaller",L("Taller","Workshop")),...MAS()]),
+    ingles:()=>dice(L("Sí, atendemos en inglés. También tienes la web en inglés.","Yes, we speak English. The whole website is in English too."),[`<a href="${L("/en/","/")}">${L("English version","Versión en español")}</a>`,...MAS()]),
+    itv:()=>dice(L("Hacemos <b>pre-ITV</b>: revisamos el coche y lo dejamos listo para pasarla a la primera. Puedes reservarla online.","We do <b>pre-ITV (MOT) checks</b>: we inspect the car and get it ready to pass first time. You can book online."),[btn("irtaller",L("Reservar pre-ITV","Book a pre-ITV check"),"pri"),...MAS()]),
+    precio:()=>dice(L("Cada reparación depende del coche, así que te damos <b>presupuesto por escrito y gratis</b> antes de tocar nada. Mándanos fotos o cuéntanos qué le pasa:","Every repair depends on the car, so we give you a <b>free written quote</b> before touching anything. Send photos or tell us what's wrong:"),[btn("urgente",L("Pedir presupuesto","Get a quote"),"pri"),btn("irtaller",L("Reservar cita","Book")),...MAS()]),
+    asesor:()=>{ const on=abierto(), q=ultimo?L(`Hola Volcano Cars, os escribo desde la web: ${ultimo}`,`Hi Volcano Cars, I'm writing from the website: ${ultimo}`):L("Hola Volcano Cars, tengo una consulta: ","Hi Volcano Cars, I have a question: ");
+      return dice(on?L("Ahora estamos <b>abiertos</b>: un asesor te contesta en minutos.","We're <b>open</b> now: an adviser will reply within minutes."):L(`Ahora estamos cerrados (${esc(estado().txt.replace(/^Cerrado · /,""))}). Déjanos el mensaje y te contestamos a primera hora.`,`We're closed right now. Leave us a message and we'll reply first thing.`),
+        [waB(q,L("Abrir WhatsApp","Open WhatsApp")),...(on?[`<a href="${tel}">${L("Llamar","Call")} ${esc(EMPRESA.telefono)}</a>`]:[]),btn("menu",L("Otra pregunta","Another question"))]); },
+    gracias:()=>dice(L("¡A ti! Si necesitas algo más, aquí estoy.","You're welcome! I'm here if you need anything else."),MAS()),
+    nose:t=>dice(L("No tengo esa respuesta a mano, pero un asesor sí. Te paso tu pregunta por WhatsApp para que no tengas que repetirla:","I don't have that answer, but an adviser does. I'll pass your question on WhatsApp so you don't have to repeat it:"),[waB(L(`Hola Volcano Cars, os escribo desde la web: ${t}`,`Hi Volcano Cars, I'm writing from the website: ${t}`),L("Preguntar a un asesor","Ask an adviser")),btn("menu",L("Ver opciones","See options"))])
+  };
+  const CLAVES=[
+    ["gracias",/^(gracias|muchas gracias|thanks|thank you|ok gracias|perfecto|genial)\b/],
+    ["hola",/^(hola|buenas|buenos dias|buenas tardes|hello|hi|hey)\b[\s!.,]*$/],
+    ["vender",/(vend(o|er) mi coche|compr(ais|an|ais) coches|tasa(r|cion)|sell my car|buy my car)/],
+    ["reparacion",/(estado de mi|mi coche (esta|ya)|como va|ya esta listo|seguimiento|enlace|tracking|is it ready|my repair|status)/],
+    ["urgente",/(urgent|averia|no arranca|golpe|choque|accidente|ruido|humo|testigo|pinchazo|broke|breakdown|won'?t start|crash|dent)/],
+    ["financiacion",/(financ|cuota|plazo|mensual|credito|prestamo|pagar a|finance|monthly|loan|installment)/],
+    ["garantia",/(garantia|warranty|guarantee|reclamar)/],
+    ["itv",/(itv|\bmot\b)/],
+    ["cita",/(cita|reserv|turno|hueco|appointment|book)/],
+    ["precio",/(presupuesto|cuanto (cuesta|vale|cobrais)|precio de|quote|how much|price)/],
+    ["entrega",/(entrega|domicilio|llevais|a casa|delivery|deliver)/],
+    ["ingles",/(english|ingles|speak)/],
+    ["horario",/(horario|hora|abr(is|en|e)|cierr|abierto|open|hours|when)/],
+    ["donde",/(donde|direccion|ubicacion|como llego|llegar|mapa|address|where|located|directions)/],
+    ["coches",/(coche|comprar|stock|disponible|segunda mano|ocasion|probar|car|buy|test drive|vehicle)/],
+    ["asesor",/(asesor|persona|humano|llamar|telefono|whatsapp|adviser|human|phone|call|talk)/]
+  ];
+  async function responder(t){
+    const n=norm(t).trim(); ultimo=t.trim().slice(0,300);
+    if(espera==="urgente"){ espera="";
+      const on=abierto();
+      return dice(L(`Anotado. Pulsa el botón y se lo mandamos a un asesor por WhatsApp. ${on?"Ahora estamos abiertos: te contestamos en minutos.":"Te contestamos a primera hora."}\nSi puedes, añade una foto del problema.`,`Noted. Tap the button and we'll send it to an adviser on WhatsApp. ${on?"We're open now: we'll reply within minutes.":"We'll reply first thing."}\nIf you can, add a photo of the problem.`),
+        [waB(L(`URGENTE · Presupuesto desde la web: ${ultimo}`,`URGENT · Quote request from the website: ${ultimo}`),L("Enviar a un asesor","Send to an adviser")),btn("irtaller",L("Reservar cita","Book")),btn("menu",L("Otra pregunta","Another question"))]); }
+    const m=n.match(/\/s\/([a-z0-9_-]{12,40})/i);
+    if(m) return dice(L("Ese es tu enlace de seguimiento. Ábrelo aquí:","That's your tracking link. Open it here:"),[`<a class="pri" href="/s/${encodeURIComponent(t.match(/\/s\/([A-Za-z0-9_-]{12,40})/)[1])}" target="_blank" rel="noopener">${L("Ver mi reparación","See my repair")}</a>`,...MAS()]);
+    const hit=CLAVES.find(([,re])=>re.test(n));
+    return hit?R[hit[0]]():R.nose(ultimo);
+  }
+  M.addEventListener("click",e=>{
+    const car=e.target.closest("[data-car]"); if(car){ const el=document.querySelector(`.car[data-id="${CSS.escape(car.dataset.car)}"]`); cerrar(); if(el) el.click(); return; }
+    const b=e.target.closest("[data-b]"); if(!b) return;
+    const k=b.dataset.b; yo(b.textContent.trim());
+    if(k==="vertodos"){ cerrar(); go("comprar"); return; }
+    if(k==="irtaller"){ cerrar(); go("taller"); return; }
+    R[k]&&R[k]();
+  });
+  $("#bot-form").addEventListener("submit",e=>{ e.preventDefault(); const i=$("#bot-in"), t=i.value.trim(); if(!t) return; i.value=""; yo(t); responder(t); });
+  function abrir(){ box.hidden=false; fab.classList.add("oculto"); quitarTip(); try{ sessionStorage.setItem("vc_bot","1"); }catch(_){}
+    if(!empezado){ empezado=true; R.hola(); } setTimeout(()=>{ if(matchMedia("(hover:hover)").matches) $("#bot-in").focus(); },250); }
+  function cerrar(){ box.hidden=true; fab.classList.remove("oculto"); fab.focus({preventScroll:true}); }
+  fab.onclick=abrir; $("#bot-x").onclick=cerrar;
+  box.addEventListener("keydown",e=>{ if(e.key==="Escape") cerrar(); });
+  /* aviso discreto una sola vez por visita, a los 25 s, si no ha abierto nada */
+  let tip=null; function quitarTip(){ if(tip){ tip.remove(); tip=null; } }
+  let visto=false; try{ visto=!!sessionStorage.getItem("vc_bot"); }catch(_){}
+  if(!visto) setTimeout(()=>{ if(!box.hidden||document.querySelector("dialog[open]")) return; try{ sessionStorage.setItem("vc_bot","1"); }catch(_){}
+    tip=document.createElement("div"); tip.className="bot-tip"; tip.innerHTML=`${L("¿Tienes alguna pregunta? Te respondo al momento.","Any questions? I'll answer instantly.")}<button type="button" aria-label="${L("Cerrar","Close")}">×</button>`;
+    tip.onclick=e=>{ if(e.target.closest("button")) quitarTip(); else abrir(); }; document.body.appendChild(tip); setTimeout(quitarTip,12000); },25000);
+  /* en el móvil sube el botón si está la barra «Reservar» del taller */
+  new MutationObserver(()=>document.body.classList.toggle("con-barra",!$("#barra-cita").hidden)).observe($("#barra-cita"),{attributes:true,attributeFilter:["hidden"]});
+  return {abrir,cerrar};
+})();
+
+/* =====================================================================
+   SEO: enlace propio de cada coche (/coche/…), compartir, abrir un coche
+   desde un enlace (?coche=ID) y lista de coches para Google (schema.org)
+   ===================================================================== */
+function slugDe(c){
+  if(!/^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(c.id)) return c.id;
+  const b=`${c.marca} ${c.modelo} ${c.anio}`.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+  return (b?b+"-":"")+c.id.slice(0,8).toLowerCase();
+}
+const fichaURL=c=>location.origin+"/coche/"+slugDe(c);
+$("#m-share").addEventListener("click",async e=>{
+  e.preventDefault(); const c=gal.c; if(!c) return;
+  const url=fichaURL(c), t=`${c.marca} ${c.modelo} ${c.anio} · ${eur(c.precio)} · Volcano Cars`;
+  TRK("clk","compartir",c.id.slice(0,20));
+  if(navigator.share){ try{ await navigator.share({title:t,url}); return; }catch(_){ return; } }
+  window.open(wa(t+"\n"+url),"_blank","noopener");
+});
+let abiertoDesdeEnlace=false;
+function abrirDesdeEnlace(){
+  if(abiertoDesdeEnlace) return; const id=new URLSearchParams(location.search).get("coche"); if(!id) return;
+  abiertoDesdeEnlace=true;
+  const busca=()=>document.querySelector(`#cat-grid .car[data-id="${CSS.escape(id)}"]`)||document.querySelector(`.car[data-id="${CSS.escape(id)}"]`);
+  setTimeout(()=>{ const el=busca(); if(el) el.click(); },350);
+  try{ const q=new URLSearchParams(location.search); q.delete("coche"); const s=q.toString(); history.replaceState(null,"",location.pathname+(s?"?"+s:"")+location.hash); }catch(_){}
+}
+function listaParaGoogle(){
+  let el=document.getElementById("ld-coches"); if(!el){ el=document.createElement("script"); el.type="application/ld+json"; el.id="ld-coches"; document.head.appendChild(el); }
+  el.textContent=JSON.stringify({"@context":"https://schema.org","@type":"ItemList","name":L("Coches de segunda mano en venta en Volcano Cars","Used cars for sale at Volcano Cars"),
+    "itemListElement":COCHES.filter(c=>c.estado!=="vendido").map((c,i)=>({"@type":"ListItem","position":i+1,"url":fichaURL(c),"name":`${c.marca} ${c.modelo} ${c.anio}`}))});
+}
 
 cargar();
 </script>
