@@ -1,5 +1,5 @@
 # Cambia la dirección de la web en todos los archivos (canonical, sitemap, Google, redes).
-# Uso:  python3 tools/cambiar-direccion.py lestter4th.netlify.app monzacar-antigua.netlify.app
+# Uso:  python3 tools/cambiar-direccion.py lestter5th.netlify.app monzacar-antigua.netlify.app
 import pathlib, sys
 if len(sys.argv) != 3:
     sys.exit("Uso: python3 tools/cambiar-direccion.py DIRECCION_VIEJA DIRECCION_NUEVA")

@@ -4,21 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<title>Panel Monza Car</title>
+<title>Panel Volcano Cars</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,800;125,800&family=Audiowide&family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,700..900&family=Figtree:wght@400;500;600;700&display=swap">
 <style>
 :root{
-  --ground:#F6F3EE; --surface:#FFFFFF; --surface-2:#EFEAE3; --line:#E4DCD1;
-  --ink:#15171A; --muted:#6B655E; --brand:#15171A; --brand-ink:#FFFFFF; --brand-soft:#EFEAE3;
-  --accent:#C8202B; --accent-ink:#FFFFFF; --ok:#1F8B4C; --ok-soft:#E3F2E9; --bad:#B3261E; --bad-soft:#FBE9E7;
+  --ground:#F2EFEA; --surface:#FFFFFF; --surface-2:#E9E5DF; --line:#DCD8D1;
+  --ink:#1B1B1A; --muted:#67635D; --brand:#1B1B1A; --brand-ink:#FFFFFF; --brand-soft:#E9E5DF;
+  --accent:#D9481C; --accent-ink:#FFFFFF; --ok:#1F8B4C; --ok-soft:#E3F2E9; --bad:#B3261E; --bad-soft:#FBE9E7;
   --display:"Archivo","Arial Narrow",Arial,sans-serif; --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 @media (prefers-color-scheme:dark){:root{
-  --ground:#0D0E10; --surface:#16181B; --surface-2:#1E2125; --line:#2A2E33;
-  --ink:#F3EFE9; --muted:#A49E97; --brand:#F3EFE9; --brand-ink:#15171A; --brand-soft:#1E2125;
-  --accent:#E0413F; --accent-ink:#FFFFFF; --ok:#3DBF76; --ok-soft:#14291D; --bad:#F2918A; --bad-soft:#3A1D1B;
+  --ground:#121211; --surface:#1B1B1A; --surface-2:#252523; --line:#35342F;
+  --ink:#F2EFEA; --muted:#A9A49B; --brand:#F2EFEA; --brand-ink:#1B1B1A; --brand-soft:#252523;
+  --accent:#E5562A; --accent-ink:#FFFFFF; --ok:#3DBF76; --ok-soft:#14291D; --bad:#F2918A; --bad-soft:#3A1D1B;
 }}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -27,7 +27,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 [hidden]{display:none!important}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .wrap{max-width:900px;margin:0 auto;padding-inline:16px}
-h1,h2{font-family:var(--display);font-stretch:112%;font-weight:800;margin:0;line-height:1.1}
+h1,h2{font-family:var(--display);font-stretch:80%;font-weight:800;margin:0;line-height:1.1}
 .top{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
 .bar{display:flex;align-items:center;gap:12px;height:60px}
 .logo{display:flex;align-items:center;gap:8px;font-family:var(--display);font-stretch:125%;font-weight:800;font-size:18px;text-decoration:none;color:inherit}
@@ -106,13 +106,13 @@ legend{font-family:var(--display);font-stretch:112%;font-weight:800;font-size:18
 body{background:radial-gradient(900px 500px at 100% -10%,color-mix(in srgb,var(--accent) 7%,transparent),transparent 60%),radial-gradient(700px 400px at -10% 110%,color-mix(in srgb,var(--ok) 7%,transparent),transparent 60%),var(--ground);background-attachment:fixed}
 .lux{position:relative;isolation:isolate}
 .lux::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .35s;
-  background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--c1,#C8202B) 12%,transparent),transparent 65%)}
+  background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--c1,#D9481C) 12%,transparent),transparent 65%)}
 .lux:hover::after{opacity:1}
-.b-acc{background:linear-gradient(135deg,#C8202B,#E0413F 60%,#F2A65A);box-shadow:0 10px 24px -12px #C8202B;transition:transform .25s,box-shadow .25s}
-.b-acc:hover{transform:translateY(-2px);box-shadow:0 16px 30px -12px #C8202B}
+.b-acc{background:linear-gradient(135deg,#D9481C,#E5562A 60%,#F2994A);box-shadow:0 10px 24px -12px #D9481C;transition:transform .25s,box-shadow .25s}
+.b-acc:hover{transform:translateY(-2px);box-shadow:0 16px 30px -12px #D9481C}
 .b-brand{transition:transform .25s}.b-brand:hover{transform:translateY(-2px)}
-.login{box-shadow:0 30px 70px -30px rgba(200,32,43,.45),0 2px 6px rgba(0,0,0,.05);border:0;position:relative;overflow:hidden}
-.login::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,#1F8B4C 0 33%,#F3EFE9 33% 66%,#C8202B 66%)}
+.login{box-shadow:0 30px 70px -30px rgba(217,72,28,.45),0 2px 6px rgba(0,0,0,.05);border:0;position:relative;overflow:hidden}
+.login::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:#D9481C}
 .login-mark{color:var(--ink)}
 /* coches */
 .row{--c1:#1F8B4C;transition:transform .3s,box-shadow .3s,border-color .25s}
@@ -126,27 +126,27 @@ body{background:radial-gradient(900px 500px at 100% -10%,color-mix(in srgb,var(-
 .seg button[aria-pressed="true"]{color:#fff;box-shadow:0 6px 14px -8px currentColor}
 .seg .seg-disponible[aria-pressed="true"]{background:#1F8B4C}
 .seg .seg-reservado[aria-pressed="true"]{background:#E08A2E}
-.seg .seg-vendido[aria-pressed="true"]{background:#6B655E}
+.seg .seg-vendido[aria-pressed="true"]{background:#67635D}
 .stats .pill{display:inline-flex;align-items:center;gap:7px}
 .stats .pill::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
 /* KPIs */
-.kpi{--c1:#C8202B;--c2:#F2A65A;display:grid;gap:2px;transition:transform .3s,box-shadow .3s}
-.kpi.k2{--c1:#3B6FD8;--c2:#2FB5C8}.kpi.k3{--c1:#1F9D6B;--c2:#2FB5C8}.kpi.k4{--c1:#E08A2E;--c2:#C8202B}
+.kpi{--c1:#D9481C;--c2:#F2994A;display:grid;gap:2px;transition:transform .3s,box-shadow .3s}
+.kpi.k2{--c1:#3B6FD8;--c2:#2FB5C8}.kpi.k3{--c1:#1F9D6B;--c2:#2FB5C8}.kpi.k4{--c1:#E08A2E;--c2:#D9481C}
 .kpi:hover{transform:translateY(-2px);box-shadow:0 14px 28px -18px var(--c1)}
 .kpi .k-ic{display:grid;font-size:0;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff!important;background:linear-gradient(135deg,var(--c1),var(--c2));margin-bottom:6px;box-shadow:0 8px 16px -8px var(--c1)}
 .kpi b{background:linear-gradient(135deg,var(--c1),var(--c2));-webkit-background-clip:text;background-clip:text;color:transparent}
 /* solicitudes */
 #leads .lead,#agenda .lead{border-left:5px solid var(--c1)}
 .lead{--c1:#3B6FD8;transition:transform .3s,box-shadow .3s}
-.lead.t-taller{--c1:#1F9D6B}.lead.t-tasacion{--c1:#E08A2E}.lead.t-contacto{--c1:#6B655E}
+.lead.t-taller{--c1:#1F9D6B}.lead.t-tasacion{--c1:#E08A2E}.lead.t-contacto{--c1:#67635D}
 .lead:hover{transform:translateY(-2px);box-shadow:0 16px 32px -20px var(--c1)}
 #leads .lead.nueva{border-left-color:var(--c1)}
 .lead.nueva{box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 35%,transparent)}
 .lead.nueva .top1 b::after{content:"NUEVA";margin-left:8px;font-size:10.5px;font-weight:800;letter-spacing:.08em;color:#fff;background:var(--accent);padding:2px 7px;border-radius:999px;vertical-align:2px;animation:latido 1.8s infinite}
 @keyframes latido{50%{box-shadow:0 0 0 5px color-mix(in srgb,var(--accent) 20%,transparent)}}
 .lead.perdida{opacity:.62}
-.lead select[data-v]{font-weight:700;border-color:transparent;color:#fff;background:#6B655E}
-.lead select[data-v="nueva"]{background:#C8202B}.lead select[data-v="contactado"]{background:#3B6FD8}.lead select[data-v="cita"]{background:#1F9D6B}.lead select[data-v="ganada"]{background:#E08A2E}.lead select[data-v="perdida"]{background:#8a8580}
+.lead select[data-v]{font-weight:700;border-color:transparent;color:#fff;background:#67635D}
+.lead select[data-v="nueva"]{background:#D9481C}.lead select[data-v="contactado"]{background:#3B6FD8}.lead select[data-v="cita"]{background:#1F9D6B}.lead select[data-v="ganada"]{background:#E08A2E}.lead select[data-v="perdida"]{background:#8a8580}
 .lead select option{background:var(--surface);color:var(--ink)}
 /* agenda */
 .cita-item{position:relative}
@@ -156,7 +156,7 @@ body{background:radial-gradient(900px 500px at 100% -10%,color-mix(in srgb,var(-
 .cita-item.hecha{opacity:.6}
 /* formulario */
 legend{display:flex;align-items:center;gap:10px}
-.lg-ic{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-size:16px;color:#fff;background:linear-gradient(135deg,#C8202B,#F2A65A)}
+.lg-ic{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-size:16px;color:#fff;background:linear-gradient(135deg,#D9481C,#F2994A)}
 .drop{transition:border-color .25s,background .25s,transform .25s}
 .drop:hover,.drop.over{transform:scale(1.01);border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
 .tabs button svg{flex-shrink:0}
@@ -202,9 +202,9 @@ legend{display:flex;align-items:center;gap:10px}
 /* vídeo 360° */
 .v360{position:relative;overflow:hidden}
 .v360::before{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--accent) 14%,transparent),transparent 70%);pointer-events:none}
-.v-new{font-family:var(--body);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,#C8202B,#F2A65A);padding:3px 8px;border-radius:999px}
+.v-new{font-family:var(--body);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,#D9481C,#F2994A);padding:3px 8px;border-radius:999px}
 .hint{margin:-4px 0 0;color:var(--muted);font-size:14.5px}
-.lg-ic.v{background:linear-gradient(135deg,#15171A,#3B6FD8)}
+.lg-ic.v{background:linear-gradient(135deg,#1B1B1A,#3B6FD8)}
 .drop.vd b{display:inline-flex;align-items:center;gap:8px}
 .tips{font-size:14px;color:var(--muted)}
 .tips summary{cursor:pointer;font-weight:700;color:var(--ink);padding:4px 0}
@@ -213,7 +213,7 @@ legend{display:flex;align-items:center;gap:10px}
 .vprog .top1{display:flex;justify-content:space-between;gap:10px;align-items:center;font-weight:700}
 .vprog .top1 span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .vbar{height:10px;border-radius:999px;background:var(--surface);overflow:hidden;box-shadow:inset 0 0 0 1px var(--line)}
-.vbar i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#C8202B,#F2A65A);transition:width .3s ease;position:relative;overflow:hidden}
+.vbar i{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#D9481C,#F2994A);transition:width .3s ease;position:relative;overflow:hidden}
 .vbar i::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);transform:translateX(-100%);animation:brillo 1.4s infinite}
 @keyframes brillo{to{transform:translateX(100%)}}
 .vprog small{color:var(--muted);font-size:13.5px}
@@ -231,8 +231,8 @@ legend{display:flex;align-items:center;gap:10px}
 .vtipo label:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,var(--surface));box-shadow:0 8px 20px -14px var(--accent)}
 .vtipo label:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:2px}
 .vacts{display:flex;gap:8px;flex-wrap:wrap}
-.pill.v3{background:#15171A;color:#fff}
-@media (prefers-color-scheme:dark){.pill.v3{background:#F3EFE9;color:#15171A}}
+.pill.v3{background:#1B1B1A;color:#fff}
+@media (prefers-color-scheme:dark){.pill.v3{background:#F2EFEA;color:#1B1B1A}}
 .pill.viendo{background:var(--bad-soft);color:var(--accent);display:inline-flex;align-items:center;gap:6px}
 .pill.viendo::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;animation:latido 1.8s infinite}
 /* ---------- móvil (Android e iPhone, 320–440 px) ---------- */
@@ -242,7 +242,7 @@ html{overflow-x:hidden}
 img,video{max-width:100%}
 @media (max-width:480px){
   .bar{gap:8px}
-  .logo svg{width:42px}
+  .logo svg{height:28px;width:auto}
   .logo em{font-size:16px}
   .bar .sp .btn{padding:8px 10px;font-size:13.5px}
   .tabsrow{gap:10px}
@@ -264,7 +264,7 @@ img,video{max-width:100%}
 <body>
 <header class="top">
   <div class="wrap bar">
-    <a class="logo" href="/" target="_blank" rel="noopener"><svg viewBox="0 0 240 90" width="54" aria-hidden="true" style="overflow:visible"><path d="M4 88 C14 66 32 52 60 43 L66 40 L68 45 C44 54 24 66 11 88 Z" fill="#1F8B4C"/><path d="M64 42 C92 30 108 14 136 11 C150 10 158 12 164 14M82 58 C108 62 134 56 160 46" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M156 12 L234 4 L236 9 L222 62 L214 62 L224 15 L196 17 L172 44 L160 46 L160 36 L180 17 L158 19 Z" fill="#C8202B"/></svg><em style="font-family:Audiowide,var(--display);font-style:normal;font-weight:400;display:inline-block;transform:skewX(-10deg)">MONZA CAR</em></a>
+    <a class="logo" href="/" target="_blank" rel="noopener"><svg viewBox="0 0 662 162" height="34" aria-label="Volcano Cars" style="display:block;--logo-inv:var(--surface)"><path d="M0 0 L22 0 L40 74 L58 0 L80 0 L54 100 L26 100 Z M112 0 L160 0 Q176 0 176 16 L176 84 Q176 100 160 100 L112 100 Q96 100 96 84 L96 16 Q96 0 112 0 Z M122 22 L150 22 Q154 22 154 26 L154 74 Q154 78 150 78 L122 78 Q118 78 118 74 L118 26 Q118 22 122 22 Z M192 0 L214 0 L214 78 L256 78 L256 100 L192 100 Z M288 0 L348 0 L348 22 L298 22 Q294 22 294 26 L294 74 Q294 78 298 78 L348 78 L348 100 L288 100 Q272 100 272 84 L272 16 Q272 0 288 0 Z M364 100 L364 16 Q364 0 380 0 L428 0 Q444 0 444 16 L444 100 L422 100 L422 68 L386 68 L386 100 Z M386 22 L422 22 L422 48 L386 48 Z M460 0 L484 0 L518 62 L518 0 L540 0 L540 100 L516 100 L482 38 L482 100 L460 100 Z" fill="currentColor" fill-rule="evenodd"/><path d="M552 100 L580 0 L596 0 L607 14 L618 0 L634 0 L662 100 Z" fill="currentColor"/><path d="M592.9 36 L621.1 36 L632.8 78 L581.2 78 Z" fill="#D9481C"/><path d="M0 122 L170 122 L170 162 L0 162 Z" fill="#D9481C"/><path d="M29 134.52 Q29 131 32.52 131 L45.28 131 L45.28 135.84 L34.72 135.84 Q33.84 135.84 33.84 136.72 L33.84 147.28 Q33.84 148.16 34.72 148.16 L45.28 148.16 L45.28 153 L32.52 153 Q29 153 29 149.48 Z M60.907 153 L60.907 134.52 Q60.907 131 64.427 131 L73.667 131 Q77.187 131 77.187 134.52 L77.187 153 L72.347 153 L72.347 148.16 L65.747 148.16 L65.747 153 Z M65.747 136.72 Q65.747 135.84 66.627 135.84 L71.467 135.84 Q72.347 135.84 72.347 136.72 L72.347 143.32 L65.747 143.32 Z M92.813 153 L92.813 131 L105.573 131 Q109.093 131 109.093 134.52 L109.093 139.8 Q109.093 143.32 105.573 143.32 L97.653 143.32 L97.653 153 Z M97.653 135.84 L103.373 135.84 Q104.253 135.84 104.253 136.72 L104.253 137.6 Q104.253 138.48 103.373 138.48 L97.653 138.48 Z M97.697 143.32 L103.263 143.32 L109.093 153 L103.527 153 Z M124.72 134.52 Q124.72 131 128.24 131 L141 131 L141 135.84 L130.44 135.84 Q129.56 135.84 129.56 136.72 L129.56 139.58 L137.48 139.58 Q141 139.58 141 143.1 L141 149.48 Q141 153 137.48 153 L124.72 153 L124.72 148.16 L135.28 148.16 Q136.16 148.16 136.16 147.28 L136.16 144.42 L128.24 144.42 Q124.72 144.42 124.72 140.9 Z" fill="#1B1B1A"/><path d="M178 122 L662 122 L662 162 L178 162 Z" fill="currentColor"/><path d="M200 134.5 L209.6 134.5 L209.6 137.35 L206.225 137.35 L206.225 149.5 L203.375 149.5 L203.375 137.35 L200 137.35 Z M214.759 149.5 L214.759 136.9 Q214.759 134.5 217.159 134.5 L221.959 134.5 Q224.359 134.5 224.359 136.9 L224.359 149.5 L221.509 149.5 L221.509 145.75 L217.609 145.75 L217.609 149.5 Z M217.609 137.95 Q217.609 137.35 218.209 137.35 L220.909 137.35 Q221.509 137.35 221.509 137.95 L221.509 142.9 L217.609 142.9 Z M229.519 134.5 L232.369 134.5 L232.369 146.65 L238.159 146.65 L238.159 149.5 L229.519 149.5 Z M243.318 134.5 L246.168 134.5 L246.168 146.65 L251.958 146.65 L251.958 149.5 L243.318 149.5 Z M257.118 134.5 L266.718 134.5 L266.718 137.35 L259.968 137.35 L259.968 140.575 L265.374 140.575 L265.374 143.425 L259.968 143.425 L259.968 146.65 L266.718 146.65 L266.718 149.5 L257.118 149.5 Z M271.877 149.5 L271.877 134.5 L279.077 134.5 Q281.477 134.5 281.477 136.9 L281.477 140.5 Q281.477 142.9 279.077 142.9 L274.727 142.9 L274.727 149.5 Z M274.727 137.35 L278.027 137.35 Q278.627 137.35 278.627 137.95 L278.627 139.45 Q278.627 140.05 278.027 140.05 L274.727 140.05 Z M274.757 142.9 L278.035 142.9 L281.477 149.5 L278.2 149.5 Z M296.596 134.5 L299.446 134.5 L303.316 140.5 L307.186 134.5 L310.036 134.5 L310.036 149.5 L307.186 149.5 L307.186 139.139 L303.316 145.139 L299.446 139.139 L299.446 149.5 L296.596 149.5 Z M315.196 134.5 L324.796 134.5 L324.796 137.35 L318.046 137.35 L318.046 140.575 L323.452 140.575 L323.452 143.425 L318.046 143.425 L318.046 146.65 L324.796 146.65 L324.796 149.5 L315.196 149.5 Z M329.955 136.9 Q329.955 134.5 332.355 134.5 L339.555 134.5 L339.555 137.35 L333.405 137.35 Q332.805 137.35 332.805 137.95 L332.805 146.05 Q332.805 146.65 333.405 146.65 L339.555 146.65 L339.555 149.5 L332.355 149.5 Q329.955 149.5 329.955 147.1 Z M344.715 149.5 L344.715 136.9 Q344.715 134.5 347.115 134.5 L351.915 134.5 Q354.315 134.5 354.315 136.9 L354.315 149.5 L351.465 149.5 L351.465 145.75 L347.565 145.75 L347.565 149.5 Z M347.565 137.95 Q347.565 137.35 348.165 137.35 L350.865 137.35 Q351.465 137.35 351.465 137.95 L351.465 142.9 L347.565 142.9 Z M347.947 133.15 L350.512 133.15 L353.077 130.75 L350.512 130.75 Z M359.474 134.5 L362.609 134.5 L366.224 142.887 L366.224 134.5 L369.074 134.5 L369.074 149.5 L365.939 149.5 L362.324 141.113 L362.324 149.5 L359.474 149.5 Z M374.233 134.5 L377.083 134.5 L377.083 149.5 L374.233 149.5 Z M382.243 136.9 Q382.243 134.5 384.643 134.5 L391.843 134.5 L391.843 137.35 L385.693 137.35 Q385.093 137.35 385.093 137.95 L385.093 146.05 Q385.093 146.65 385.693 146.65 L391.843 146.65 L391.843 149.5 L384.643 149.5 Q382.243 149.5 382.243 147.1 Z M397.002 136.9 Q397.002 134.5 399.402 134.5 L404.202 134.5 Q406.602 134.5 406.602 136.9 L406.602 147.1 Q406.602 149.5 404.202 149.5 L399.402 149.5 Q397.002 149.5 397.002 147.1 Z M400.452 137.35 Q399.852 137.35 399.852 137.95 L399.852 146.05 Q399.852 146.65 400.452 146.65 L403.152 146.65 Q403.752 146.65 403.752 146.05 L403.752 137.95 Q403.752 137.35 403.152 137.35 Z M421.721 140.361 L424.999 140.361 L424.999 143.639 L421.721 143.639 Z M440.118 136.9 Q440.118 134.5 442.518 134.5 L449.718 134.5 L449.718 137.35 L443.568 137.35 Q442.968 137.35 442.968 137.95 L442.968 146.05 Q442.968 146.65 443.568 146.65 L449.718 146.65 L449.718 149.5 L442.518 149.5 Q440.118 149.5 440.118 147.1 Z M454.877 134.5 L457.727 134.5 L457.727 140.575 L461.627 140.575 L461.627 134.5 L464.477 134.5 L464.477 149.5 L461.627 149.5 L461.627 143.425 L457.727 143.425 L457.727 149.5 L454.877 149.5 Z M469.637 149.5 L469.637 136.9 Q469.637 134.5 472.037 134.5 L476.837 134.5 Q479.237 134.5 479.237 136.9 L479.237 149.5 L476.387 149.5 L476.387 145.75 L472.487 145.75 L472.487 149.5 Z M472.487 137.95 Q472.487 137.35 473.087 137.35 L475.787 137.35 Q476.387 137.35 476.387 137.95 L476.387 142.9 L472.487 142.9 Z M484.396 149.5 L484.396 134.5 L491.596 134.5 Q493.996 134.5 493.996 136.9 L493.996 140.8 Q493.996 143.2 491.596 143.2 L487.246 143.2 L487.246 149.5 Z M487.246 137.35 L490.546 137.35 Q491.146 137.35 491.146 137.95 L491.146 139.75 Q491.146 140.35 490.546 140.35 L487.246 140.35 Z M499.155 149.5 L499.155 136.9 Q499.155 134.5 501.555 134.5 L506.355 134.5 Q508.755 134.5 508.755 136.9 L508.755 149.5 L505.905 149.5 L505.905 145.75 L502.005 145.75 L502.005 149.5 Z M502.005 137.95 Q502.005 137.35 502.605 137.35 L505.305 137.35 Q505.905 137.35 505.905 137.95 L505.905 142.9 L502.005 142.9 Z M523.874 134.5 L527.152 134.5 L528.674 138.289 L530.197 134.5 L533.474 134.5 L530.099 142.9 L530.099 149.5 L527.249 149.5 L527.249 142.9 Z M548.593 149.5 L548.593 134.5 L555.793 134.5 Q558.193 134.5 558.193 136.9 L558.193 140.8 Q558.193 143.2 555.793 143.2 L551.443 143.2 L551.443 149.5 Z M551.443 137.35 L554.743 137.35 Q555.343 137.35 555.343 137.95 L555.343 139.75 Q555.343 140.35 554.743 140.35 L551.443 140.35 Z M563.353 134.5 L566.203 134.5 L566.203 149.5 L563.353 149.5 Z M571.362 134.5 L574.497 134.5 L578.112 142.887 L578.112 134.5 L580.962 134.5 L580.962 149.5 L577.827 149.5 L574.212 141.113 L574.212 149.5 L571.362 149.5 Z M586.122 134.5 L595.722 134.5 L595.722 137.35 L592.347 137.35 L592.347 149.5 L589.497 149.5 L589.497 137.35 L586.122 137.35 Z M600.881 134.5 L603.731 134.5 L603.731 146.05 Q603.731 146.65 604.331 146.65 L607.031 146.65 Q607.631 146.65 607.631 146.05 L607.631 134.5 L610.481 134.5 L610.481 147.1 Q610.481 149.5 608.081 149.5 L603.281 149.5 Q600.881 149.5 600.881 147.1 Z M615.641 149.5 L615.641 134.5 L622.841 134.5 Q625.241 134.5 625.241 136.9 L625.241 140.5 Q625.241 142.9 622.841 142.9 L618.491 142.9 L618.491 149.5 Z M618.491 137.35 L621.791 137.35 Q622.391 137.35 622.391 137.95 L622.391 139.45 Q622.391 140.05 621.791 140.05 L618.491 140.05 Z M618.521 142.9 L621.798 142.9 L625.241 149.5 L621.963 149.5 Z M630.4 149.5 L630.4 136.9 Q630.4 134.5 632.8 134.5 L637.6 134.5 Q640 134.5 640 136.9 L640 149.5 L637.15 149.5 L637.15 145.75 L633.25 145.75 L633.25 149.5 Z M633.25 137.95 Q633.25 137.35 633.85 137.35 L636.55 137.35 Q637.15 137.35 637.15 137.95 L637.15 142.9 L633.25 142.9 Z" style="fill:var(--logo-inv)"/></svg></a>
     <span class="tag">Panel</span>
     <div class="sp" id="topacts" hidden>
       <a class="btn b-ghost b-sm" href="/#comprar" target="_blank" rel="noopener">Ver web</a>
@@ -277,7 +277,7 @@ img,video{max-width:100%}
   <!-- LOGIN -->
   <section id="s-login" hidden>
     <form class="card login" id="login-form">
-      <div class="login-mark"><svg viewBox="0 0 240 90" width="84" aria-hidden="true" style="overflow:visible"><path d="M4 88 C14 66 32 52 60 43 L66 40 L68 45 C44 54 24 66 11 88 Z" fill="#34B36A"/><path d="M64 42 C92 30 108 14 136 11 C150 10 158 12 164 14M82 58 C108 62 134 56 160 46" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M156 12 L234 4 L236 9 L222 62 L214 62 L224 15 L196 17 L172 44 L160 46 L160 36 L180 17 L158 19 Z" fill="#E0413F"/></svg></div>
+      <div class="login-mark"><svg viewBox="-6 -6 122 112" width="84" aria-hidden="true"><path d="M0 100 L28 0 L44 0 L55 14 L66 0 L82 0 L110 100 Z" fill="currentColor"/><path d="M40.9 36 L69.1 36 L80.8 78 L29.2 78 Z" fill="#D9481C"/></svg></div>
       <h1 style="font-size:26px">Entrar al panel</h1>
       <p style="margin:0;color:var(--muted)">Desde aquí publicas, editas y marcas como vendidos los coches de la web.</p>
       <div class="field"><label for="pw">Contraseña</label><input class="in" id="pw" type="password" autocomplete="current-password" required></div>
@@ -744,7 +744,7 @@ async function loadLeads(mostrar){
   try{ LEADS=await api("/api/solicitudes"); }catch(err){ if(mostrar) $("#leads").innerHTML=`<div class="empty">${esc(err.message)}</div>`; return; }
   if(!conocidas) conocidas=new Set(LEADS.map(l=>l.id));
   const n=LEADS.filter(x=>x.estado==="nueva").length;
-  $("#n-new").hidden=!n; $("#n-new").textContent=n; document.title=(n?`(${n}) `:"")+"Panel Monza Car";
+  $("#n-new").hidden=!n; $("#n-new").textContent=n; document.title=(n?`(${n}) `:"")+"Panel Volcano Cars";
   renderLeads(); renderAgenda();
 }
 $("#reload-leads").onclick=()=>loadLeads(true);
@@ -767,7 +767,7 @@ function renderLeads(){
     if(x.cita) det.push(`<div><span>${x.estado==="perdida"?"Cita cancelada:":"Cita confirmada:"}</span> <b>${esc(fecha(x.cita.fecha))} · ${esc(x.cita.hora)} h</b></div>`);
     else if(x.dia||x.franja) det.push(`<div><span>Quiere venir:</span> <b>${esc(fecha(x.dia)||"cualquier día")}${x.franja?" · "+esc(x.franja):""}</b></div>`);
     if(x.mensaje) det.push(`<div><span>Mensaje:</span> ${esc(x.mensaje)}</div>`);
-    const saludo=x.idioma==="en"?`Hi ${x.nombre.split(" ")[0]}, this is Monza Car. `:`Hola ${x.nombre.split(" ")[0]}, te escribimos de Monza Car. `;
+    const saludo=x.idioma==="en"?`Hi ${x.nombre.split(" ")[0]}, this is Volcano Cars. `:`Hola ${x.nombre.split(" ")[0]}, te escribimos de Volcano Cars. `;
     return `<article class="lead lux t-${x.tipo} ${x.estado}" data-id="${esc(x.id)}">
       <div class="top1"><div><span class="tipo ${x.tipo}">${TIPO[x.tipo]||x.tipo}</span><b>${esc(x.nombre)}</b>${x.idioma==="en"?' <span class="tipo">EN</span>':""}</div>
         <span class="meta">${hace(x.creado)} · ${esc((x.origen&&x.origen.canal)||"Directo")}${x.origen&&x.origen.utm_campaign?" · "+esc(x.origen.utm_campaign):""}</span></div>
@@ -815,7 +815,7 @@ function renderAgenda(){
   for(const x of citas){
     if(x.cita.fecha!==dia){ dia=x.cita.fecha; html+=`<h2 style="font-size:18px;margin:14px 0 2px">${x.cita.fecha===hoy?"Hoy · ":""}${fechaLarga(dia)}</h2>`; }
     const qué = x.coche ? "Ver el "+x.coche.titulo : (x.servicios&&x.servicios.length?x.servicios.join(", "):"Taller")+(x.vehiculo&&x.vehiculo.coche?" · "+x.vehiculo.coche:"");
-    const rec=`Hola ${x.nombre.split(" ")[0]}, te recordamos tu cita en Monza Car el ${fechaLarga(x.cita.fecha).toLowerCase()} a las ${x.cita.hora}. Calle Valle Largo, Nave 8, Antigua. ¡Te esperamos!`;
+    const rec=`Hola ${x.nombre.split(" ")[0]}, te recordamos tu cita en Volcano Cars el ${fechaLarga(x.cita.fecha).toLowerCase()} a las ${x.cita.hora}. Calle Valle Largo, Nave 8, Antigua. ¡Te esperamos!`;
     html+=`<article class="lead cita-item lux t-${x.tipo} ${x===prox?"prox":""} ${x.estado==="ganada"?"hecha":""}" data-id="${esc(x.id)}" style="grid-template-columns:auto 1fr;display:grid;align-items:start">
       <div class="c-hora">${esc(x.cita.hora)}${x===prox?'<small>Próxima</small>':""}</div>
       <div style="display:grid;gap:8px"><div><span class="tipo ${x.tipo}">${x.cita.agenda==="visita"?"Visita":"Taller"}</span><b>${esc(x.nombre)}</b> ${x.estado==="ganada"?'<span class="tipo tasacion">Hecha</span>':""}</div>
@@ -859,7 +859,7 @@ function avisar(nuevas){
   const x=nuevas[0], txt=nuevas.length>1?`${nuevas.length} solicitudes nuevas`:x.cita?`Nueva cita: ${x.nombre}, ${fecha(x.cita.fecha)} a las ${x.cita.hora}`:`Nueva solicitud de ${x.nombre} (${TIPO[x.tipo]||x.tipo})`;
   toast(txt); pitido();
   try{ if(document.hidden && "Notification" in window && Notification.permission==="granted"){
-    const n=new Notification("Monza Car · "+txt,{body:x.coche?x.coche.titulo:(x.servicios||[]).join(", ")||x.telefono,tag:"mz-lead"});
+    const n=new Notification("Volcano Cars · "+txt,{body:x.coche?x.coche.titulo:(x.servicios||[]).join(", ")||x.telefono,tag:"mz-lead"});
     n.onclick=()=>{ window.focus(); show("s-leads"); renderLeads(); n.close(); }; } }catch(_){}
 }
 function pintarVivo(){
@@ -884,7 +884,7 @@ async function tick(){
     conocidas=ids;
     const sl=JSON.stringify(leads);
     if(sl!==sigLeads){ sigLeads=sl; LEADS=leads; const n=LEADS.filter(x=>x.estado==="nueva").length;
-      $("#n-new").hidden=!n; $("#n-new").textContent=n; document.title=(n?`(${n}) `:"")+"Panel Monza Car";
+      $("#n-new").hidden=!n; $("#n-new").textContent=n; document.title=(n?`(${n}) `:"")+"Panel Volcano Cars";
       const foco=document.activeElement; if(!(foco && foco.matches && foco.matches("[data-notas]"))) renderLeads(); renderAgenda(); }
     if(cars){ const sc=JSON.stringify([cars,int,vi]); if(sc!==sigCars){ sigCars=sc; CARS=cars; INTERES=int||{}; VIENDO=vi||{};
       const foco=document.activeElement; if(!(foco && foco.closest && foco.closest("#list"))) renderList(); } }

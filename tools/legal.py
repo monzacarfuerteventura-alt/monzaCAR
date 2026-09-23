@@ -17,10 +17,10 @@ HEAD = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{title} · Monza Car</title>
+<title>{title} · Volcano Cars</title>
 <meta name="robots" content="noindex, follow">
 <style>
-:root{{--ground:#F6F3EE;--surface:#FFFFFF;--line:#E4DCD1;--ink:#15171A;--muted:#6B655E;--rosso:#C8202B;color-scheme:light}}
+:root{{--ground:#F2EFEA;--surface:#FFFFFF;--line:#DCD8D1;--ink:#1B1B1A;--muted:#6B655E;--rosso:#D9481C;color-scheme:light}}
 @media (prefers-color-scheme:dark){{:root:not([data-theme="light"]){{--ground:#0D0E10;--surface:#16181B;--line:#2A2E33;--ink:#F3EFE9;--muted:#A49E97;--rosso:#E0413F;color-scheme:dark}}}}
 :root[data-theme="dark"]{{--ground:#0D0E10;--surface:#16181B;--line:#2A2E33;--ink:#F3EFE9;--muted:#A49E97;--rosso:#E0413F;color-scheme:dark}}
 *{{box-sizing:border-box}}
@@ -40,7 +40,7 @@ th,td{{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vert
 </head>
 <body>
 <main class="wrap">
-<a class="back" href="/">← Volver a Monza Car</a>
+<a class="back" href="/">← Volver a Volcano Cars</a>
 <h1>{title}</h1>
 <p class="upd">Última actualización: {upd}</p>
 """
@@ -53,7 +53,7 @@ FOOT = """
 TITULAR_BOX = f"""<div class="box">
 <b>Titular:</b> {TITULAR}<br>
 <b>NIF/CIF:</b> {NIF}<br>
-<b>Nombre comercial:</b> Monza Car<br>
+<b>Nombre comercial:</b> Volcano Cars<br>
 <b>Domicilio:</b> {DIRECCION}<br>
 <b>Email:</b> <a href="mailto:{EMAIL}">{EMAIL}</a> · <b>Teléfono:</b> {TEL}<br>
 <b>Taller:</b> {REG_TALLER}<br>
@@ -65,7 +65,7 @@ aviso = HEAD.format(title="Aviso legal", upd=ACTUALIZADO) + f"""
 {TITULAR_BOX}
 
 <h2>Objeto</h2>
-<p>Esta web informa sobre los servicios de taller (chapa y pintura, mecánica rápida) y sobre los vehículos de ocasión que vende Monza Car en Antigua, Fuerteventura, y permite pedir presupuesto, cita o tasación.</p>
+<p>Esta web informa sobre los servicios de taller (chapa y pintura, mecánica rápida) y sobre los vehículos de ocasión que vende Volcano Cars en Antigua, Fuerteventura, y permite pedir presupuesto, cita o tasación.</p>
 
 <h2>Precios y vehículos</h2>
 <p>La información de cada vehículo (fotos, kilómetros, equipamiento y precio) se publica con la mayor exactitud posible. Los precios mostrados son precios finales para el comprador, con todos los impuestos incluidos. Si hubiera un error tipográfico evidente, se avisará antes de firmar y prevalecerá lo firmado en el contrato de compraventa. La publicación de un vehículo no supone una reserva: la disponibilidad se confirma en el momento del contacto. Esta web no vende a distancia: las compraventas y reparaciones se contratan en nuestras instalaciones.</p>
@@ -74,20 +74,20 @@ aviso = HEAD.format(title="Aviso legal", upd=ACTUALIZADO) + f"""
 <p>Los vehículos de ocasión vendidos a consumidores tienen una garantía de 12 meses desde la entrega y las reparaciones del taller, de 3 meses o 2.000 km. Todos los detalles están en <a href="/condiciones">Condiciones de venta, taller y garantía</a>. Hay hojas de reclamaciones a disposición de los clientes en el taller.</p>
 
 <h2>Propiedad intelectual</h2>
-<p>Los textos, fotografías, logotipos y el diseño de esta web pertenecen a Monza Car o se usan con permiso. No se pueden copiar ni reutilizar sin autorización.</p>
+<p>Los textos, fotografías, logotipos y el diseño de esta web pertenecen a Volcano Cars o se usan con permiso. No se pueden copiar ni reutilizar sin autorización.</p>
 
 <h2>Reseñas</h2>
 <p>Las reseñas de la web son una selección copiada literalmente de nuestra ficha pública de Google Maps (algunas recortadas; en la versión inglesa, traducidas). No hemos cambiado su contenido. No podemos verificar que cada autor haya sido cliente; Google publica las opiniones de cualquier usuario con cuenta. Todas las reseñas, también las negativas, pueden consultarse en Google Maps.</p>
 
 <h2>Responsabilidad</h2>
-<p>Monza Car no se hace responsable de los contenidos de webs de terceros a las que se enlaza (Google Maps, WhatsApp) ni de interrupciones técnicas ajenas a su control.</p>
+<p>Volcano Cars no se hace responsable de los contenidos de webs de terceros a las que se enlaza (Google Maps, WhatsApp) ni de interrupciones técnicas ajenas a su control.</p>
 
 <h2>Legislación</h2>
 <p>Esta web se rige por la legislación española. Para cualquier controversia con consumidores serán competentes los juzgados del domicilio del consumidor.</p>
 """ + FOOT
 
 priv = HEAD.format(title="Política de privacidad", upd=ACTUALIZADO) + f"""
-<p class="en" id="en" lang="en"><b>In English:</b> Monza Car only uses the details you send us (name, phone, car details, preferred day) to answer your request. We keep them for up to 2 years and never sell them. You can ask us to delete them at any time by writing to <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>
+<p class="en" id="en" lang="en"><b>In English:</b> Volcano Cars only uses the details you send us (name, phone, car details, preferred day) to answer your request. We keep them for up to 2 years and never sell them. You can ask us to delete them at any time by writing to <a href="mailto:{EMAIL}">{EMAIL}</a>.</p>
 
 <h2>Quién trata tus datos</h2>
 {TITULAR_BOX}
@@ -145,7 +145,7 @@ cook = HEAD.format(title="Política de cookies", upd=ACTUALIZADO) + f"""
 cond = HEAD.format(title="Condiciones de venta, taller y garantía", upd=ACTUALIZADO) + f"""
 <p class="en" id="en" lang="en"><b>In English:</b> the used cars we sell to consumers come with a 12-month legal warranty from delivery. Workshop repairs are guaranteed for 3 months or 2,000 km. You are entitled to a written quote before any repair. If your car is not ready on the agreed date, we discount 10 % of the labour cost per working day of delay, up to 50 % (see section 4 for exceptions). Online appointments are confirmed instantly; please tell us on WhatsApp if you cannot come. Prices shown are final, taxes included. Once the sale is signed, we deliver the car free of charge to any address on Fuerteventura. Nothing is sold online: contracts are signed at our premises in Antigua.</p>
 
-<p>Estas condiciones resumen tus derechos al comprar un coche o reparar el tuyo en Monza Car. No sustituyen al contrato ni a la factura, que son los documentos que se firman.</p>
+<p>Estas condiciones resumen tus derechos al comprar un coche o reparar el tuyo en Volcano Cars. No sustituyen al contrato ni a la factura, que son los documentos que se firman.</p>
 {TITULAR_BOX}
 
 <h2>1. Compra de coches de ocasión</h2>
