@@ -104,3 +104,10 @@ Reglas para que siempre sea verdad: mínimo 3 coches comparados, precio por deba
 comparativa de menos de 4 meses (si caduca, el bloque se oculta solo: actualízala). A partir del 10 % sale como
 «¡Oferta imbatible de mercado!»; entre el 3 y el 9 %, como «Precio por debajo del mercado».
 La frase de urgencia usa datos reales (cuánto tardaron en venderse vuestros últimos coches).
+
+## Guía de venta (El Método de Venta Volcano Cars · SOP-02 v2.0)
+Panel → Coches → «¿No sabes cómo publicar y vender?» (o /admin#guia). Seis pasos + Chuleta + Anexo A, cada uno con
+«Hazlo así», «En el panel» (botones que llevan a la pantalla correcta) y «Listo cuando» (las casillas se guardan en el móvil).
+También hay enlaces a la guía dentro del formulario del coche (fotos, descripción, comparativa) y en el CRM.
+«Descargar PDF completo» abre «Imprimir» con el manual en A4 (portada + 9 páginas enlazadas): elige «Guardar como PDF».
+Textos: tools/guia/guia.js · estilos: tools/guia/guia.css · después ejecuta  python3 tools/guia/inyectar.py

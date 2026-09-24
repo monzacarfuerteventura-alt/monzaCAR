@@ -483,6 +483,296 @@ dialog.dlg form{display:grid;gap:12px;padding:20px}
 .mk-prev:empty{display:none}
 .mk-prev.si{background:#E3F2E9;color:#1F7A45}
 .mk-prev.no{background:#FBE4DA;color:#B83A12}
+/*GUIA-CSS-INICIO*/
+/* =====================================================================
+   GUÍA DE VENTA (El Método de Venta Volcano Cars · SOP-02)
+   Se genera con tools/guia/inyectar.py: no editar aquí dentro de admin.html
+   ===================================================================== */
+.g-cta-guia{display:inline-flex;align-items:center;gap:8px}
+.g-cta-guia svg{flex-shrink:0}
+.g-link{display:inline-flex;align-items:center;gap:6px;border:0;background:none;padding:0;color:var(--accent);font:inherit;font-weight:700;font-size:13.5px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.guia>*,.g-2>*,.g-3>*,.g-4>*,.g-6>*{min-width:0}
+.guia{--gg:#1B1B1A;--gm:#D9481C;--gw:#F2994A;--gh:#F2EFEA;--gv:#1F8B4C;--gp:#5A564F;display:grid;gap:18px}
+.g-top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.g-top small{display:block;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.g-top h1{font-size:clamp(24px,5vw,32px);text-transform:uppercase;margin-top:4px}
+.g-top .acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.g-pag{display:grid;gap:18px}
+.g-cierre{display:grid;gap:18px}
+.solo-pdf{display:none!important}
+.g-top .acts small{flex-basis:100%;letter-spacing:0;text-transform:none;font-weight:600;color:var(--muted);text-align:right}
+.g-nav{position:sticky;top:60px;z-index:8;background:var(--ground);padding:8px 0 10px;margin:-6px 0 0}
+.g-nav nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px}
+.g-nav nav::-webkit-scrollbar{display:none}
+.g-nav a{flex-shrink:0;display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-weight:700;font-size:13.5px;text-decoration:none;white-space:nowrap}
+.g-nav a b{font-family:var(--display);font-stretch:90%;color:var(--accent)}
+.g-nav a[aria-current="page"]{background:var(--gg);border-color:var(--gg);color:#F2EFEA}
+.g-nav a[aria-current="page"] b{color:#F2994A}
+.g-nav a.hecho::after{content:"✓";color:var(--ok);font-weight:900}
+.g-prog{display:flex;gap:4px;margin-top:8px}
+.g-prog i{flex:1;height:4px;border-radius:4px;background:var(--line)}
+.g-prog i.on{background:var(--gm)}
+.g-prog i.ok{background:var(--gv)}
+/* cabecera de cada paso */
+.g-hero{position:relative;overflow:hidden;background:var(--gg);color:#F2EFEA;border-radius:22px;padding:24px 24px 22px;display:grid;grid-template-columns:auto 1fr;gap:6px 22px;align-items:start}
+.g-hero::after{content:"";position:absolute;right:-90px;top:-90px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(217,72,28,.45),transparent 70%);pointer-events:none}
+.g-hero .num{font-family:var(--display);font-stretch:78%;font-weight:900;font-size:clamp(64px,13vw,104px);line-height:.85;color:#FF6A3D;grid-row:span 3}
+.g-hero .num small{display:block;font-family:var(--body);font-size:11.5px;font-weight:800;letter-spacing:.16em;color:rgba(242,239,234,.6);margin-bottom:6px}
+.g-hero h2{font-size:clamp(26px,5vw,40px);text-transform:uppercase;letter-spacing:.005em;line-height:1}
+.g-hero p{margin:0;color:rgba(242,239,234,.78);font-size:15.5px;max-width:62ch}
+.g-hero .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;position:relative;z-index:1}
+.g-hero .chips span{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+.g-hero .chips b{color:#FF8A5C;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-right:6px}
+@media (max-width:560px){.g-hero{grid-template-columns:1fr;padding:20px}.g-hero .num{grid-row:auto;font-size:64px}}
+/* bloques */
+.g-sec{display:grid;gap:12px}
+.g-h{margin:6px 0 0;font-family:var(--display);font-stretch:90%;font-weight:800;font-size:20px;display:flex;align-items:center;gap:10px;text-transform:uppercase;letter-spacing:.01em}
+.g-h::before{content:"";width:5px;height:20px;border-radius:3px;background:var(--gm)}
+.g-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px}
+.g-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.g-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.g-6{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+@media (max-width:860px){.g-3,.g-4{grid-template-columns:1fr 1fr}.g-6{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:561px){.g-chatw{grid-template-columns:1.3fr 1fr}}
+@media (max-width:560px){.g-2,.g-3{grid-template-columns:1fr}}
+/* hazlo así */
+.g-hazlo{list-style:none;margin:0;padding:0;counter-reset:h;display:grid;gap:8px}
+.g-hazlo li{counter-increment:h;display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:15px;line-height:1.45}
+.g-hazlo li::before{content:counter(h);width:34px;height:34px;border-radius:50%;background:var(--gm);color:#fff;display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:17px}
+/* casillas */
+.g-check{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.g-check label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:14.5px;line-height:1.4;padding:4px 0}
+.g-check input{width:19px;height:19px;flex-shrink:0;margin:1px 0 0;accent-color:#1F8B4C}
+.g-check input:checked+span{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(31,139,76,.6)}
+/* avisos */
+.g-call{border-radius:14px;padding:14px 16px;border-left:5px solid;font-size:14.5px;line-height:1.45}
+.g-call b.t{display:block;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.g-call.magma{background:#FBE4DA;border-color:#D9481C;color:#5c2410}.g-call.magma b.t{color:#B83A12}
+.g-call.piedra{background:var(--surface);border-color:#5A564F;color:var(--ink)}.g-call.piedra b.t{color:var(--muted)}
+.g-call.oscuro{background:#1B1B1A;border-color:#F2994A;color:#F2EFEA}.g-call.oscuro b.t{color:#F2994A}
+.g-call.verde{background:#E3F2E9;border-color:#1F8B4C;color:#123d24}.g-call.verde b.t{color:#1F8B4C}
+.g-call.ambar{background:#FDF0DC;border-color:#E08A2E;color:#4d2f0c}.g-call.ambar b.t{color:#A55F12}
+/* en el panel */
+.g-panel{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;background:linear-gradient(135deg,rgba(217,72,28,.08),rgba(242,153,74,.08));border:1.5px dashed rgba(217,72,28,.45);border-radius:16px;padding:16px}
+.g-panel .ic{width:42px;height:42px;border-radius:12px;background:var(--gm);color:#fff;display:grid;place-items:center}
+.g-panel b.t{display:block;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.g-panel p{margin:0;font-size:14.5px;line-height:1.5}
+.g-panel .bt{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+/* listo cuando */
+.g-listo{background:var(--surface);border:2px solid #1F8B4C;border-radius:18px;padding:16px 18px;display:grid;gap:10px}
+.g-listo b.t{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#1F8B4C}
+.g-listo .fin{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:10px;font-size:13.5px;color:var(--muted)}
+/* fotos */
+.g-foto{position:relative;border-radius:14px;padding:10px 10px 12px;background:var(--surface);border:1px solid var(--line);min-height:84px;cursor:pointer;text-align:left;font:inherit;color:var(--ink);display:grid;align-content:start;gap:4px}
+.g-foto b{font-family:var(--display);font-stretch:85%;font-weight:900;font-size:22px;color:var(--gm);line-height:1}
+.g-foto span{font-weight:700;font-size:13px;line-height:1.25}
+.g-foto.portada{background:#1B1B1A;border-color:#1B1B1A;color:#F2EFEA}.g-foto.portada b{color:#FF6A3D}
+.g-foto.defecto{background:#FDF0DC;border-color:#F2C27A}.g-foto.defecto b{color:#A55F12}
+.g-foto.hecha::after{content:"✓";position:absolute;top:8px;right:9px;width:22px;height:22px;border-radius:50%;background:#1F8B4C;color:#fff;display:grid;place-items:center;font-weight:900;font-size:13px}
+.g-leyenda{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted)}
+.g-leyenda i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:6px}
+/* anatomía del anuncio */
+.g-anat{display:grid;gap:6px}
+.g-anat div{display:grid;grid-template-columns:170px 1fr;gap:8px}
+.g-anat dt{border-radius:12px;padding:10px 12px;color:#fff;font-weight:800;font-size:13.5px;letter-spacing:.04em;text-transform:uppercase;line-height:1.2}
+.g-anat dt small{display:block;text-transform:none;letter-spacing:0;font-weight:600;opacity:.8;font-size:12px;margin-top:2px}
+.g-anat dd{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;line-height:1.4}
+.g-anat dd em{display:block;font-style:normal;color:var(--muted);font-size:12.5px;margin-top:3px}
+@media (max-width:560px){.g-anat div{grid-template-columns:1fr;gap:0}.g-anat dt{border-radius:12px 12px 0 0}.g-anat dd{border-radius:0 0 12px 12px}}
+.c-magma{background:#D9481C}.c-gris{background:#1B1B1A}.c-ambar{background:#E08A2E}.c-verde{background:#1F8B4C}.c-piedra{background:#5A564F}
+/* sí / no */
+.g-sino{border-radius:16px;overflow:hidden;border:1px solid var(--line);background:var(--surface)}
+.g-sino b.t{display:block;padding:10px 16px;color:#fff;font-weight:900;letter-spacing:.08em}
+.g-sino ul{list-style:none;margin:0;padding:12px 16px;display:grid;gap:7px;font-size:14.5px}
+.g-sino li{display:flex;gap:9px}
+.g-sino.si li::before{content:"✓";color:#1F8B4C;font-weight:900}
+.g-sino.no li::before{content:"✕";color:#D9481C;font-weight:900}
+/* chat */
+.g-chat{border-radius:18px;overflow:hidden;border:1px solid var(--line)}
+.g-chat .cab{background:#0B6B57;color:#fff;padding:12px 16px;font-weight:700;display:flex;align-items:center;gap:10px}
+.g-chat .cab i{width:26px;height:26px;border-radius:50%;background:#25D366}
+.g-chat .cuerpo{background:#ECE5DD;padding:14px;display:grid;gap:8px}
+.g-chat p{margin:0;max-width:84%;padding:9px 12px;border-radius:12px;font-size:14px;line-height:1.4;color:#1B1B1A;box-shadow:0 1px 1px rgba(0,0,0,.08)}
+.g-chat p.c{background:#fff;justify-self:start;border-top-left-radius:3px}
+.g-chat p.v{background:#DCF8C6;justify-self:end;border-top-right-radius:3px}
+.g-notas{display:grid;gap:10px;align-content:start}
+.g-nota{border-left:4px solid;padding:4px 0 4px 12px;font-size:14px;line-height:1.4}
+.g-nota b{display:block;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
+/* espejos rápidos */
+.g-esp{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:14px;color:var(--muted)}
+.g-esp b{color:#5A564F;white-space:nowrap;font-size:15px}
+/* ruta */
+.g-ruta{list-style:none;margin:0;padding:0;display:grid;gap:0;counter-reset:r}
+.g-ruta li{counter-increment:r;display:grid;grid-template-columns:36px .9fr 1fr 1.1fr;gap:12px;align-items:start;position:relative;padding-bottom:14px}
+.g-ruta li::before{content:counter(r);width:34px;height:34px;border-radius:50%;background:#1B1B1A;color:#fff;display:grid;place-items:center;font-weight:900;position:relative;z-index:1}
+.g-ruta li:first-child::before,.g-ruta li:last-child::before{background:#D9481C}
+.g-ruta li:not(:last-child)::after{content:"";position:absolute;left:16px;top:34px;bottom:0;width:2px;background:var(--line)}
+.g-ruta b{display:block;font-size:15px}.g-ruta small{color:var(--accent);font-weight:700}
+.g-ruta .q{font-size:14.5px}.g-ruta .qd{background:#FBE4DA;color:#5c2410;border-radius:12px;padding:8px 12px;font-weight:700;font-size:14px}
+@media (max-width:640px){.g-ruta li{grid-template-columns:36px 1fr}.g-ruta .q,.g-ruta .qd{grid-column:2}}
+/* técnicas */
+.g-tec{border-radius:16px;overflow:hidden;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column}
+.g-tec .cab{padding:12px 16px;color:#fff;display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.g-tec .cab b{font-weight:900;letter-spacing:.06em;text-transform:uppercase}
+.g-tec .cab span{font-size:12.5px;opacity:.85}
+.g-tec ul{margin:0;padding:12px 16px 4px 32px;display:grid;gap:6px;font-size:14.5px;font-style:italic;flex:1}
+.g-tec .regla{margin:8px 12px 12px;background:var(--ground);border-radius:10px;padding:8px 10px;font-size:13px}
+.g-tec.amb .cab{color:#1B1B1A}
+/* mini tarjetas de herramientas */
+.g-mini{border-radius:14px;padding:14px;color:#fff}
+.g-mini b{display:block;font-weight:900;font-size:16px}.g-mini span{font-size:13.5px;opacity:.9}
+.g-mini.amb{color:#1B1B1A}
+/* escalera */
+.g-esc{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-items:end}
+.g-esc div{border-radius:14px;padding:14px;color:#fff;font-size:13.5px;line-height:1.35}
+.g-esc b{display:flex;gap:8px;align-items:baseline;font-size:14.5px;margin-bottom:6px}
+.g-esc b i{font-style:normal;font-family:var(--display);font-weight:900;font-size:24px}
+.g-esc div:nth-child(1){min-height:120px}.g-esc div:nth-child(2){min-height:140px}.g-esc div:nth-child(3){min-height:160px}.g-esc div:nth-child(4){min-height:180px}
+@media (max-width:640px){.g-esc{grid-template-columns:1fr 1fr}.g-esc div{min-height:0!important}}
+/* estados */
+.g-est{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.g-est div{color:#fff;padding:12px 14px 12px 22px;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,0 100%,12px 50%);text-align:center;font-size:13px;line-height:1.3}
+.g-est div:first-child{clip-path:polygon(0 0,calc(100% - 12px) 0,100% 50%,calc(100% - 12px) 100%,0 100%);padding-left:14px}
+.g-est div:last-child{clip-path:polygon(0 0,100% 0,100% 100%,0 100%,12px 50%)}
+.g-est b{display:block;font-size:14px}.g-est em{display:block;font-style:normal;font-size:11.5px;margin-top:4px;opacity:.85;background:rgba(255,255,255,.15);border-radius:6px;padding:2px 4px}
+@media (max-width:760px){.g-est{grid-template-columns:1fr}.g-est div{clip-path:none!important;border-radius:10px;text-align:left;padding:10px 14px!important}}
+/* tabla */
+.g-tabla{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.g-tabla th{background:#1B1B1A;color:#F2EFEA;text-align:left;padding:10px 12px;font-size:13px}
+.g-tabla td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top}
+.g-tabla td:nth-child(2){color:var(--accent);font-weight:700;white-space:nowrap}
+.g-tag{display:inline-block;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:800;color:#fff;white-space:nowrap}
+.g-tw{overflow-x:auto;border-radius:14px}
+@media (max-width:640px){.g-tabla{min-width:620px}}
+/* no decir / decir */
+.g-nd{display:grid;grid-template-columns:1fr auto 1.2fr;gap:8px;align-items:stretch}
+.g-nd div{border-radius:12px;padding:10px 12px;font-size:14px}
+.g-nd .n{background:#FBE4DA;color:#5c2410}.g-nd .n::before{content:"✕ ";color:#D9481C;font-weight:900}
+.g-nd .s{background:#E3F2E9;color:#123d24}.g-nd .s::before{content:"✓ ";color:#1F8B4C;font-weight:900}
+.g-nd i{align-self:center;font-style:normal;color:var(--muted)}
+@media (max-width:640px){.g-nd{grid-template-columns:1fr}.g-nd i{display:none}.g-nd .s{margin-bottom:8px}}
+/* métricas */
+.g-kpi{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 12px;text-align:center}
+.g-kpi b{display:block;font-family:var(--display);font-stretch:85%;font-weight:900;font-size:28px;color:var(--gm);line-height:1.1}
+.g-kpi span{display:block;font-size:13px;color:var(--muted)}
+.g-kpi small{display:block;margin-top:6px;font-size:11.5px;font-weight:700;color:var(--ink)}
+/* recorrido */
+.g-reco{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;position:relative}
+.g-reco a{text-decoration:none;color:inherit;text-align:center;display:grid;justify-items:center;gap:6px;padding:10px 6px;border-radius:14px}
+.g-reco a:hover{background:var(--surface)}
+.g-reco i{width:50px;height:50px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-family:var(--display);font-weight:900;font-size:20px;color:#fff;background:#1B1B1A}
+.g-reco a:nth-child(odd) i{background:#D9481C}
+.g-reco b{font-size:14px;line-height:1.2}
+.g-reco em{font-style:normal;color:var(--accent);font-weight:800;font-size:14px}
+.g-reco small{color:var(--muted);font-size:12px}
+@media (max-width:760px){.g-reco{grid-template-columns:repeat(3,1fr)}}
+/* reglas de oro */
+.g-regla{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+.g-regla b{display:flex;align-items:center;gap:10px;font-size:15.5px;margin-bottom:6px}
+.g-regla b i{width:28px;height:28px;border-radius:50%;background:#1B1B1A;color:#fff;display:grid;place-items:center;font-style:normal;font-size:13px}
+.g-regla p{margin:0;font-size:14px;color:var(--muted)}
+.g-regla.oscura{background:#1B1B1A;border-color:#1B1B1A;color:#F2EFEA}.g-regla.oscura p{color:rgba(242,239,234,.8)}.g-regla.oscura b{color:#FF8A5C;text-transform:uppercase;letter-spacing:.06em;font-size:14px}
+/* anexo */
+.g-form{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g-form div{display:grid;grid-template-columns:150px 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;min-height:44px}
+.g-form b{background:var(--ground);padding:12px;font-size:13.5px}
+@media (max-width:560px){.g-form{grid-template-columns:1fr}}
+.g-decl{margin:0;padding:0;list-style:none;counter-reset:d;display:grid;gap:8px}
+.g-decl li{counter-increment:d;display:grid;grid-template-columns:28px 1fr;gap:10px;font-size:14.5px;line-height:1.45}
+.g-decl li::before{content:counter(d);width:26px;height:26px;border-radius:50%;background:#1B1B1A;color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px}
+.g-firmas{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.g-firmas div{border:1px solid var(--line);border-radius:10px;min-height:110px;overflow:hidden}
+.g-firmas b{display:block;background:var(--ground);padding:8px 12px;font-size:13.5px}
+@media (max-width:560px){.g-firmas{grid-template-columns:1fr}}
+/* pie de navegación */
+.g-pie{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.g-pie a{display:grid;gap:2px;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.g-pie a small{color:var(--muted);font-size:12px;font-weight:700}
+.g-pie a b{font-size:15px}
+.g-pie a.sig{text-align:right;background:#1B1B1A;border-color:#1B1B1A;color:#F2EFEA}.g-pie a.sig small{color:#F2994A}
+.g-pie a[hidden]{display:block!important;visibility:hidden}
+/* portada (en pantalla es la cabecera de «Inicio») */
+.g-portada{position:relative;overflow:hidden;background:#1B1B1A;color:#F2EFEA;border-radius:24px;padding:28px}
+.g-portada::before{content:"";position:absolute;right:-120px;top:-60px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(217,72,28,.5),transparent 68%)}
+.g-portada::after{content:"";position:absolute;right:40px;bottom:-140px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.04)}
+.g-portada img{height:40px;width:auto;position:relative}
+.g-portada .eb{display:block;margin-top:26px;font-size:12px;font-weight:800;letter-spacing:.16em;color:#FF8A5C;position:relative}
+.g-portada h2{position:relative;font-size:clamp(34px,7vw,64px);text-transform:uppercase;line-height:.95;margin-top:8px}
+.g-portada h2 span{color:#FF6A3D}
+.g-portada p{position:relative;max-width:58ch;color:rgba(242,239,234,.78);font-size:16px;margin:12px 0 0}
+.g-portada .lista{position:relative;display:grid;gap:8px;margin-top:18px}
+.g-portada .lista a{display:flex;align-items:center;gap:12px;color:#F2EFEA;text-decoration:none;font-weight:700;font-size:16px}
+.g-portada .lista i{width:34px;height:34px;border-radius:50%;background:#D9481C;display:grid;place-items:center;font-style:normal;font-size:13px;font-weight:900}
+.g-portada .pie{position:relative;margin-top:22px;font-size:12px;color:rgba(242,239,234,.55)}
+
+/* ---------------- PDF (Descargar PDF completo = imprimir → Guardar como PDF) ---------------- */
+#guia-print{display:none}
+@media print{
+  @page guia{size:A4;margin:8mm 9mm}
+  body.print-guia{background:#fff!important}
+  body.print-guia>*:not(#guia-print){display:none!important}
+  body.print-guia #guia-print{display:block;page:guia;color:#1B1B1A;font-size:8.6pt;line-height:1.35;
+    --ground:#F2EFEA;--surface:#FFFFFF;--line:#DCD8D1;--ink:#1B1B1A;--muted:#67635D;--accent:#D9481C;--ok:#1F8B4C}
+  #guia-print *{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-shadow:none!important}
+  #guia-print .g-pag{break-before:page;display:grid;gap:5px;align-content:start}
+  #guia-print .g-cierre{grid-template-columns:1fr 1fr;gap:6px;align-items:stretch;break-inside:avoid}
+  #guia-print .g-sec{gap:4px}#guia-print .g-hazlo{gap:3px}#guia-print .g-check{gap:0}#guia-print .g-check label{padding:1px 0;gap:6px}#guia-print .g-check input{width:11px;height:11px}
+  #guia-print .g-ruta li{grid-template-columns:24px .9fr 1fr 1.1fr}#guia-print .g-ruta .q,#guia-print .g-ruta .qd{grid-column:auto}
+  #guia-print .g-chat p{padding:4px 8px;font-size:8pt!important}#guia-print .g-chat .cuerpo{padding:8px;gap:4px}#guia-print .g-chat .cab{padding:6px 10px}
+  #guia-print .g-esp{padding:5px 9px;font-size:8.2pt}#guia-print .g-esp b{font-size:8.6pt}
+  #guia-print .g-regla{padding:7px 9px}#guia-print .g-regla b{font-size:9pt;margin-bottom:2px}#guia-print .g-regla b i{width:18px;height:18px;font-size:8pt}
+  #guia-print .g-reco a{padding:4px}#guia-print .g-reco i{width:32px;height:32px;font-size:12pt}#guia-print .g-reco b{font-size:8.4pt}
+  #guia-print .g-mini{padding:8px 10px}#guia-print .g-mini b{font-size:10pt}
+  #guia-print .g-tec .cab{padding:6px 10px}#guia-print .g-tec ul{padding:6px 10px 2px 24px;gap:3px}#guia-print .g-tec .regla{margin:4px 8px 8px;padding:5px 8px;font-size:8pt}
+  #guia-print .g-esc div{min-height:0!important;padding:8px 10px}#guia-print .g-esc b i{font-size:15pt}
+  #guia-print .g-call{padding:6px 10px}#guia-print .g-call b.t{font-size:7.8pt;margin-bottom:1px}
+  #guia-print .g-panel{padding:8px 10px;gap:8px}#guia-print .g-panel .ic{width:28px;height:28px}#guia-print .g-listo b.t,#guia-print .g-panel b.t{font-size:7.8pt}
+  #guia-print .g-h::before{height:13px;width:4px}
+  #guia-print .g-est div{padding:6px 8px 6px 16px;font-size:8pt}#guia-print .g-est b{font-size:8.6pt}
+  #guia-print .g-nd{gap:5px}#guia-print .g-nd div{padding:5px 9px}
+  #guia-print .g-form div{min-height:30px;grid-template-columns:34mm 1fr}#guia-print .g-form b{padding:7px 9px;font-size:8.4pt}
+  #guia-print .g-leyenda{font-size:7.8pt;gap:8px}
+  #guia-print .g-pag:first-child{break-before:auto}
+  #guia-print .guia{gap:9px}
+  #guia-print .g-portada{height:278mm;border-radius:6mm;padding:14mm;display:flex;flex-direction:column}
+  #guia-print .g-portada .eb{margin-top:auto}
+  #guia-print .g-portada h2{font-size:40pt}
+  #guia-print .g-portada .lista a{font-size:13pt}
+  #guia-print .g-portada .pie{margin-top:auto}
+  #guia-print .g-hero{border-radius:5mm;padding:3.5mm 6mm;gap:1px 14px}
+  #guia-print .g-hero .chips{margin-top:3px}#guia-print .g-hero .num small{margin-bottom:2px;font-size:7pt}
+  #guia-print .g-pnav{margin-top:2px}
+  #guia-print .g-hero .num{font-size:46pt}
+  #guia-print .g-hero h2{font-size:19pt}
+  #guia-print .g-hero p{font-size:8.8pt}
+  #guia-print .g-hero .chips span{font-size:8.5pt;padding:3px 9px}
+  #guia-print .g-pnav{display:flex!important}
+  #guia-print .solo-pdf{display:grid!important}
+  #guia-print .g-h{font-size:11.5pt;margin-top:1px}
+  #guia-print .g-hazlo li,#guia-print .g-check label,#guia-print .g-esc div,#guia-print .g-call,#guia-print .g-panel p,#guia-print .g-anat dd,#guia-print .g-sino ul,#guia-print .g-chat p,#guia-print .g-nota,#guia-print .g-ruta .q,#guia-print .g-ruta .qd,#guia-print .g-tec ul,#guia-print .g-tabla,#guia-print .g-nd div,#guia-print .g-decl li,#guia-print .g-regla p{font-size:8.3pt}
+  #guia-print .g-hazlo li{padding:3px 8px;grid-template-columns:20px 1fr;gap:8px;border-radius:9px}
+  #guia-print .g-hazlo li::before{width:20px;height:20px;font-size:9pt}
+  #guia-print .g-card,#guia-print .g-listo{padding:6px 10px;gap:4px;border-radius:10px}
+  #guia-print .g-foto{min-height:40px;padding:4px 6px;border-radius:8px}
+  #guia-print .g-foto b{font-size:13pt}#guia-print .g-foto span{font-size:8pt}
+  #guia-print .g-2,#guia-print .g-3,#guia-print .g-4,#guia-print .g-6,#guia-print .g-reco,#guia-print .g-esc,#guia-print .g-est,#guia-print .g-form,#guia-print .g-firmas{gap:6px}
+  #guia-print .g-chatw{grid-template-columns:1.3fr 1fr}#guia-print .g-3{grid-template-columns:repeat(3,1fr)}#guia-print .g-2{grid-template-columns:1fr 1fr}#guia-print .g-6{grid-template-columns:repeat(6,1fr)}#guia-print .g-4{grid-template-columns:repeat(4,1fr)}
+  #guia-print .g-reco{grid-template-columns:repeat(6,1fr)}#guia-print .g-est{grid-template-columns:repeat(5,1fr)}#guia-print .g-esc{grid-template-columns:repeat(4,1fr)}
+  #guia-print .g-anat{gap:3px}#guia-print .g-anat div{grid-template-columns:32mm 1fr}#guia-print .g-anat dt{padding:4px 8px;font-size:8pt;border-radius:8px}#guia-print .g-anat dd{padding:4px 8px;border-radius:8px}#guia-print .g-anat dd em{display:none}
+  #guia-print .g-ruta li{grid-template-columns:24px .9fr 1fr 1.1fr;padding-bottom:5px}#guia-print .g-ruta li::before{width:24px;height:24px}#guia-print .g-ruta li:not(:last-child)::after{left:11px;top:24px}
+  #guia-print .g-tabla{min-width:0}#guia-print .g-tabla td,#guia-print .g-tabla th{padding:5px 8px}
+  #guia-print .g-kpi b{font-size:14pt}#guia-print .g-kpi{padding:5px}#guia-print .g-kpi small{margin-top:2px;font-size:7.4pt}
+  #guia-print .g-listo .fin,#guia-print .g-panel .bt,#guia-print .g-pie,#guia-print .no-pdf{display:none!important}
+  #guia-print .g-sec,#guia-print .g-call,#guia-print .g-panel,#guia-print .g-listo,#guia-print .g-tec,#guia-print .g-chat,#guia-print .g-card{break-inside:avoid}
+  #guia-print .g-firmas div{min-height:26mm}
+  #guia-print .g-sino ul{padding:6px 10px;gap:3px}#guia-print .g-sino b.t{padding:5px 10px}
+  #guia-print a{color:inherit}
+}
+.g-pnav{display:none;gap:4px;flex-wrap:wrap;justify-content:flex-end;position:relative;z-index:1;grid-column:1/-1}
+.g-pnav a{font-size:7.5pt;font-weight:800;text-decoration:none;color:#F2EFEA;background:rgba(255,255,255,.1);border-radius:99px;padding:2px 7px}
+.g-pnav a.on{background:#D9481C}
+/*GUIA-CSS-FIN*/
 </style>
 </head>
 <body>
@@ -536,7 +826,7 @@ dialog.dlg form{display:grid;gap:12px;padding:20px}
   <!-- CRM -->
   <section id="s-leads" hidden>
     <div class="head">
-      <div><h1 style="font-size:28px">CRM</h1><p>Todos tus clientes: los que piden cita o información en la web y los que apuntas tú.</p></div>
+      <div><h1 style="font-size:28px">CRM</h1><p>Todos tus clientes: los que piden cita o información en la web y los que apuntas tú. <button type="button" class="g-link" data-guia="03">Cómo contestar y hacer seguimiento</button></p></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn b-acc b-sm" id="nuevo-cliente" type="button">+ Nuevo cliente</button><button class="btn b-ghost b-sm" id="exp-leads" type="button">Exportar a Excel</button><button class="btn b-ghost b-sm" id="notif" type="button" hidden>Activar avisos en este dispositivo</button><button class="btn b-ghost b-sm" id="reload-leads" type="button">Actualizar</button></div>
     </div>
     <div class="tareas" id="tareas"></div>
@@ -572,10 +862,19 @@ dialog.dlg form{display:grid;gap:12px;padding:20px}
     </div>
   </section>
 
+  <section id="s-guia" hidden>
+    <div class="guia">
+      <div class="g-top"><div><small>Guía interna · SOP-02 v2.0</small><h1>El Método de Venta</h1></div>
+        <div class="acts"><button class="btn b-ghost b-sm" type="button" id="guia-volver">← Volver</button><button class="btn b-acc b-sm" type="button" id="guia-pdf">Descargar PDF completo</button><small>Se abre «Imprimir»: elige «Guardar como PDF».</small></div></div>
+      <div class="g-nav"><nav id="guia-nav" aria-label="Pasos de la guía"></nav><div class="g-prog" id="guia-prog" aria-hidden="true"></div></div>
+      <div id="guia-body"></div>
+    </div>
+  </section>
+
   <section id="s-list" hidden>
     <div class="head">
       <div><h1 style="font-size:28px">Tus coches</h1><p>Lo que publiques aquí aparece al momento en la web.</p></div>
-      <button class="btn b-acc" id="add" type="button">+ Añadir coche</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn b-ghost g-cta-guia" type="button" data-guia="inicio"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 016.5 3H20v15H6.5A2.5 2.5 0 004 20.5z"/><path d="M4 20.5A2.5 2.5 0 006.5 23H20M8 7h8M8 11h6"/></svg>¿No sabes cómo publicar y vender?</button><button class="btn b-acc" id="add" type="button">+ Añadir coche</button></div>
     </div>
     <div class="stats num" id="stats"></div>
     <details class="card fin-cfg" id="fin-cfg">
@@ -613,6 +912,7 @@ dialog.dlg form{display:grid;gap:12px;padding:20px}
     <form class="car" id="car-form" novalidate>
       <fieldset class="card">
         <legend><span class="lg-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></span>Fotos</legend>
+        <p class="hint" style="margin:0 0 10px">Súbelas en el orden de la guía: las 3 primeras son la portada. <button type="button" class="g-link" data-guia="01">Ver las 24 fotos (paso 01)</button></p>
         <label class="drop" id="drop" for="files">
           <b>Añadir fotos</b>
           <small>Desde la galería o la cámara. La primera es la foto principal.</small>
@@ -682,7 +982,7 @@ dialog.dlg form{display:grid;gap:12px;padding:20px}
 
       <fieldset class="card mk">
         <legend><span class="lg-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>Comparativa de mercado <small style="font-weight:600;color:var(--muted)">(opcional)</small></legend>
-        <p class="hint">Busca en coches.net, Wallapop, Milanuncios o AutoScout24 el mismo modelo, año y motor, con kilómetros parecidos, y pega aquí sus precios. Si tu precio está por debajo de la media, la ficha enseña el bloque «¡Oferta imbatible de mercado!» con el ahorro. Tienen que ser anuncios reales: la comparativa se ve en la web con la fecha.</p>
+        <p class="hint">Busca en coches.net, Wallapop, Milanuncios o AutoScout24 el mismo modelo, año y motor, con kilómetros parecidos, y pega aquí sus precios. Si tu precio está por debajo de la media, la ficha enseña el bloque «¡Oferta imbatible de mercado!» con el ahorro. Tienen que ser anuncios reales: la comparativa se ve en la web con la fecha. <button type="button" class="g-link" data-guia="02">Los 3 precios (paso 02)</button></p>
         <div class="field"><label for="mk-precios">Precios que has encontrado</label><textarea class="in num" id="mk-precios" rows="3" placeholder="18.500, 19.200, 17.900, 18.990…"></textarea></div>
         <div class="g3">
           <div class="field"><label for="mk-media">Precio medio (€)</label><input class="in num" id="mk-media" inputmode="numeric" placeholder="Se calcula solo"></div>
@@ -695,6 +995,7 @@ dialog.dlg form{display:grid;gap:12px;padding:20px}
 
       <fieldset class="card">
         <legend>Descripción</legend>
+        <p class="hint" style="margin:0 0 10px">Para quién es · por qué este coche · lo que debe saber. <button type="button" class="g-link" data-guia="02">Cómo escribir el anuncio (paso 02)</button></p>
         <div class="field"><label for="descripcion">Cuéntale al cliente cómo está el coche</label><textarea class="in" id="descripcion" placeholder="Un solo propietario, libro de mantenimiento al día, ITV pasada…"></textarea></div>
         <div class="field"><label for="equipamiento">Equipamiento (uno por línea)</label><textarea class="in" id="equipamiento" placeholder="Navegador&#10;Cámara trasera&#10;Climatizador bizona"></textarea></div>
       </fieldset>
@@ -758,7 +1059,7 @@ let video = null, vSubiendo = false, vNuevo = null, vAbort = null;
 
 function toast(t){ const el=$("#toast"); el.textContent=t; el.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>el.hidden=true,2600); }
 const TABS={dash:"s-dash",leads:"s-leads",ordenes:"s-ordenes",agenda:"s-agenda",coches:"s-list"};
-function show(id){ ["s-login","s-list","s-form","s-leads","s-agenda","s-dash","s-ordenes"].forEach(x=>$("#"+x).hidden = x!==id); $("#topacts").hidden = id==="s-login";
+function show(id){ ["s-login","s-list","s-form","s-leads","s-agenda","s-dash","s-ordenes","s-guia"].forEach(x=>$("#"+x).hidden = x!==id); $("#topacts").hidden = id==="s-login";
   $("#tabsrow").hidden = !Object.values(TABS).includes(id);
   document.querySelectorAll("#tabs [data-tab]").forEach(b=>b.setAttribute("aria-selected", String(TABS[b.dataset.tab]===id)));
   window.scrollTo(0,0); }
@@ -1938,8 +2239,254 @@ $("#btn-seg").onclick=abrirSeguridad;
 if(PW){ fetch("/api/login",{headers:{authorization:"Bearer "+PW}}).then(async r=>{ if(!r.ok) return logout("Tu sesión ha caducado. Vuelve a entrar.");
   try{ localStorage.setItem("vc_admin","1"); }catch(_){}
   const h=location.hash.slice(1), tab={crm:"leads",solicitudes:"leads",taller:"ordenes",agenda:"agenda",coches:"coches",dashboard:"dash"}[h]||"dash";
-  await loadList(true); await loadLeads(false); abrirTab(tab,false); }).catch(()=>show("s-login")); }
+  await loadList(true); await loadLeads(false); abrirTab(tab,false); if(h==="guia"||h.startsWith("guia-")) abrirGuia(h.slice(5)||"inicio"); }).catch(()=>show("s-login")); }
 else show("s-login");
+/*GUIA-JS-INICIO*/
+/* =====================================================================
+   GUÍA DE VENTA · «El Método de Venta Volcano Cars» (SOP-02 v2.0)
+   Fuente: tools/guia/guia.js → se copia dentro de admin.html con
+   python3 tools/guia/inyectar.py. Para cambiar textos, edita aquí.
+   ===================================================================== */
+const GUIA_VER="SOP-02 · v2.0";
+const GUIA_PAGS=["inicio","01","02","03","04","05","06","chuleta","anexo"];
+const GUIA_NOMBRE={inicio:"Inicio","01":"Preparar y fotografiar","02":"Publicar el anuncio","03":"Primer contacto","04":"Prueba en carretera","05":"Negociar","06":"Cerrar y seguir",chuleta:"Chuleta rápida",anexo:"Anexo A"};
+const GUIA_CORTO={inicio:"Inicio","01":"Preparar","02":"Publicar","03":"Contacto","04":"Prueba","05":"Negociar","06":"Cerrar",chuleta:"Chuleta",anexo:"Anexo"};
+const G_ICO_PANEL='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2.5"/><path d="M3 9h18M8 21h8"/></svg>';
+const G_ICO_LIBRO='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 016.5 3H20v15H6.5A2.5 2.5 0 004 20.5z"/><path d="M4 20.5A2.5 2.5 0 006.5 23H20M8 7h8M8 11h6"/></svg>';
+
+let GST={chk:{},fotos:{}};
+try{ GST=Object.assign(GST,JSON.parse(localStorage.getItem("vc_guia")||"{}")); }catch(_){}
+const gGuardar=()=>{ try{ localStorage.setItem("vc_guia",JSON.stringify(GST)); }catch(_){} };
+
+/* ---------- piezas ---------- */
+const gH=t=>`<h3 class="g-h">${t}</h3>`;
+const gCall=(tipo,t,txt)=>`<div class="g-call ${tipo}"><b class="t">${t}</b>${txt}</div>`;
+const gHazlo=l=>`<div class="g-sec">${gH("Hazlo así")}<ol class="g-hazlo">${l.map(x=>`<li><span>${x}</span></li>`).join("")}</ol></div>`;
+const gCheck=(id,l)=>`<ul class="g-check">${l.map((x,i)=>`<li><label><input type="checkbox" data-gchk="${id}-${i}" ${GST.chk[id+"-"+i]?"checked":""}><span>${x}</span></label></li>`).join("")}</ul>`;
+const gPanel=(txt,bt=[])=>`<div class="g-panel"><span class="ic">${G_ICO_PANEL}</span><div><b class="t">En el panel</b><p>${txt}</p>${bt.length?`<div class="bt">${bt.map(([k,t])=>`<button type="button" class="btn b-ghost b-sm" data-gir="${k}">${t}</button>`).join("")}</div>`:""}</div></div>`;
+function gListo(id,l,sig){
+  return `<div class="g-listo"><b class="t">Listo para el siguiente paso cuando…</b>${gCheck("L"+id,l)}
+    <div class="fin"><span>Si falta algo, no pases al siguiente paso.</span>${sig?`<button type="button" class="btn b-brand b-sm" data-gpag="${sig}">Siguiente: ${GUIA_NOMBRE[sig]} →</button>`:""}</div></div>`;
+}
+const gListoOk=id=>{ const n=(GUIA_LISTO[id]||[]).length; return n>0 && [...Array(n).keys()].every(i=>GST.chk["L"+id+"-"+i]); };
+function gPNav(pag){ return `<nav class="g-pnav">${GUIA_PAGS.map(p=>`<a href="#gp-${p}" class="${p===pag?"on":""}">${GUIA_CORTO[p]}</a>`).join("")}</nav>`; }
+function gHero(pag,{num,eyebrow,titulo,intro,chips=[],cls=""}){
+  return `<header class="g-hero ${cls}" ${num?"":'style="grid-template-columns:1fr"'}>${num?`<div class="num"><small>PASO</small>${num}</div>`:""}
+    <div>${eyebrow?`<small style="display:block;font-size:11.5px;font-weight:800;letter-spacing:.16em;color:#FF8A5C;margin-bottom:6px">${eyebrow}</small>`:""}<h2>${titulo}</h2></div>
+    <p>${intro}</p>${chips.length?`<div class="chips">${chips.map(([k,v])=>`<span><b>${k}</b>${v}</span>`).join("")}</div>`:""}${gPNav(pag)}</header>`;
+}
+const TEC={
+  etiquetar:["Etiquetar","c-magma","Pon nombre a su miedo"],
+  calibrada:["Pregunta calibrada","c-gris","Devuelve el problema"],
+  espejo:["Espejo","c-piedra","Repite 1–3 palabras"],
+  no:["Buscar el NO","c-ambar amb","El «no» da control"],
+  esoes:["Resumen «eso es»","c-verde","La señal de cierre"]
+};
+const gTec=(k,frases,regla)=>{ const [t,c,s]=TEC[k]; return `<div class="g-tec ${c.includes("amb")?"amb":""}"><div class="cab ${c}"><b>${t}</b><span>${s}</span></div><ul>${frases.map(f=>`<li>${f}</li>`).join("")}</ul>${regla?`<div class="regla"><b>Regla:</b> ${regla}</div>`:""}</div>`; };
+const gTag=(t,c)=>`<span class="g-tag ${c}">${t}</span>`;
+
+/* ---------- criterios de «listo» de cada paso ---------- */
+const GUIA_LISTO={
+  "01":["Las 24 fotos hechas en orden (y la 24 si hay algún defecto)","Matrícula difuminada en todas","Vídeo 360° grabado (vuelta completa y termina dentro)"],
+  "02":["Los 3 precios fijados con el gerente (el mínimo no se publica)","Ficha completa y visible en la web","Comparativa de mercado hecha (al menos 3 anuncios reales)","Publicado el mismo día en web, portales, redes y estado de WhatsApp"],
+  "03":["Respondido en menos de 15 minutos","Sé para quién es el coche y qué le preocupa","Tiene día y hora de prueba (o seguimiento apuntado en el CRM)"],
+  "04":["Anexo A firmado, km y hora de vuelta anotados","He oído «eso es» o sé exactamente qué le frena","Nota de la prueba y fecha de seguimiento en el CRM"],
+  "05":["Precio acordado igual o mayor que el mínimo, con algo a cambio de cada rebaja","Señal cobrada y justificante entregado","Coche marcado «Reservado» en el panel"],
+  "06":["Coche «Vendido» y cliente «Ganada» con su importe","Seguimiento de 7 días apuntado en el CRM","Reseña de Google pedida"]
+};
+
+/* ---------- las páginas ---------- */
+const FOTOS=["3/4 delantero izq.","3/4 trasero dcho.","Interior conductor","Frontal recto","Trasera recta","Lateral izquierdo","Lateral derecho","3/4 trasero izq.","Salpicadero","Cuadro encendido","Pantalla / radio","Climatización","Palanca de cambios","Asiento conductor","Asientos traseros","Maletero vacío","Motor","Neumático","Llanta","Techo / techo solar","Llaves y mando","Libro y facturas","Extra diferenciador","Defecto honesto"];
+
+const GUIA_PAG={
+inicio:()=>`
+  <section class="g-portada no-pdf"><img src="/marca/logo-claro.svg" alt="Volcano Cars" width="163" height="40">
+    <span class="eb">GUÍA INTERNA · ${GUIA_VER}</span><h2>El Método de Venta <span>Volcano Cars</span></h2>
+    <p>Seis pasos para vender cada coche siempre igual: fotos que atraen, conversaciones que dan confianza y una negociación en la que el cliente se siente en control. Cada paso te dice qué hacer, dónde hacerlo en el panel y cuándo pasar al siguiente.</p>
+    <p><b style="color:#fff">Cómo se usa:</b> en cada paso verás el objetivo, el tiempo máximo y quién lo hace; después <b style="color:#fff">Hazlo así</b> (lo esencial en 5 líneas), el detalle, <b style="color:#fff">En el panel</b> y la lista <b style="color:#fff">Listo cuando</b>. Si un paso no se cumple, no se pasa al siguiente.</p></section>
+  ${gHero("inicio",{cls:"solo-pdf",eyebrow:"CÓMO USAR ESTA GUÍA",titulo:"El recorrido de cada venta",intro:"Cada coche y cada cliente recorren los mismos seis pasos. En cada paso verás el <b>objetivo</b>, el <b>tiempo máximo</b> y <b>quién</b> lo hace; después, <b>Hazlo así</b> (lo esencial en 5 líneas), el detalle, <b>En el panel</b> y la lista <b>Listo cuando</b>. Si un paso no se cumple, no se pasa al siguiente."})}
+  <div class="g-card"><div class="g-reco">${[["01","Preparar y fotografiar","48 h","24 fotos"],["02","Publicar el anuncio","48 h","Plantilla"],["03","Primer contacto","15 min","Espejo"],["04","Prueba en carretera","30 min","Escucha"],["05","Negociar","24–72 h","4 técnicas"],["06","Cerrar y seguir","7 días","CRM"]].map(([n,t,m,s])=>`<a href="#gp-${n}" data-gpag="${n}"><i>${n}</i><b>${t}</b><em>${m}</em><small>${s}</small></a>`).join("")}</div></div>
+  <div class="g-sec">${gH("Las 5 reglas de oro")}<div class="g-3">
+    ${[["Escuchar antes de vender","La primera conversación sirve para entender qué necesita y qué teme el cliente."],["Sin presión","El cliente decide. Un «no» a tiempo vale más que un «sí» forzado."],["Verdad sobre el coche","Contamos lo bueno y lo que no es perfecto. Vendemos confianza: nunca inventamos prisas ni interesados."],["Nada gratis","Nunca bajamos el precio sin recibir algo a cambio."],["Todo registrado","Cada cliente entra en el CRM del panel el mismo día, con fecha de próximo contacto."]].map(([t,d],i)=>`<div class="g-regla"><b><i>${i+1}</i>${t}</b><p>${d}</p></div>`).join("")}
+    <div class="g-regla oscura"><b>3 precios por coche</b><p><b style="color:#fff">Anuncio · Objetivo · Mínimo.</b> Los fija el gerente antes de publicar. Solo el de anuncio se publica; el mínimo nunca se revela.</p></div></div></div>
+  <div class="g-sec">${gH("Cómo sabemos que funciona")}<div class="g-6">
+    ${[["< 15 min","primera respuesta","CRM · «Primera respuesta»"],["30 %","de clientes prueban","Dashboard"],["35 %","de pruebas compran","CRM · Embudo"],["< 4 %","descuento medio","Precio anuncio vs importe"],["< 45 días","en stock","Coches · «Vendido en X días»"],["50 %","dejan reseña","Plantilla «Pedir reseña»"]].map(([b,s,d])=>`<div class="g-kpi"><b>${b}</b><span>${s}</span><small>${d}</small></div>`).join("")}</div></div>
+  <div class="g-sec">${gH("Las 4 herramientas de negociación")}<div class="g-4">
+    <div class="g-mini c-magma"><b>Etiquetar</b><span>«Parece que…»</span></div><div class="g-mini c-gris"><b>Pregunta calibrada</b><span>«¿Cómo…?» «¿Qué…?»</span></div>
+    <div class="g-mini c-piedra"><b>Espejo</b><span>Repetir 1–3 palabras</span></div><div class="g-mini c-ambar amb"><b>Buscar el NO</b><span>«¿Sería mala idea…?»</span></div></div></div>
+  ${gCall("piedra","Glosario","<b>FORM-02</b>: informe de revisión del coche en nuestro taller · <b>FORM-04</b>: alta del coche para la venta, aprobada por el gerente · <b>CRM</b>: la pestaña CRM del panel (sustituye a la antigua Hoja de Seguimiento).")}
+  ${gCall("verde","Consejo","Pulsa <b>Descargar PDF completo</b> y guárdalo en el móvil. En el PDF, la barra de cada página te lleva a cualquier paso. La <b>Chuleta</b> resume todos los guiones en una hoja.")}`,
+
+"01":()=>`
+  ${gHero("01",{num:"01",titulo:"Preparar y fotografiar",intro:"El comprador decide en las tres primeras fotos si abre el anuncio. Cada coche se fotografía igual: mismo orden, mismo fondo, misma luz.",chips:[["Objetivo","24 fotos + vídeo 360°"],["Tiempo","< 48 h desde FORM-04"],["Quién","Vendedor"]]})}
+  ${gHazlo(["Comprueba que el coche está aprobado para la venta (<b>FORM-04</b>) y lávalo por dentro y por fuera: sin arena ni salitre.","Llévalo al <b>fondo de siempre</b>, limpio, sin otros coches ni herramientas.","Dispara <b>antes de las 10:00 o después de las 18:00</b>, con el móvil en horizontal a la altura de los faros.","Haz las <b>24 fotos en el orden</b> de la tabla. Repite la 1 hasta que sea perfecta.","Graba el <b>vídeo 360°</b>: una vuelta completa despacio y termina dentro (salpicadero, asientos, cuentakilómetros)."])}
+  <div class="g-2"><div class="g-sec">${gH("Antes de disparar")}<div class="g-card">${gCheck("p1a",["Coche aprobado en <b>FORM-04</b>, lavado por dentro y por fuera.","Fondo limpio y <b>siempre el mismo</b>.","Luz de <b>primera o última hora</b>. Al mediodía, sombra completa.","Móvil en <b>horizontal</b>, lente limpia, a la altura de los faros, sin zoom.","Ruedas delanteras giradas hacia la cámara en la foto 1.","Motor en marcha para la foto del cuadro (sin testigos encendidos).","La matrícula se difumina al editar."])}</div></div>
+    <div class="g-sec" style="align-content:start">${gCall("magma","La regla de las 3 primeras","Las fotos 1, 2 y 3 son la portada del anuncio y de la tarjeta de la web. Si no enamoran, nadie ve las otras 21.")}${gCall("ambar","Fuerteventura","El sol del mediodía quema los brillos y marca sombras duras. Dispara antes de las 10:00 o después de las 18:00.")}${gCall("piedra","Vídeo 360°","Es lo que más confianza da a quien compra sin venir: en la web el coche se mueve en su tarjeta. Mejor con luz de día y el coche limpio; 1080p es suficiente.")}</div></div>
+  <div class="g-sec">${gH("Las 24 fotos, en este orden")}<p style="margin:0;color:var(--muted);font-size:14px" class="no-pdf">Toca cada foto cuando la tengas: se marca con ✓ (se guarda en este móvil).</p>
+    <div class="g-6">${FOTOS.map((f,i)=>`<button type="button" class="g-foto ${i<3?"portada":i===23?"defecto":""} ${GST.fotos[i]?"hecha":""}" data-gfoto="${i}"><b>${String(i+1).padStart(2,"0")}</b><span>${f}</span></button>`).join("")}</div>
+    <div class="g-leyenda"><span><i style="background:#1B1B1A"></i>Portada del anuncio</span><span><i style="background:#FDF0DC;border:1px solid #F2C27A"></i>Obligatoria si hay algún defecto estético: enseñarlo antes genera confianza</span><button type="button" class="g-link no-pdf" data-greset>Desmarcar todas</button></div></div>
+  ${gCall("verde","Después de disparar","Revisa que estén las 24 · recorta y endereza · difumina la matrícula · guarda la carpeta con la matrícula del coche.")}
+  <div class="g-cierre">${gPanel("<b>Coches → + Añadir coche → Fotos.</b> Súbelas en este mismo orden: la primera es la portada (con ★ puedes cambiarla). En <b>Vídeo 360°</b> sube la vuelta al coche; la web lo enseña en movimiento en su tarjeta.",[["form","+ Añadir coche"],["coches","Ver mis coches"]])}${gListo("01",GUIA_LISTO["01"],"02")}</div>`,
+
+"02":()=>`
+  ${gHero("02",{num:"02",titulo:"Publicar el anuncio",intro:"El título dice qué es. La primera línea, para quién es. El resto quita miedos. Todos los datos coinciden con FORM-02 y FORM-04.",chips:[["Objetivo","Mensajes y llamadas"],["Tiempo","< 48 h"],["Quién","Vendedor"]]})}
+  ${gHazlo(["Fija con el gerente los <b>3 precios</b>: anuncio, objetivo y mínimo. Solo el de anuncio se publica.","Rellena la ficha en el panel: marca, modelo, versión, año, km, <b>precio final con IGIC</b>, combustible, cambio y etiqueta.","Escribe la descripción con la plantilla: <b>para quién · por qué este · lo que debes saber</b>. Equipamiento, una línea por cosa.","Haz la <b>comparativa de mercado</b> con al menos 3 anuncios reales del mismo coche y pégala en el panel.","Publica y copia el mismo texto en portales, redes y estado de WhatsApp. Usa <b>Compartir</b> para mandar el enlace del coche."])}
+  <div class="g-sec">${gH("Anatomía de un anuncio de alto impacto")}<dl class="g-anat">
+    ${[["Título","Qué es","c-magma","Seat Ibiza 1.0 TSI Style · 2019 · 68.000 km · Gasolina · Manual","En el panel: marca + modelo + versión (la web lo monta sola)"],["Para quién","Conecta","c-magma","Ideal para moverte a diario por la isla: consume poco y cabe en cualquier aparcamiento.","Primera línea de la descripción"],["Por qué este","Da confianza","c-gris","Revisado en nuestro taller (FORM-02): aceite, filtros y pastillas nuevos · ITV hasta 06/2027 · 2 llaves y libro.","Descripción"],["Equipamiento","Lo que se usa","c-gris","Aire acondicionado · pantalla con CarPlay y Android Auto · sensores traseros · control de crucero.","Equipamiento: una línea por elemento"],["Transparencia","Quita miedos","c-ambar","Lo que debes saber: pequeño rayón en el paragolpes trasero (foto 24).","Descripción + foto 24"],["Garantía","Seguridad","c-gris","12 meses de garantía · cambio de nombre incluido · entrega gratis en toda Fuerteventura · financiación disponible.","La web lo añade sola en cada ficha"],["Precio","Claro","c-gris","10.990 € · precio final, IGIC incluido.","Precio (con céntimos si hace falta)"],["Llamada","Acción","c-verde","Ven a probarlo sin compromiso a Antigua. Escríbenos por WhatsApp al 643 66 88 13.","Portales y redes (en la web ya hay botones)"]].map(([t,s,c,v,p])=>`<div><dt class="${c}">${t}<small>${s}</small></dt><dd>${v}<em>${p}</em></dd></div>`).join("")}</dl></div>
+  <div class="g-2"><div class="g-sino si"><b class="t c-verde">SÍ</b><ul><li>Frases cortas y datos concretos (km, año, fecha de ITV).</li><li>Decir para quién es el coche.</li><li>Contar el defecto con foto.</li><li>El mismo texto en todos los canales.</li><li>Renovar la foto de portada a los 15 días sin contactos.</li></ul></div>
+    <div class="g-sino no"><b class="t c-magma">NO</b><ul><li>«Precio negociable»: invita al regateo.</li><li>«Urge vender»: suena a problema.</li><li>Mayúsculas continuas y exclamaciones.</li><li>«Impecable» sin un dato que lo pruebe.</li><li>Datos que no coinciden con FORM-02 y FORM-04.</li></ul></div></div>
+  <div class="g-2">${gCall("oscuro","3 precios por coche","<b>Anuncio</b> (el que se publica) · <b>Objetivo</b> (al que queremos cerrar) · <b>Mínimo</b> (nunca por debajo y nunca se revela). Los fija el gerente antes de publicar.")}${gCall("piedra","Publicación","Mismo anuncio en la web, portales (coches.net, Wallapop, Milanuncios), redes y estado de WhatsApp, el mismo día. Coche con 45 días sin pruebas → revisión de fotos, precio y texto con el gerente.")}</div>
+  <div class="g-cierre">${gPanel("<b>Coches → editar coche.</b> Rellena la ficha y la descripción; en <b>Comparativa de mercado</b> pega los precios de anuncios reales: si el tuyo está por debajo, la web enseña «¡Oferta imbatible de mercado!». En la ficha pública, <b>Compartir</b> te da el enlace del coche para portales y WhatsApp.",[["form","+ Añadir coche"],["coches","Ver mis coches"]])}${gListo("02",GUIA_LISTO["02"],"03")}</div>`,
+
+"03":()=>`
+  ${gHero("03",{num:"03",titulo:"Primer contacto",intro:"Quien responde primero, gana la conversación. El objetivo no es vender el coche por WhatsApp: es entender qué busca el cliente y conseguir que venga a probarlo.",chips:[["Objetivo","Cita de prueba"],["Tiempo","Responder en < 15 min"],["Quién","Vendedor"]]})}
+  ${gHazlo(["Responde en <b>menos de 15 minutos</b>: te llega un email con cada cliente nuevo y el CRM lo marca en «Sin contestar».","Preséntate con tu nombre y confirma que el coche sigue disponible.","Haz <b>espejo</b>: repite sus 1–3 últimas palabras importantes y calla.","<b>Etiqueta</b> su miedo («Parece que lo que más te importa es…») hasta que diga «eso es».","Propón la prueba <b>buscando el NO</b>: «¿Sería mala idea venir a probarlo mañana, sin compromiso?» y cierra día y hora."])}
+  <div class="g-sec">${gH("La técnica del espejo en 3 pasos")}<div class="g-3">${[["Escucha","Deja que el cliente termine la frase sin interrumpir."],["Repite","Las 1–3 últimas palabras importantes, en tono de pregunta suave."],["Calla","4 segundos de silencio. El cliente se explica solo."]].map(([t,d],i)=>`<div class="g-regla"><b><i style="background:#5A564F">${i+1}</i>${t}</b><p>${d}</p></div>`).join("")}</div></div>
+  <div class="g-sec">${gH("Así suena una respuesta por WhatsApp")}<div class="g-2 g-chatw">
+    <div class="g-chat"><div class="cab"><i></i>Cliente · Seat Ibiza 2019</div><div class="cuerpo">
+      <p class="c">Hola, ¿sigue disponible el Ibiza? Lo quiero para mi hija.</p>
+      <p class="v">¡Hola! Soy Dani, de Volcano Cars. Sí, sigue disponible. <b>¿Para tu hija?</b></p>
+      <p class="c">Sí, acaba de sacarse el carnet y me da miedo que le deje tirada.</p>
+      <p class="v"><b>Parece que lo que más te importa es que sea un coche fiable y seguro para ella.</b></p>
+      <p class="c">Exacto, eso es. Ya tuvimos una mala experiencia con otro.</p>
+      <p class="v">Te entiendo. Lo hemos revisado en nuestro taller y te enseño las facturas; además tiene 12 meses de garantía. <b>¿Sería mala idea que vinierais los dos a probarlo mañana, sin compromiso?</b></p>
+      <p class="c">No, para nada. ¿Por la tarde os viene bien?</p></div></div>
+    <div class="g-notas"><div class="g-nota" style="border-color:#5A564F"><b style="color:#5A564F">Espejo</b>«¿Para tu hija?» repite sus palabras y le invita a contar más.</div>
+      <div class="g-nota" style="border-color:#D9481C"><b style="color:#D9481C">Etiqueta</b>Nombra el miedo real: fiabilidad y seguridad.</div>
+      <div class="g-nota" style="border-color:#1F8B4C"><b style="color:#1F8B4C">«Eso es»</b>El cliente se siente entendido. Ahora sí confía.</div>
+      <div class="g-nota" style="border-color:#E08A2E"><b style="color:#A55F12">Buscar el NO</b>«¿Sería mala idea…?» El «no» le da control y dice sí a la cita.</div>
+      ${gCall("magma","Ojo con el horario","Abrimos de lunes a viernes de 8:00 a 16:00. Si quiere venir fuera de horario, ofrécele la primera hora del día siguiente.")}</div></div></div>
+  <div class="g-sec">${gH("Espejos rápidos para llamadas y mensajes")}<div class="g-2">${[["«Busco algo que gaste poco, que me muevo mucho.»","«¿Te mueves mucho?»"],["«Me han dicho que los automáticos dan problemas.»","«¿Dan problemas?»"],["«El precio me parece alto.»","«¿Alto?»"],["«Ya vi otro parecido en Puerto del Rosario.»","«¿Uno parecido?»"]].map(([a,b])=>`<div class="g-esp"><span>${a}</span><b>${b}</b></div>`).join("")}</div></div>
+  <div class="g-cierre">${gPanel("<b>CRM</b>: abre el cliente → botón <b>WhatsApp</b> (plantilla «Primer contacto») y el estado pasa a «Contactado». El CRM mide tu tiempo de <b>primera respuesta</b>. Para la prueba, mándale el enlace del coche (<b>Compartir</b>): allí elige día y hora y la cita entra sola en la <b>Agenda</b>. Si te llama o viene en persona: <b>+ Nuevo cliente</b>.",[["crm","Abrir CRM"],["agenda","Abrir Agenda"]])}${gListo("03",GUIA_LISTO["03"],"04")}</div>`,
+
+"04":()=>`
+  ${gHero("04",{num:"04",titulo:"Prueba en carretera",intro:"La prueba es donde el cliente decide. El vendedor va de copiloto, habla poco y escucha mucho: descubre qué le gusta y qué le preocupa.",chips:[["Objetivo","Un «eso es»"],["Tiempo","20–30 min"],["Quién","Vendedor"]]})}
+  ${gHazlo(["Antes de salir: carnet en vigor, DNI/NIE y el <b>Anexo A firmado</b>.","Sigue la <b>ruta de 7 tramos</b> (unos 30 minutos).","En cada tramo, una sola pregunta o espejo; después, <b>silencio</b>.","<b>Nada de precio</b> mientras conduce, y nunca critiques a la competencia.","Al volver, resume con sus palabras hasta oír <b>«eso es»</b> y propón sentaros a ver números."])}
+  <div class="g-sec">${gH("Antes de salir")}<div class="g-card">${gCheck("p4a",["Carnet en vigor + DNI/NIE (copia).","Seguro que cubre conductores en prueba.","Condiciones de la prueba firmadas (Anexo A).","Km y combustible de salida anotados.","Asiento, volante y espejos ajustados.","Mandos básicos explicados."])}</div></div>
+  <div class="g-sec">${gH("La ruta y qué decir en cada tramo")}<ol class="g-ruta">
+    ${[["Salida y ciudad","5 min","Arranque en frío, dirección, cámara y sensores","«¿Qué te parece cómo suena en frío?»"],["Rotondas","3 min","Suspensión y ruidos en giro","Espejo de lo que comente"],["Vía rápida (FV-1 / FV-2)","10 min","Estabilidad, cambio, ruido, consumo","«¿Qué diferencia notas con tu coche?»"],["Subida","3 min","Potencia con el A/C encendido","«Parece que el calor de aquí te importa.»"],["Frenada segura","1 min","Frena recto y sin vibración","Silencio: que lo note él"],["Multimedia","2 min","Conecta su móvil y pone su música","«¿Qué tal si pones tu música?»"],["Vuelta y aparcar","5 min","Maniobra y sensación general","«¿Algo te hace pensar que no es para ti?»"]].map(([t,m,q,d])=>`<li><div><b>${t}</b><small>${m}</small></div><span class="q">${q}</span><span class="qd">${d}</span></li>`).join("")}</ol></div>
+  <div class="g-2">${gCall("magma","Reglas durante la prueba","No hablar de precio mientras conduce · no criticar a la competencia · si el cliente calla, callar también · si señala un defecto, etiquetarlo y dar el dato real de FORM-02.")}${gCall("verde","Al volver","Resume con sus palabras lo que busca hasta oír «eso es». Después: <b>«¿Sería mala idea sentarnos cinco minutos a ver números?»</b>")}</div>
+  <div class="g-cierre">${gPanel("<b>Agenda</b>: tus visitas del día, con el coche y el teléfono. Después de la prueba, en el <b>CRM</b>: estado «Cita», una nota en <b>Actividad</b> con lo que dijo (sus palabras) y <b>Próximo seguimiento</b> para mañana. El Anexo A está en esta guía: puedes imprimirlo desde su página.",[["agenda","Abrir Agenda"],["crm","Abrir CRM"]])}${gListo("04",GUIA_LISTO["04"],"05")}</div>`,
+
+"05":()=>`
+  ${gHero("05",{num:"05",titulo:"Negociar",intro:"Negociar no es discutir el precio: es entender lo que siente el cliente. Tono tranquilo, voz grave y silencio después de cada técnica.",chips:[["Objetivo","Reserva con señal"],["Tiempo","24–72 h"],["Quién","Vendedor + gerente"]]})}
+  ${gHazlo(["Antes de hablar de precio o de un defecto, haz la <b>auditoría de acusaciones</b>.","Deja que diga su cifra y responde con una <b>pregunta calibrada</b>: «¿Cómo has llegado a esa cifra?».","Si pide rebaja, sube la <b>escalera del precio</b> escalón a escalón. Nunca por debajo del mínimo.","Si el problema es la cuota, abre la <b>calculadora de financiación</b> del coche y ofrécele el pre-estudio.","Cierra con <b>señal</b> y fecha de entrega por escrito, y marca el coche «Reservado»."])}
+  <div class="g-2">
+    ${gTec("etiquetar",["«Parece que te preocupa el historial de mantenimiento.»","«Parece que sientes que el precio está fuera de tu presupuesto.»","«Suena a que has tenido una mala experiencia antes.»"],"Empieza por «Parece que…». Nunca «pero» después.")}
+    ${gTec("calibrada",["«¿Cómo se supone que haga ese descuento sin tocar la garantía del coche?»","«¿Cómo has llegado a esa cifra?»","«¿Qué tendría que pasar para que este coche fuera el tuyo?»"],"Solo «¿Cómo…?» o «¿Qué…?». Nunca «¿Por qué…?».")}
+    ${gTec("no",["«¿Sería una mala idea probar el coche hoy sin compromiso?»","«¿Te molestaría si hablamos de números con calma?»","«¿Es una locura dejarlo reservado hoy con una señal?»"],"Un «sí» forzado pone a la defensiva; un «no» relaja.")}
+    ${gTec("esoes",["«Entonces buscas un coche para el día a día, que gaste poco, con maletero para los niños y sin sustos con el calor.»"],"Si dice «eso es», está listo. Si dice «tienes razón», todavía no.")}</div>
+  <div class="g-sec">${gH("La escalera del precio: nunca saltarse un escalón")}<div class="g-esc">
+    <div class="c-gris"><b><i>1</i>Pregunta calibrada</b>«¿Cómo has llegado a esa cifra?»</div>
+    <div class="c-piedra"><b><i>2</i>Algo que no sea dinero</b>Cambio de aceite a los 6 meses en nuestro taller, depósito lleno, alfombrillas.</div>
+    <div class="c-ambar" style="color:#1B1B1A"><b><i>3</i>Bajada pequeña y no redonda</b>Con permiso del gerente: 11.740 €, no 11.700 €.</div>
+    <div class="c-magma"><b><i>4</i>Límite</b>Nunca por debajo del precio mínimo. Nada gratis: a cambio, señal hoy o pago al contado.</div></div></div>
+  <div class="g-2">${gCall("magma","Auditoría de acusaciones · antes del precio o de un defecto","<i>«Seguro que piensas que todos los vendedores dicen que su coche está perfecto y que te voy a presionar para firmar hoy. Por eso prefiero enseñarte también lo que no está perfecto.»</i>")}${gCall("oscuro","Si el problema es la cuota","«¿Te ayudaría verlo en cuotas?» → abre el coche en la web, mueve entrada y plazo en <b>Calcula tu cuota</b> y pídele el <b>pre-estudio</b> sin compromiso: te llega al CRM como «Financiación».")}</div>
+  ${gCall("ambar","Solo lo que es verdad","Nunca digas que hay más interesados si no los hay. Si los hay de verdad, la web ya lo enseña («X personas han preguntado por este coche esta semana»).")}
+  <div class="g-cierre">${gPanel("<b>CRM</b>: pon el <b>Importe</b> acordado y el estado. La señal se acuerda en el taller con justificante. En <b>Coches</b>, pulsa <b>Reservado</b>: la web lo muestra con la etiqueta y ya no se puede pedir visita.",[["crm","Abrir CRM"],["coches","Marcar reservado"]])}${gListo("05",GUIA_LISTO["05"],"06")}</div>`,
+
+"06":()=>`
+  ${gHero("06",{num:"06",titulo:"Cerrar y seguir",intro:"Ningún cliente se queda sin fecha de próximo contacto. El seguimiento con técnica convierte los «me lo pienso» en ventas y las ventas en reseñas.",chips:[["Objetivo","Venta + reseña"],["Tiempo","Mismo día"],["Quién","Vendedor · gerente revisa"]]})}
+  ${gHazlo(["Firma en Antigua y acuerda la entrega: <b>gratis en toda la isla</b> o recogida en el taller.","Marca el coche <b>«Vendido»</b> y el cliente <b>«Ganada»</b> con el importe.","A los 7 días: «¿Qué tal los primeros días?» + plantilla <b>«Pedir reseña en Google»</b>.","A los 6 meses: recordatorio de revisión en nuestro taller.","Si se pierde: estado <b>«Perdida»</b> con el motivo, en sus palabras."])}
+  <div class="g-sec">${gH("Los 5 estados de cada cliente")}<div class="g-est">
+    <div class="c-gris"><b>Lead entrante</b>Conseguir la prueba<em>CRM: Nueva / Contactado</em></div>
+    <div class="c-piedra"><b>Prueba realizada</b>Resolver dudas<em>CRM: Cita</em></div>
+    <div class="c-magma"><b>Negociación activa</b>Reserva con señal<em>CRM: Cita + seguimiento</em></div>
+    <div class="c-verde"><b>Cerrado</b>Entrega y reseña<em>CRM: Ganada</em></div>
+    <div style="background:#8C867D"><b>Perdido</b>Anotar el motivo<em>CRM: Perdida</em></div></div></div>
+  <div class="g-sec">${gH("Calendario de seguimiento táctico")}<div class="g-tw"><table class="g-tabla"><thead><tr><th>Estado</th><th>Cuándo</th><th>Mensaje</th><th>Técnica</th></tr></thead><tbody>
+    ${[["Lead entrante","Mismo día","«¿Qué es lo que más te ha llamado la atención del [modelo]?»",gTag("Calibrada","c-gris")],["Lead entrante","48 h sin respuesta","«¿Sería mala idea venir a probarlo esta semana, sin compromiso?»",gTag("NO","c-ambar")],["Lead entrante","7 días sin respuesta","«¿Has dejado de estar interesado en el [modelo]?»",gTag("NO","c-ambar")],["Prueba realizada","24 h","«Parece que el coche te gustó, y algo te hace dudar. ¿Qué es?»",gTag("Etiqueta","c-magma")],["Prueba realizada","3 días","Enviar el dato que resuelve su duda: factura, informe OBD, foto.",gTag("Prueba","c-piedra")],["Negociación","24 h","«¿Cómo lo habéis visto en casa?»",gTag("Calibrada","c-gris")],["Negociación","3 días","«Parece que algo no encaja. ¿Estás en contra de buscarlo juntos?»",gTag("Etiqueta + NO","c-magma")],["Cerrado","7 días","«¿Qué tal los primeros días con el coche?» + pedir reseña",gTag("Relación","c-verde")],["Cerrado","6 meses","Recordatorio de revisión en el taller de Volcano Cars",gTag("Taller","c-verde")],["Perdido","30 días","«¿Sería mala idea escribirte si entra un coche como el que buscabas?»",gTag("NO","c-ambar")]].map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join("")}</tbody></table></div></div>
+  <div class="g-2">${gCall("magma","Reglas del CRM","Todo cliente con fecha de <b>Próximo seguimiento</b> · máximo 3 intentos sin respuesta por estado · el motivo de cada «Perdida» se anota con sus palabras.")}${gCall("verde","Revisión del lunes","El gerente revisa el CRM 20 minutos cada lunes (filtro «Seguimiento») y a fin de mes el <b>Dashboard → Informe PDF</b>. Una vez al mes, el equipo elige la etiqueta o pregunta que mejor funcionó y la añade a la Chuleta.")}</div>
+  <div class="g-cierre">${gPanel("<b>CRM</b>: botones <b>Mañana · En 3 días · En 1 semana</b> para el próximo seguimiento; <b>Motivo</b> cuando se pierde; plantillas de WhatsApp «Seguimiento del coche» y «Pedir reseña en Google». En <b>Coches</b>, «Vendido»: la web lo enseña 60 días en «Vendidos recientemente» con los días que tardó.",[["crm","Abrir CRM"],["dash","Abrir Dashboard"]])}${gListo("06",GUIA_LISTO["06"],"")}</div>`,
+
+chuleta:()=>`
+  ${gHero("chuleta",{eyebrow:"CHULETA RÁPIDA",titulo:"Todos los guiones en una hoja",intro:"Tenla a mano en el móvil o impresa. Voz tranquila y grave · silencio después de cada técnica · nunca «pero» después de una etiqueta."})}
+  <div class="g-2">
+    ${gTec("etiquetar",["Parece que te preocupa el historial del coche.","Parece que el precio se sale de tu presupuesto.","Suena a que ya tuviste una mala experiencia.","Parece que los dos coches te gustan y no quieres equivocarte.","Suena a que todavía hay algo que no te convence."])}
+    ${gTec("calibrada",["¿Cómo has llegado a esa cifra?","¿Cómo hago ese descuento sin tocar la garantía?","¿Qué diferencia ves entre aquel coche y este?","¿Qué te frena ahora mismo?","¿Qué necesitas para dejarlo reservado hoy?"])}
+    ${gTec("espejo",["«…que me muevo mucho.» → ¿Te mueves mucho?","«…me parece alto.» → ¿Alto?","«…lo quiero para mi hija.» → ¿Para tu hija?","«…dan problemas.» → ¿Dan problemas?","Después: 4 segundos de silencio."])}
+    ${gTec("no",["¿Sería mala idea probarlo hoy sin compromiso?","¿Has dejado de estar interesado?","¿Te molestaría si vemos números con calma?","¿Te vendría mal pasar mañana?","¿Es una locura reservarlo hoy con una señal?"])}</div>
+  <div class="g-sec">${gH("No decir → decir")}<div class="g-sec" style="gap:8px">
+    ${[["«Es el último, se lo llevan hoy.»","«Si te encaja, ¿sería mala idea dejarlo reservado?» (y si de verdad hay más interesados, dilo tal cual)."],["«Este es mi precio final.» (al principio)","«¿Cómo has llegado a esa cifra?»"],["«Confía en mí.»","Enseñar FORM-02, facturas e informe OBD."],["«¿Por qué no te decides?»","«¿Qué te frena ahora mismo?»"],["«Entiendo, pero…»","«Parece que…» y silencio."]].map(([n,s])=>`<div class="g-nd"><div class="n">${n}</div><i>→</i><div class="s">${s}</div></div>`).join("")}</div></div>
+  ${gCall("oscuro","Tono","Voz tranquila y grave · silencio después de cada técnica · nunca «pero» después de una etiqueta · nada gratis: cada rebaja, a cambio de algo.")}`,
+
+anexo:()=>`
+  ${gHero("anexo",{eyebrow:"ANEXO A · UNA HOJA POR PRUEBA",titulo:"Condiciones de la prueba en carretera",intro:`Volcano Cars · ${typeof EMPRESA_DIR!=="undefined"?EMPRESA_DIR:"Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua"} · 643 66 88 13. Rellenar y firmar antes de salir.`})}
+  <div class="no-pdf" style="display:flex;justify-content:flex-end"><button type="button" class="btn b-brand b-sm" data-gimprimir="anexo">Imprimir solo el Anexo A</button></div>
+  <div class="g-form">${["Vehículo","Matrícula","Km salida","Combustible salida","Conductor","DNI / NIE","Nº de carnet","Caducidad del carnet","Hora de salida","Hora de vuelta","Km vuelta","Acompañante Volcano Cars"].map(t=>`<div><b>${t}</b><span></span></div>`).join("")}</div>
+  <div class="g-sec">${gH("El conductor declara que:")}<ol class="g-decl">
+    <li>Tiene el permiso de conducir en vigor y válido para este vehículo, y no está bajo los efectos del alcohol, drogas ni medicamentos que afecten a la conducción.</li>
+    <li>Conducirá respetando las normas de tráfico, por la ruta indicada por Volcano Cars y acompañado en todo momento por su personal.</li>
+    <li>Será responsable de las multas y sanciones de tráfico que se produzcan durante la prueba por su conducción.</li>
+    <li>Será responsable de los daños causados al vehículo o a terceros por conducción temeraria, negligencia grave o incumplimiento de estas condiciones, en la parte no cubierta por el seguro, incluida la franquicia si la hubiera.</li>
+    <li>Devolverá el vehículo en el mismo estado en que lo recibe y avisará de inmediato de cualquier incidente.</li>
+    <li>La prueba no supone ningún compromiso de compra.</li></ol>
+    <p style="margin:0;font-size:13px;color:var(--muted)">Autoriza a Volcano Cars a conservar copia de su carnet mientras dure la prueba. Sus datos se tratan según la política de privacidad de Volcano Cars (web → Privacidad) y la copia se destruye al terminar la prueba si no hay compra.</p></div>
+  <div class="g-firmas"><div><b>Firma del conductor</b></div><div><b>Firma de Volcano Cars</b></div><div><b>Fecha</b></div></div>`
+};
+
+/* ---------- pantalla ---------- */
+let GUIA_ACT="inicio", GUIA_VOLVER="s-list";
+function guiaPintar(pag){
+  if(!GUIA_PAG[pag]) pag="inicio";
+  GUIA_ACT=pag; try{ sessionStorage.setItem("vc_guia_pag",pag); }catch(_){}
+  const i=GUIA_PAGS.indexOf(pag), ant=GUIA_PAGS[i-1], sig=GUIA_PAGS[i+1];
+  const pasos=["01","02","03","04","05","06"];
+  $("#guia-nav").innerHTML=GUIA_PAGS.map(p=>`<a href="#" data-gpag="${p}" ${p===pag?'aria-current="page"':""} class="${pasos.includes(p)&&gListoOk(p)?"hecho":""}">${pasos.includes(p)?`<b>${p}</b>`:""}${GUIA_CORTO[p]}</a>`).join("");
+  $("#guia-prog").innerHTML=pasos.map(p=>`<i class="${gListoOk(p)?"ok":p===pag?"on":""}"></i>`).join("");
+  $("#guia-body").innerHTML=`<div class="g-pag">${GUIA_PAG[pag]()}</div>
+    <nav class="g-pie"><a href="#" data-gpag="${ant||""}" ${ant?"":"hidden"}><small>← Anterior</small><b>${ant?GUIA_NOMBRE[ant]:""}</b></a><a href="#" class="sig" data-gpag="${sig||""}" ${sig?"":"hidden"}><small>Siguiente →</small><b>${sig?GUIA_NOMBRE[sig]:""}</b></a></nav>`;
+  const cur=$("#guia-nav [aria-current]"); if(cur) cur.scrollIntoView({inline:"center",block:"nearest"});
+}
+function abrirGuia(pag){
+  const vis=["s-list","s-form","s-leads","s-agenda","s-dash","s-ordenes"].find(x=>!$("#"+x).hidden);
+  if(vis) GUIA_VOLVER=vis;
+  let p=pag; if(!p){ try{ p=sessionStorage.getItem("vc_guia_pag")||"inicio"; }catch(_){ p="inicio"; } }
+  show("s-guia"); guiaPintar(p);
+}
+function guiaVolver(){ if(GUIA_VOLVER==="s-form") show("s-form"); else if(GUIA_VOLVER==="s-list") loadList(); else show(GUIA_VOLVER); }
+document.addEventListener("click",e=>{
+  const g=e.target.closest("[data-guia]"); if(g){ e.preventDefault(); abrirGuia(g.dataset.guia||undefined); return; }
+  if(!e.target.closest("#s-guia")) return;
+  const p=e.target.closest("[data-gpag]"); if(p){ e.preventDefault(); if(p.dataset.gpag){ guiaPintar(p.dataset.gpag); window.scrollTo(0,0); } return; }
+  const f=e.target.closest("[data-gfoto]"); if(f){ const i=f.dataset.gfoto; GST.fotos[i]=!GST.fotos[i]; f.classList.toggle("hecha",!!GST.fotos[i]); gGuardar(); return; }
+  if(e.target.closest("[data-greset]")){ GST.fotos={}; gGuardar(); guiaPintar(GUIA_ACT); return; }
+  const ir=e.target.closest("[data-gir]"); if(ir){ const k=ir.dataset.gir;
+    if(k==="form") openForm(null); else if(k==="coches") loadList(); else abrirTab({crm:"leads",agenda:"agenda",dash:"dash"}[k]||"coches"); return; }
+  const im=e.target.closest("[data-gimprimir]"); if(im){ guiaPDF([im.dataset.gimprimir]); return; }
+  if(e.target.closest("#guia-pdf")){ guiaPDF(); return; }
+  if(e.target.closest("#guia-volver")){ guiaVolver(); return; }
+});
+document.addEventListener("change",e=>{
+  const c=e.target.closest("[data-gchk]"); if(!c) return;
+  GST.chk[c.dataset.gchk]=c.checked; gGuardar();
+  if(c.dataset.gchk.startsWith("L")) guiaPintarNav();
+});
+function guiaPintarNav(){ const pasos=["01","02","03","04","05","06"];
+  document.querySelectorAll("#guia-nav [data-gpag]").forEach(a=>a.classList.toggle("hecho",pasos.includes(a.dataset.gpag)&&gListoOk(a.dataset.gpag)));
+  $("#guia-prog").innerHTML=pasos.map(p=>`<i class="${gListoOk(p)?"ok":p===GUIA_ACT?"on":""}"></i>`).join(""); }
+
+/* ---------- PDF: página de impresión con todas las hojas (Guardar como PDF) ---------- */
+async function guiaPDF(solo){
+  const pags=solo||GUIA_PAGS;
+  let box=$("#guia-print"); if(!box){ box=document.createElement("div"); box.id="guia-print"; document.body.appendChild(box); }
+  const portada=solo?"":`<div class="g-pag" id="gp-portada"><section class="g-portada"><img src="/marca/logo-claro.svg" alt="Volcano Cars" width="163" height="40">
+    <span class="eb">GUÍA INTERNA · ${GUIA_VER}</span><h2>El Método de Venta <span>Volcano Cars</span></h2>
+    <p>Seis pasos para vender cada coche siempre igual: fotos que atraen, conversaciones que dan confianza y una negociación en la que el cliente se siente en control.</p>
+    <div class="lista">${["01","02","03","04","05","06"].map(p=>`<a href="#gp-${p}"><i>${p}</i>${GUIA_NOMBRE[p]}</a>`).join("")}<a href="#gp-chuleta"><i style="background:#F2994A;color:#1B1B1A">✓</i>Chuleta rápida</a><a href="#gp-anexo"><i style="background:#5A564F">A</i>Anexo A · Condiciones de la prueba</a></div>
+    <div class="pie">Metodología: sistemas de E-Myth (Michael E. Gerber) + negociación táctica (Chris Voss) · Documento interno de Volcano Cars · Pulsa cualquier paso para ir directamente a él.</div></section></div>`;
+  box.innerHTML=`<div class="guia">${portada}${pags.map(p=>`<div class="g-pag" id="gp-${p}">${GUIA_PAG[p]()}</div>`).join("")}</div>`;
+  box.querySelectorAll("input[type=checkbox]").forEach(i=>i.checked=false);
+  box.querySelectorAll(".g-foto").forEach(f=>f.classList.remove("hecha"));
+  document.body.classList.add("print-guia");
+  const t=document.title; document.title=solo?"Volcano Cars - Anexo A - Condiciones de la prueba":"Volcano Cars - El Metodo de Venta (SOP-02)";
+  try{ await document.fonts.ready; await Promise.all([...box.querySelectorAll("img")].map(im=>im.complete?0:new Promise(r=>{im.onload=im.onerror=r;}))); }catch(_){}
+  const fin=()=>{ document.body.classList.remove("print-guia"); document.title=t; box.innerHTML=""; window.removeEventListener("afterprint",fin); };
+  window.addEventListener("afterprint",fin);
+  window.print();
+  setTimeout(()=>{ if(!matchMedia("print").matches && document.body.classList.contains("print-guia")) fin(); },60000);
+}
+/*GUIA-JS-FIN*/
 </script>
 </body>
 </html>
