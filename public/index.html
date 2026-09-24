@@ -21,9 +21,9 @@
 <link rel="alternate" hreflang="en" href="https://lestter5th.netlify.app/en/">
 <link rel="alternate" hreflang="x-default" href="https://lestter5th.netlify.app/">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":["AutoRepair","AutoDealer","AutoBodyShop"],"@id":"https://lestter5th.netlify.app/#negocio","name":"Volcano Cars","logo":"https://lestter5th.netlify.app/marca/logo-oscuro.svg","hasMap":"https://www.google.com/maps/search/?api=1&query=Calle%20Valle%20Largo%2C%20Nave%208%2C%20Pol%C3%ADgono%20Industrial%2C%2035610%20Antigua%2C%20Las%20Palmas","description":"Chapa y pintura, mecánica rápida y venta de coches de ocasión revisados con 12 meses de garantía y entrega a domicilio gratis en toda Fuerteventura.","telephone":"+34643668813","email":"volcanocars2026@gmail.com","url":"https://lestter5th.netlify.app/","image":"https://lestter5th.netlify.app/coches/opel-astra-2010/anuncio.jpg","priceRange":"€€",
+{"@context":"https://schema.org","@type":["AutoRepair","AutoDealer","AutoBodyShop"],"@id":"https://lestter5th.netlify.app/#negocio","name":"Volcano Cars","logo":"https://lestter5th.netlify.app/marca/logo-oscuro.svg","hasMap":"https://www.google.com/maps?cid=5551544135827693991","geo":{"@type":"GeoCoordinates","latitude":28.420871,"longitude":-13.8621004},"description":"Chapa y pintura, mecánica rápida y venta de coches de ocasión revisados con 12 meses de garantía y entrega a domicilio gratis en toda Fuerteventura.","telephone":"+34643668813","email":"volcanocars2026@gmail.com","url":"https://lestter5th.netlify.app/","image":"https://lestter5th.netlify.app/coches/opel-astra-2010/anuncio.jpg","priceRange":"€€",
  "address":{"@type":"PostalAddress","streetAddress":"Calle Valle Largo, Nave 8, Polígono Industrial","postalCode":"35610","addressLocality":"Antigua","addressRegion":"Las Palmas","addressCountry":"ES"},
- "areaServed":["Antigua","Caleta de Fuste","Puerto del Rosario","Tuineje","Gran Tarajal","La Oliva","Corralejo","Pájara","Fuerteventura"],
+ "areaServed":[{"@type":"Island","name":"Fuerteventura"},"Antigua","Caleta de Fuste","Puerto del Rosario","La Oliva","Corralejo","Tuineje","Gran Tarajal","Pájara","Costa Calma","Morro Jable"],
  "availableLanguage":["es","en"],
  "openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"16:00"}]}
 </script>
@@ -134,6 +134,9 @@ nav.mtabs{display:none}
 .btn-wa:hover{transform:translateY(-2px)}
 
 .view[hidden]{display:none!important}
+/* /comprar, /taller y /contacto se abren ya en su sección (hasta que arranca el JS) */
+html[data-vista] #v-inicio{display:none!important}
+html[data-vista="comprar"] #v-comprar,html[data-vista="taller"] #v-taller,html[data-vista="contacto"] #v-contacto{display:block!important}
 
 /* ---------- Hero ---------- */
 .hero{position:relative;overflow:hidden;background:var(--night);color:#F2EFEA;isolation:isolate}
@@ -221,6 +224,7 @@ section.block{padding-block:88px}
 .specs{display:flex;flex-wrap:wrap;gap:6px}
 .chip{font-size:12.5px;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--surface-2);color:var(--ink)}
 .price-row{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}
+.price-row>div{min-width:0}.price-row .price{white-space:nowrap;line-height:1.05}.price-row .month{text-align:left;margin-top:4px}.price-row .ver{flex-shrink:0}
 .price{font-family:var(--display);font-stretch:82%;font-weight:800;font-size:27px;letter-spacing:-.02em}
 .month{font-size:13px;color:var(--muted);text-align:right}
 .empty{background:var(--surface);border:1.5px dashed var(--line);border-radius:var(--r);padding:48px 22px;text-align:center;color:var(--muted)}
@@ -352,7 +356,12 @@ dialog::backdrop{background:rgba(8,9,10,.66);backdrop-filter:blur(6px)}
 .m-img{aspect-ratio:16/10;max-width:100%}
 .m-body{padding:28px;display:grid;gap:22px}
 @media (max-width:520px){.m-body{padding:20px}}
-.m-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.m-top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 20px;align-items:start}
+.m-top h3{overflow-wrap:anywhere}
+.m-precio{text-align:right;white-space:nowrap;padding-top:4px}
+.m-precio .price{line-height:1}
+.m-precio .month{margin-top:6px}
+@media (max-width:560px){.m-top{grid-template-columns:1fr}.m-precio{text-align:left;display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 0 0;border-top:1px solid var(--line)}.m-precio .month{text-align:right;margin:0}}
 .m-top h3{font-size:32px}
 .spec-table{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .spec-table div{background:var(--surface);padding:13px 15px}
@@ -390,6 +399,11 @@ footer .logo-tag{color:rgba(242,239,234,.55)}
 .foot a{display:block;text-decoration:none;padding:4px 0;color:rgba(242,239,234,.85);transition:color .2s}
 .foot a:hover{color:#fff}
 .foot p{color:rgba(242,239,234,.65);margin:16px 0 0;max-width:34ch}
+.zonas-foot{border-top:1px solid var(--night-line);padding-block:18px;font-size:13.5px;color:rgba(242,239,234,.6);display:grid;gap:8px}
+.zonas-foot p{margin:0;line-height:1.9}
+.zonas-foot b{color:rgba(242,239,234,.85);margin-right:6px;font-weight:700}
+.zonas-foot a{color:rgba(242,239,234,.72);text-decoration:none;margin-right:12px;white-space:nowrap}
+.zonas-foot a:hover{color:#fff;text-decoration:underline}
 .legal{border-top:1px solid var(--night-line);padding-block:20px;font-size:13px;color:rgba(242,239,234,.5);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 @media (max-width:860px){.foot{grid-template-columns:1fr 1fr;padding-block:48px 32px}}
 @media (max-width:900px){footer{padding-bottom:96px}}
@@ -624,9 +638,10 @@ footer .logo-tag{color:rgba(242,239,234,.55)}
 .modo{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--surface-2);padding:5px;border-radius:14px}
 .modo label{position:relative;cursor:pointer}
 .modo input{position:absolute;opacity:0;pointer-events:none}
-.modo span{display:block;text-align:center;padding:10px 8px;border-radius:10px;font-weight:700;font-size:14.5px;color:var(--muted);transition:background .2s,color .2s}
+.modo span{display:flex;align-items:center;justify-content:center;height:100%;min-height:44px;text-align:center;line-height:1.2;padding:8px 6px;border-radius:10px;font-weight:700;font-size:14.5px;color:var(--muted);transition:background .2s,color .2s}
 .modo input:checked+span{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.1)}
 .modo input:focus-visible+span{outline:3px solid var(--rosso);outline-offset:2px}
+@media (max-width:360px){.modo span{font-size:13px;padding:8px 4px}}
 .agenda{display:grid;gap:12px}
 .ag-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px}
 .ag-head b{font-size:15px}
@@ -885,6 +900,80 @@ footer .logo svg.vc-logo{height:62px}
 }
 /* franja magma (sustituye a la tricolor) */
 .tricolore{height:6px;background:var(--rosso)}
+
+/* =====================================================================
+   PORTADA: split-hero (Comprar coche / Taller) — las dos tarjetas se ven sin bajar
+   ===================================================================== */
+.hs{padding-block:clamp(22px,4.2vh,52px) clamp(26px,4.6vh,56px);display:grid;gap:clamp(16px,2.6vh,26px)}
+.hs>*{min-width:0}
+.hero h1.hs-h1{font-size:clamp(30px,4vw,56px);margin:0;max-width:30ch;letter-spacing:-.01em;text-wrap:balance}
+.hs-stock-p{white-space:nowrap}
+.hs-lead{margin:10px 0 0;color:rgba(242,239,234,.72);font-size:clamp(15.5px,1.3vw,18px);max-width:60ch}
+.hs-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,1.6vw,22px)}
+.hs-card{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;gap:12px;min-width:0;
+  padding:clamp(20px,2.4vw,34px);border-radius:26px;color:#F2EFEA;
+  background:linear-gradient(155deg,#2B2A28 0%,#1F1E1C 55%,#171615 100%);
+  border:1px solid rgba(255,255,255,.1);box-shadow:0 30px 70px -30px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.06);
+  transition:transform .35s var(--ease),border-color .35s,box-shadow .35s}
+.hs-card::before{content:"";position:absolute;z-index:-1;inset:auto -20% -45% auto;width:80%;aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(217,72,28,.55),transparent);filter:blur(6px);transition:transform .6s var(--ease),opacity .4s}
+.hs-taller::before{background:radial-gradient(closest-side,rgba(242,153,74,.42),transparent)}
+.hs-bg{position:absolute;z-index:-1;right:-18px;bottom:-26px;width:clamp(120px,15vw,200px);height:clamp(120px,15vw,200px);color:#fff;opacity:.06;transform:rotate(-8deg)}
+.hs-kick{display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(242,239,234,.82)}
+.hs-ic{flex-shrink:0;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#B83A12,#D9481C);box-shadow:0 10px 24px -10px rgba(217,72,28,.9)}
+.hs-taller .hs-ic{background:linear-gradient(135deg,#C46A1E,#F2994A);color:#1B1B1A;box-shadow:0 10px 24px -10px rgba(242,153,74,.8)}
+.hs-card h2{margin:4px 0 0;font-family:var(--display);font-stretch:82%;font-weight:800;text-transform:uppercase;line-height:.98;letter-spacing:-.005em;
+  font-size:clamp(25px,2.6vw,40px);color:#fff;text-wrap:balance}
+.hs-card p{margin:0;color:rgba(242,239,234,.76);font-size:clamp(15px,1.15vw,17px);line-height:1.45;max-width:40ch}
+.hs-acts{margin-top:auto;padding-top:6px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px}
+.hs-cta{padding:14px 22px}
+.hs-cta::after{content:"";position:absolute;inset:0;border-radius:26px;z-index:0}
+.hs-card .btn.hs-cta{position:static;transform:none!important}
+.hs-venta:hover .hs-cta{background:#E4552A}.hs-taller:hover .hs-cta{background:#fff}
+.hs-card:hover .hs-cta .arr{transform:translateX(4px)}
+/* ojo: nada de transform/filter en .hs-cta, rompería el enlace que ocupa toda la tarjeta */
+.hs-card:active{transform:scale(.99)}
+.hs-alt{position:relative;z-index:1;display:inline-flex;align-items:center;gap:7px;color:#F2EFEA;font-weight:700;font-size:14.5px;text-decoration:none;opacity:.85;padding:8px 2px}
+.hs-alt:hover{opacity:1;text-decoration:underline}
+.hs-alt svg{color:#34D27B}
+.btn-hueso{background:#F2EFEA;color:#1B1B1A;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.btn-hueso:hover{background:#fff}
+@media (hover:hover){
+  .hs-card:hover{transform:translateY(-4px);border-color:rgba(255,122,77,.5);box-shadow:0 40px 80px -30px rgba(0,0,0,.8),0 0 0 1px rgba(255,122,77,.25)}
+  .hs-taller:hover{border-color:rgba(242,153,74,.5);box-shadow:0 40px 80px -30px rgba(0,0,0,.8),0 0 0 1px rgba(242,153,74,.25)}
+  .hs-card:hover::before{transform:scale(1.15)}
+}
+.hs-card:has(.hs-cta:focus-visible){outline:3px solid #FF7A4D;outline-offset:3px}
+.hs-meta{margin-top:0}
+.hero-split .trust{margin-top:0}
+@media (max-width:900px){
+  .hs-lead{display:none}
+}
+@media (max-width:700px){
+  .hs{padding-block:18px 26px;gap:14px}
+  .hero h1.hs-h1{font-size:clamp(25px,7.4vw,34px);line-height:1}
+  .hs-grid{grid-template-columns:1fr;gap:12px}
+  .hs-card{padding:18px 18px 16px;border-radius:22px;gap:8px}
+  .hs-cta::after{border-radius:22px}
+  .hs-kick{font-size:11px;gap:8px}
+  .hs-ic{width:32px;height:32px;border-radius:10px}
+  .hs-ic svg{width:17px;height:17px}
+  .hs-card h2{font-size:clamp(22px,6.6vw,28px)}
+  .hs-card p{font-size:14.5px;line-height:1.4}
+  .hs-acts{padding-top:4px;gap:6px 14px}
+  .hs-cta{padding:12px 18px;font-size:15px}
+  .hero-split .hs-cta{flex:0 1 auto}
+  .hs-bg{width:120px;height:120px;right:-14px;bottom:-20px}
+  .hs-meta{font-size:13.5px}
+  .hs-kick{letter-spacing:.08em}
+  .hs-alt{width:46px;height:46px;padding:0;justify-content:center;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);opacity:1}
+  .hs-alt svg{width:20px;height:20px}
+  .hs-alt span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .hs-alt{position:absolute;top:14px;right:14px}
+  .hs-cta{white-space:nowrap}
+}
+@media (max-width:360px){.hs-card h2{font-size:21px}.hs-card p{font-size:14px}.hs-cta{padding:11px 15px;font-size:14.5px}}
+@media (prefers-reduced-motion:reduce){.hs-card,.hs-card::before{transition:none}}
 
 /* =====================================================================
    MOVIL (Android e iPhone): sellos de confianza 2x2
@@ -1188,13 +1277,13 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
 
 <header class="top" id="top">
   <div class="wrap bar">
-    <a class="logo" href="#inicio" data-go="inicio" aria-label="Volcano Cars, inicio">
+    <a class="logo" href="/" data-go="inicio" aria-label="Volcano Cars, inicio">
       <svg class="vc-logo" viewBox="0 0 662 162" role="img" aria-hidden="true"><use href="#vc-logo"/></svg>
     </a>
     <nav class="tabs" aria-label="Secciones">
-      <a href="#comprar" data-go="comprar">Comprar coche</a>
-      <a href="#taller" data-go="taller">Taller</a>
-      <a href="#contacto" data-go="contacto">Contacto</a>
+      <a href="/comprar" data-go="comprar">Comprar coche</a>
+      <a href="/taller" data-go="taller">Taller</a>
+      <a href="/contacto" data-go="contacto">Contacto</a>
     </nav>
     <a class="head-cta" id="head-call" href="tel:+34643668813"><svg width="17" height="17"><use href="#i-phone"/></svg>Llámanos</a>
     <a class="phone-top" id="phone-top" href="tel:+34643668813" aria-label="Llamar a Volcano Cars"><svg width="17" height="17"><use href="#i-phone"/></svg><span class="pt-txt">Llamar</span></a>
@@ -1203,46 +1292,52 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
 </header>
 
 <nav class="mtabs" aria-label="Secciones">
-  <a href="#inicio" data-go="inicio"><svg><use href="#i-home"/></svg>Inicio</a>
-  <a href="#comprar" data-go="comprar"><svg><use href="#i-car"/></svg>Comprar</a>
-  <a href="#taller" data-go="taller"><svg><use href="#i-wrench"/></svg>Taller</a>
-  <a href="#contacto" data-go="contacto"><svg><use href="#i-phone"/></svg>Contacto</a>
+  <a href="/" data-go="inicio"><svg><use href="#i-home"/></svg>Inicio</a>
+  <a href="/comprar" data-go="comprar"><svg><use href="#i-car"/></svg>Comprar</a>
+  <a href="/taller" data-go="taller"><svg><use href="#i-wrench"/></svg>Taller</a>
+  <a href="/contacto" data-go="contacto"><svg><use href="#i-phone"/></svg>Contacto</a>
 </nav>
 
 <main>
 <!-- ================= INICIO ================= -->
 <div class="view" id="v-inicio">
-  <section class="hero">
-    <div class="wrap hero-in">
-      <div>
-        <h1 class="h1-long">Los mejores coches de ocasión en <span class="rs">Fuerteventura,</span> con <span class="s serif">1 año de garantía.</span></h1>
-        <p class="lead">Reparamos, pintamos y cuidamos tu coche como si fuera nuestro, aquí mismo, en el corazón de Fuerteventura. Y si buscas coche, te ofrecemos vehículos de ocasión revisados en nuestro propio taller, listos para rodar.</p>
-        <div class="hero-ctas">
-          <a class="btn btn-rosso" href="#comprar" data-go="comprar">Ver coches disponibles <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
-          <a class="btn btn-glass" href="#taller" data-go="taller">Pedir cita en el taller</a>
-        </div>
-        <div class="hero-meta">
-          <span class="status" data-status><i></i><span>Lunes a viernes, de 8:00 a 16:00</span></span>
-          <a href="#contacto" data-go="contacto"><svg width="16" height="16" style="vertical-align:-3px;margin-right:6px"><use href="#i-pin"/></svg>Polígono Industrial de Antigua</a>
-        </div>
+  <section class="hero hero-split" aria-labelledby="hs-h1">
+    <div class="wrap hs">
+      <div class="hs-head">
+        <h1 id="hs-h1" class="hs-h1">Coches de ocasión y taller en <span class="rs">Fuerteventura.</span></h1>
+        <p class="hs-lead">Elige qué necesitas: te atendemos en nuestra nave de Antigua, en el centro de la isla.</p>
+      </div>
+      <div class="hs-grid">
+        <article class="hs-card hs-venta">
+          <svg class="hs-bg" aria-hidden="true"><use href="#i-car"/></svg>
+          <div class="hs-kick"><span class="hs-ic"><svg width="20" height="20"><use href="#i-car"/></svg></span><span id="hs-stock">Venta de coches</span></div>
+          <h2>Comprar Coche de Ocasión</h2>
+          <p>Vehículos revisados con 1 año de garantía y entrega gratis en toda la isla.</p>
+          <div class="hs-acts">
+            <a class="btn btn-rosso hs-cta" href="/comprar" data-go="comprar">Ver catálogo disponible <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+        <article class="hs-card hs-taller">
+          <svg class="hs-bg" aria-hidden="true"><use href="#i-wrench"/></svg>
+          <div class="hs-kick"><span class="hs-ic"><svg width="20" height="20"><use href="#i-wrench"/></svg></span><span>Taller en Antigua</span></div>
+          <h2>Taller Mecánico, Chapa y Pintura</h2>
+          <p>Presupuesto sin compromiso, garantía de reparación y compromiso de plazo.</p>
+          <div class="hs-acts">
+            <a class="btn btn-hueso hs-cta" href="/taller" data-go="taller">Pedir cita o presupuesto <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
+            <a class="hs-alt" data-wa target="_blank" rel="noopener"><svg width="16" height="16"><use href="#i-wa"/></svg><span>WhatsApp</span></a>
+          </div>
+        </article>
+      </div>
+      <div class="hero-meta hs-meta">
+        <span class="status" data-status><i></i><span>Lunes a viernes, de 8:00 a 16:00</span></span>
+        <a href="/contacto" data-go="contacto"><svg width="16" height="16" style="vertical-align:-3px;margin-right:6px"><use href="#i-pin"/></svg>Polígono Industrial de Antigua</a>
+      </div>
       <ul class="trust" aria-label="Por qué Volcano Cars">
         <li><svg width="16" height="16"><use href="#i-shield"/></svg>1 año de garantía</li>
         <li><svg width="16" height="16"><use href="#i-check"/></svg>Revisados en nuestro taller</li>
         <li><svg width="16" height="16"><use href="#i-cal"/></svg>Cita online al momento</li>
         <li><svg width="16" height="16"><use href="#i-truck"/></svg>Entrega gratis en toda la isla</li>
       </ul>
-      </div>
-      <div class="hero-art" id="hero-sil"><svg class="hero-mark vc-hero" viewBox="-20 -34 150 144" aria-hidden="true">
-        <defs>
-          <clipPath id="vc-rise"><rect class="vc-lava" x="0" y="0" width="110" height="100"/></clipPath>
-          <radialGradient id="vc-glow" cx="50%" cy="60%" r="55%"><stop offset="0" stop-color="#FF7A4D" stop-opacity=".55"/><stop offset="1" stop-color="#D9481C" stop-opacity="0"/></radialGradient>
-        </defs>
-        <ellipse class="vc-halo" cx="55" cy="62" rx="60" ry="46" fill="url(#vc-glow)"/>
-        <path class="vc-out" d="M0 100 L28 0 L44 0 L55 14 L66 0 L82 0 L110 100 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-        <g clip-path="url(#vc-rise)"><path d="M40.9 36 L69.1 36 L80.8 78 L29.2 78 Z" fill="#D9481C"/></g>
-        <g class="vc-sparks" fill="#FF7A4D"><circle cx="50" cy="8" r="1.6"/><circle cx="58" cy="4" r="1.1"/><circle cx="54" cy="10" r="1.3"/><circle cx="61" cy="9" r="0.9"/><circle cx="47" cy="3" r="1"/></g>
-      </svg></div>
-      <div class="hero-feat" id="hero-feat" hidden></div>
     </div>
     <div class="tricolore"></div>
   </section>
@@ -1287,7 +1382,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
     <div class="wrap">
       <div class="sec-head rv">
         <div><div class="eyebrow">Coches disponibles</div><h2>Recién <span class="serif">llegados</span></h2></div>
-        <a class="btn btn-ghost" href="#comprar" data-go="comprar">Ver todos <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
+        <a class="btn btn-ghost" href="/comprar" data-go="comprar">Ver todos <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
       </div>
       <div class="grid rv d1" id="home-grid"></div>
     </div>
@@ -1305,7 +1400,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
             <li><span class="ic"><svg width="20" height="20"><use href="#i-cal"/></svg></span><span>Tú eliges el día y la hora</span></li>
             <li><span class="ic"><svg width="20" height="20"><use href="#i-shield"/></svg></span><span>Con sus 12 meses de garantía desde el primer kilómetro</span></li>
           </ul>
-          <a class="btn btn-rosso" href="#comprar" data-go="comprar">Ver coches disponibles <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
+          <a class="btn btn-rosso" href="/comprar" data-go="comprar">Ver coches disponibles <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
         </div>
         <div class="ruta" role="img" aria-label="Entrega gratis en toda Fuerteventura, de Corralejo a Morro Jable">
           <span class="camion" aria-hidden="true"><svg><use href="#i-truck"/></svg></span>
@@ -1341,7 +1436,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
           <h3>Chapa y pintura</h3>
           <p>Golpes, arañazos, rozaduras y abolladuras. Reparamos la chapa y trabajamos el color para que la reparación no se note.</p>
           <ul><li>Golpes y abolladuras</li><li>Arañazos</li><li>Pintura parcial o completa</li><li>Paragolpes</li></ul>
-          <a class="btn btn-rosso" href="#taller" data-go="taller">Pedir presupuesto <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
+          <a class="btn btn-rosso" href="/taller" data-go="taller">Pedir presupuesto <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
         </article>
         <article class="feature mech lux rv d2">
           <svg class="big-ic"><use href="#i-wrench"/></svg>
@@ -1349,7 +1444,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
           <h3>Mecánica rápida</h3>
           <p>El mantenimiento de siempre, sin esperas largas: aceite y filtros, frenos, neumáticos, batería, diagnosis y pre-ITV.</p>
           <ul><li>Aceite y filtros</li><li>Frenos</li><li>Neumáticos</li><li>Diagnosis</li><li>Pre-ITV</li></ul>
-          <a class="btn btn-glass" href="#taller" data-go="taller">Pedir cita <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
+          <a class="btn btn-glass" href="/taller" data-go="taller">Pedir cita <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
         </article>
       </div>
     </div>
@@ -1511,13 +1606,17 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
   <div class="tricolore"></div>
   <div class="wrap foot">
     <div>
-      <a class="logo" href="#inicio" data-go="inicio"><svg class="vc-logo" viewBox="0 0 662 162" aria-hidden="true" style="color:#F2EFEA"><use href="#vc-logo"/></svg></a>
+      <a class="logo" href="/" data-go="inicio"><svg class="vc-logo" viewBox="0 0 662 162" aria-hidden="true" style="color:#F2EFEA"><use href="#vc-logo"/></svg></a>
       <p>Taller de chapa y pintura, mecánica rápida y venta de coches de ocasión revisados en Antigua, Fuerteventura.</p>
     </div>
-    <div><h4>Coches</h4><a href="#comprar" data-go="comprar">Comprar coche</a><a href="/coches-segunda-mano-fuerteventura/">Coches de segunda mano</a><a href="/financiacion-coches-fuerteventura/">Financiación</a><a href="#contacto" data-go="contacto">Pedir información</a></div>
-    <div><h4>Taller</h4><a href="/chapa-y-pintura-fuerteventura/">Chapa y pintura</a><a href="/taller-mecanico-fuerteventura/">Taller mecánico</a><a href="/pre-itv-fuerteventura/">Pre-ITV</a><a href="#taller" data-go="taller">Pedir presupuesto</a></div>
-    <div><h4>Visítanos</h4><a data-map target="_blank" rel="noopener" data-addr-link></a><a href="#contacto" data-go="contacto" data-hours-short></a></div>
+    <div><h4>Coches</h4><a href="/comprar" data-go="comprar">Comprar coche</a><a href="/coches-segunda-mano-fuerteventura/">Coches de segunda mano</a><a href="/financiacion-coches-fuerteventura/">Financiación</a><a href="/contacto" data-go="contacto">Pedir información</a></div>
+    <div><h4>Taller</h4><a href="/chapa-y-pintura-fuerteventura/">Chapa y pintura</a><a href="/taller-mecanico-fuerteventura/">Taller mecánico</a><a href="/pre-itv-fuerteventura/">Pre-ITV</a><a href="/taller" data-go="taller">Pedir presupuesto</a></div>
+    <div><h4>Visítanos</h4><a data-map target="_blank" rel="noopener" data-addr-link></a><a href="/contacto" data-go="contacto" data-hours-short></a></div>
   </div>
+  <nav class="wrap zonas-foot" aria-label="Por zonas">
+    <p><b>Coches de segunda mano en</b> <a href="/coches-segunda-mano-corralejo">Corralejo</a> <a href="/coches-segunda-mano-la-oliva">La Oliva</a> <a href="/coches-segunda-mano-puerto-del-rosario">Puerto del Rosario</a> <a href="/coches-segunda-mano-antigua">Antigua</a> <a href="/coches-segunda-mano-caleta-de-fuste">Caleta de Fuste</a> <a href="/coches-segunda-mano-gran-tarajal">Gran Tarajal</a> <a href="/coches-segunda-mano-costa-calma">Costa Calma</a> <a href="/coches-segunda-mano-morro-jable">Morro Jable</a></p>
+    <p><b>Taller mecánico para</b> <a href="/taller-mecanico-corralejo">Corralejo</a> <a href="/taller-mecanico-la-oliva">La Oliva</a> <a href="/taller-mecanico-puerto-del-rosario">Puerto del Rosario</a> <a href="/taller-mecanico-antigua">Antigua</a> <a href="/taller-mecanico-caleta-de-fuste">Caleta de Fuste</a> <a href="/taller-mecanico-gran-tarajal">Gran Tarajal</a> <a href="/taller-mecanico-costa-calma">Costa Calma</a> <a href="/taller-mecanico-morro-jable">Morro Jable</a></p>
+  </nav>
   <div class="wrap legal"><span>© <span id="yr"></span> Volcano Cars · <a href="/aviso-legal">Aviso legal</a> · <a href="/condiciones">Condiciones y garantía</a> · <a href="/privacidad">Privacidad</a> · <a href="/cookies">Cookies</a> · <button type="button" id="ck-open">Configurar cookies</button></span><span>Hecho en Fuerteventura, tierra de volcanes</span></div>
 </footer>
 
@@ -1541,7 +1640,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
     <div class="m-body">
       <div class="m-top">
         <div><h3 id="m-title"></h3><div class="car-ver" id="m-ver"></div></div>
-        <div style="text-align:right"><div class="price num" id="m-price"></div><div class="month num" id="m-month"></div></div>
+        <div class="m-precio"><div class="price num" id="m-price"></div><div class="month" id="m-month"></div></div>
       </div>
       <div class="m-sig" id="m-sig">
         <div class="vivo" id="m-vivo" role="status" aria-live="polite" hidden></div>
@@ -1565,7 +1664,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
         <p>Elige día y hora y te lo tenemos preparado. Sin compromiso.</p>
         <div class="modo" role="radiogroup" aria-label="Cómo quieres venir">
           <label><input type="radio" name="b-modo" value="cita" checked><span>Elegir día y hora</span></label>
-          <label><input type="radio" name="b-modo" value="presu"><span>Prefiero que me llaméis</span></label>
+          <label><input type="radio" name="b-modo" value="presu"><span>Que me llaméis</span></label>
         </div>
         <div class="row2">
           <div class="field"><label for="b-name">Tu nombre</label><input class="input" id="b-name" required autocomplete="name"></div>
@@ -1594,7 +1693,10 @@ const EMPRESA = {
   direccion: "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua, Las Palmas",
   horario: "Lunes a viernes, de 8:00 a 16:00, en horario continuado. Sábados y domingos, cerrado.",
   horarioCorto: "L–V · 8:00 a 16:00 continuado",
-  mapa: "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua, Las Palmas"
+  mapa: "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua, Las Palmas",
+  mapaEnlace: "https://maps.app.goo.gl/dz8icDhkUkB4oznd8",   // ficha de Volcano Cars en Google Maps
+  mapaEmbed: "Volcano Cars, Calle Valle Largo, Nave 8, 35610 Antigua, Las Palmas",
+  mapaCoords: "28.420871,-13.8621004"
 };
 
 /* =====================================================================
@@ -1733,15 +1835,22 @@ function card(c){
 const vacio = `<div class="empty" style="grid-column:1/-1"><b style="color:var(--ink)">Estamos preparando nuevos coches.</b><br>Escríbenos por <a href="${wa("Hola Volcano Cars, busco un coche: ")}" target="_blank" rel="noopener">WhatsApp</a> y te avisamos en cuanto entre uno que encaje contigo.</div>`;
 const cargando = '<div class="empty" style="grid-column:1/-1">Cargando coches…</div>';
 
+/* portada: dato vivo en la tarjeta de venta («3 coches disponibles · desde 2.999 €») */
+function pintarStockHero(){
+  const el=$("#hs-stock"); if(!el) return;
+  const disp=COCHES.filter(c=>c.estado!=="reservado");
+  if(!disp.length){ el.textContent=L("Venta de coches","Cars for sale"); return; }
+  const min=Math.min(...disp.map(c=>c.precio||Infinity));
+  el.innerHTML=esc(disp.length===1?L("1 coche disponible","1 car available"):disp.length+" "+L("coches disponibles","cars available"))+(isFinite(min)?` · <span class="hs-stock-p">${esc(L("desde","from")+" "+eur(Math.floor(min)))}</span>`:"");
+}
 /* catálogo */
 function render(){
   pintarCatalogo();
   const d = COCHES.find(c=>c.destacado && c.estado!=="reservado");
-  const resto = COCHES.filter(c=>c!==d).slice(0,3);
-  $("#home-grid").innerHTML = resto.length ? resto.map(card).join("") : (d ? "" : vacio);
-  $("#home-sec").hidden = !!d && !resto.length;
-  $("#hero-feat").innerHTML = d ? `<div class="feat-tag">Coche destacado</div>${card(d)}` : "";
-  $("#hero-feat").hidden = !d; $("#hero-sil").toggleAttribute("hidden", !!d);
+  const inicio = (d ? [d, ...COCHES.filter(c=>c!==d)] : COCHES).slice(0,3);
+  $("#home-grid").innerHTML = inicio.length ? inicio.map(card).join("") : vacio;
+  $("#home-sec").hidden = false;
+  pintarStockHero();
   const vs = VENDIDOS.slice(0,6).map(soldCard).join("");
   $("#sold-grid").innerHTML = $("#cat-sold").innerHTML = vs;
   $("#sold-sec").hidden = $("#cat-sold-wrap").hidden = !VENDIDOS.length;
@@ -2288,7 +2397,7 @@ document.addEventListener("click",e=>{
 /* contacto */
 $("#c-addr").textContent=EMPRESA.direccion; $("#c-phone").textContent=EMPRESA.telefono;
 $("#c-mail").textContent=EMPRESA.email; $("#c-hours").textContent=EMPRESA.horario;
-const MAPA="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(EMPRESA.mapa);
+const MAPA=EMPRESA.mapaEnlace;
 document.querySelectorAll("[data-map]").forEach(a=>a.href=MAPA);
 document.querySelectorAll("[data-wa]").forEach(a=>a.href=wa("Hola Volcano Cars, tengo una consulta: "));
 document.querySelectorAll("[data-addr]").forEach(e=>e.textContent=EMPRESA.direccion);
@@ -2297,7 +2406,7 @@ document.querySelectorAll("[data-hours]").forEach(e=>e.textContent=EMPRESA.horar
 document.querySelectorAll("[data-hours-short]").forEach(e=>e.textContent=EMPRESA.horarioCorto);
 let mapaCargado=false;
 function cargarMapa(){ if(mapaCargado) return; mapaCargado=true; const f=document.createElement("iframe"); f.title="Mapa: Volcano Cars en Antigua"; f.loading="lazy"; f.referrerPolicy="no-referrer-when-downgrade";
-  f.src="https://www.google.com/maps?q="+encodeURIComponent(EMPRESA.mapa)+"&z=15&output=embed"; $("#c-map-load").replaceWith(f); }
+  f.src="https://www.google.com/maps?q="+encodeURIComponent(EMPRESA.mapaEmbed)+"&ll="+EMPRESA.mapaCoords+"&z=16&output=embed"; $("#c-map-load").replaceWith(f); }
 $("#c-map-btn").onclick=cargarMapa;
 
 /* abierto / cerrado (hora de Canarias) */
@@ -2348,25 +2457,52 @@ document.addEventListener("click",e=>{
 
 /* pestañas */
 const VIEWS=["inicio","comprar","taller","contacto"];
+/* Cada sección tiene su dirección real (/comprar, /taller, /contacto). La versión inglesa sigue con #comprar… */
+const RUTAS = IDIOMA!=="en";
+const rutaDe = v => v==="inicio" ? "/" : "/"+v;
+const META_VISTA = {
+  inicio:["Volcano Cars · Coches de ocasión con 1 año de garantía, chapa y pintura y mecánica en Fuerteventura"],
+  comprar:["Coches de ocasión en Fuerteventura con 1 año de garantía | Volcano Cars","Coches de segunda mano revisados en nuestro taller de Antigua, con 12 meses de garantía y entrega gratis en toda Fuerteventura. Precios desde 2.500 €."],
+  taller:["Taller mecánico, chapa y pintura en Antigua, Fuerteventura | Volcano Cars","Pide cita o presupuesto sin compromiso en nuestro taller de Antigua: mecánica, chapa y pintura, pre-ITV. Garantía de reparación y fecha de entrega por escrito."],
+  contacto:["Contacto y cómo llegar | Volcano Cars, Antigua (Fuerteventura)","Teléfono, WhatsApp, horario y mapa de Volcano Cars en el Polígono Industrial de Antigua, Fuerteventura."]
+};
+const META0 = { d:(document.querySelector('meta[name="description"]')||{}).content||"" };
+function metaVista(v){
+  if(!RUTAS) return;
+  const m=META_VISTA[v]||META_VISTA.inicio; document.title=m[0];
+  const d=document.querySelector('meta[name="description"]'); if(d) d.content=m[1]||META0.d;
+  const c=document.querySelector('link[rel="canonical"]'); if(c) try{ c.href=new URL(c.href).origin+rutaDe(v); }catch(_){}
+}
+function vistaDeURL(){
+  const h=(location.hash||"").slice(1);
+  if(VIEWS.includes(h)||h==="vender") return h;
+  const m=location.pathname.match(/^\/(comprar|taller|contacto)\/?$/); return m?m[1]:"inicio";
+}
 function go(v,push=true){
+  document.documentElement.removeAttribute("data-vista");
   if(v==="vender") v="contacto";
   if(!VIEWS.includes(v)) v="inicio";
   const swap=()=>{ VIEWS.forEach(x=>$("#v-"+x).hidden = x!==v); };
   if(push && document.startViewTransition && !matchMedia("(prefers-reduced-motion: reduce)").matches) document.startViewTransition(swap); else swap();
   document.querySelectorAll("nav [data-go]").forEach(a=>{ if(a.dataset.go===v) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
-  if(push) try{ history.replaceState(null,"","#"+v); }catch(_){}
+  if(push) try{ if(RUTAS){ if(location.pathname!==rutaDe(v)||location.hash) history.pushState({v},"",rutaDe(v)+location.search); } else history.replaceState(null,"","#"+v); }catch(_){}
+  metaVista(v);
   window.scrollTo({top:0});
   if(v==="taller") modoTaller();
   if(typeof barra==="function") barra();
   TRK("pv",v);
 }
 document.addEventListener("click",e=>{ const a=e.target.closest("[data-go]"); if(!a) return; e.preventDefault(); go(a.dataset.go); });
-go((location.hash||"#inicio").slice(1),false);
-addEventListener("hashchange",()=>go((location.hash||"#inicio").slice(1),false));
+(()=>{ let v=vistaDeURL(); if(v==="vender") v="contacto"; go(v,false);
+  /* enlaces antiguos (/#comprar) pasan a la dirección nueva (/comprar) sin recargar */
+  if(RUTAS && location.hash && VIEWS.concat("vender").includes(location.hash.slice(1))) try{ history.replaceState({v},"",rutaDe(v)+location.search); metaVista(v); }catch(_){}
+})();
+addEventListener("hashchange",()=>{ const h=(location.hash||"").slice(1); if(VIEWS.includes(h)||h==="vender"||!RUTAS) go(vistaDeURL(),!!RUTAS); });
+addEventListener("popstate",()=>go(vistaDeURL(),false));
 observar();
 
 /* reseñas */
-$("#rev-link").href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent("Volcano Cars Antigua Fuerteventura");
+$("#rev-link").href=MAPA;
 if(matchMedia("(hover:hover) and (pointer:fine)").matches && !matchMedia("(prefers-reduced-motion: reduce)").matches){
   document.querySelectorAll(".rev").forEach(el=>{
     el.addEventListener("pointermove",e=>{ const r=el.getBoundingClientRect(), x=(e.clientX-r.left)/r.width, y=(e.clientY-r.top)/r.height;
@@ -2439,8 +2575,7 @@ const filtrados=()=>COCHES.filter(c=>pasa(c)).sort(ORDENES[FX.orden]||ORDENES.re
 const nFiltros=()=>(FX.q?1:0)+(FX.pmin||FX.pmax?1:0)+(FX.amin||FX.amax?1:0)+(FX.kmax?1:0)+FX.comb.length+FX.cambio.length+FX.etq.length;
 const alterna=(arr,v)=>arr.includes(v)?arr.filter(x=>x!==v):[...arr,v];
 const QUICK=[
-  {k:"p5",t:()=>L("Hasta 5.000 €","Up to €5,000"),on:()=>FX.pmax===5000,set:v=>{FX.pmax=v?5000:0},n:c=>c.precio<=5000},
-  {k:"p10",t:()=>L("Hasta 10.000 €","Up to €10,000"),on:()=>FX.pmax===10000,set:v=>{FX.pmax=v?10000:0},n:c=>c.precio<=10000},
+  ...[2500,3500,4500,5500,6500,8000].map(x=>({k:"p"+x,t:()=>L("Hasta "+eur(x),"Up to €"+x.toLocaleString("en")),on:()=>FX.pmax===x,set:v=>{FX.pmax=v?x:0},n:c=>c.precio<=x,precio:1})),
   {k:"km",t:()=>L("Menos de 100.000 km","Under 100,000 km"),on:()=>FX.kmax===100000,set:v=>{FX.kmax=v?100000:0},n:c=>c.km<=100000},
   {k:"auto",t:()=>L("Automático","Automatic"),on:()=>FX.cambio.includes("Automático"),set:()=>{FX.cambio=alterna(FX.cambio,"Automático")},n:c=>c.cambio==="Automático"},
   {k:"diesel",t:()=>L("Diésel","Diesel"),on:()=>FX.comb.includes("Diésel"),set:()=>{FX.comb=alterna(FX.comb,"Diésel")},n:c=>c.combustible==="Diésel"},
@@ -2511,8 +2646,8 @@ function fxPintarBarra(){
   box.hidden=!COCHES.length;
   const n=nFiltros(); $("#fx-n").textContent=n; $("#fx-n").hidden=!n; $("#fx-qx").hidden=!FX.q;
   const base=COCHES.filter(c=>pasa(c));
-  $("#fx-quick").innerHTML=QUICK.map(d=>{ const on=d.on(), cnt=COCHES.filter(d.n).length; if(!cnt && !on) return "";
-    return `<button type="button" class="fq" data-fq="${d.k}" aria-pressed="${on}">${d.t()} <small>${on?base.length:cnt}</small></button>`; }).join("");
+  $("#fx-quick").innerHTML=QUICK.map(d=>{ const on=d.on(), cnt=COCHES.filter(d.n).length; if(!cnt && !on && !d.precio) return "";
+    return `<button type="button" class="fq${d.precio?" fq-p":""}" data-fq="${d.k}" aria-pressed="${on}" ${!cnt&&!on?"disabled":""}>${d.t()} <small>${on?base.length:cnt}</small></button>`; }).join("");
   const et=fxEtiquetas();
   $("#fx-act").hidden=!et.length;
   $("#fx-act").innerHTML=et.map(([k,t])=>`<button type="button" class="fa" data-fa="${esc(k)}" aria-label="${L("Quitar filtro","Remove filter")} ${esc(t)}">${esc(t)} <b aria-hidden="true">×</b></button>`).join("")+(et.length>1?`<button type="button" class="fa-clear" data-fx-reset>${L("Quitar todos","Clear all")}</button>`:"");
@@ -2539,7 +2674,7 @@ $("#cat-grid").addEventListener("click",e=>{ if(e.target.closest("[data-fx-reset
 const fxDlg=document.createElement("dialog"); fxDlg.className="fx-dlg"; fxDlg.setAttribute("aria-labelledby","fx-h"); document.body.appendChild(fxDlg);
 fxDlg.addEventListener("click",e=>{ if(e.target===fxDlg) fxDlg.close(); });
 function fxAbrir(){ fxPintarPanel(); fxDlg.showModal(); TRK("frm","filtros"); }
-const PRECIOS=[2000,3000,4000,5000,6000,8000,10000,12000,15000,20000,25000,30000,40000];
+const PRECIOS=[1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000,9000,10000,12000,15000];
 function opts(lista,sel,fmt,vacio){ return `<option value="0">${vacio}</option>`+lista.map(v=>`<option value="${v}" ${+sel===v?"selected":""}>${fmt(v)}</option>`).join(""); }
 function fxChips(tipo,valores,txt,pre=v=>""){
   return valores.map(v=>{ const cnt=COCHES.filter(c=>pasa(c,tipo)&&(tipo==="etq"?ETQ(c):tipo==="comb"?c.combustible:c.cambio)===v).length, on=FX[tipo].includes(v);

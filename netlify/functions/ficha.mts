@@ -6,7 +6,7 @@ import { EMPRESA, escH, eur, kmTxt, foto, wa, slugDe, cabecera, pie } from "../l
   FICHA DE CADA COCHE PARA GOOGLE:  /coche/toyota-c-hr-2020-1a2b3c4d
   Página completa con fotos, datos, precio y datos estructurados (schema.org Car + Offer),
   para que cada coche aparezca en Google por sí solo («Toyota C-HR segunda mano Fuerteventura»).
-  Los botones llevan a la web (/?coche=ID#comprar), donde se abre la ficha con calculadora y cita.
+  Los botones llevan a la web (/comprar?coche=ID), donde se abre la ficha con calculadora y cita.
 */
 
 async function coches(): Promise<Car[]> {
@@ -17,10 +17,10 @@ async function coches(): Promise<Car[]> {
 const CACHE = { "cache-control": "public, max-age=0, must-revalidate", "netlify-cdn-cache-control": "public, s-maxage=120, stale-while-revalidate=600" };
 
 function noEncontrado(origin: string, otros: Car[]) {
-  const html = cabecera(origin, "Coche no disponible · Volcano Cars", "Este coche ya no está publicado. Mira los coches de ocasión disponibles en Volcano Cars, Fuerteventura.", origin + "/#comprar", "", "noindex, follow") +
+  const html = cabecera(origin, "Coche no disponible · Volcano Cars", "Este coche ya no está publicado. Mira los coches de ocasión disponibles en Volcano Cars, Fuerteventura.", origin + "/comprar", "", "noindex, follow") +
     `<section class="sec"><div class="wrap"><span class="eyebrow">Coches de ocasión</span><h1>Este coche ya <span class="r">no está</span> publicado</h1>
     <p class="lead">Puede que se haya vendido. Estos son los coches que tenemos ahora, todos revisados en nuestro taller y con 1 año de garantía.</p>
-    <div class="ctas"><a class="btn b-rosso" href="/#comprar">Ver coches disponibles</a><a class="btn b-wa" href="${escH(wa("Hola Volcano Cars, busco un coche: "))}" target="_blank" rel="noopener">Dinos qué buscas</a></div>
+    <div class="ctas"><a class="btn b-rosso" href="/comprar">Ver coches disponibles</a><a class="btn b-wa" href="${escH(wa("Hola Volcano Cars, busco un coche: "))}" target="_blank" rel="noopener">Dinos qué buscas</a></div>
     ${tarjetas(otros)}</div></section>` + pie();
   return new Response(html, { status: 404, headers: { "content-type": "text/html; charset=utf-8", ...CACHE } });
 }
@@ -101,7 +101,7 @@ ${fotos[0] ? `<meta property="og:image" content="${escH(origin + fotos[0])}">` :
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, "\\u003c")}</script>`;
 
-  const enWeb = `/?coche=${encodeURIComponent(c.id)}#comprar`;
+  const enWeb = `/comprar?coche=${encodeURIComponent(c.id)}`;
   const specs: [string, string | number | null][] = [["Año", c.anio], ["Kilómetros", kmTxt(c.km)], ["Combustible", c.combustible], ["Cambio", c.cambio], ["Potencia", c.cv ? c.cv + " CV" : ""], ["Puertas", c.puertas], ["Color", c.color], ["Etiqueta DGT", c.etiqueta]];
   const waTxt = `Hola, me interesa el ${completo} (${c.anio}, ${kmTxt(c.km)}) de ${eur(c.precio)}. ¿Sigue disponible?`;
   const otros = disponibles.filter((x) => x.id !== c.id).slice(0, 3);
@@ -122,7 +122,7 @@ ${fotos[0] ? `<meta property="og:image" content="${escH(origin + fotos[0])}">` :
       <div class="precio num">${eur(c.precio)}<small>Precio final, impuestos incluidos</small></div>
       ${ofe}
       <dl class="specs num">${specs.filter(([, v]) => v !== null && v !== "" && v !== undefined).map(([k, v]) => `<div><dt>${k}</dt><dd>${escH(v)}</dd></div>`).join("")}</dl>
-      ${vendido ? `<div class="ctas"><a class="btn b-rosso" href="/#comprar">Ver coches disponibles</a></div>` : `<div class="ctas">
+      ${vendido ? `<div class="ctas"><a class="btn b-rosso" href="/comprar">Ver coches disponibles</a></div>` : `<div class="ctas">
         <a class="btn b-rosso" href="${enWeb}">${reservado ? "Ver en la web" : "Reservar visita y prueba"}</a>
         <a class="btn b-ink" href="${enWeb}">Calcular cuota de financiación</a>
         <a class="btn b-wa" href="${escH(wa(waTxt))}" target="_blank" rel="noopener">Preguntar por WhatsApp</a>
@@ -134,7 +134,7 @@ ${fotos[0] ? `<meta property="og:image" content="${escH(origin + fotos[0])}">` :
   ${c.descripcion ? `<section class="sec"><h2>Sobre este ${escH(nombre)}</h2><p style="white-space:pre-line">${escH(c.descripcion)}</p></section>` : ""}
   ${c.equipamiento.length ? `<section class="sec"><h2>Equipamiento</h2><ul class="eq">${c.equipamiento.map((e) => `<li>${escH(e)}</li>`).join("")}</ul></section>` : ""}
   <section class="sec"><div class="banda"><div><h2>Ven a verlo a Antigua</h2><p>${escH(EMPRESA.direccion)}. ${escH(EMPRESA.horario)}. Elige día y hora en la web y te lo tenemos preparado para probarlo.</p></div>
-    <div class="ctas"><a class="btn b-rosso" href="${vendido ? "/#comprar" : enWeb}">${vendido ? "Ver coches" : "Elegir día y hora"}</a><a class="btn b-wa" href="${escH(wa(waTxt))}" target="_blank" rel="noopener">WhatsApp</a></div></div></section>
+    <div class="ctas"><a class="btn b-rosso" href="${vendido ? "/comprar" : enWeb}">${vendido ? "Ver coches" : "Elegir día y hora"}</a><a class="btn b-wa" href="${escH(wa(waTxt))}" target="_blank" rel="noopener">WhatsApp</a></div></div></section>
   ${otros.length ? `<section class="sec"><h2>Otros coches disponibles</h2>${tarjetas(otros)}</section>` : ""}
 </div>` + pie(waTxt);
 

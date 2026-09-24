@@ -319,7 +319,7 @@ async function tGuardar(cerrar,quieto){
     if(!TF||TF.orden.token!==token) return;
     tRecibir(r); TSAVED=tHora(new Date().toISOString());
     if(TVER===ver){ TDIRTY=false; }
-    if(cerrar){ TDIRTY=false; tVacias(); tRenderHead(); tRenderBody(); toast({f1:"Recepción firmada y cerrada",f2:"Inspección firmada. El tiempo estimado ya está en FORM-03",f4:TF.fichas.f4.resultado==="rechazado"?"Rechazado: el coche vuelve a taller":"Control de calidad firmado"}[cual]); scrollTo(0,0); }
+    if(cerrar){ TDIRTY=false; tVacias(); tRenderHead(); tRenderBody(); toast(cual==="f1"?"Recepción firmada y cerrada":cual==="f2"?"Inspección firmada. El tiempo estimado ya está en FORM-03":TF.fichas.f4&&TF.fichas.f4.resultado==="rechazado"?"Rechazado: el coche vuelve a taller":"Control de calidad firmado"); scrollTo(0,0); }
     else { if(TVER===ver) TW[cual]=Object.assign(tClone(TF.fichas[cual]),cual==="f4"?{firma:null}:{}); tRenderHead(); }
   }catch(err){ toast(err.message); if(cerrar) tFaltan([err.message]); }
   TSAVING=false; tSaveBar();

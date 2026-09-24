@@ -27,6 +27,18 @@ TEXT = {
     "Día y hora": "Day & time",
     "Reservar": "Book",
     "Los mejores coches de ocasión en": "The best used cars in",
+    "Coches de ocasión y taller en": "Used cars and a workshop in",
+    "Coches de segunda mano en": "Used cars in",
+    "Taller mecánico para": "Car repairs for",
+    "Elige qué necesitas: te atendemos en nuestra nave de Antigua, en el centro de la isla.": "Tell us what you need: you'll find us at our workshop in Antigua, in the middle of the island.",
+    "Venta de coches": "Cars for sale",
+    "Comprar Coche de Ocasión": "Buy a Used Car",
+    "Vehículos revisados con 1 año de garantía y entrega gratis en toda la isla.": "Cars checked in our own workshop, with a 1-year warranty and free delivery anywhere on the island.",
+    "Ver catálogo disponible": "See available cars",
+    "Taller en Antigua": "Workshop in Antigua",
+    "Taller Mecánico, Chapa y Pintura": "Mechanics, Bodywork & Paint",
+    "Presupuesto sin compromiso, garantía de reparación y compromiso de plazo.": "No-obligation quote, repair warranty and a promised finish date.",
+    "Pedir cita o presupuesto": "Book or get a quote",
     "con": "with",
     "1 año de garantía.": "a 1-year warranty.",
     "Tu coche listo a tiempo o te devolvemos parte del dinero.": "Your car ready on time, or we refund part of the cost.",
@@ -41,7 +53,7 @@ TEXT = {
     "Solicitud recibida. Te enviamos el presupuesto por WhatsApp o por teléfono en horario de apertura.": "Request received. We'll send your quote by WhatsApp or phone during opening hours.",
     "Elige día y hora y te lo tenemos preparado. Sin compromiso.": "Pick a day and time and we'll have it ready for you. No obligation.",
     "Elegir día y hora": "Pick a day and time",
-    "Prefiero que me llaméis": "Please call me",
+    "Que me llaméis": "Call me back",
     "Confirmar visita": "Confirm viewing",
     "¡Hecho! Te llamamos en horario de apertura para quedar.": "Done! We'll call you during opening hours to arrange it.",
     "01 · Carrocería": "01 · Bodywork",
@@ -310,7 +322,6 @@ RAW = [
      '<b style="color:var(--ink)">New cars are on their way.</b><br>Message us on <a href="${wa("Hi Volcano Cars, I\'m looking for a car: ")}" target="_blank" rel="noopener">WhatsApp</a> and we\'ll let you know as soon as one comes in that suits you.'),
     ("'<div class=\"empty\" style=\"grid-column:1/-1\">Cargando coches…</div>'", "'<div class=\"empty\" style=\"grid-column:1/-1\">Loading cars…</div>'"),
     ('(n===1 ? "1 coche disponible" : n+" coches disponibles")', '(n===1 ? "1 car for sale" : n+" cars for sale")'),
-    ('`<div class="feat-tag">Coche destacado</div>${card(d)}`', '`<div class="feat-tag">Featured car</div>${card(d)}`'),
     ('<b style="color:var(--ink)">No hemos podido cargar los coches.</b><br>Recarga la página o llámanos al ${EMPRESA.telefono}.', '<b style="color:var(--ink)">We couldn\'t load the cars.</b><br>Reload the page or call us on ${EMPRESA.telefono}.'),
     ('alt="${esc(gal.c.marca+" "+gal.c.modelo)}, foto ${nfo} de ${nf}"', 'alt="${esc(gal.c.marca+" "+gal.c.modelo)}, photo ${nfo} of ${nf}"'),
     ('aria-label="Foto ${j+(c.video?0:1)}"', 'aria-label="Photo ${j+(c.video?0:1)}"'),
@@ -335,7 +346,6 @@ RAW = [
     ('"Cerrado · abrimos hoy a las 8:00"', '"Closed · we open today at 8:00"'),
     ('"Cerrado · abrimos mañana a las 8:00"', '"Closed · we open tomorrow at 8:00"'),
     ('"Cerrado · abrimos el lunes a las 8:00"', '"Closed · we open on Monday at 8:00"'),
-    ('encodeURIComponent("Volcano Cars Antigua Fuerteventura")', 'encodeURIComponent("Volcano Cars Antigua Fuerteventura")'),
 ]
 
 out = src
@@ -371,6 +381,9 @@ body = re.sub(r'(placeholder|aria-label|alt|title)="([^"]+)"', attr, body)
 out = head + body + js
 
 # Enlaces de la versión inglesa
+# (la web española usa /comprar, /taller… ; la inglesa sigue con #comprar dentro de /en/)
+out = re.sub(r'href="/(comprar|taller|contacto)" data-go="', r'href="#\1" data-go="', out)
+out = out.replace('href="/" data-go="inicio"', 'href="#inicio" data-go="inicio"')
 out = out.replace('href="/privacidad"', 'href="/privacidad#en"').replace('href="/cookies"', 'href="/cookies#en"')
 
 # Aviso de textos sin traducir (heurística)
@@ -386,3 +399,7 @@ if restos:
 (ROOT / "en").mkdir(exist_ok=True)
 (ROOT / "en" / "index.html").write_text(out, encoding="utf-8")
 print("OK: public/en/index.html generado")
+
+# Direcciones /comprar, /taller y /contacto (copias de la web española con su propio título)
+import runpy
+runpy.run_path(str(pathlib.Path(__file__).with_name("build-rutas.py")))

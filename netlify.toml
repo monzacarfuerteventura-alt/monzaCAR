@@ -2,6 +2,22 @@
   publish = "public"
   functions = "netlify/functions"
 
+# Secciones de la web con dirección propia (se generan con tools/build-en.py)
+[[redirects]]
+  from = "/comprar"
+  to = "/comprar/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/taller"
+  to = "/taller/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/contacto"
+  to = "/contacto/index.html"
+  status = 200
+
 [[redirects]]
   from = "/admin"
   to = "/admin.html"

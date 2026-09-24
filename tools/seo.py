@@ -11,6 +11,7 @@ TEL, TEL_LINK, WA = "643 66 88 13", "+34643668813", "34643668813"
 CALLE, CP, LOC = "Calle Valle Largo, Nave 8, Polígono Industrial", "35610", "Antigua"
 DIRECCION = f"{CALLE}, {CP} {LOC}, Las Palmas"
 HORARIO = "Lunes a viernes, de 8:00 a 16:00"
+MAPA = "https://maps.app.goo.gl/dz8icDhkUkB4oznd8"  # ficha de Volcano Cars en Google Maps
 ZONAS = ["Antigua", "Caleta de Fuste", "Puerto del Rosario", "Corralejo", "La Oliva", "El Cotillo", "Lajares", "Villaverde",
          "Tuineje", "Gran Tarajal", "Tarajalejo", "Las Playitas", "Pájara", "Costa Calma", "Morro Jable", "Betancuria", "Tefía", "Tetir"]
 e = html.escape
@@ -20,6 +21,7 @@ NEGOCIO = {"@type": ["AutoDealer", "AutoRepair", "AutoBodyShop"], "@id": BASE + 
            "telephone": "+34643668813", "email": "volcanocars2026@gmail.com", "image": BASE + "/coches/opel-astra-2010/anuncio.jpg",
            "logo": BASE + "/marca/logo-oscuro.svg", "priceRange": "€€",
            "address": {"@type": "PostalAddress", "streetAddress": CALLE, "postalCode": CP, "addressLocality": LOC, "addressRegion": "Las Palmas", "addressCountry": "ES"},
+           "hasMap": "https://www.google.com/maps?cid=5551544135827693991", "geo": {"@type": "GeoCoordinates", "latitude": 28.420871, "longitude": -13.8621004},
            "areaServed": {"@type": "Island", "name": "Fuerteventura"}, "availableLanguage": ["es", "en"],
            "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "08:00", "closes": "16:00"}]}
 
@@ -73,19 +75,26 @@ def cabecera(p):
   </section>
 """
 
+# Páginas locales por pueblo (las genera netlify/functions/local.mts; datos en netlify/lib/municipios.mts)
+LOCALES = [("corralejo", "Corralejo"), ("la-oliva", "La Oliva"), ("puerto-del-rosario", "Puerto del Rosario"), ("antigua", "Antigua"),
+           ("caleta-de-fuste", "Caleta de Fuste"), ("gran-tarajal", "Gran Tarajal"), ("costa-calma", "Costa Calma"), ("morro-jable", "Morro Jable")]
+LOCAL_SLUG = {n: k for k, n in LOCALES}
+VENTA_URL = lambda p: p['url'].startswith(("/coches", "/financiacion"))
+
 def pie(p):
     return f"""
   <section class="sec"><h2>Preguntas frecuentes</h2><div class="faq">{''.join(f'<details><summary>{e(q)}</summary><p>{a}</p></details>' for q, a in p['faq'])}</div></section>
   <section class="sec"><div class="banda"><div><h2>{p['banda'][0]}</h2><p>{e(DIRECCION)}. {HORARIO}, en horario continuado.</p></div>
     <div class="ctas">{p['banda'][1]}</div></div></section>
+  <section class="sec"><h2>{'Coches de segunda mano por zonas' if VENTA_URL(p) else 'Taller para clientes de toda la isla'}</h2><div class="chips">{''.join(f'<a href="/{"coches-segunda-mano" if VENTA_URL(p) else "taller-mecanico"}-{k}">{e(n)}</a>' for k, n in LOCALES)}</div></section>
   <section class="sec"><h2>También te puede interesar</h2><div class="chips">{''.join(f'<a href="{u}">{e(t)}</a>' for u, t in RELACION if u != p['url'])}</div></section>
 </div>
 </main>
 <footer class="pg-foot"><div class="wrap">
   <div><img src="/marca/logo-claro.svg" alt="Volcano Cars" width="180" height="44" loading="lazy"><p>Coches de ocasión revisados con 1 año de garantía, taller mecánico y chapa y pintura en Antigua, Fuerteventura.</p></div>
-  <div><h4>Coches</h4><a href="/#comprar">Coches disponibles</a><a href="/coches-segunda-mano-fuerteventura/">Segunda mano en Fuerteventura</a><a href="/financiacion-coches-fuerteventura/">Financiación</a></div>
-  <div><h4>Taller</h4><a href="/taller-mecanico-fuerteventura/">Taller mecánico</a><a href="/chapa-y-pintura-fuerteventura/">Chapa y pintura</a><a href="/pre-itv-fuerteventura/">Pre-ITV</a><a href="/#taller">Pedir cita</a></div>
-  <div><h4>Visítanos</h4><a href="https://www.google.com/maps/search/?api=1&amp;query={quote(DIRECCION)}" target="_blank" rel="noopener">{e(CALLE)}<br>{CP} {LOC}</a><a href="tel:{TEL_LINK}">{TEL}</a><a href="/#contacto">{HORARIO}</a></div>
+  <div><h4>Coches</h4><a href="/comprar">Coches disponibles</a><a href="/coches-segunda-mano-fuerteventura/">Segunda mano en Fuerteventura</a><a href="/financiacion-coches-fuerteventura/">Financiación</a></div>
+  <div><h4>Taller</h4><a href="/taller-mecanico-fuerteventura/">Taller mecánico</a><a href="/chapa-y-pintura-fuerteventura/">Chapa y pintura</a><a href="/pre-itv-fuerteventura/">Pre-ITV</a><a href="/taller">Pedir cita</a></div>
+  <div><h4>Visítanos</h4><a href="{MAPA}" target="_blank" rel="noopener">{e(CALLE)}<br>{CP} {LOC}</a><a href="tel:{TEL_LINK}">{TEL}</a><a href="/contacto">{HORARIO}</a></div>
   <div class="pg-legal"><span>© {datetime.date.today().year} Volcano Cars</span><a href="/aviso-legal">Aviso legal</a><a href="/condiciones">Condiciones y garantía</a><a href="/privacidad">Privacidad</a><a href="/cookies">Cookies</a><a href="/en/">English</a></div>
 </div></footer>
 <nav class="pg-barra" aria-label="Contacto rápido"><a class="btn b-wa" href="{e(wa(p['wa']))}" target="_blank" rel="noopener">WhatsApp</a><a class="btn b-ink" href="tel:{TEL_LINK}">Llamar</a></nav>
@@ -114,14 +123,14 @@ def tarjetas(items):
 def pasos(items):
     return '<ol class="pasos">' + ''.join(f'<li><div><b>{e(t)}</b><span>{d}</span></div></li>' for t, d in items) + '</ol>'
 
-B_CITA = '<a class="btn b-rosso" href="/#taller">Reservar cita online</a>'
+B_CITA = '<a class="btn b-rosso" href="/taller">Reservar cita online</a>'
 B_TEL = f'<a class="btn b-ghost" href="tel:{TEL_LINK}">Llamar {TEL}</a>'
 def B_WA(t, label="WhatsApp"): return f'<a class="btn b-wa" href="{e(wa(t))}" target="_blank" rel="noopener">{label}</a>'
-B_COCHES = '<a class="btn b-rosso" href="/#comprar">Ver coches disponibles</a>'
+B_COCHES = '<a class="btn b-rosso" href="/comprar">Ver coches disponibles</a>'
 
 RELACION = [("/coches-segunda-mano-fuerteventura/", "Coches de segunda mano"), ("/financiacion-coches-fuerteventura/", "Financiación"),
             ("/taller-mecanico-fuerteventura/", "Taller mecánico"), ("/chapa-y-pintura-fuerteventura/", "Chapa y pintura"),
-            ("/pre-itv-fuerteventura/", "Pre-ITV"), ("/#contacto", "Cómo llegar")]
+            ("/pre-itv-fuerteventura/", "Pre-ITV"), ("/contacto", "Cómo llegar")]
 
 COMPROMISO = [
     ("€", "Presupuesto por escrito", "Antes de tocar nada te damos el presupuesto por escrito, válido 12 días hábiles. Sin tu autorización no hacemos ningún trabajo."),
@@ -155,15 +164,19 @@ PAGINAS.append(dict(
   <section class="sec"><h2>Busca tu coche</h2>
     <p>Entra directamente en los coches que buscas. Los filtros se pueden combinar en la web (precio, año, kilómetros, combustible, cambio y etiqueta DGT).</p>
     <div class="chips">
-      <a href="/?orden=barato#comprar">Del más barato al más caro</a>
-      <a href="/?pmax=5000#comprar">Hasta 5.000 €</a>
-      <a href="/?pmax=10000#comprar">Hasta 10.000 €</a>
-      <a href="/?cambio=Autom%C3%A1tico#comprar">Automáticos</a>
-      <a href="/?comb=Di%C3%A9sel#comprar">Diésel</a>
-      <a href="/?comb=Gasolina#comprar">Gasolina</a>
-      <a href="/?etq=ECO,0#comprar">Híbridos y eléctricos (ECO y 0)</a>
-      <a href="/?kmax=100000#comprar">Menos de 100.000 km</a>
-      <a href="/?orden=nuevo#comprar">Los más nuevos</a>
+      <a href="/comprar?orden=barato">Del más barato al más caro</a>
+      <a href="/comprar?pmax=2500">Hasta 2.500 €</a>
+      <a href="/comprar?pmax=3500">Hasta 3.500 €</a>
+      <a href="/comprar?pmax=4500">Hasta 4.500 €</a>
+      <a href="/comprar?pmax=5500">Hasta 5.500 €</a>
+      <a href="/comprar?pmax=6500">Hasta 6.500 €</a>
+      <a href="/comprar?pmax=8000">Hasta 8.000 €</a>
+      <a href="/comprar?cambio=Autom%C3%A1tico">Automáticos</a>
+      <a href="/comprar?comb=Di%C3%A9sel">Diésel</a>
+      <a href="/comprar?comb=Gasolina">Gasolina</a>
+      <a href="/comprar?etq=ECO,0">Híbridos y eléctricos (ECO y 0)</a>
+      <a href="/comprar?kmax=100000">Menos de 100.000 km</a>
+      <a href="/comprar?orden=nuevo">Los más nuevos</a>
     </div>
   </section>
   <section class="sec"><h2>Cómo es la compra</h2>
@@ -173,7 +186,7 @@ PAGINAS.append(dict(
             ("Te lo llevamos gratis", "Lo recoges en el taller o te lo llevamos a casa en cualquier punto de la isla.")])}
   </section>
   <section class="sec"><h2>Entrega gratis en toda la isla</h2><p>Llevamos tu coche sin coste a cualquier municipio de Fuerteventura, por ejemplo:</p>
-    <ul class="zonas">{''.join(f'<li>{z}</li>' for z in ZONAS)}</ul></section>""",
+    <ul class="zonas">{''.join(f'<li><a href="/coches-segunda-mano-{LOCAL_SLUG[z]}">{z}</a></li>' if z in LOCAL_SLUG else f'<li>{z}</li>' for z in ZONAS)}</ul></section>""",
     faq=[("¿Los coches tienen garantía?", "Sí. Los coches que vendemos a particulares tienen 12 meses de garantía desde la entrega. Cubre los defectos que el coche ya tuviera al entregártelo; no cubre el desgaste normal por uso (pastillas, neumáticos, embrague, batería…). <a href='/condiciones'>Ver condiciones</a>."),
          ("¿Puedo probar el coche antes de comprarlo?", "Claro. En la ficha de cada coche puedes elegir día y hora para venir a verlo y probarlo en Antigua. La visita no te obliga a nada."),
          ("¿Me lo lleváis a casa?", "Sí, una vez firmada la compra te lo llevamos gratis a cualquier punto de Fuerteventura, el día y a la hora que acordemos. También puedes recogerlo en el taller."),

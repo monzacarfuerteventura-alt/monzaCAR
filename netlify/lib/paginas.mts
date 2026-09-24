@@ -12,6 +12,10 @@ export const EMPRESA = {
   localidad: "Antigua",
   direccion: "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua, Las Palmas",
   horario: "Lunes a viernes, de 8:00 a 16:00",
+  mapa: "https://maps.app.goo.gl/dz8icDhkUkB4oznd8", // ficha de Volcano Cars en Google Maps
+  mapaCid: "https://www.google.com/maps?cid=5551544135827693991",
+  lat: 28.420871,
+  lng: -13.8621004,
 };
 
 export const escH = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
@@ -69,9 +73,9 @@ export function pie(waTxt = "Hola Volcano Cars, tengo una consulta: ") {
   return `</main>
 <footer class="pg-foot"><div class="wrap">
   <div><img src="/marca/logo-claro.svg" alt="Volcano Cars" width="180" height="44" loading="lazy"><p>Coches de ocasión revisados con 1 año de garantía, taller mecánico y chapa y pintura en Antigua, Fuerteventura.</p></div>
-  <div><h4>Coches</h4><a href="/#comprar">Coches disponibles</a><a href="/coches-segunda-mano-fuerteventura/">Segunda mano en Fuerteventura</a><a href="/financiacion-coches-fuerteventura/">Financiación</a></div>
-  <div><h4>Taller</h4><a href="/taller-mecanico-fuerteventura/">Taller mecánico</a><a href="/chapa-y-pintura-fuerteventura/">Chapa y pintura</a><a href="/pre-itv-fuerteventura/">Pre-ITV</a><a href="/#taller">Pedir cita</a></div>
-  <div><h4>Visítanos</h4><a href="https://www.google.com/maps/search/?api=1&amp;query=${encodeURIComponent(EMPRESA.direccion)}" target="_blank" rel="noopener">${escH(EMPRESA.calle)}<br>${EMPRESA.cp} ${EMPRESA.localidad}</a><a href="tel:${EMPRESA.telLink}">${EMPRESA.tel}</a><a href="/#contacto">${escH(EMPRESA.horario)}</a></div>
+  <div><h4>Coches</h4><a href="/comprar">Coches disponibles</a><a href="/coches-segunda-mano-fuerteventura/">Segunda mano en Fuerteventura</a><a href="/financiacion-coches-fuerteventura/">Financiación</a></div>
+  <div><h4>Taller</h4><a href="/taller-mecanico-fuerteventura/">Taller mecánico</a><a href="/chapa-y-pintura-fuerteventura/">Chapa y pintura</a><a href="/pre-itv-fuerteventura/">Pre-ITV</a><a href="/taller">Pedir cita</a></div>
+  <div><h4>Visítanos</h4><a href="${EMPRESA.mapa}" target="_blank" rel="noopener">${escH(EMPRESA.calle)}<br>${EMPRESA.cp} ${EMPRESA.localidad}</a><a href="tel:${EMPRESA.telLink}">${EMPRESA.tel}</a><a href="/contacto">${escH(EMPRESA.horario)}</a></div>
   <div class="pg-legal"><span>© ${new Date().getFullYear()} Volcano Cars</span><a href="/aviso-legal">Aviso legal</a><a href="/condiciones">Condiciones y garantía</a><a href="/privacidad">Privacidad</a><a href="/cookies">Cookies</a><a href="/en/">English</a></div>
 </div></footer>
 <nav class="pg-barra" aria-label="Contacto rápido"><a class="btn b-wa" href="${escH(wa(waTxt))}" target="_blank" rel="noopener">WhatsApp</a><a class="btn b-ink" href="tel:${EMPRESA.telLink}">Llamar</a></nav>
