@@ -61,7 +61,7 @@ function cjPintar(){
       ${pend.length?`<div class="msg bad cj-pend">${pend.length} salida${pend.length>1?"s":""} sin ticket. Haz la foto en cuanto lo tengas: el gerente ya ha recibido el aviso.</div>`:""}
       <h3 class="cj-h">Movimientos de este turno <span class="num">${movs.length}</span></h3>
       ${movs.length?`<div class="cj-movs">${movs.slice().reverse().map(m=>`<div class="cj-mov ${m.tipo} ${m.anulado?"anulado":""}"><i>${m.tipo==="egreso"?"−":"+"}</i><div><b>${esc(m.concepto)}</b><small>${esc(tHora(m.t))} · ${esc(CJ_TXT[m.categoria]||m.categoria)}${m.ref?" · "+esc(m.ref):""} · ${esc(m.porNombre)}${m.tipo==="egreso"&&m.responsableNombre&&m.responsableNombre!==m.porNombre?" · se lo lleva "+esc(m.responsableNombre):""}</small>
-        ${m.sinTicket?`<span class="chip rojo">Sin ticket</span>${m.mio||e.admin?` <label class="chipb cj-tk"><input type="file" accept="image/*" capture="environment" hidden data-cjtk="${esc(m.id)}">📷 Añadir ticket</label>`:""}`:m.foto?`<a class="chip ok" href="${FOTO(m.foto)}" target="_blank" rel="noopener">Ticket ✓</a>`:""}${m.anulado?' <span class="chip">Anulado</span>':""}</div>
+        ${m.sinTicket?`<span class="chip rojo">Sin ticket</span>${m.mio||e.admin?` <label class="chipb cj-tk"><input type="file" accept="image/*" capture="environment" hidden data-cjtk="${esc(m.id)}">📷 Añadir ticket</label>`:""}`:m.foto?`<a class="chip ok" href="${FOTO(m.foto)}" target="_blank" rel="noopener">${m.foto.endsWith(".pdf")?"Factura PDF ✓":"Ticket ✓"}</a>`:""}${m.anulado?' <span class="chip">Anulado</span>':""}</div>
         <b class="num">${m.importe!=null?(m.tipo==="egreso"?"−":"+")+cjE(m.importe):"•••"}</b></div>`).join("")}</div>`:'<p class="t-vacio">Todavía no hay movimientos.</p>'}
       ${!e.admin?'<p class="hint">Solo ves el importe de lo que registras tú. El total lo calcula el sistema al cerrar.</p>':""}`;
   }
@@ -71,6 +71,7 @@ function cjPintar(){
 }
 
 /* ---------- formulario de cobro / salida ---------- */
+let CJ_COCHES=null;
 function cjForm(tipo){
   let d=$("#dlg-cj"); if(!d){ d=document.createElement("dialog"); d.id="dlg-cj"; d.className="t-dlg cj-dlg"; document.body.appendChild(d); }
   const eg=tipo==="egreso", cats=eg?CJ_CAT_E:CJ_CAT_I, eq=(TEQ||[]).filter(p=>p.activo);
@@ -81,6 +82,7 @@ function cjForm(tipo){
     <div class="field"><label>${eg?"Tipo de salida":"Tipo de cobro"} *</label><div class="t-seg" id="cj-cat">${cats.map(([k,t])=>`<button type="button" data-v="${k}" aria-pressed="false">${t}</button>`).join("")}</div></div>
     ${eg?`<div class="field"><label for="cj-resp">¿Quién se lleva el dinero? *</label><select class="in" id="cj-resp"><option value="${esc(ME.uid)}">${esc(ME.nombre)} (yo)</option>${eq.filter(p=>p.id!==ME.uid).map(p=>`<option value="${esc(p.id)}">${esc(p.nombre)}</option>`).join("")}${ME.uid!=="gerente"?'<option value="gerente">Gerente / propietario</option>':""}</select></div>`:""}
     ${!eg&&ords.length?`<div class="field"><label for="cj-ord">Orden de taller (si es de una reparación)</label><select class="in" id="cj-ord"><option value="">— Ninguna —</option>${ords.map(o=>`<option value="${esc(o.token)}" data-num="${esc(o.num||"")}" data-txt="${esc((o.vehiculo.coche||"")+" "+(o.vehiculo.matricula||"").toUpperCase()+" · "+o.cliente.nombre)}">${esc((o.num||"")+" · "+(o.vehiculo.matricula||"").toUpperCase()+" · "+o.cliente.nombre)}</option>`).join("")}</select></div>`:""}
+    ${!eg?`<div class="field" id="cj-coche-f" hidden><label for="cj-coche">¿De qué coche? (venta o señal)</label><select class="in" id="cj-coche"><option value="">— Ninguno —</option>${(CJ_COCHES||[]).filter(c=>c.estado!=="vendido"||Date.now()-Date.parse(c.actualizado||0)<30*864e5).map(c=>`<option value="${esc(c.id)}">${esc(c.marca+" "+c.modelo+" "+(c.version||""))}${c.estado==="vendido"?" · vendido":c.estado==="reservado"?" · reservado":""}</option>`).join("")}</select><small class="hint">Así la señal cuenta como parte del pago del coche y no como un ingreso aparte.</small></div>`:""}
     <div class="field"><label for="cj-con">Concepto *</label><input class="in" id="cj-con" maxlength="200" placeholder="${eg?"Ej.: 5 L aceite 5W30 en Recambios Sur":"Ej.: Cambio de pastillas, Toyota Yaris"}"></div>
     <div class="field"><label for="cj-ref">${eg?"Nº de factura, ticket u orden *":"Nº de factura u orden"}</label><input class="in" id="cj-ref" maxlength="40" placeholder="${eg?"Ej.: F-2026-0142 · si es un retiro: nº del vale firmado":"Ej.: VC-2026-0003"}"></div>
     ${eg?`<div class="field"><label>Foto del ticket o la factura *</label><div class="cj-foto" id="cj-foto"><label class="t-foto-add cj-foto-add"><input type="file" accept="image/*" capture="environment" hidden id="cj-file"><span>📷</span><small>Hacer foto</small></label></div>
@@ -88,7 +90,7 @@ function cjForm(tipo){
     <div class="msg bad" id="cj-err" hidden></div>
     <div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-cjcancel>Cancelar</button><button type="submit" class="btn ${eg?"b-brand":"b-acc"}" id="cj-ok">${eg?"Registrar la salida":"Registrar el cobro"}</button></div></form>`;
   let foto="";
-  $("#cj-cat").onclick=ev=>{ const b=ev.target.closest("[data-v]"); if(!b) return; $("#cj-cat").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); if(eg&&b.dataset.v==="propietario"&&$("#cj-resp")) $("#cj-resp").value=ME.uid==="gerente"?ME.uid:"gerente"; };
+  $("#cj-cat").onclick=ev=>{ const b=ev.target.closest("[data-v]"); if(!b) return; $("#cj-cat").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); if($("#cj-coche-f")) $("#cj-coche-f").hidden=!["venta","senal"].includes(b.dataset.v); if(eg&&b.dataset.v==="propietario"&&$("#cj-resp")) $("#cj-resp").value=ME.uid==="gerente"?ME.uid:"gerente"; };
   const ord=$("#cj-ord"); if(ord) ord.onchange=()=>{ const o=ord.selectedOptions[0]; if(ord.value){ if(!$("#cj-ref").value) $("#cj-ref").value=o.dataset.num; if(!$("#cj-con").value) $("#cj-con").value="Reparación "+o.dataset.txt; const b=$("#cj-cat [data-v=taller]"); if(b) b.click(); } };
   if(eg) $("#cj-file").onchange=async ev=>{ const f=ev.target.files[0]; ev.target.value=""; if(!f) return; $("#cj-foto").classList.add("sub"); toast("Subiendo la foto…");
     try{ const b=await shrink(f); foto=(await api("/api/fotos",{method:"POST",headers:{"content-type":"image/jpeg"},body:b})).key; $("#cj-foto").innerHTML=`<span class="t-foto"><img src="${FOTO(foto)}" alt="Ticket"></span><small class="cj-fok">Ticket listo ✓</small>`; $("#cj-sin").checked=false; }catch(err){ toast(err.message); }
@@ -103,7 +105,7 @@ function cjForm(tipo){
     if(eg&&!$("#cj-ref").value.trim()) return falla("Escribe el nº de factura, ticket u orden.");
     if(eg&&!foto&&!$("#cj-sin").checked) return falla("Haz la foto del ticket. Si de verdad no lo tienes, marca la casilla de abajo.");
     btn.disabled=true;
-    try{ await api("/api/caja/movimiento",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({tipo,importe:String(imp),categoria:cat,concepto:$("#cj-con").value,ref:$("#cj-ref").value,foto,sinTicket:eg&&!foto&&$("#cj-sin").checked,responsable:eg?$("#cj-resp").value:"",orden:ord?ord.value:""})});
+    try{ await api("/api/caja/movimiento",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({tipo,importe:String(imp),categoria:cat,concepto:$("#cj-con").value,ref:$("#cj-ref").value,foto,sinTicket:eg&&!foto&&$("#cj-sin").checked,responsable:eg?$("#cj-resp").value:"",orden:ord?ord.value:"",coche:$("#cj-coche")&&!$("#cj-coche-f").hidden?$("#cj-coche").value:""})});
       d.close(); toast(`${eg?"Salida":"Cobro"} de ${cjE(Math.round(imp*100))} registrad${eg?"a":"o"}`); cjCargar(true);
     }catch(x){ falla(x.message); }
     btn.disabled=false; };
@@ -136,7 +138,7 @@ $("#cj").addEventListener("click",async e=>{
   const mn=q("[data-cjmenos]"), ms=q("[data-cjmas]");
   if(mn||ms){ const d=(mn||ms).dataset[mn?"cjmenos":"cjmas"]; CJ_CONTEO[d]=Math.max(0,(CJ_CONTEO[d]||0)+(ms?1:-1)); const i=document.querySelector(`[data-cjn="${d}"]`); i.value=CJ_CONTEO[d]||""; cjActualizar(d); return; }
   if(q("[data-cjconfirmar]")){ cjConfirmar(); return; }
-  const fm=q("[data-cjform]"); if(fm){ if(!TEQ.length) await tCargarEquipo(); cjForm(fm.dataset.cjform); return; }
+  const fm=q("[data-cjform]"); if(fm){ if(!TEQ.length) await tCargarEquipo(); if(!CJ_COCHES) CJ_COCHES=await fetch("/api/coches").then(r=>r.ok?r.json():[]).catch(()=>[]); cjForm(fm.dataset.cjform); return; }
   if(q("[data-cjmes]")){ CJ_MES=mesMas(CJ_MES,+q("[data-cjmes]").dataset.cjmes); cjCargar(true); return; }
   const tr=q("[data-cjturno]"); if(tr){ cjTurno(tr.dataset.cjturno); return; }
   if(q("[data-cjlibro]")){ cjLibro(); return; }
@@ -199,7 +201,7 @@ function cjTurno(id){
     ${c&&c.justificacion?`<div class="msg bad" style="margin-top:10px">Explicación de ${esc(c.nombre)}: «${esc(c.justificacion)}»</div>`:""}</section>
     ${c?`<section class="dw-box"><h3>Conteos del cierre</h3>${c.intentos.map((x,i)=>`<div class="cj-int"><b>${i+1}º · ${esc(tHora(x.t))} · ${cjE(x.contado)}</b>${desg(x.desglose)}</div>`).join("")}${c.intentos.length>1?'<p class="hint">Varios recuentos: el empleado volvió a contar porque no cuadraba. Compara los importes.</p>':""}</section>`:""}
     <section class="dw-box"><h3>Movimientos (${t.movimientos.length})</h3>${t.movimientos.length?t.movimientos.map(m=>`<div class="cj-mov ${m.tipo} ${m.anulado?"anulado":""}"><i>${m.tipo==="egreso"?"−":"+"}</i><div><b>${esc(m.concepto)}</b><small>${esc(tHora(m.t))} · ${esc(CJ_TXT[m.categoria]||m.categoria)}${m.ref?" · "+esc(m.ref):""} · registra ${esc(m.porNombre)}${m.tipo==="egreso"?" · se lo lleva "+esc(m.responsableNombre):""}${m.ajuste?" · AJUSTE DEL GERENTE":""}</small>
-      ${m.foto?`<a href="${FOTO(m.foto)}" target="_blank" rel="noopener" class="cj-tkimg"><img src="${FOTO(m.foto)}" alt="Ticket"></a>${m.sinTicket?`<small class="cj-ambar">Ticket añadido después (${esc(fechaHora(m.fotoT))})</small>`:""}`:m.tipo==="egreso"&&!m.ajuste?'<span class="chip rojo">Sin ticket</span>':""}
+      ${m.foto?`<a href="${FOTO(m.foto)}" target="_blank" rel="noopener" class="cj-tkimg">${m.foto.endsWith(".pdf")?'<span class="chip">Factura PDF</span>':`<img src="${FOTO(m.foto)}" alt="Ticket">`}</a>${m.sinTicket?`<small class="cj-ambar">Ticket añadido después (${esc(fechaHora(m.fotoT))})</small>`:""}`:m.tipo==="egreso"&&!m.ajuste?'<span class="chip rojo">Sin ticket</span>':""}
       ${m.anulado?`<small class="cj-rojo">Anulado: ${esc(m.anulado.motivo)} (${esc(fechaHora(m.anulado.t))})</small>`:`<button type="button" class="chipb" data-cjanular="${esc(m.id)}" style="margin-top:6px">Anular</button>`}</div><b class="num">${m.tipo==="egreso"?"−":"+"}${cjE(m.importe)}</b></div>`).join(""):'<p class="hint">Sin movimientos.</p>'}</section>
     ${t.ajustes.length?`<section class="dw-box"><h3>Ajustes del gerente</h3>${t.ajustes.map(a=>`<p style="margin:0 0 6px"><b>${esc(fechaHora(a.t))}</b> · ${esc(a.tipo)} ${esc(cjD(a.importe))} · ${esc(a.concepto)}<br><small>Motivo: ${esc(a.motivo)}</small></p>`).join("")}</section>`:""}
     ${c?`<section class="dw-box"><h3>Revisión</h3>${t.revision?`<div class="t-firmado"><span class="t-sello">✓</span><span><b>Revisado</b><small>${esc(fechaHora(t.revision.t))} · ${esc(t.revision.nota)}</small></span></div>`:`<div class="quick"><input class="in" id="cj-rev" placeholder="Qué has comprobado o decidido (p. ej. «Lo repone de su sueldo»)" maxlength="400" style="flex:1 1 240px"><button type="button" class="btn b-brand b-sm" data-cjrevisar="${esc(t.id)}">Dar por revisado</button></div>`}</section>

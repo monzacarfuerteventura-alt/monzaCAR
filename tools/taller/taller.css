@@ -303,7 +303,7 @@ em b.s-r,em b.s-a{background:none;color:var(--t-r)}em b.s-a{color:var(--t-a)}
 .t-per summary{display:flex;gap:10px;align-items:center;padding:10px 12px;cursor:pointer;list-style:none}
 .t-per summary::-webkit-details-marker{display:none}
 .t-per summary i{width:34px;height:34px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-style:normal;font-weight:800;flex-shrink:0}
-.t-per.nuevo summary i{background:var(--accent);color:#fff}
+.t-per.t-nueva summary i{background:var(--accent);color:#fff}
 .t-per summary small{display:block;color:var(--muted);font-size:12.5px}
 .t-per.baja{opacity:.6}
 .t-perf{display:grid;gap:10px;padding:0 12px 12px}
@@ -358,3 +358,7 @@ em b.s-r,em b.s-a{background:none;color:var(--t-r)}em b.s-a{color:var(--t-a)}
   #t-print .tp-inv{width:auto!important;color:#1B1B1A!important;font-size:7.6pt!important}
   #t-print .t-ley{font-size:6.8pt;gap:5px}#t-print .t-ley i{width:11px;height:11px;font-size:6pt}
 }
+@media (prefers-color-scheme:dark){.t-semhint b.s-a,.t-sem button.s-a[aria-pressed="true"],.t-seg button.s-a[aria-pressed="true"],.t-fb.vivo{color:#1B1B1A}}
+/* hueco al final para que ninguna etiqueta flotante (p. ej. «Powered by Netlify») tape el último botón */
+.dw-body::after{content:"";display:block;height:80px}
+main.wrap{padding-bottom:110px}

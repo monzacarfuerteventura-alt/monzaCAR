@@ -788,7 +788,7 @@ em b.s-r,em b.s-a{background:none;color:var(--t-r)}em b.s-a{color:var(--t-a)}
 .t-per summary{display:flex;gap:10px;align-items:center;padding:10px 12px;cursor:pointer;list-style:none}
 .t-per summary::-webkit-details-marker{display:none}
 .t-per summary i{width:34px;height:34px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-style:normal;font-weight:800;flex-shrink:0}
-.t-per.nuevo summary i{background:var(--accent);color:#fff}
+.t-per.t-nueva summary i{background:var(--accent);color:#fff}
 .t-per summary small{display:block;color:var(--muted);font-size:12.5px}
 .t-per.baja{opacity:.6}
 .t-perf{display:grid;gap:10px;padding:0 12px 12px}
@@ -843,6 +843,10 @@ em b.s-r,em b.s-a{background:none;color:var(--t-r)}em b.s-a{color:var(--t-a)}
   #t-print .tp-inv{width:auto!important;color:#1B1B1A!important;font-size:7.6pt!important}
   #t-print .t-ley{font-size:6.8pt;gap:5px}#t-print .t-ley i{width:11px;height:11px;font-size:6pt}
 }
+@media (prefers-color-scheme:dark){.t-semhint b.s-a,.t-sem button.s-a[aria-pressed="true"],.t-seg button.s-a[aria-pressed="true"],.t-fb.vivo{color:#1B1B1A}}
+/* hueco al final para que ninguna etiqueta flotante (p. ej. «Powered by Netlify») tape el último botón */
+.dw-body::after{content:"";display:block;height:80px}
+main.wrap{padding-bottom:110px}
 /*TALLER-CSS-FIN*/
 /*CAJA-CSS-INICIO*//* ===================== CONTROL DE CAJA ===================== */
 .cj-op{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;display:grid;gap:14px;margin-bottom:18px}
@@ -933,6 +937,89 @@ a.chip{text-decoration:none}
 .cj-integ b{font-size:16px}
 @media (max-width:560px){.cj-op{padding:14px}.cj-den{grid-template-columns:70px auto 1fr;gap:8px}.cj-step button{width:44px}.cj-step input{width:54px}.cj-tur th:nth-child(2),.cj-tur td:nth-child(2),.cj-tur th:nth-child(6),.cj-tur td:nth-child(6){display:none}}
 /*CAJA-CSS-FIN*/
+/*FINANZAS-CSS-INICIO*//* ===================== FINANZAS ===================== */
+:root{--fn-ing:#2a78d6;--fn-egr:#eb6834}
+@media (prefers-color-scheme:dark){:root{--fn-ing:#3987e5;--fn-egr:#d95926}}
+.fn-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.fn-acts{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+@media (max-width:720px){.fn-acts{margin-left:0;width:100%}.fn-acts .btn{flex:1 1 auto}}
+.fn-avisos{display:flex;gap:6px 14px;flex-wrap:wrap;align-items:center;padding:10px 14px;border-radius:12px;background:var(--t-aS,#FDF0D8);margin-bottom:12px;font-size:14px}
+.fn-avisos span::before{content:"•";margin-right:6px;color:var(--t-a,#B26A00)}
+.fn-kpis{display:grid;grid-template-columns:1.5fr repeat(4,1fr);gap:10px;margin-bottom:12px}
+@media (max-width:900px){.fn-kpis{grid-template-columns:1fr 1fr}.fn-kpi.hero{grid-column:1/-1}}
+.fn-kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:2px;align-content:start;min-width:0}
+.fn-kpi small{font-size:12px;font-weight:700;color:var(--muted)}.fn-kpi b{font-family:var(--display);font-stretch:105%;font-size:24px;line-height:1.15}.fn-kpi span{font-size:12.5px;color:var(--muted)}
+.fn-kpi.hero{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}.fn-kpi.hero small,.fn-kpi.hero span{color:inherit;opacity:.8}.fn-kpi.hero b{font-size:34px}
+.fn-kpi.hero.neg b{color:#FF8A7A}
+.fn-kpi.pos b{color:var(--ok)}.fn-kpi.neg b{color:var(--bad)}.fn-kpi.aviso{border-color:#E08A2E}
+.fn-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;align-items:start}
+@media (max-width:820px){.fn-grid{grid-template-columns:1fr}}
+#s-fin .card{margin-bottom:12px}#s-fin .fn-grid .card{margin-bottom:0}
+#s-fin .card h3{margin:0 0 6px;font-family:var(--display);font-stretch:85%;font-size:18px;text-transform:uppercase}
+#s-fin .card h3 .num{font-size:12px;background:var(--surface-2);border-radius:999px;padding:2px 8px;font-family:var(--body);vertical-align:3px}
+.fn-canales{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media (max-width:520px){.fn-canales{grid-template-columns:1fr 1fr}}
+.fn-canal{background:var(--surface-2);border-radius:12px;padding:10px;display:grid;gap:1px}.fn-canal small{font-size:12px;font-weight:700;color:var(--muted)}.fn-canal b{font-size:17px}.fn-canal span{font-size:12px;color:var(--muted)}
+.fn-canal.efectivo{box-shadow:inset 3px 0 0 var(--ok)}
+.fn-efe b{font-family:var(--display);font-stretch:105%;font-size:30px;display:block}.fn-efe span{font-size:13px;color:var(--muted)}
+.fn-mini{margin:8px 0}.fn-mini td{padding:6px 4px}.fn-mini tr.sub td{font-weight:800;border-top:1.5px solid var(--line)}
+.fn-rent-g{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:720px){.fn-rent-g{grid-template-columns:1fr}}
+.fn-rent{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--surface-2)}
+.fn-rent-h b{font-size:17px;display:block}.fn-rent-h small{color:var(--muted);font-size:12.5px}
+.fn-rent .fn-mini{background:transparent}
+.fn-neto{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding-top:8px;border-top:2px solid var(--line)}
+.fn-neto span{font-weight:700}.fn-neto b{font-family:var(--display);font-stretch:105%;font-size:24px}.fn-neto.pos b{color:var(--ok)}.fn-neto.neg b{color:var(--bad)}
+/* evolución: barras agrupadas cobrado/pagado */
+.fn-ley{display:flex;gap:14px;font-size:13px;color:var(--muted);margin:2px 0 8px}.fn-ley span{display:inline-flex;gap:6px;align-items:center}.fn-ley i{width:12px;height:12px;border-radius:3px}
+.fn-c-ing{background:var(--fn-ing)}.fn-c-egr{background:var(--fn-egr)}
+b.fn-c-ing,b.fn-c-egr{background:none;color:var(--ink)}
+.fn-evo{display:grid;grid-template-columns:auto 1fr;gap:6px;height:170px}
+.fn-evo-y{display:flex;flex-direction:column;justify-content:space-between;font-size:11px;color:var(--muted);text-align:right}
+.fn-evo-b{display:flex;gap:2px;align-items:flex-end;border-bottom:1px solid var(--line);background:linear-gradient(var(--line),var(--line)) 0 0/100% 1px no-repeat,linear-gradient(var(--line),var(--line)) 0 50%/100% 1px no-repeat}
+.fn-evo-c{flex:1;min-width:4px;height:100%;display:flex;gap:2px;align-items:flex-end;justify-content:center;cursor:default;padding:0 1px}
+.fn-evo-c i{flex:1;max-width:14px;border-radius:4px 4px 0 0;min-height:0}
+.fn-evo-c:hover{background:color-mix(in srgb,var(--surface-2) 70%,transparent)}
+.fn-evo-x{display:flex;gap:2px;margin-left:34px;font-size:11px;color:var(--muted)}.fn-evo-x span{flex:1;text-align:center;min-width:4px;overflow:visible;white-space:nowrap}
+.fn-dia{display:grid;grid-template-columns:1fr 1fr;gap:10px}.fn-dia div{padding:12px;border-radius:12px;background:var(--surface-2)}.fn-dia small{display:block;color:var(--muted);font-weight:700}.fn-dia b{font-size:22px}
+.fn-dia div:first-child{box-shadow:inset 4px 0 0 var(--fn-ing)}.fn-dia div:last-child{box-shadow:inset 4px 0 0 var(--fn-egr)}
+.fn-tabla-d{margin-top:10px}.fn-tabla-d summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--muted)}
+.fn-dest .bh-t i{background:var(--fn-egr)}
+/* pendientes y tablas */
+.fn-h4{margin:12px 0 6px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.fn-pend{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.fn-pend span{min-width:0}.fn-pend span small{display:block;color:var(--muted);font-size:12.5px}.fn-pend>b{text-align:right}.fn-pend>b small{display:block;font-weight:500;color:var(--muted);font-size:11.5px}
+.fn-pend:has(>span+button){grid-template-columns:1fr auto}
+@media (max-width:560px){.fn-pend{grid-template-columns:1fr auto}.fn-pend .btn{grid-column:1/-1}}
+.fn-th{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.fn-t td small{display:block;color:var(--muted);font-size:12px}.fn-t tr.fn-sc td{background:color-mix(in srgb,var(--t-aS,#FDF0D8) 60%,transparent)}
+.fn-t td.n .chip,.fn-t td.n .chipb{margin:2px 0 2px 4px}
+@media (max-width:640px){.fn-t{font-size:13px}.fn-t th:nth-child(4),.fn-t td:nth-child(4){display:none}}
+/* diálogos */
+.fn-dlg{max-height:92vh}.fn-dlg form{gap:12px}
+.fn-tot{margin:-4px 0 0;font-weight:800;font-size:15px;padding:8px 12px;border-radius:10px;background:var(--surface-2)}
+.fn-adj{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.fn-adj .btn{cursor:pointer}.fn-adj-ok{font-weight:700;color:var(--ok);font-size:14px}
+#fn-print{display:none}
+@media print{
+  @page finanzas{size:A4;margin:10mm}
+  body.print-fin{background:#fff!important;padding:0}
+  body.print-fin>*:not(#fn-print){display:none!important}
+  body.print-fin #fn-print{display:block;color:#1B1B1A;font:8.2pt/1.3 var(--body)}
+  #fn-print *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #fn-print .fp{page:finanzas;display:block}#fn-print .fp>*+*{margin-top:6px}
+  #fn-print .tp-h{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;border-bottom:3px solid #D9481C;padding-bottom:6px}
+  #fn-print .tp-h img{height:24px;width:auto}#fn-print .tp-h>div>b{display:block;font-size:14pt;text-transform:uppercase}#fn-print .tp-h small{color:#67635D}
+  #fn-print .tp-badge{background:#1B1B1A;color:#fff;font-weight:900;padding:4px 8px;border-radius:5px}
+  #fn-print h4{margin:10px 0 3px;font-size:8.5pt;text-transform:uppercase;letter-spacing:.08em;color:#D9481C}
+  #fn-print table{width:100%;border-collapse:collapse}
+  #fn-print th,#fn-print td{border:.6pt solid #CFCAC2;padding:2.5px 4px;text-align:left;vertical-align:top}
+  #fn-print .tp-kv th{background:#F2EFEA;font-size:7pt;color:#67635D;white-space:nowrap;width:1%}
+  #fn-print .tp-t thead th{background:#1B1B1A;color:#fff;font-size:7pt}#fn-print .tp-t thead{display:table-header-group}#fn-print .tp-t tr{break-inside:avoid}
+  #fn-print td.r{text-align:right;white-space:nowrap}#fn-print tr.tot td{font-weight:800;background:#F2EFEA}
+  #fn-print .tp-legal{font-size:7pt;color:#67635D}#fn-print .tp-f{border-top:.6pt solid #CFCAC2;padding-top:3px;font-size:6.8pt;color:#67635D}
+}
+@media (max-width:520px){.fn-kpi b{font-size:19px}.fn-kpi.hero b{font-size:28px}.fn-canal b{font-size:15px}}
+/*FINANZAS-CSS-FIN*/
 /*GUIA-CSS-INICIO*/
 /* =====================================================================
    GUÍA DE VENTA (El Método de Venta Volcano Cars · SOP-02)
@@ -1261,6 +1348,7 @@ a.chip{text-decoration:none}
     <button type="button" role="tab" data-tab="leads" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-6 6.5-6s5.9 2.4 6.5 6M16 4.8a3.5 3.5 0 010 6.4M18.5 14.3c1.7.9 2.8 2.9 3 5.7"/></svg>CRM <span class="badge-n" id="n-new" hidden></span></button>
     <button type="button" role="tab" data-tab="ordenes" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 00-5.4 5.2L3.5 17.3a1.8 1.8 0 002.5 2.5l5.8-5.8a4 4 0 005.2-5.4l-2.5 2.5-2.1-.4-.4-2.1 2.7-2.3z"/></svg>Taller <span class="badge-n" id="n-ord" hidden></span></button>
     <button type="button" role="tab" data-tab="caja" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></svg>Control de Caja <span class="badge-n" id="n-caja" hidden></span></button>
+    <button type="button" role="tab" data-tab="fin" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M6 16v-4M10 16V8M14 16v-6M18 16V5"/></svg>Finanzas</button>
     <button type="button" role="tab" data-tab="agenda" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5.5" width="16" height="14" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/></svg>Agenda <span class="badge-n" id="n-hoy" hidden></span></button>
     <button type="button" role="tab" data-tab="coches" aria-selected="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16h14M6.5 16l1.3-4.3A2 2 0 0 1 9.7 10h4.6a2 2 0 0 1 1.9 1.7L17.5 16M4 16v2.5h2.5V16M17.5 16v2.5H20V16"/></svg>Coches</button>
   </nav>
@@ -1310,6 +1398,12 @@ a.chip{text-decoration:none}
   <section id="s-caja" hidden>
     <div class="head"><div><h1 style="font-size:28px">Control de Caja</h1><p>Apertura y cierre con arqueo ciego, cobros y salidas de efectivo con su ticket. Nada se puede borrar.</p></div></div>
     <div id="cj"></div>
+  </section>
+
+  <!-- FINANZAS -->
+  <section id="s-fin" hidden>
+    <div class="head"><div><h1 style="font-size:28px">Finanzas</h1><p>Ingresos y gastos de todo el negocio: taller, venta de coches y caja, conectados y sin apuntar nada dos veces.</p></div></div>
+    <div id="fn"></div>
   </section>
 
   <!-- AGENDA -->
@@ -1523,8 +1617,8 @@ let CARS = [], editing = null, fotos = [], uploading = 0, INTERES = {}, VIENDO =
 let video = null, vSubiendo = false, vNuevo = null, vAbort = null;
 
 function toast(t){ const el=$("#toast"); el.textContent=t; el.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>el.hidden=true,2600); }
-const TABS={dash:"s-dash",leads:"s-leads",ordenes:"s-ordenes",caja:"s-caja",agenda:"s-agenda",coches:"s-list"};
-function show(id){ ["s-login","s-list","s-form","s-leads","s-agenda","s-dash","s-ordenes","s-guia","s-ficha","s-caja"].forEach(x=>$("#"+x).hidden = x!==id); $("#topacts").hidden = id==="s-login";
+const TABS={dash:"s-dash",leads:"s-leads",ordenes:"s-ordenes",caja:"s-caja",fin:"s-fin",agenda:"s-agenda",coches:"s-list"};
+function show(id){ ["s-login","s-list","s-form","s-leads","s-agenda","s-dash","s-ordenes","s-guia","s-ficha","s-caja","s-fin"].forEach(x=>$("#"+x).hidden = x!==id); $("#topacts").hidden = id==="s-login";
   $("#tabsrow").hidden = !Object.values(TABS).includes(id);
   document.querySelectorAll("#tabs [data-tab]").forEach(b=>b.setAttribute("aria-selected", String(TABS[b.dataset.tab]===id)));
   window.scrollTo(0,0); }
@@ -1618,7 +1712,8 @@ $("#list").addEventListener("click", async e=>{
   const b=e.target.closest("[data-set]"); if(!b || b.getAttribute("aria-pressed")==="true") return;
   const id=b.dataset.id;
   const c=CARS.find(x=>x.id===id); const prev=c.estado; c.estado=b.dataset.set;
-  try{ Object.assign(c, await api("/api/coches/"+id,{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(c)})); renderList(); toast("Marcado como "+c.estado); }
+  try{ Object.assign(c, await api("/api/coches/"+id,{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(c)})); renderList(); toast("Marcado como "+c.estado);
+    if(c.estado==="vendido"&&prev!=="vendido"&&typeof fnVenta==="function"){ FN_CARS=null; fnVenta(c.id); } }
   catch(err){ c.estado=prev; renderList(); toast(err.message); }
 });
 $("#list").addEventListener("click", e=>{ const id=e.target.dataset.edit; if(id) openForm(CARS.find(x=>x.id===id)); });
@@ -1831,8 +1926,10 @@ $("#car-form").addEventListener("submit", async e=>{
   data.mercado = mkDatos();
   const btn=$("#save"); btn.disabled=true;
   try{
-    if(editing) await api("/api/coches/"+editing.id,{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(data)});
-    else await api("/api/coches",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(data)});
+    const antes=editing?editing.estado:"";
+    const guardado = editing ? await api("/api/coches/"+editing.id,{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(data)})
+                             : await api("/api/coches",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(data)});
+    if(data.estado==="vendido"&&antes!=="vendido"&&guardado&&guardado.id&&typeof fnVenta==="function") setTimeout(()=>{ FN_CARS=null; fnVenta(guardado.id); },400);
     vNuevo = null; // ya está publicado: no hay que borrarlo al salir
     toast(editing ? "Cambios guardados" : "Coche publicado en la web");
     await loadList();
@@ -1892,6 +1989,7 @@ let LEADS=[], ORDENES=[], filtro="activas", tipoF="", busq="", vista="lista", DW
 function abrirTab(t,push=true){
   if(ME&&ME.equipo&&!(t==="caja"&&ME.caja)) t="ordenes";
   if(t==="caja"){ cjAbrirTab(); return; }
+  if(t==="fin"){ fnAbrirTab(); return; }
   if(t==="ordenes") tCabeceraTaller();
   if(t==="leads"){ show("s-leads"); renderLeads(); }
   else if(t==="ordenes"){ show("s-ordenes"); renderOrdenes(); }
@@ -2054,7 +2152,7 @@ function abrirDrawer(html){ $("#dw-body").innerHTML=html; $("#drawer").hidden=fa
 function cerrarDrawer(){ $("#drawer").hidden=true; document.body.classList.remove("dw-open"); DW=null; }
 $("#dw-bg").onclick=cerrarDrawer;
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("#drawer").hidden&&!document.querySelector("dialog[open]")) cerrarDrawer(); });
-function refrescarDrawer(){ if(!DW||$("#drawer").hidden||DW.tipo==="seguridad"||DW.tipo==="equipo"||String(DW.tipo).startsWith("caja")) return; const foco=document.activeElement; if(foco&&foco.closest&&foco.closest("#dw-body")&&foco.matches("input,textarea,select")) return;
+function refrescarDrawer(){ if(!DW||$("#drawer").hidden||DW.tipo==="seguridad"||DW.tipo==="equipo"||String(DW.tipo).startsWith("caja")||DW.tipo==="fin") return; const foco=document.activeElement; if(foco&&foco.closest&&foco.closest("#dw-body")&&foco.matches("input,textarea,select")) return;
   const st=$("#dw-body").scrollTop; if(DW.tipo==="lead"){ const x=LEADS.find(l=>l.id===DW.id); if(x) $("#dw-body").innerHTML=htmlLead(x); } else { const o=ORDENES.find(z=>z.token===DW.id); if(o) $("#dw-body").innerHTML=htmlOrden(o); } $("#dw-body").scrollTop=st; }
 
 function plantillas(x){
@@ -2729,7 +2827,7 @@ if(PW){ fetch("/api/login",{headers:{authorization:"Bearer "+PW}}).then(async r=
   if(yo.equipo) return entrarEquipo(yo);
   ME={rol:"gerente",nombre:"Gerente",uid:"gerente"}; tUsuario(); setTimeout(()=>cjVigilar(),1200);
   try{ localStorage.setItem("vc_admin","1"); }catch(_){}
-  const h=location.hash.slice(1), tab={crm:"leads",solicitudes:"leads",taller:"ordenes",caja:"caja",agenda:"agenda",coches:"coches",dashboard:"dash"}[h]||"dash";
+  const h=location.hash.slice(1), tab={crm:"leads",solicitudes:"leads",taller:"ordenes",caja:"caja",finanzas:"fin",agenda:"agenda",coches:"coches",dashboard:"dash"}[h]||"dash";
   await loadList(true); await loadLeads(false);
   let abierta=""; try{ abierta=sessionStorage.getItem("vc_tf")||""; }catch(_){}
   if(h==="fichas"&&abierta){ await tCargarEquipo(); abrirFichas(abierta); return; }
@@ -3431,7 +3529,7 @@ function tPintarEquipo(cfg){
   $("#dw-body").innerHTML=`<div class="dw-head"><div><span class="tipo taller">Taller</span><h2 class="dw-nombre" style="margin:0">Equipo y ajustes</h2></div><button class="x" type="button" data-cerrar aria-label="Cerrar">✕</button></div>
     <section class="dw-box"><h3>Cómo entra el equipo</h3><p class="hint" style="margin:0">Cada persona abre <b>${esc(location.origin)}/admin</b> en la tablet o en su móvil, pulsa «Entrar como equipo del taller» y pone su usuario y PIN. Solo ve el taller: no ve coches en venta, clientes del CRM, ventas ni seguridad. Los intentos fallidos bloquean la conexión igual que con tu contraseña.</p></section>
     <section class="dw-box"><h3>Equipo</h3>${TEQ.length?TEQ.map(fila).join(""):'<p class="hint">Todavía no hay nadie. Añade a tus mecánicos abajo.</p>'}
-      <details class="t-per nuevo" ${TEQ.length?"":"open"}><summary><i>+</i><span><b>Añadir persona</b></span></summary><form class="t-perf" data-tper=""><div class="t-g2"><div class="field"><label>Nombre</label><input class="in" name="nombre" maxlength="40" required></div><div class="field"><label>Usuario (sin espacios)</label><input class="in" name="usuario" maxlength="20" autocomplete="off" required placeholder="pedro"></div>
+      <details class="t-per t-nueva" ${TEQ.length?"":"open"}><summary><i>+</i><span><b>Añadir persona</b></span></summary><form class="t-perf" data-tper=""><div class="t-g2"><div class="field"><label>Nombre</label><input class="in" name="nombre" maxlength="40" required></div><div class="field"><label>Usuario (sin espacios)</label><input class="in" name="usuario" maxlength="20" autocomplete="off" required placeholder="pedro"></div>
       <div class="field"><label>Puesto</label><select class="in" name="rol">${roles.map(([k,t])=>`<option value="${k}">${t}</option>`).join("")}</select></div><div class="field"><label>Horas pagadas al día</label><input class="in num" name="jornada" value="${String(cfg.jornada).replace(".",",")}" inputmode="decimal"></div>
       <div class="field"><label>Fecha de alta</label><input class="in" type="date" name="alta" value="${hoyC()}"></div><div class="field"><label>PIN para entrar</label><input class="in num" name="pin" inputmode="numeric" maxlength="8" autocomplete="new-password" placeholder="6 a 8 números" required></div></div>
       <label class="t-chk"><input type="checkbox" name="caja"><span>Puede usar la caja (abrir, cerrar, cobrar y registrar salidas)</span></label>
@@ -3561,7 +3659,7 @@ function cjPintar(){
       ${pend.length?`<div class="msg bad cj-pend">${pend.length} salida${pend.length>1?"s":""} sin ticket. Haz la foto en cuanto lo tengas: el gerente ya ha recibido el aviso.</div>`:""}
       <h3 class="cj-h">Movimientos de este turno <span class="num">${movs.length}</span></h3>
       ${movs.length?`<div class="cj-movs">${movs.slice().reverse().map(m=>`<div class="cj-mov ${m.tipo} ${m.anulado?"anulado":""}"><i>${m.tipo==="egreso"?"−":"+"}</i><div><b>${esc(m.concepto)}</b><small>${esc(tHora(m.t))} · ${esc(CJ_TXT[m.categoria]||m.categoria)}${m.ref?" · "+esc(m.ref):""} · ${esc(m.porNombre)}${m.tipo==="egreso"&&m.responsableNombre&&m.responsableNombre!==m.porNombre?" · se lo lleva "+esc(m.responsableNombre):""}</small>
-        ${m.sinTicket?`<span class="chip rojo">Sin ticket</span>${m.mio||e.admin?` <label class="chipb cj-tk"><input type="file" accept="image/*" capture="environment" hidden data-cjtk="${esc(m.id)}">📷 Añadir ticket</label>`:""}`:m.foto?`<a class="chip ok" href="${FOTO(m.foto)}" target="_blank" rel="noopener">Ticket ✓</a>`:""}${m.anulado?' <span class="chip">Anulado</span>':""}</div>
+        ${m.sinTicket?`<span class="chip rojo">Sin ticket</span>${m.mio||e.admin?` <label class="chipb cj-tk"><input type="file" accept="image/*" capture="environment" hidden data-cjtk="${esc(m.id)}">📷 Añadir ticket</label>`:""}`:m.foto?`<a class="chip ok" href="${FOTO(m.foto)}" target="_blank" rel="noopener">${m.foto.endsWith(".pdf")?"Factura PDF ✓":"Ticket ✓"}</a>`:""}${m.anulado?' <span class="chip">Anulado</span>':""}</div>
         <b class="num">${m.importe!=null?(m.tipo==="egreso"?"−":"+")+cjE(m.importe):"•••"}</b></div>`).join("")}</div>`:'<p class="t-vacio">Todavía no hay movimientos.</p>'}
       ${!e.admin?'<p class="hint">Solo ves el importe de lo que registras tú. El total lo calcula el sistema al cerrar.</p>':""}`;
   }
@@ -3571,6 +3669,7 @@ function cjPintar(){
 }
 
 /* ---------- formulario de cobro / salida ---------- */
+let CJ_COCHES=null;
 function cjForm(tipo){
   let d=$("#dlg-cj"); if(!d){ d=document.createElement("dialog"); d.id="dlg-cj"; d.className="t-dlg cj-dlg"; document.body.appendChild(d); }
   const eg=tipo==="egreso", cats=eg?CJ_CAT_E:CJ_CAT_I, eq=(TEQ||[]).filter(p=>p.activo);
@@ -3581,6 +3680,7 @@ function cjForm(tipo){
     <div class="field"><label>${eg?"Tipo de salida":"Tipo de cobro"} *</label><div class="t-seg" id="cj-cat">${cats.map(([k,t])=>`<button type="button" data-v="${k}" aria-pressed="false">${t}</button>`).join("")}</div></div>
     ${eg?`<div class="field"><label for="cj-resp">¿Quién se lleva el dinero? *</label><select class="in" id="cj-resp"><option value="${esc(ME.uid)}">${esc(ME.nombre)} (yo)</option>${eq.filter(p=>p.id!==ME.uid).map(p=>`<option value="${esc(p.id)}">${esc(p.nombre)}</option>`).join("")}${ME.uid!=="gerente"?'<option value="gerente">Gerente / propietario</option>':""}</select></div>`:""}
     ${!eg&&ords.length?`<div class="field"><label for="cj-ord">Orden de taller (si es de una reparación)</label><select class="in" id="cj-ord"><option value="">— Ninguna —</option>${ords.map(o=>`<option value="${esc(o.token)}" data-num="${esc(o.num||"")}" data-txt="${esc((o.vehiculo.coche||"")+" "+(o.vehiculo.matricula||"").toUpperCase()+" · "+o.cliente.nombre)}">${esc((o.num||"")+" · "+(o.vehiculo.matricula||"").toUpperCase()+" · "+o.cliente.nombre)}</option>`).join("")}</select></div>`:""}
+    ${!eg?`<div class="field" id="cj-coche-f" hidden><label for="cj-coche">¿De qué coche? (venta o señal)</label><select class="in" id="cj-coche"><option value="">— Ninguno —</option>${(CJ_COCHES||[]).filter(c=>c.estado!=="vendido"||Date.now()-Date.parse(c.actualizado||0)<30*864e5).map(c=>`<option value="${esc(c.id)}">${esc(c.marca+" "+c.modelo+" "+(c.version||""))}${c.estado==="vendido"?" · vendido":c.estado==="reservado"?" · reservado":""}</option>`).join("")}</select><small class="hint">Así la señal cuenta como parte del pago del coche y no como un ingreso aparte.</small></div>`:""}
     <div class="field"><label for="cj-con">Concepto *</label><input class="in" id="cj-con" maxlength="200" placeholder="${eg?"Ej.: 5 L aceite 5W30 en Recambios Sur":"Ej.: Cambio de pastillas, Toyota Yaris"}"></div>
     <div class="field"><label for="cj-ref">${eg?"Nº de factura, ticket u orden *":"Nº de factura u orden"}</label><input class="in" id="cj-ref" maxlength="40" placeholder="${eg?"Ej.: F-2026-0142 · si es un retiro: nº del vale firmado":"Ej.: VC-2026-0003"}"></div>
     ${eg?`<div class="field"><label>Foto del ticket o la factura *</label><div class="cj-foto" id="cj-foto"><label class="t-foto-add cj-foto-add"><input type="file" accept="image/*" capture="environment" hidden id="cj-file"><span>📷</span><small>Hacer foto</small></label></div>
@@ -3588,7 +3688,7 @@ function cjForm(tipo){
     <div class="msg bad" id="cj-err" hidden></div>
     <div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-cjcancel>Cancelar</button><button type="submit" class="btn ${eg?"b-brand":"b-acc"}" id="cj-ok">${eg?"Registrar la salida":"Registrar el cobro"}</button></div></form>`;
   let foto="";
-  $("#cj-cat").onclick=ev=>{ const b=ev.target.closest("[data-v]"); if(!b) return; $("#cj-cat").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); if(eg&&b.dataset.v==="propietario"&&$("#cj-resp")) $("#cj-resp").value=ME.uid==="gerente"?ME.uid:"gerente"; };
+  $("#cj-cat").onclick=ev=>{ const b=ev.target.closest("[data-v]"); if(!b) return; $("#cj-cat").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); if($("#cj-coche-f")) $("#cj-coche-f").hidden=!["venta","senal"].includes(b.dataset.v); if(eg&&b.dataset.v==="propietario"&&$("#cj-resp")) $("#cj-resp").value=ME.uid==="gerente"?ME.uid:"gerente"; };
   const ord=$("#cj-ord"); if(ord) ord.onchange=()=>{ const o=ord.selectedOptions[0]; if(ord.value){ if(!$("#cj-ref").value) $("#cj-ref").value=o.dataset.num; if(!$("#cj-con").value) $("#cj-con").value="Reparación "+o.dataset.txt; const b=$("#cj-cat [data-v=taller]"); if(b) b.click(); } };
   if(eg) $("#cj-file").onchange=async ev=>{ const f=ev.target.files[0]; ev.target.value=""; if(!f) return; $("#cj-foto").classList.add("sub"); toast("Subiendo la foto…");
     try{ const b=await shrink(f); foto=(await api("/api/fotos",{method:"POST",headers:{"content-type":"image/jpeg"},body:b})).key; $("#cj-foto").innerHTML=`<span class="t-foto"><img src="${FOTO(foto)}" alt="Ticket"></span><small class="cj-fok">Ticket listo ✓</small>`; $("#cj-sin").checked=false; }catch(err){ toast(err.message); }
@@ -3603,7 +3703,7 @@ function cjForm(tipo){
     if(eg&&!$("#cj-ref").value.trim()) return falla("Escribe el nº de factura, ticket u orden.");
     if(eg&&!foto&&!$("#cj-sin").checked) return falla("Haz la foto del ticket. Si de verdad no lo tienes, marca la casilla de abajo.");
     btn.disabled=true;
-    try{ await api("/api/caja/movimiento",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({tipo,importe:String(imp),categoria:cat,concepto:$("#cj-con").value,ref:$("#cj-ref").value,foto,sinTicket:eg&&!foto&&$("#cj-sin").checked,responsable:eg?$("#cj-resp").value:"",orden:ord?ord.value:""})});
+    try{ await api("/api/caja/movimiento",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({tipo,importe:String(imp),categoria:cat,concepto:$("#cj-con").value,ref:$("#cj-ref").value,foto,sinTicket:eg&&!foto&&$("#cj-sin").checked,responsable:eg?$("#cj-resp").value:"",orden:ord?ord.value:"",coche:$("#cj-coche")&&!$("#cj-coche-f").hidden?$("#cj-coche").value:""})});
       d.close(); toast(`${eg?"Salida":"Cobro"} de ${cjE(Math.round(imp*100))} registrad${eg?"a":"o"}`); cjCargar(true);
     }catch(x){ falla(x.message); }
     btn.disabled=false; };
@@ -3636,7 +3736,7 @@ $("#cj").addEventListener("click",async e=>{
   const mn=q("[data-cjmenos]"), ms=q("[data-cjmas]");
   if(mn||ms){ const d=(mn||ms).dataset[mn?"cjmenos":"cjmas"]; CJ_CONTEO[d]=Math.max(0,(CJ_CONTEO[d]||0)+(ms?1:-1)); const i=document.querySelector(`[data-cjn="${d}"]`); i.value=CJ_CONTEO[d]||""; cjActualizar(d); return; }
   if(q("[data-cjconfirmar]")){ cjConfirmar(); return; }
-  const fm=q("[data-cjform]"); if(fm){ if(!TEQ.length) await tCargarEquipo(); cjForm(fm.dataset.cjform); return; }
+  const fm=q("[data-cjform]"); if(fm){ if(!TEQ.length) await tCargarEquipo(); if(!CJ_COCHES) CJ_COCHES=await fetch("/api/coches").then(r=>r.ok?r.json():[]).catch(()=>[]); cjForm(fm.dataset.cjform); return; }
   if(q("[data-cjmes]")){ CJ_MES=mesMas(CJ_MES,+q("[data-cjmes]").dataset.cjmes); cjCargar(true); return; }
   const tr=q("[data-cjturno]"); if(tr){ cjTurno(tr.dataset.cjturno); return; }
   if(q("[data-cjlibro]")){ cjLibro(); return; }
@@ -3699,7 +3799,7 @@ function cjTurno(id){
     ${c&&c.justificacion?`<div class="msg bad" style="margin-top:10px">Explicación de ${esc(c.nombre)}: «${esc(c.justificacion)}»</div>`:""}</section>
     ${c?`<section class="dw-box"><h3>Conteos del cierre</h3>${c.intentos.map((x,i)=>`<div class="cj-int"><b>${i+1}º · ${esc(tHora(x.t))} · ${cjE(x.contado)}</b>${desg(x.desglose)}</div>`).join("")}${c.intentos.length>1?'<p class="hint">Varios recuentos: el empleado volvió a contar porque no cuadraba. Compara los importes.</p>':""}</section>`:""}
     <section class="dw-box"><h3>Movimientos (${t.movimientos.length})</h3>${t.movimientos.length?t.movimientos.map(m=>`<div class="cj-mov ${m.tipo} ${m.anulado?"anulado":""}"><i>${m.tipo==="egreso"?"−":"+"}</i><div><b>${esc(m.concepto)}</b><small>${esc(tHora(m.t))} · ${esc(CJ_TXT[m.categoria]||m.categoria)}${m.ref?" · "+esc(m.ref):""} · registra ${esc(m.porNombre)}${m.tipo==="egreso"?" · se lo lleva "+esc(m.responsableNombre):""}${m.ajuste?" · AJUSTE DEL GERENTE":""}</small>
-      ${m.foto?`<a href="${FOTO(m.foto)}" target="_blank" rel="noopener" class="cj-tkimg"><img src="${FOTO(m.foto)}" alt="Ticket"></a>${m.sinTicket?`<small class="cj-ambar">Ticket añadido después (${esc(fechaHora(m.fotoT))})</small>`:""}`:m.tipo==="egreso"&&!m.ajuste?'<span class="chip rojo">Sin ticket</span>':""}
+      ${m.foto?`<a href="${FOTO(m.foto)}" target="_blank" rel="noopener" class="cj-tkimg">${m.foto.endsWith(".pdf")?'<span class="chip">Factura PDF</span>':`<img src="${FOTO(m.foto)}" alt="Ticket">`}</a>${m.sinTicket?`<small class="cj-ambar">Ticket añadido después (${esc(fechaHora(m.fotoT))})</small>`:""}`:m.tipo==="egreso"&&!m.ajuste?'<span class="chip rojo">Sin ticket</span>':""}
       ${m.anulado?`<small class="cj-rojo">Anulado: ${esc(m.anulado.motivo)} (${esc(fechaHora(m.anulado.t))})</small>`:`<button type="button" class="chipb" data-cjanular="${esc(m.id)}" style="margin-top:6px">Anular</button>`}</div><b class="num">${m.tipo==="egreso"?"−":"+"}${cjE(m.importe)}</b></div>`).join(""):'<p class="hint">Sin movimientos.</p>'}</section>
     ${t.ajustes.length?`<section class="dw-box"><h3>Ajustes del gerente</h3>${t.ajustes.map(a=>`<p style="margin:0 0 6px"><b>${esc(fechaHora(a.t))}</b> · ${esc(a.tipo)} ${esc(cjD(a.importe))} · ${esc(a.concepto)}<br><small>Motivo: ${esc(a.motivo)}</small></p>`).join("")}</section>`:""}
     ${c?`<section class="dw-box"><h3>Revisión</h3>${t.revision?`<div class="t-firmado"><span class="t-sello">✓</span><span><b>Revisado</b><small>${esc(fechaHora(t.revision.t))} · ${esc(t.revision.nota)}</small></span></div>`:`<div class="quick"><input class="in" id="cj-rev" placeholder="Qué has comprobado o decidido (p. ej. «Lo repone de su sueldo»)" maxlength="400" style="flex:1 1 240px"><button type="button" class="btn b-brand b-sm" data-cjrevisar="${esc(t.id)}">Dar por revisado</button></div>`}</section>
@@ -3750,6 +3850,315 @@ async function cjVigilar(){
 setInterval(cjVigilar,15000);
 setInterval(async()=>{ if(!PW||ES_GER()||$("#s-caja").hidden||CJ_MODO||document.querySelector("#dlg-cj[open]")) return; try{ CJ=await api("/api/caja/estado"); cjPintar(); }catch(_){ } },20000);
 /*CAJA-JS-FIN*/
+/*FINANZAS-JS-INICIO*//* =====================================================================
+   FINANZAS · Ingresos y egresos globales (solo el gerente)
+   Integrado con Taller (presupuestos aceptados), Coches (vendidos) y Caja.
+   Fuente: tools/finanzas/finanzas.js → python3 tools/finanzas/inyectar.py
+   ===================================================================== */
+const FN_CAT=[
+  ["fijos","Gastos fijos",[["alquiler","Alquiler del local","general"],["nominas","Nóminas de empleados","general"],["seguros","Seguros","general"],["asesoria","Asesoría / gestoría","general"],["autonomos","Cuotas de autónomos / Seguridad Social","general"]]],
+  ["suministros","Suministros y servicios",[["luz","Luz","general"],["agua","Agua","general"],["telefono","Internet / teléfono","general"],["software","Licencias de software","general"],["publicidad","Publicidad / marketing","general"]]],
+  ["operativos","Gastos operativos de taller y venta",[["recambios","Compra de recambios / piezas","taller"],["itv","ITV / tasas","venta"],["combustible","Combustible","general"],["herramientas","Herramientas","taller"],["reacondicionamiento","Reacondicionamiento de coches (retoma / clientes)","venta"],["mantenimiento","Mantenimiento del local","general"]]]];
+const FN_CATTXT=Object.fromEntries(FN_CAT.flatMap(g=>g[2].map(([k,t])=>[k,t]))); FN_CATTXT["sin-clasificar"]="Sin clasificar (salidas de caja)"; FN_CATTXT["descuadres"]="Descuadres de caja (falta dinero)";
+const FN_AREA={taller:"Taller",venta:"Venta de coches",general:"General (común)"};
+const FN_PAGO=[["efectivo","Efectivo (caja)"],["tarjeta","Tarjeta"],["transferencia","Transferencia"],["domiciliacion","Domiciliación"]];
+const FN_COBRO=[["efectivo","Efectivo"],["tarjeta","Tarjeta / TPV"],["transferencia","Transferencia"],["financiacion","Financiación"]];
+const FN_MTXT={efectivo:"Efectivo",tarjeta:"Tarjeta / TPV",transferencia:"Transferencia",domiciliacion:"Domiciliación",financiacion:"Financiación"};
+const FN_IMP=[["0","0 % (exento)"],["3","3 % IGIC reducido"],["7","7 % IGIC general"],["9.5","9,5 % IGIC incrementado"],["15","15 % IGIC especial"],["21","21 % IVA (factura peninsular)"]];
+let FN=null, FN_PER="mes", FN_REF=hoyC(), FN_VISTA_E="todas", FN_CARS=null;
+
+/* ---------- periodo ---------- */
+const fnD=(d,n)=>new Date(Date.parse(d+"T12:00:00Z")+n*864e5).toISOString().slice(0,10);
+function fnRango(){
+  const r=FN_REF;
+  if(FN_PER==="dia") return [r,r,fechaLarga(r)];
+  if(FN_PER==="semana"){ const w=(new Date(r+"T12:00:00Z").getUTCDay()+6)%7, a=fnD(r,-w), b=fnD(a,6); return [a,b,`Semana del ${tF(a)} al ${tF(b)}`]; }
+  if(FN_PER==="anio") return [r.slice(0,4)+"-01-01",r.slice(0,4)+"-12-31","Año "+r.slice(0,4)];
+  return [r.slice(0,8)+"01",finMes(r.slice(0,7)),nombreMes(r.slice(0,7))];
+}
+function fnMover(n){ const r=FN_REF;
+  if(FN_PER==="dia") FN_REF=fnD(r,n); else if(FN_PER==="semana") FN_REF=fnD(r,7*n);
+  else if(FN_PER==="anio") FN_REF=(+r.slice(0,4)+n)+r.slice(4); else FN_REF=mesMas(r.slice(0,7),n)+"-01";
+  if(FN_REF>hoyC()) FN_REF=hoyC(); fnCargar(); }
+
+/* ---------- carga ---------- */
+async function fnCargar(){
+  const [a,b]=fnRango(), hasta=b>hoyC()?hoyC():b;
+  if(!FN) $("#fn").innerHTML='<div class="empty">Calculando…</div>';
+  try{ const [r,cars]=await Promise.all([api(`/api/finanzas/resumen?desde=${a}&hasta=${hasta}`),FN_CARS?null:api("/api/coches?todos=1")]); FN=r; if(cars) FN_CARS=cars; fnPintar(); }
+  catch(err){ $("#fn").innerHTML=`<div class="empty">${esc(err.message)}</div>`; }
+}
+function fnAbrirTab(){ if(!ES_GER()||ES_EQ()) return abrirTab("ordenes"); show("s-fin"); history.replaceState(null,"","#finanzas"); FN_CARS=null; fnCargar(); }
+
+/* ---------- pintar ---------- */
+const fnPct=(a,b)=>b?Math.round(a/b*1000)/10:0;
+const fnPctTxt=v=>String(v).replace(".",",")+" %";
+function fnPintar(){
+  const r=FN, k=r.kpis, [,,etq]=fnRango();
+  const canalTot=Object.values(r.porCanal).reduce((a,b)=>a+b,0), pagoTot=Object.values(r.porPago).reduce((a,b)=>a+b,0);
+  const avisos=[];
+  if(k.ventasSinDatos) avisos.push(`<b>${k.ventasSinDatos}</b> venta${k.ventasSinDatos>1?"s":""} de coche sin completar (precio final o coste de compra)`);
+  if(k.sinClasificar) avisos.push(`<b>${k.sinClasificar}</b> salida${k.sinClasificar>1?"s":""} de caja sin clasificar`);
+  if(k.porCobrar) avisos.push(`<b>${cjE(k.porCobrar)}</b> pendientes de cobro`);
+  $("#fn").innerHTML=`
+  <div class="fn-bar">
+    <div class="segv" role="group" aria-label="Periodo">${[["dia","Día"],["semana","Semana"],["mes","Mes"],["anio","Año"]].map(([p,t])=>`<button type="button" data-fnper="${p}" aria-pressed="${FN_PER===p}">${t}</button>`).join("")}</div>
+    <div class="mesnav"><button type="button" data-fnmov="-1" aria-label="Anterior">‹</button><b>${esc(etq)}</b><button type="button" data-fnmov="1" aria-label="Siguiente" ${fnRango()[1]>=hoyC()?"disabled":""}>›</button></div>
+    <div class="fn-acts"><button type="button" class="btn b-acc b-sm" data-fngasto>− Nuevo gasto</button><button type="button" class="btn b-ghost b-sm" data-fningreso>+ Otro ingreso</button><button type="button" class="btn b-ghost b-sm" data-fnexp="emitidas">Excel emitidas</button><button type="button" class="btn b-ghost b-sm" data-fnexp="recibidas">Excel recibidas</button><button type="button" class="btn b-brand b-sm" data-fnexp="pdf">PDF asesoría</button></div>
+  </div>
+  ${avisos.length?`<div class="fn-avisos">${avisos.map(a=>`<span>${a}</span>`).join("")} <a href="#fn-pend" class="g-link">Resolver</a></div>`:""}
+  <div class="fn-kpis">
+    <div class="fn-kpi hero ${k.flujo<0?"neg":""}"><small>Flujo de caja neto</small><b class="num">${cjD(k.flujo)}</b><span>Cobrado ${cjE(k.cobrado)} − pagado ${cjE(k.pagado)}${k.descuadres?` ${k.descuadres<0?"−":"+"} descuadres ${cjE(Math.abs(k.descuadres))}`:""}</span></div>
+    <div class="fn-kpi"><small>Cobrado</small><b class="num">${cjE(k.cobrado)}</b><span>Facturado ${cjE(k.facturado)}</span></div>
+    <div class="fn-kpi"><small>Pagado</small><b class="num">${cjE(k.pagado)}</b><span>${cjE(k.gastosBase)} sin impuestos</span></div>
+    <div class="fn-kpi ${k.resultado<0?"neg":"pos"}"><small>Beneficio neto real</small><b class="num">${cjD(k.resultado)}</b><span>Taller + venta, sin impuestos</span></div>
+    <div class="fn-kpi ${k.porCobrar?"aviso":""}"><small>Pendiente de cobro</small><b class="num">${cjE(k.porCobrar)}</b><span>De todas las fechas</span></div>
+  </div>
+  <div class="fn-grid">
+    <section class="card"><h3>Cobrado por canal</h3><p class="hint">Todo lo que ha entrado en ${esc(etq.toLowerCase())}. El efectivo es el que suma a la caja física.</p>
+      <div class="fn-canales">${FN_COBRO.map(([c,t])=>`<div class="fn-canal ${c}"><small>${t}</small><b class="num">${cjE(r.porCanal[c]||0)}</b><span>${canalTot?fnPctTxt(fnPct(r.porCanal[c]||0,canalTot)):"—"}</span></div>`).join("")}</div>
+      <p class="hint" style="margin-top:10px">Pagado: efectivo ${cjE(r.porPago.efectivo||0)} · banco (tarjeta, transferencia, domiciliación) ${cjE(pagoTot-(r.porPago.efectivo||0))}</p></section>
+    <section class="card"><h3>Cuenta de efectivo</h3><p class="hint">Conciliada con los cierres ciegos de caja.</p>
+      <div class="fn-efe"><b class="num">${cjE(r.efectivo.teorico)}</b><span>${r.efectivo.abierta?`Teórico ahora: caja abierta por ${esc(r.efectivo.nombre)}`:r.efectivo.desde?`Contado en el último cierre (${esc(r.efectivo.nombre)}, ${esc(fechaHora(r.efectivo.desde))})`:"La caja no se ha abierto todavía"}</span></div>
+      <table class="tabla fn-mini"><tbody>
+        <tr><td>Descuadres de caja en el periodo</td><td class="n num ${k.descuadres<0?"cj-rojo":""}">${cjD(k.descuadres)}</td></tr>
+        ${r.internos.length?`<tr><td>Retiros del propietario</td><td class="n num">${cjE(r.internos.filter(x=>x.tipo==="propietario").reduce((a,x)=>a+x.importe,0))}</td></tr><tr><td>Llevado al banco</td><td class="n num">${cjE(r.internos.filter(x=>x.tipo==="banco").reduce((a,x)=>a+x.importe,0))}</td></tr>`:""}
+      </tbody></table><p class="hint">Los retiros del propietario y los ingresos al banco no son gastos: solo cambian el dinero de sitio.</p>
+      <button type="button" class="g-link" data-fncaja>Abrir Control de Caja →</button></section>
+  </div>
+  ${fnRentabilidad()}
+  <div class="fn-grid">
+    <section class="card"><h3>Entradas y salidas de dinero</h3>${fnEvolucion()}</section>
+    <section class="card"><h3>¿A dónde se va el dinero?</h3><p class="hint">Reparto de lo pagado en ${esc(etq.toLowerCase())} (con impuestos).</p>${fnDestino()}</section>
+  </div>
+  ${fnPendientes()}
+  ${fnEmitidas()}
+  ${fnRecibidas()}
+  ${fnCoches()}`;
+}
+
+function fnRentabilidad(){
+  const t=FN.taller, v=FN.venta, col=(tit,sub,filas,neto)=>`<div class="fn-rent"><div class="fn-rent-h"><b>${tit}</b><small>${sub}</small></div><table class="tabla fn-mini"><tbody>${filas.map(([l,x,cls])=>`<tr class="${cls||""}"><td>${l}</td><td class="n num">${x}</td></tr>`).join("")}</tbody></table><div class="fn-neto ${neto<0?"neg":"pos"}"><span>Ganancia neta real</span><b class="num">${cjD(neto)}</b></div></div>`;
+  return `<section class="card fn-rents"><h3>Rentabilidad: taller frente a venta de coches</h3><p class="hint">Importes sin impuestos. Los gastos comunes (alquiler, nóminas, luz…) se reparten según lo que factura cada parte. Lo invertido en coches que aún no se han vendido no cuenta como gasto hasta que se venden${FN.kpis.invertidoStock?` (ahora ${cjE(FN.kpis.invertidoStock)})`:""}.</p>
+    <div class="fn-rent-g">${col("Taller","Presupuestos aceptados y cobros de taller",[["Ingresos",cjE(t.ingresos)],["− Gastos del taller (recambios, herramientas…)",cjE(t.gastosDirectos)],["= Margen directo",cjD(t.margen),"sub"],["− Parte de gastos comunes",cjE(t.generales)]],t.neto)}
+    ${col("Venta de coches",`${v.coches} coche${v.coches===1?"":"s"} vendido${v.coches===1?"":"s"}`,[["Ventas",cjE(v.ingresos)],["− Compra y reacondicionamiento de esos coches",cjE(v.costeCoches)],["− Otros gastos de venta",cjE(v.gastosDirectos)],["= Margen directo",cjD(v.margen),"sub"],["− Parte de gastos comunes",cjE(v.generales)]],v.neto)}</div></section>`;
+}
+function fnEvolucion(){
+  const [a,b]=fnRango(), fin=b>hoyC()?hoyC():b, porDia=Object.fromEntries(FN.serie.map(s=>[s.fecha,s]));
+  let cubos=[];
+  if(FN_PER==="dia") return `<div class="fn-dia"><div><small>Entró</small><b class="num fn-c-ing">${cjE(FN.kpis.cobrado)}</b></div><div><small>Salió</small><b class="num fn-c-egr">${cjE(FN.kpis.pagado)}</b></div></div>`;
+  if(FN_PER==="anio"){ for(let m=1;m<=12;m++){ const mm=a.slice(0,4)+"-"+String(m).padStart(2,"0"); if(mm>fin.slice(0,7)) break; const xs=FN.serie.filter(s=>s.fecha.startsWith(mm)); cubos.push({etq:MESES[m-1].slice(0,3),larga:nombreMes(mm),ing:xs.reduce((x,s)=>x+s.cobrado,0),egr:xs.reduce((x,s)=>x+s.pagado,0)}); } }
+  else for(let d=a;d<=fin;d=fnD(d,1)){ const s=porDia[d]||{cobrado:0,pagado:0}; cubos.push({etq:FN_PER==="semana"?["L","M","X","J","V","S","D"][(new Date(d+"T12:00:00Z").getUTCDay()+6)%7]:String(+d.slice(8)),larga:fechaLarga(d),ing:s.cobrado,egr:s.pagado}); }
+  const max=Math.max(1,...cubos.flatMap(c=>[c.ing,c.egr])), cada=cubos.length>16?Math.ceil(cubos.length/10):1;
+  if(!cubos.some(c=>c.ing||c.egr)) return '<p class="hint">Sin movimientos en este periodo.</p>';
+  return `<div class="fn-ley"><span><i class="fn-c-ing"></i>Cobrado</span><span><i class="fn-c-egr"></i>Pagado</span></div>
+   <div class="fn-evo" role="img" aria-label="Cobrado y pagado por ${FN_PER==="anio"?"mes":"día"}"><div class="fn-evo-y"><span>${cjE(max).replace(/,00 €$/," €")}</span><span>0</span></div><div class="fn-evo-b">${cubos.map(c=>`<div class="fn-evo-c" data-tip="${esc(`${c.larga} · cobrado ${cjE(c.ing)} · pagado ${cjE(c.egr)} · neto ${cjD(c.ing-c.egr)}`)}"><i class="fn-c-ing" style="height:${(c.ing/max*100).toFixed(1)}%"></i><i class="fn-c-egr" style="height:${(c.egr/max*100).toFixed(1)}%"></i></div>`).join("")}</div></div>
+   <div class="fn-evo-x">${cubos.map((c,i)=>`<span>${i%cada===0||i===cubos.length-1?esc(c.etq):""}</span>`).join("")}</div>
+   <details class="fn-tabla-d"><summary>Ver como tabla</summary><div class="tabla-wrap"><table class="tabla"><thead><tr><th>${FN_PER==="anio"?"Mes":"Día"}</th><th class="n">Cobrado</th><th class="n">Pagado</th><th class="n">Neto</th></tr></thead><tbody>${cubos.filter(c=>c.ing||c.egr).map(c=>`<tr><td>${esc(c.larga)}</td><td class="n num">${cjE(c.ing)}</td><td class="n num">${cjE(c.egr)}</td><td class="n num">${cjD(c.ing-c.egr)}</td></tr>`).join("")}</tbody></table></div></details>`;
+}
+function fnDestino(){
+  const tot=Object.values(FN.porCategoria).reduce((a,b)=>a+b,0); if(!tot) return '<p class="hint">Sin gastos en este periodo.</p>';
+  const filas=Object.entries(FN.porCategoria).sort((a,b)=>b[1]-a[1]);
+  return `<div class="bh fn-dest">${filas.map(([c,v])=>`<div class="bh-r" data-tip="${esc(`${FN_CATTXT[c]||c}: ${cjE(v)} · ${fnPctTxt(fnPct(v,tot))} del total`)}"><span class="bh-l">${esc(FN_CATTXT[c]||c)}</span><span class="bh-t"><i style="width:${(v/filas[0][1]*100).toFixed(1)}%"></i></span><span class="bh-v num">${fnPctTxt(fnPct(v,tot))}<small>${cjE(v)}</small></span></div>`).join("")}</div>
+    <p class="hint" style="margin-top:8px">Total pagado: <b>${cjE(tot)}</b></p>`;
+}
+function fnPendientes(){
+  const p=FN.porCobrar, sc=FN.sinClasificar, sinVenta=FN.coches.filter(c=>c.estimado||c.sinCoste);
+  if(!p.length&&!sc.length&&!sinVenta.length) return `<section class="card" id="fn-pend"><h3>Pendientes</h3><p class="hint">Nada pendiente: todo cobrado, todas las ventas completas y todas las salidas de caja clasificadas.</p></section>`;
+  return `<section class="card" id="fn-pend"><h3>Pendientes</h3>
+    ${sinVenta.length?`<h4 class="fn-h4">Ventas de coches por completar</h4>${sinVenta.map(c=>`<div class="fn-pend"><span><b>${esc(c.nombre)}</b><small>${esc(tF(c.fecha))} · ${c.estimado?"sin precio final (se usa el anunciado: "+cjE(c.precio)+")":""}${c.estimado&&c.sinCoste?" · ":""}${c.sinCoste?"falta el coste de compra":""}</small></span><button type="button" class="btn b-acc b-sm" data-fnventa="${esc(c.coche)}">Completar venta</button></div>`).join("")}`:""}
+    ${p.length?`<h4 class="fn-h4">Por cobrar</h4>${p.map(x=>`<div class="fn-pend"><span><b>${esc(x.concepto)}</b><small>${esc(tF(x.fecha))}${x.num?" · "+esc(x.num):""}${x.cliente?" · "+esc(x.cliente):""}</small></span><b class="num">${cjE(x.pendiente)}${x.pendiente!==x.total?`<small>de ${cjE(x.total)}</small>`:""}</b>${x.tipo==="taller"||x.tipo==="venta"?`<button type="button" class="btn b-brand b-sm" data-fncobro="${x.tipo}" data-ref="${esc(x.ref)}" data-pend="${x.pendiente}" data-txt="${esc(x.concepto)}" ${x.tipo==="venta"&&x.estimado?"disabled title=\"Primero completa la venta\"":""}>Registrar cobro</button>`:""}</div>`).join("")}`:""}
+    ${sc.length?`<h4 class="fn-h4">Salidas de caja sin clasificar</h4><p class="hint" style="margin:0 0 6px">El equipo las registró en la caja. Dile a qué categoría pertenecen para que cuenten bien.</p>${sc.map(g=>`<div class="fn-pend"><span><b>${esc(g.concepto)}</b><small>${esc(tF(g.fecha))} · ${esc(g.factura||"")} · registró ${esc(g.por||"")}</small></span><b class="num">${cjE(g.total)}</b><button type="button" class="btn b-ghost b-sm" data-fnclasif="${esc(g.cajaMov)}" data-txt="${esc(g.concepto)}" data-imp="${g.total}">Clasificar</button></div>`).join("")}`:""}
+  </section>`;
+}
+const fnAdj=a=>a?`<a class="chip" href="${FOTO(a.key)}" target="_blank" rel="noopener">${a.tipo==="pdf"?"PDF":"Foto"}</a>`:'<span class="chip rojo">Sin adjunto</span>';
+function fnEmitidas(){
+  const l=FN.emitidas.filter(d=>FN_VISTA_E==="todas"||d.area===FN_VISTA_E);
+  return `<section class="card"><div class="fn-th"><h3>Facturas emitidas · ingresos <span class="num">${FN.emitidas.length}</span></h3><div class="segv" role="group">${[["todas","Todas"],["taller","Taller"],["venta","Venta"],["general","Otros"]].map(([k,t])=>`<button type="button" data-fnve="${k}" aria-pressed="${FN_VISTA_E===k}">${t}</button>`).join("")}</div></div>
+   ${l.length?`<div class="tabla-wrap"><table class="tabla fn-t"><thead><tr><th>Fecha</th><th>Concepto</th><th class="n">Base</th><th class="n">Impuesto</th><th class="n">Total</th><th>Cobro</th><th></th></tr></thead><tbody>${l.map(d=>{ const pend=d.total-d.cobrado, canales=[...new Set(d.cobros.map(c=>FN_MTXT[c.metodo]))].join(" + ");
+     return `<tr><td class="num">${esc(tF(d.fecha))}<small>${esc(d.num||"")}</small></td><td><b>${esc(d.concepto)}</b><small>${esc(d.cliente||"")}${d.estimado?' · <span class="cj-ambar">precio estimado</span>':""}${d.sinPresupuesto?' · <span class="cj-ambar">cobrado sin presupuesto aceptado</span>':""}${d.sinFactura?" · cobro de caja":""}</small></td><td class="n num">${cjE(d.base)}</td><td class="n num">${cjE(d.impuesto)}<small>${fnPctTxt(d.impuestoPct)}</small></td><td class="n num"><b>${cjE(d.total)}</b></td><td>${pend<=0?`<span class="chip ok">Cobrado</span>`:d.cobrado?`<span class="chip">Parcial</span>`:`<span class="chip rojo">Pendiente</span>`}<small>${esc(canales)}</small></td><td class="n">${d.tipo==="manual"?`<button type="button" class="chipb" data-fnanular="ingreso" data-id="${esc(d.ref)}">Anular</button>`:""}${d.adjunto?fnAdj(d.adjunto):""}</td></tr>`; }).join("")}</tbody></table></div>`:'<p class="hint">Sin ingresos en este periodo.</p>'}</section>`;
+}
+function fnRecibidas(){
+  const l=FN.recibidas;
+  return `<section class="card"><div class="fn-th"><h3>Facturas recibidas · gastos <span class="num">${l.length}</span></h3><button type="button" class="btn b-acc b-sm" data-fngasto>− Nuevo gasto</button></div>
+   ${l.length?`<div class="tabla-wrap"><table class="tabla fn-t"><thead><tr><th>Fecha</th><th>Proveedor · concepto</th><th>Categoría</th><th class="n">Base</th><th class="n">Impuesto</th><th class="n">Total</th><th>Pago</th><th></th></tr></thead><tbody>${l.map(g=>`<tr class="${g.sinClasificar?"fn-sc":""}"><td class="num">${esc(tF(g.fecha))}<small>${esc(g.factura||"")}</small></td><td><b>${esc(g.proveedor||"—")}</b><small>${esc(g.concepto)}${g.cocheNombre?" · "+esc(g.cocheNombre):""}</small></td><td>${esc(FN_CATTXT[g.categoria]||g.categoria)}<small>${esc(FN_AREA[g.area]||"")}</small></td><td class="n num">${cjE(g.base)}</td><td class="n num">${cjE(g.impuesto)}<small>${fnPctTxt(g.impuestoPct)}</small></td><td class="n num"><b>${cjE(g.total)}</b></td><td>${esc(FN_MTXT[g.metodo]||g.metodo)}${g.origen==="caja"?"<small>salida de caja</small>":g.cajaMov?"<small>salió de la caja</small>":""}</td><td class="n">${fnAdj(g.adjunto)}${g.origen==="gasto"?` <button type="button" class="chipb" data-fnanular="gasto" data-id="${esc(g.id)}">Anular</button>`:g.sinClasificar?` <button type="button" class="chipb" data-fnclasif="${esc(g.cajaMov)}" data-txt="${esc(g.concepto)}" data-imp="${g.total}">Clasificar</button>`:""}</td></tr>`).join("")}</tbody></table></div>`:'<p class="hint">Sin gastos en este periodo.</p>'}</section>`;
+}
+function fnCoches(){
+  const v=FN.coches.filter(c=>{ const [a,b]=fnRango(); return c.fecha>=a&&c.fecha<=b; }), s=FN.stock;
+  return `<section class="card"><h3>Coches: beneficio por unidad</h3>
+   ${v.length?`<div class="tabla-wrap"><table class="tabla fn-t"><thead><tr><th>Vendido</th><th>Coche</th><th class="n">Venta</th><th class="n">Compra</th><th class="n">Reacond.</th><th class="n">Beneficio</th><th></th></tr></thead><tbody>${v.map(c=>`<tr><td class="num">${esc(tF(c.fecha))}</td><td><b>${esc(c.nombre)}</b>${c.estimado?'<small class="cj-ambar">precio estimado</small>':""}${c.sinCoste?'<small class="cj-ambar">falta coste de compra</small>':""}</td><td class="n num">${cjE(c.base)}</td><td class="n num">${cjE(c.compra)}</td><td class="n num">${cjE(c.reacondicionamiento)}</td><td class="n num"><b class="${c.beneficio<0?"cj-rojo":"cj-verde"}">${cjD(c.beneficio)}</b><small>${c.base?fnPctTxt(fnPct(c.beneficio,c.base)):""}</small></td><td class="n"><button type="button" class="chipb" data-fnventa="${esc(c.coche)}">Editar</button></td></tr>`).join("")}</tbody></table></div>`:'<p class="hint">Ningún coche vendido en este periodo.</p>'}
+   <h4 class="fn-h4">En stock: lo invertido</h4>
+   ${s.length?`<div class="tabla-wrap"><table class="tabla fn-t"><thead><tr><th>Coche</th><th class="n">Precio anunciado</th><th class="n">Compra</th><th class="n">Reacond.</th><th class="n">Margen si se vende al anunciado</th><th></th></tr></thead><tbody>${s.map(c=>{ const m=c.precio-c.compra-c.reacondicionamiento; return `<tr><td><b>${esc(c.nombre)}</b></td><td class="n num">${cjE(c.precio)}</td><td class="n num">${c.compra?cjE(c.compra):'<span class="cj-ambar">sin dato</span>'}</td><td class="n num">${cjE(c.reacondicionamiento)}</td><td class="n num">${c.compra?`<b class="${m<0?"cj-rojo":""}">${cjD(m)}</b>`:"—"}</td><td class="n"><button type="button" class="chipb" data-fncoste="${esc(c.coche)}" data-txt="${esc(c.nombre)}" data-v="${c.compra}">Coste de compra</button></td></tr>`; }).join("")}</tbody></table></div><p class="hint">La compra de coches para stock no es un gasto del negocio: se descuenta de su venta al calcular el beneficio.</p>`:'<p class="hint">No hay coches en stock.</p>'}</section>`;
+}
+
+/* ---------- diálogos ---------- */
+function fnDlg(html){ let d=$("#dlg-fn"); if(!d){ d=document.createElement("dialog"); d.id="dlg-fn"; d.className="t-dlg fn-dlg"; document.body.appendChild(d); } d.innerHTML=html; d.showModal(); d.querySelector("[data-fncancel]").onclick=()=>d.close(); return d; }
+const fnSeg=(id,ops,v)=>`<div class="t-seg" id="${id}">${ops.map(([k,t])=>`<button type="button" data-v="${k}" aria-pressed="${k===v}">${t}</button>`).join("")}</div>`;
+const fnSegVal=id=>(document.querySelector(`#${id} [aria-pressed=true]`)||{}).dataset?.v||"";
+function fnSegBind(id,cb){ const el=$("#"+id); el.onclick=e=>{ const b=e.target.closest("[data-v]"); if(!b) return; el.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); cb&&cb(b.dataset.v); }; }
+async function fnSubir(file){
+  if(file.type==="application/pdf"||/\.pdf$/i.test(file.name)){ if(file.size>5*1024*1024) throw new Error("El PDF pesa más de 5 MB."); return (await api("/api/fotos",{method:"POST",headers:{"content-type":"application/pdf"},body:file})).key; }
+  const b=await shrink(file); return (await api("/api/fotos",{method:"POST",headers:{"content-type":"image/jpeg"},body:b})).key;
+}
+function fnAdjuntoUI(id,obligatorio){ return `<div class="field"><label>Factura o recibo ${obligatorio?'<b class="t-req">*</b>':"(opcional)"}</label><div class="fn-adj" id="${id}"><label class="btn b-ghost b-sm"><input type="file" accept="image/*" capture="environment" hidden data-fnfile>📷 Foto</label><label class="btn b-ghost b-sm"><input type="file" accept="application/pdf,image/*" hidden data-fnfile>📄 PDF o archivo</label><span class="fn-adj-ok" hidden></span></div></div>`; }
+function fnAdjuntoBind(id){ const box=$("#"+id); box.dataset.key=""; box.querySelectorAll("[data-fnfile]").forEach(i=>i.onchange=async()=>{ const f=i.files[0]; i.value=""; if(!f) return; const ok=box.querySelector(".fn-adj-ok"); ok.hidden=false; ok.textContent="Subiendo…";
+  try{ const k=await fnSubir(f); box.dataset.key=k; ok.innerHTML=`✓ <a href="${FOTO(k)}" target="_blank" rel="noopener">${k.endsWith(".pdf")?"PDF adjunto":"Foto adjunta"}</a>`; }catch(err){ ok.textContent=err.message; } }); }
+function fnTotalUI(){ const b=cjNum($("#fn-base").value), p=Number($("#fn-imp").value)||0; $("#fn-tot").textContent=b>0?`Impuesto ${cjE(Math.round(b*p))} · Total ${cjE(Math.round(b*100)+Math.round(b*p))}`:"Escribe la base"; }
+function fnErr(m){ const e=$("#fn-err"); e.textContent=m; e.hidden=false; }
+
+function fnNuevoGasto(){
+  const cars=(FN_CARS||[]);
+  const d=fnDlg(`<form id="f-fn" novalidate><h2>Nuevo gasto</h2><p class="hint">Cada gasto con su categoría, su factura y cómo se pagó. Si se paga en efectivo, sale de la caja al momento.</p>
+    <div class="t-g2"><div class="field"><label for="fn-fecha">Fecha *</label><input class="in" type="date" id="fn-fecha" value="${hoyC()}" max="${hoyC()}"></div>
+    <div class="field"><label for="fn-cat">Categoría *</label><select class="in" id="fn-cat"><option value="">— Elige —</option>${FN_CAT.map(([g,gt,l])=>`<optgroup label="${esc(gt)}">${l.map(([k,t])=>`<option value="${k}">${esc(t)}</option>`).join("")}</optgroup>`).join("")}</select></div></div>
+    <div class="field"><label>¿De qué parte del negocio es?</label>${fnSeg("fn-area",Object.entries(FN_AREA),"general")}</div>
+    <div class="field" id="fn-coche-f" hidden><label for="fn-coche">Coche (si el gasto es de un coche concreto)</label><select class="in" id="fn-coche"><option value="">— Ninguno —</option>${cars.map(c=>`<option value="${esc(c.id)}">${esc(c.marca+" "+c.modelo+" "+(c.version||""))} · ${esc(c.estado)}</option>`).join("")}</select></div>
+    <div class="t-g2"><div class="field"><label for="fn-prov">Proveedor / acreedor *</label><input class="in" id="fn-prov" maxlength="120" placeholder="Ej.: Recambios Sur S.L."></div><div class="field"><label for="fn-fact">Nº de factura</label><input class="in" id="fn-fact" maxlength="40"></div></div>
+    <div class="field"><label for="fn-con">Concepto detallado *</label><input class="in" id="fn-con" maxlength="300" placeholder="Ej.: 4 pastillas de freno Brembo para el Seat Ibiza 1111AAA"></div>
+    <div class="t-g2"><div class="field"><label for="fn-base">Base imponible (€) *</label><input class="in num" id="fn-base" inputmode="decimal" placeholder="0,00"></div><div class="field"><label for="fn-imp">Impuesto</label><select class="in" id="fn-imp">${FN_IMP.map(([v,t])=>`<option value="${v}" ${v==="7"?"selected":""}>${t}</option>`).join("")}</select></div></div>
+    <p class="fn-tot num" id="fn-tot">Escribe la base</p>
+    <div class="field"><label>¿Cómo se pagó? *</label>${fnSeg("fn-met",FN_PAGO,"")}<small class="hint" id="fn-met-h"></small></div>
+    ${fnAdjuntoUI("fn-adj",true)}
+    <div class="msg bad" id="fn-err" hidden></div>
+    <div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-fncancel>Cancelar</button><button type="submit" class="btn b-acc" id="fn-ok">Guardar gasto</button></div></form>`);
+  const ajustarArea=()=>{ const k=$("#fn-cat").value, a=FN_CAT.flatMap(g=>g[2]).find(x=>x[0]===k); if(a) $("#fn-area").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===a[2]))); $("#fn-coche-f").hidden=!["reacondicionamiento","itv","recambios","combustible"].includes(k)&&fnSegVal("fn-area")!=="venta"; };
+  $("#fn-cat").onchange=ajustarArea; fnSegBind("fn-area",()=>ajustarArea());
+  fnSegBind("fn-met",v=>{ $("#fn-met-h").textContent=v==="efectivo"?"Sale de la caja abierta de hoy y se resta de su teórico. La fecha tiene que ser hoy.":""; if(v==="efectivo") $("#fn-fecha").value=hoyC(); });
+  $("#fn-base").oninput=fnTotalUI; $("#fn-imp").onchange=fnTotalUI; fnAdjuntoBind("fn-adj");
+  $("#f-fn").onsubmit=async e=>{ e.preventDefault(); $("#fn-err").hidden=true;
+    const base=cjNum($("#fn-base").value), met=fnSegVal("fn-met"), adj=$("#fn-adj").dataset.key;
+    if(!$("#fn-cat").value) return fnErr("Elige la categoría.");
+    if($("#fn-prov").value.trim().length<2) return fnErr("Escribe el proveedor.");
+    if($("#fn-con").value.trim().length<5) return fnErr("Escribe el concepto con detalle.");
+    if(!(base>0)) return fnErr("Escribe la base imponible.");
+    if(!met) return fnErr("Elige cómo se pagó.");
+    if(!adj) return fnErr("Adjunta la foto o el PDF de la factura.");
+    $("#fn-ok").disabled=true;
+    try{ await api("/api/finanzas/gasto",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({fecha:$("#fn-fecha").value,categoria:$("#fn-cat").value,area:fnSegVal("fn-area"),coche:$("#fn-coche").value,proveedor:$("#fn-prov").value,factura:$("#fn-fact").value,concepto:$("#fn-con").value,base:String(base),impuestoPct:$("#fn-imp").value,metodo:met,adjunto:adj})});
+      d.close(); toast(met==="efectivo"?"Gasto guardado y restado de la caja":"Gasto guardado"); fnCargar(); }catch(err){ fnErr(err.message); }
+    $("#fn-ok").disabled=false; };
+}
+function fnNuevoIngreso(){
+  const d=fnDlg(`<form id="f-fn" novalidate><h2>Otro ingreso</h2><p class="hint">Para ingresos que no vienen de un presupuesto de taller ni de la venta de un coche (esos entran solos).</p>
+    <div class="t-g2"><div class="field"><label for="fn-fecha">Fecha *</label><input class="in" type="date" id="fn-fecha" value="${hoyC()}" max="${hoyC()}"></div><div class="field"><label for="fn-fact">Nº de factura</label><input class="in" id="fn-fact" maxlength="40"></div></div>
+    <div class="t-g2"><div class="field"><label for="fn-cli">Cliente</label><input class="in" id="fn-cli" maxlength="120"></div><div class="field"><label>Parte del negocio</label>${fnSeg("fn-area",Object.entries(FN_AREA),"general")}</div></div>
+    <div class="field"><label for="fn-con">Concepto *</label><input class="in" id="fn-con" maxlength="300"></div>
+    <div class="t-g2"><div class="field"><label for="fn-base">Base imponible (€) *</label><input class="in num" id="fn-base" inputmode="decimal" placeholder="0,00"></div><div class="field"><label for="fn-imp">Impuesto</label><select class="in" id="fn-imp">${FN_IMP.map(([v,t])=>`<option value="${v}" ${v==="7"?"selected":""}>${t}</option>`).join("")}</select></div></div>
+    <p class="fn-tot num" id="fn-tot">Escribe la base</p>
+    <div class="field"><label>¿Cómo se cobró? *</label>${fnSeg("fn-met",FN_COBRO,"")}</div>
+    ${fnAdjuntoUI("fn-adj",false)}
+    <div class="msg bad" id="fn-err" hidden></div>
+    <div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-fncancel>Cancelar</button><button type="submit" class="btn b-acc" id="fn-ok">Guardar ingreso</button></div></form>`);
+  fnSegBind("fn-area"); fnSegBind("fn-met"); $("#fn-base").oninput=fnTotalUI; $("#fn-imp").onchange=fnTotalUI; fnAdjuntoBind("fn-adj");
+  $("#f-fn").onsubmit=async e=>{ e.preventDefault(); $("#fn-err").hidden=true; const base=cjNum($("#fn-base").value), met=fnSegVal("fn-met");
+    if($("#fn-con").value.trim().length<3) return fnErr("Escribe el concepto."); if(!(base>0)) return fnErr("Escribe la base imponible."); if(!met) return fnErr("Elige cómo se cobró.");
+    $("#fn-ok").disabled=true;
+    try{ await api("/api/finanzas/ingreso",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({fecha:$("#fn-fecha").value,factura:$("#fn-fact").value,cliente:$("#fn-cli").value,area:fnSegVal("fn-area"),concepto:$("#fn-con").value,base:String(base),impuestoPct:$("#fn-imp").value,metodo:met,adjunto:$("#fn-adj").dataset.key})});
+      d.close(); toast("Ingreso guardado"); fnCargar(); }catch(err){ fnErr(err.message); }
+    $("#fn-ok").disabled=false; };
+}
+function fnCobro(tipo,ref,pend,txt){
+  const d=fnDlg(`<form id="f-fn" novalidate><h2>Registrar cobro</h2><p class="hint">${esc(txt)}</p>
+    <div class="t-g2"><div class="field"><label for="fn-importe">Importe cobrado (€) *</label><input class="in num cj-imp" id="fn-importe" inputmode="decimal" value="${(pend/100).toFixed(2).replace(".",",")}"></div><div class="field"><label for="fn-fecha">Fecha</label><input class="in" type="date" id="fn-fecha" value="${hoyC()}" max="${hoyC()}"></div></div>
+    <div class="field"><label>¿Cómo ha pagado? *</label>${fnSeg("fn-met",FN_COBRO,"")}<small class="hint" id="fn-met-h"></small></div>
+    <div class="msg bad" id="fn-aviso" hidden></div><div class="msg bad" id="fn-err" hidden></div>
+    <div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-fncancel>Cancelar</button><button type="submit" class="btn b-acc" id="fn-ok">Guardar cobro</button></div></form>`);
+  const avisar=()=>{ const v=fnSegVal("fn-met"), imp=cjNum($("#fn-importe").value); $("#fn-met-h").textContent=v==="efectivo"?"Entra en la caja abierta de hoy (suma a su teórico).":v==="financiacion"?"La financiera paga al concesionario: cuenta como cobrado.":"";
+    $("#fn-aviso").hidden=!(v==="efectivo"&&imp>=1000); $("#fn-aviso").textContent="Ojo: en España los pagos en efectivo de 1.000 € o más entre una empresa y un particular no están permitidos (Ley 11/2021). Confírmalo con tu gestoría."; };
+  fnSegBind("fn-met",avisar); $("#fn-importe").oninput=avisar;
+  $("#f-fn").onsubmit=async e=>{ e.preventDefault(); $("#fn-err").hidden=true; const imp=cjNum($("#fn-importe").value), met=fnSegVal("fn-met");
+    if(!(imp>0)) return fnErr("Escribe el importe."); if(!met) return fnErr("Elige cómo ha pagado."); $("#fn-ok").disabled=true;
+    try{ await api(`/api/finanzas/cobro/${tipo}/${encodeURIComponent(ref)}`,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({importe:String(imp),metodo:met,fecha:$("#fn-fecha").value})});
+      d.close(); toast("Cobro registrado"+(met==="efectivo"?" y sumado a la caja":"")); fnCargar(); }catch(err){ fnErr(err.message); }
+    $("#fn-ok").disabled=false; };
+}
+async function fnVenta(id){
+  if(!FN_CARS) try{ FN_CARS=await api("/api/coches?todos=1"); }catch(_){ FN_CARS=CARS||[]; }
+  const c=(FN_CARS||[]).find(x=>x.id===id)||(CARS||[]).find(x=>x.id===id); if(!c) return toast("Coche no encontrado");
+  const v=FN&&FN.coches.find(x=>x.coche===id);
+  const d=fnDlg(`<form id="f-fn" novalidate><h2>Registrar la venta</h2><p class="hint"><b>${esc(c.marca+" "+c.modelo+" "+(c.version||""))}</b> · anunciado a ${cjE(Math.round(c.precio*100))}. Con estos datos se calcula el beneficio real del coche.</p>
+    <div class="t-g2"><div class="field"><label for="fn-importe">Precio final de venta (€) *</label><input class="in num cj-imp" id="fn-importe" inputmode="decimal" value="${v&&!v.estimado?(v.precio/100).toFixed(2).replace(".",","):String(c.precio).replace(".",",")}"></div>
+    <div class="field"><label for="fn-compra">Lo que costó comprarlo (€) *</label><input class="in num cj-imp" id="fn-compra" inputmode="decimal" value="${v&&v.compra?(v.compra/100).toFixed(2).replace(".",","):""}" placeholder="0,00"></div></div>
+    <div class="t-g2"><div class="field"><label for="fn-fecha">Fecha de venta</label><input class="in" type="date" id="fn-fecha" value="${v?v.fecha:hoyC()}" max="${hoyC()}"></div><div class="field"><label for="fn-imp">Impuesto incluido en el precio</label><select class="in" id="fn-imp"><option value="0">Sin desglosar (REBU u otro: lo ve tu gestoría)</option><option value="7">7 % IGIC</option><option value="21">21 % IVA</option></select></div></div>
+    <div class="t-g2"><div class="field"><label for="fn-cli">Comprador</label><input class="in" id="fn-cli" maxlength="120"></div><div class="field"><label for="fn-fact">Nº de factura o contrato</label><input class="in" id="fn-fact" maxlength="40"></div></div>
+    ${!v||v.estimado?`<div class="field"><label>Forma de pago de lo cobrado ahora</label>${fnSeg("fn-met",[...FN_COBRO,["","Aún sin cobrar"]],"")}<small class="hint">El reacondicionamiento (gastos con este coche) se descuenta solo.</small></div><div class="msg bad" id="fn-aviso" hidden>Ojo: en España los pagos en efectivo de 1.000 € o más entre una empresa y un particular no están permitidos (Ley 11/2021). Confírmalo con tu gestoría.</div>`:""}
+    <div class="msg bad" id="fn-err" hidden></div>
+    <div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-fncancel>Más tarde</button><button type="submit" class="btn b-acc" id="fn-ok">Guardar la venta</button></div></form>`);
+  if($("#fn-met")) fnSegBind("fn-met",x=>{ $("#fn-aviso").hidden=!(x==="efectivo"&&cjNum($("#fn-importe").value)>=1000); });
+  $("#f-fn").onsubmit=async e=>{ e.preventDefault(); $("#fn-err").hidden=true; const imp=cjNum($("#fn-importe").value), compra=cjNum($("#fn-compra").value||"0");
+    if(!(imp>0)) return fnErr("Escribe el precio final."); if(!(compra>=0)) return fnErr("Escribe el coste de compra (0 si no lo sabes aún).");
+    $("#fn-ok").disabled=true;
+    try{ await api("/api/finanzas/venta/"+encodeURIComponent(id),{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({importe:String(imp),costeCompra:String(compra),fecha:$("#fn-fecha").value,igicPct:$("#fn-imp").value,comprador:$("#fn-cli").value,factura:$("#fn-fact").value})});
+      const met=$("#fn-met")?fnSegVal("fn-met"):""; let aviso="";
+      if(met){ try{ await api(`/api/finanzas/cobro/venta/${encodeURIComponent(id)}`,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({importe:String(imp),metodo:met,fecha:$("#fn-fecha").value})}); }catch(err){ aviso=" · el cobro no se pudo guardar: "+err.message; } }
+      d.close(); toast("Venta registrada"+aviso); if(!$("#s-fin").hidden) fnCargar(); }catch(err){ fnErr(err.message); }
+    $("#fn-ok").disabled=false; };
+}
+function fnClasificar(mov,txt,imp){
+  const d=fnDlg(`<form id="f-fn" novalidate><h2>Clasificar salida de caja</h2><p class="hint">${esc(txt)} · ${cjE(+imp)}</p>
+    <div class="field"><label for="fn-cat">Categoría *</label><select class="in" id="fn-cat"><option value="">— Elige —</option>${FN_CAT.map(([g,gt,l])=>`<optgroup label="${esc(gt)}">${l.map(([k,t])=>`<option value="${k}">${esc(t)}</option>`).join("")}</optgroup>`).join("")}</select></div>
+    <div class="field"><label>Parte del negocio</label>${fnSeg("fn-area",Object.entries(FN_AREA),"general")}</div>
+    <div class="t-g2"><div class="field"><label for="fn-prov">Proveedor</label><input class="in" id="fn-prov" maxlength="120"></div><div class="field"><label for="fn-imp">Impuesto incluido</label><select class="in" id="fn-imp">${FN_IMP.map(([v,t])=>`<option value="${v}" ${v==="7"?"selected":""}>${t}</option>`).join("")}</select></div></div>
+    <div class="msg bad" id="fn-err" hidden></div>
+    <div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-fncancel>Cancelar</button><button type="submit" class="btn b-acc" id="fn-ok">Guardar</button></div></form>`);
+  fnSegBind("fn-area"); $("#fn-cat").onchange=()=>{ const a=FN_CAT.flatMap(g=>g[2]).find(x=>x[0]===$("#fn-cat").value); if(a) $("#fn-area").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.v===a[2]))); };
+  $("#f-fn").onsubmit=async e=>{ e.preventDefault(); if(!$("#fn-cat").value) return fnErr("Elige la categoría."); $("#fn-ok").disabled=true;
+    try{ await api("/api/finanzas/clasificar/"+mov,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({categoria:$("#fn-cat").value,area:fnSegVal("fn-area"),proveedor:$("#fn-prov").value,impuestoPct:$("#fn-imp").value})}); d.close(); toast("Clasificada"); fnCargar(); }catch(err){ fnErr(err.message); }
+    $("#fn-ok").disabled=false; };
+}
+function fnCoste(id,txt,v){
+  const d=fnDlg(`<form id="f-fn" novalidate><h2>Coste de compra</h2><p class="hint">${esc(txt)}. Solo lo ves tú: no sale en la web.</p>
+    <div class="field"><label for="fn-compra">Lo que costó comprarlo (€)</label><input class="in num cj-imp" id="fn-compra" inputmode="decimal" value="${+v?(v/100).toFixed(2).replace(".",","):""}"></div>
+    <div class="msg bad" id="fn-err" hidden></div><div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-fncancel>Cancelar</button><button type="submit" class="btn b-acc" id="fn-ok">Guardar</button></div></form>`);
+  $("#f-fn").onsubmit=async e=>{ e.preventDefault(); const c=cjNum($("#fn-compra").value); if(!(c>=0)) return fnErr("Escribe el coste.");
+    try{ await api("/api/finanzas/coste/"+encodeURIComponent(id),{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({compra:String(c)})}); d.close(); toast("Coste guardado"); fnCargar(); }catch(err){ fnErr(err.message); } };
+}
+
+/* ---------- exportar para la asesoría ---------- */
+function fnCsv(nombre,filas){
+  const csv="﻿"+filas.map(r=>r.map(x=>{ let v=String(x??""); if(/^[=+\-@\t\r]/.test(v)&&!/^-?\d/.test(v)) v="'"+v; return `"${v.replace(/"/g,'""')}"`; }).join(";")).join("\r\n");
+  const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"})); a.download=nombre; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500);
+}
+const fnN=c=>(c/100).toFixed(2).replace(".",",");
+function fnExportar(que){
+  const [a,b]=fnRango(), per=`${a}_${b>hoyC()?hoyC():b}`;
+  if(que==="emitidas") return fnCsv(`volcano-cars-facturas-emitidas-${per}.csv`,[["Fecha","Nº factura / orden","Cliente","Concepto","Parte","Base imponible","% impuesto","Impuesto","Total","Cobrado","Pendiente","Canal de cobro"],...FN.emitidas.map(d=>[d.fecha,d.num,d.cliente,d.concepto,FN_AREA[d.area]||d.area,fnN(d.base),String(d.impuestoPct).replace(".",","),fnN(d.impuesto),fnN(d.total),fnN(d.cobrado),fnN(d.total-d.cobrado),[...new Set(d.cobros.map(c=>FN_MTXT[c.metodo]))].join(" + ")])]);
+  if(que==="recibidas") return fnCsv(`volcano-cars-facturas-recibidas-${per}.csv`,[["Fecha","Nº factura","Proveedor","Concepto","Grupo","Categoría","Parte","Base imponible","% impuesto","Impuesto","Total","Método de pago","Adjunto"],...FN.recibidas.map(g=>[g.fecha,g.factura,g.proveedor,g.concepto,(FN_CAT.find(x=>x[0]===g.grupo)||[])[1]||"",FN_CATTXT[g.categoria]||g.categoria,FN_AREA[g.area]||g.area,fnN(g.base),String(g.impuestoPct).replace(".",","),fnN(g.impuesto),fnN(g.total),FN_MTXT[g.metodo]||g.metodo,g.adjunto?location.origin+FOTO(g.adjunto.key):""])]);
+  fnPdf();
+}
+function fnPdf(){
+  const [,,etq]=fnRango(), r=FN, k=r.kpis; let el=$("#fn-print"); if(!el){ el=document.createElement("div"); el.id="fn-print"; document.body.appendChild(el); }
+  const sumE=k2=>r.emitidas.reduce((a,d)=>a+d[k2],0), sumR=k2=>r.recibidas.reduce((a,g)=>a+g[k2],0);
+  el.innerHTML=`<article class="fp"><header class="tp-h"><img src="/marca/logo-oscuro.svg" alt="Volcano Cars" height="26"><div><b>Informe para la asesoría</b><small>${esc(etq)} · generado ${esc(fechaHora(new Date().toISOString()))}</small></div><span class="tp-badge">FINANZAS</span></header>
+    <table class="tp-kv"><tbody><tr><th>Cobrado</th><td>${cjE(k.cobrado)}</td><th>Pagado</th><td>${cjE(k.pagado)}</td><th>Flujo neto</th><td><b>${cjD(k.flujo)}</b></td></tr>
+    <tr><th>Facturado (base)</th><td>${cjE(k.facturadoBase)}</td><th>Gastos (base)</th><td>${cjE(k.gastosBase)}</td><th>Beneficio neto</th><td><b>${cjD(k.resultado)}</b></td></tr>
+    <tr><th>Impuesto repercutido</th><td>${cjE(sumE("impuesto"))}</td><th>Impuesto soportado</th><td>${cjE(sumR("impuesto"))}</td><th>Pendiente de cobro</th><td>${cjE(k.porCobrar)}</td></tr></tbody></table>
+    <h4>Facturas emitidas (${r.emitidas.length})</h4><table class="tp-t"><thead><tr><th>Fecha</th><th>Nº</th><th>Cliente · concepto</th><th>Base</th><th>%</th><th>Impuesto</th><th>Total</th><th>Cobro</th></tr></thead><tbody>${r.emitidas.map(d=>`<tr><td>${esc(tF(d.fecha))}</td><td>${esc(d.num||"")}</td><td>${esc(d.cliente?d.cliente+" · ":"")}${esc(d.concepto)}</td><td class="r">${fnN(d.base)}</td><td class="r">${String(d.impuestoPct).replace(".",",")}</td><td class="r">${fnN(d.impuesto)}</td><td class="r"><b>${fnN(d.total)}</b></td><td>${esc([...new Set(d.cobros.map(c=>FN_MTXT[c.metodo]))].join(" + ")||"Pendiente")}</td></tr>`).join("")}<tr class="tot"><td colspan="3">Total</td><td class="r">${fnN(sumE("base"))}</td><td></td><td class="r">${fnN(sumE("impuesto"))}</td><td class="r">${fnN(sumE("total"))}</td><td></td></tr></tbody></table>
+    <h4>Facturas recibidas (${r.recibidas.length})</h4><table class="tp-t"><thead><tr><th>Fecha</th><th>Nº</th><th>Proveedor · concepto</th><th>Categoría</th><th>Base</th><th>%</th><th>Impuesto</th><th>Total</th><th>Pago</th></tr></thead><tbody>${r.recibidas.map(g=>`<tr><td>${esc(tF(g.fecha))}</td><td>${esc(g.factura||"")}</td><td>${esc(g.proveedor?g.proveedor+" · ":"")}${esc(g.concepto)}</td><td>${esc(FN_CATTXT[g.categoria]||g.categoria)}</td><td class="r">${fnN(g.base)}</td><td class="r">${String(g.impuestoPct).replace(".",",")}</td><td class="r">${fnN(g.impuesto)}</td><td class="r"><b>${fnN(g.total)}</b></td><td>${esc(FN_MTXT[g.metodo]||g.metodo)}</td></tr>`).join("")}<tr class="tot"><td colspan="4">Total</td><td class="r">${fnN(sumR("base"))}</td><td></td><td class="r">${fnN(sumR("impuesto"))}</td><td class="r">${fnN(sumR("total"))}</td><td></td></tr></tbody></table>
+    <p class="tp-legal">Importes en euros. Las ventas de coches usados marcadas «sin desglosar» pueden estar en régimen especial (REBU): tu gestoría calcula su impuesto. Los adjuntos de cada gasto están en el panel (Finanzas) y en el Excel de facturas recibidas.</p>
+    <footer class="tp-f">Volcano Cars · Finanzas · ${esc(etq)}</footer></article>`;
+  document.body.classList.add("print-fin"); const fin=()=>{ document.body.classList.remove("print-fin"); removeEventListener("afterprint",fin); }; addEventListener("afterprint",fin);
+  const img=el.querySelector("img"); (img.complete?Promise.resolve():new Promise(ok=>{ img.onload=img.onerror=ok; setTimeout(ok,2000); })).then(()=>setTimeout(()=>window.print(),60));
+}
+
+/* ---------- eventos ---------- */
+$("#fn").addEventListener("click",async e=>{ const t=e.target, q=s=>t.closest(s);
+  const pe=q("[data-fnper]"); if(pe){ FN_PER=pe.dataset.fnper; FN_REF=hoyC(); fnCargar(); return; }
+  const mv=q("[data-fnmov]"); if(mv){ fnMover(+mv.dataset.fnmov); return; }
+  if(q("[data-fngasto]")){ if(!FN_CARS) FN_CARS=await api("/api/coches?todos=1").catch(()=>[]); fnNuevoGasto(); return; }
+  if(q("[data-fningreso]")){ fnNuevoIngreso(); return; }
+  const ex=q("[data-fnexp]"); if(ex){ fnExportar(ex.dataset.fnexp); return; }
+  const ve=q("[data-fnve]"); if(ve){ FN_VISTA_E=ve.dataset.fnve; fnPintar(); return; }
+  const co=q("[data-fncobro]"); if(co){ fnCobro(co.dataset.fncobro,co.dataset.ref,+co.dataset.pend,co.dataset.txt); return; }
+  const vt=q("[data-fnventa]"); if(vt){ fnVenta(vt.dataset.fnventa); return; }
+  const cl=q("[data-fnclasif]"); if(cl){ fnClasificar(cl.dataset.fnclasif,cl.dataset.txt,cl.dataset.imp); return; }
+  const cs=q("[data-fncoste]"); if(cs){ fnCoste(cs.dataset.fncoste,cs.dataset.txt,cs.dataset.v); return; }
+  if(q("[data-fncaja]")){ abrirTab("caja"); return; }
+  const an=q("[data-fnanular]"); if(an){ const m=prompt("Motivo de la anulación (queda en el libro):"); if(!m||m.trim().length<5) return toast("Hace falta un motivo");
+    try{ await api(`/api/finanzas/${an.dataset.fnanular}-anular/${an.dataset.id}`,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({motivo:m})}); toast("Anulado"); fnCargar(); }catch(err){ toast(err.message); } return; }
+});
+setInterval(()=>{ if(PW&&$("#s-fin")&&!$("#s-fin").hidden&&!document.hidden&&!document.querySelector("#dlg-fn[open]")) fnCargar(); },60000);
+/*FINANZAS-JS-FIN*/
 /*GUIA-JS-INICIO*/
 /* =====================================================================
    GUÍA DE VENTA · «El Método de Venta Volcano Cars» (SOP-02 v2.0)
