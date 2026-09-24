@@ -2,6 +2,7 @@ import type { Config } from "@netlify/functions";
 import { createHash } from "node:crypto";
 import { store, json, mismoOrigen } from "../lib/shared.mts";
 import { quien, leerEquipo, hoyCanarias, horaCanarias } from "../lib/taller.mts";
+import { herramientasPendientes } from "../lib/almacen.mts";
 import { s, str, cent, eur, esFoto, rid, ahora, leerDesglose, libro, alerta, listar, movsDe, teorico, turnoAbierto, leerMov, crearMovimiento, TXT_CAT, type Conteo, type Turno, type Mov } from "../lib/caja.mts";
 
 /*
@@ -88,6 +89,9 @@ export default async (req: Request) => {
   // ---------- cierre ciego ----------
   if (accion === "cerrar" && req.method === "POST") {
     const t = await turnoAbierto(); if (!t) return json({ error: "La caja no está abierta." }, 409);
+    // Auditoría de herramientas: ninguna herramienta puede quedar fuera sin que alguien diga dónde está
+    const fuera = await herramientasPendientes();
+    if (fuera.length) return json({ error: `Antes de cerrar: ${fuera.length} herramienta${fuera.length > 1 ? "s" : ""} sin devolver. Devuélvelas o indica dónde están.`, herramientas: fuera.map((h) => ({ id: h.id, codigo: h.codigo, nombre: h.nombre, quien: h.uso?.nombre, num: h.uso?.num, desde: h.uso?.desde })) }, 409);
     const { desglose, contado } = leerDesglose(body.desglose);
     const movs = await movsDe(t.id), calc = teorico(t, movs), dif = contado - calc.teorico;
     const intento = { desglose, contado, t: ahora() }, just = str(body.justificacion, 800);

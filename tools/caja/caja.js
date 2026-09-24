@@ -125,6 +125,7 @@ async function cjConfirmar(){
     await cjCargar(true); scrollTo(0,0);
   }catch(err){
     btn.disabled=false;
+    if(/herramienta/i.test(err.message)&&typeof alResolverHerramientas==="function"){ try{ const l=await api("/api/almacen/pendientes-cierre"); if(l.length) return alResolverHerramientas(l,"Antes de cerrar la caja","Estas herramientas siguen fuera. Para cerrar, cada una tiene que estar devuelta o localizada (quién la tiene y dónde está).",()=>cjConfirmar()); }catch(_){ } toast(err.message); return; }
     if(/NO cuadra|no coincide/i.test(err.message)){ const txt=document.querySelector("#cj-jtxt")?.value||""; CJ_JUST=true; cjPintar(); $("#cj-msg").textContent=err.message; $("#cj-jtxt").value=txt; document.querySelector(".cj-just").scrollIntoView({behavior:"smooth",block:"center"}); }
     else toast(err.message);
   }

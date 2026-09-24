@@ -85,7 +85,7 @@ async function entrarEquipo(d){
   TVISTA=TVISTA||"mios";
   await Promise.all([tCargarEquipo(), api("/api/ordenes").then(r=>{ ORDENES=r; }).catch(()=>{})]);
   let abierta=""; try{ abierta=sessionStorage.getItem("vc_tf")||""; }catch(_){}
-  if(abierta&&location.hash==="#fichas") abrirFichas(abierta); else abrirTab(location.hash==="#caja"&&ME.caja?"caja":"ordenes",false);
+  if(abierta&&location.hash==="#fichas") abrirFichas(abierta); else abrirTab(location.hash==="#caja"&&ME.caja?"caja":location.hash==="#inventario"?"alm":"ordenes",false);
 }
 function tUsuario(){
   let el=$("#t-yo"); if(!el){ el=document.createElement("span"); el.id="t-yo"; el.className="t-yo"; $("#topacts").prepend(el); }
@@ -256,7 +256,7 @@ function tRecibir(r){ TF=r; if(r.ahora) T_SKEW=Date.parse(r.ahora)-Date.now(); c
 async function abrirFichas(token,tab){
   if(TDIRTY&&TF&&TF.orden.token!==token) await tGuardar(false,true);
   show("s-ficha"); $("#tf").innerHTML='<div class="empty">Cargando las fichas…</div>';
-  try{ const [r]=await Promise.all([tApi("fichas/"+token),TEQ.length?null:tCargarEquipo()]); tRecibir(r); }
+  try{ const [r]=await Promise.all([tApi("fichas/"+token),TEQ.length?null:tCargarEquipo(),typeof alCargarOrden==="function"?alCargarOrden(token):null]); tRecibir(r); }
   catch(err){ $("#tf").innerHTML=`<div class="empty">${esc(err.message)}<br><br><button type="button" class="btn b-ghost b-sm" data-tvolver>← Volver al taller</button></div>`; return; }
   TDIRTY=false; TSAVED=""; tVacias();
   TF_TAB=tab||tTabSugerida();
@@ -500,6 +500,7 @@ function tF3(){
     <p class="hint">Desviación = (real − estimado) ÷ estimado × 100. Si pasa del <b>${String(cfg.umbralPct).replace(".",",")} %</b> o de <b>${cfg.umbralMin} min</b>, hay que justificarla y el gerente da el visto bueno.</p>
     ${Object.keys(c.pausas).length?`<div class="t-pmot">${Object.entries(c.pausas).sort((a,b)=>b[1]-a[1]).map(([m,v])=>`<span class="chip">${esc(m)} · ${tMin(v)}</span>`).join("")}</div>`:""}
     ${(f3.retrabajos||[]).length?`<div class="msg bad" style="margin-top:10px">Retrabajos por calidad: ${f3.retrabajos.map(r=>`${esc(tFH(r.t))} · «${esc(r.causa)}»`).join("<br>")}</div>`:""}`)}
+  ${typeof alF3==="function"?alF3():""}
   ${c.estado==="fin"&&(c.exige||j||f3.vistoBueno)?tSec(5,"Justificación y visto bueno",c.exige?"obligatoria: el tiempo real se ha pasado del límite":"",`
     ${j?`<div class="t-just"><b>Causas:</b> ${j.codigos.map(k=>`<span class="chip">${k} · ${esc((T_JUST.find(z=>z[0]===k)||[])[1]||"")}</span>`).join(" ")}<p>${esc(j.explicacion)}</p><small>Cliente avisado: ${esc({si:"Sí",no:"No",na:"No aplica"}[j.avisado]||"—")}${j.mejora?" · Para la próxima: "+esc(j.mejora):""} · ${esc(tNombre(j.por))}, ${esc(tFH(j.t))}</small></div>`:""}
     ${c.exige&&!j&&(ger||ME.uid===f3.mecanico)?`<div class="t-jform"><div class="t-jcods">${T_JUST.map(([k,t])=>`<label class="t-chk"><input type="checkbox" data-tj="${k}" ${jw.codigos.includes(k)?"checked":""}><span><b>${k}</b> ${t}</span></label>`).join("")}</div>
@@ -717,7 +718,7 @@ $("#dw-body").addEventListener("click",async e=>{ if(!DW||DW.tipo!=="equipo") re
 /* =====================================================================
    IMPRIMIR / PDF · réplica de las fichas en papel (A4)
    ===================================================================== */
-async function tPdfOrden(token){ try{ const [r]=await Promise.all([tApi("fichas/"+token),TEQ.length?null:tCargarEquipo()]); const prev=TF; TF=r; tImprimir(["f1","f2","f3","f4"]); TF=prev; }catch(err){ toast(err.message); } }
+async function tPdfOrden(token){ try{ const [r]=await Promise.all([tApi("fichas/"+token),TEQ.length?null:tCargarEquipo(),typeof alCargarOrden==="function"?alCargarOrden(token):null]); const prev=TF; TF=r; tImprimir(["f1","f2","f3","f4"]); TF=prev; }catch(err){ toast(err.message); } }
 function tImprimir(cuales){
   let el=$("#t-print"); if(!el){ el=document.createElement("div"); el.id="t-print"; document.body.appendChild(el); }
   const T={f1:["FORM-01","Ficha de recepción del vehículo"],f2:["FORM-02","Inspección 360°"],f3:["FORM-03","Control de tiempos"],f4:["FORM-04","Control de calidad"]};
@@ -753,6 +754,7 @@ function tP3(){ const x=TF.fichas.f3; if(!x) return '<p class="tp-vacio">Sin fic
   <h4>Fichajes</h4><table class="tp-t"><thead><tr><th>Fichaje</th><th>Fecha y hora</th><th>Quién</th><th>Motivo / nota / corrección</th></tr></thead><tbody>${[...x.eventos].sort((a,b)=>a.t.localeCompare(b.t)).map(e=>`<tr><td>${tn[e.tipo]}</td><td>${esc(tFH(e.t))}</td><td>${esc(tNombre(e.por))}</td><td>${esc(e.motivo)}${e.nota?" · "+esc(e.nota):""}${(e.corr||[]).map(k=>`<small>Corregida por ${esc(tNombre(k.por))}: antes ${esc(tFH(k.t0))} · ${esc(k.motivo)}</small>`).join("")}</td></tr>`).join("")||'<tr><td colspan="4">&nbsp;</td></tr>'}</tbody></table>
   ${tpKV([[["Mano de obra (sin IGIC)",eur(c.manoObra)],["Justificación obligatoria",c.exige?"Sí":"No"],["Retrabajos",String((x.retrabajos||[]).length)]]])}
   ${x.justificacion?`<h4>Justificación de la desviación</h4><div class="tp-box">${x.justificacion.codigos.map(k=>`<b>${k}</b> ${esc((T_JUST.find(z=>z[0]===k)||[])[1]||"")}`).join(" · ")}<br>${esc(x.justificacion.explicacion)}${x.justificacion.mejora?"<br>Mejora: "+esc(x.justificacion.mejora):""}</div>`:""}
+  ${typeof AL_ORDEN!=="undefined"&&AL_ORDEN&&AL_ORDEN.token===TF.orden.token&&AL_ORDEN.recambios.some(m=>m.tipo==="salida")?`<h4>Recambios del almacén usados en esta orden</h4><table class="tp-t"><thead><tr><th>Código</th><th>Recambio</th><th>Cantidad</th><th>Quién</th><th>Cuándo</th></tr></thead><tbody>${AL_ORDEN.recambios.filter(m=>m.tipo==="salida").map(m=>`<tr><td>${esc(m.sku)}</td><td>${esc(m.nombre)}</td><td>${alN(-m.cantidad-(m.devuelto||0))} ${esc(m.unidad)}${m.devuelto?` (devuelto ${alN(m.devuelto)})`:""}</td><td>${esc(m.porNombre)}</td><td>${esc(tFH(m.t))}</td></tr>`).join("")}</tbody></table>`:""}
   <div class="tp-2">${tpFirma("Mecánico",x.justificacion?{nombre:tNombre(x.justificacion.por),t:x.justificacion.t}:null)}${tpFirma("Visto bueno del gerente",x.vistoBueno?{nombre:tNombre(x.vistoBueno.por),t:x.vistoBueno.t}:null)}</div>`; }
 function tP4(){ const x=TF.fichas.f4; if(!x) return '<p class="tp-vacio">Pendiente.</p>'; const L={si:"SÍ",no:"NO",na:"NA"};
   const secs=F4_SECC.filter(s=>s[0]==="A"||s[0]==="B"||(x.destino==="venta"?s[0]==="D":s[0]==="C"));

@@ -7,7 +7,7 @@
 .t-yo i{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-style:normal;font-weight:800}
 .t-yo small{display:block;color:var(--muted);font-size:11.5px}
 @media (max-width:560px){.t-yo span{display:none}}
-body.modo-equipo #tabs [data-tab]:not([data-tab="ordenes"]):not([data-tab="caja"]),body.modo-equipo:not(.con-caja) #tabs [data-tab="caja"],body.modo-equipo #btn-seg,body.modo-equipo #topacts a{display:none!important}
+body.modo-equipo #tabs [data-tab]:not([data-tab="ordenes"]):not([data-tab="caja"]):not([data-tab="alm"]),body.modo-equipo:not(.con-caja) #tabs [data-tab="caja"],body.modo-equipo #btn-seg,body.modo-equipo #topacts a{display:none!important}
 body.modo-equipo #s-ordenes .head{margin-bottom:10px}
 
 /* barra y filtros */
@@ -362,3 +362,4 @@ em b.s-r,em b.s-a{background:none;color:var(--t-r)}em b.s-a{color:var(--t-a)}
 /* hueco al final para que ninguna etiqueta flotante (p. ej. «Powered by Netlify») tape el último botón */
 .dw-body::after{content:"";display:block;height:80px}
 main.wrap{padding-bottom:110px}
+.t-sec>*{min-width:0}
