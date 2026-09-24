@@ -1,5 +1,6 @@
 import type { Config } from "@netlify/functions";
-import { store, json, isAdmin } from "../lib/shared.mts";
+import { store, json } from "../lib/shared.mts";
+import { quien } from "../lib/taller.mts";
 
 const TYPES: Record<string, string> = { "image/jpeg": "jpg", "image/webp": "webp", "image/png": "png" };
 const MIME: Record<string, string> = { jpg: "image/jpeg", webp: "image/webp", png: "image/png" };
@@ -19,7 +20,7 @@ export default async (req: Request) => {
   }
 
   if (req.method === "POST" && !key) {
-    if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
+    if (!(await quien(req))) return json({ error: "No autorizado" }, 401); // gerente o equipo del taller (fotos de daños y de la inspección)
     const type = (req.headers.get("content-type") || "").split(";")[0];
     const ext = TYPES[type];
     if (!ext) return json({ error: "Formato de foto no admitido. Usa JPG, PNG o WEBP." }, 415);

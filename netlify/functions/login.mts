@@ -1,6 +1,7 @@
 import type { Config, Context } from "@netlify/functions";
 import { json, isAdmin, crearSesion, leerSesion, igualSeguro, mismoOrigen } from "../lib/shared.mts";
 import { estaBloqueado, fallo, limpiarFallos, registrar, avisar, dispositivoNuevo, dosFactoresActivo, verificarTotp, dispositivo, ipCorta, pais } from "../lib/seguridad.mts";
+import { leerEquipo, pinOk, crearSesionEquipo, quien } from "../lib/taller.mts";
 
 /*
   ENTRADA AL PANEL
@@ -18,7 +19,9 @@ export default async (req: Request, context: Context) => {
 
   if (req.method === "GET") {
     const t = leerSesion((req.headers.get("authorization") || "").replace(/^Bearer\s+/i, ""));
-    if (t && (await isAdmin(req))) return json({ ok: true, exp: t.exp });
+    if (t && (await isAdmin(req))) return json({ ok: true, exp: t.exp, rol: "gerente", nombre: "Gerente", uid: "gerente" });
+    const q = await quien(req);
+    if (q) return json({ ok: true, rol: q.rol, nombre: q.nombre, uid: q.uid, equipo: true });
     return json({ error: "Sesión caducada" }, 401);
   }
   if (req.method !== "POST") return json({ error: "Método no permitido" }, 405);
@@ -33,6 +36,23 @@ export default async (req: Request, context: Context) => {
   }
   const body = (await req.json().catch(() => ({}))) as any;
   const dada = String(body.clave ?? "").slice(0, 200);
+
+  // Entrada del equipo del taller: usuario + PIN (mismas defensas: espera, bloqueo y registro)
+  if (body.usuario !== undefined) {
+    const usuario = String(body.usuario || "").toLowerCase().trim().slice(0, 20), pin = String(body.pin || "").slice(0, 8);
+    const pers = (await leerEquipo()).find((x) => x.usuario === usuario && x.activo);
+    if (!pers || !pinOk(pin, pers.pin)) {
+      await espera(900);
+      const hasta = await fallo(ip);
+      await registrar("login-fallo", ip, ua, p, "PIN incorrecto" + (usuario ? " (" + usuario + ")" : ""));
+      if (hasta) { await registrar("bloqueo", ip, ua, p, "Bloqueada hasta las " + hora(hasta)); return json({ error: `Usuario o PIN incorrecto. Esta conexión queda bloqueada hasta las ${hora(hasta)}.`, bloqueado: true }, 429); }
+      return json({ error: "Usuario o PIN incorrecto." }, 401);
+    }
+    await limpiarFallos(ip);
+    const s = crearSesionEquipo(pers.id, 12);
+    await registrar("login-ok", ip, ua, p, "Entrada del equipo: " + pers.nombre);
+    return json({ ok: true, token: s.token, exp: s.exp, rol: pers.rol, nombre: pers.nombre, uid: pers.id, equipo: true });
+  }
 
   if (!dada || !igualSeguro(dada, clave)) {
     await espera(900);

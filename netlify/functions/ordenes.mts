@@ -1,5 +1,6 @@
 import type { Config } from "@netlify/functions";
 import { store, json, isAdmin, enviarAviso, waNum, mismoOrigen } from "../lib/shared.mts";
+import { quien } from "../lib/taller.mts";
 
 /*
   ÓRDENES DE TRABAJO: SEGUIMIENTO EN VIVO + PRESUPUESTO ONLINE
@@ -123,6 +124,15 @@ export default async (req: Request) => {
   }
 
   // ---------- panel ----------
+  // El equipo del taller (usuario + PIN) puede ver las órdenes; cambiarlas, solo el gerente.
+  if (req.method === "GET" && !token && !(await isAdmin(req))) {
+    const q = await quien(req);
+    if (!q) return json({ error: "No autorizado" }, 401);
+    const { blobs } = await s.list({ prefix: "o/" });
+    const todas = (await Promise.all(blobs.map((b) => s.get(b.key, { type: "json" }) as Promise<Orden | null>))).filter(Boolean) as Orden[];
+    return json(todas.filter((o) => o.estado !== "entregado" || Date.now() - Date.parse(o.actualizado) < 30 * 864e5).sort((a, b) => b.actualizado.localeCompare(a.actualizado))
+      .map((o: any) => ({ token: o.token, num: o.num, creado: o.creado, actualizado: o.actualizado, cliente: { nombre: o.cliente.nombre, telefono: o.cliente.telefono, email: "", idioma: o.cliente.idioma }, vehiculo: o.vehiculo, estado: o.estado, pasos: [], entrega: o.entrega, fotos: [], mensaje: "", interno: "", presupuesto: o.presupuesto ? { estado: o.presupuesto.estado, lineas: [] } : null, fichas: o.fichas || null, totales: { base: 0, igic: 0, total: 0 } })));
+  }
   if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
 
   if (req.method === "GET" && !token) {

@@ -71,7 +71,7 @@ inicio:()=>`
   <div class="g-sec">${gH("Las 4 herramientas de negociación")}<div class="g-4">
     <div class="g-mini c-magma"><b>Etiquetar</b><span>«Parece que…»</span></div><div class="g-mini c-gris"><b>Pregunta calibrada</b><span>«¿Cómo…?» «¿Qué…?»</span></div>
     <div class="g-mini c-piedra"><b>Espejo</b><span>Repetir 1–3 palabras</span></div><div class="g-mini c-ambar amb"><b>Buscar el NO</b><span>«¿Sería mala idea…?»</span></div></div></div>
-  ${gCall("piedra","Glosario","<b>FORM-02</b>: informe de revisión del coche en nuestro taller · <b>FORM-04</b>: alta del coche para la venta, aprobada por el gerente · <b>CRM</b>: la pestaña CRM del panel (sustituye a la antigua Hoja de Seguimiento).")}
+  ${gCall("piedra","Glosario","<b>FORM-02</b>: Inspección 360° del coche en nuestro taller (semáforo OK / Ámbar / Rojo) · <b>FORM-04</b>: Control de calidad con destino «Inventario de venta» (bloque D, alta para venta), firmado por alguien distinto del mecánico y cerrado por el gerente. Las dos están en Taller → Fichas de la orden · <b>CRM</b>: la pestaña CRM del panel (sustituye a la antigua Hoja de Seguimiento).")}
   ${gCall("verde","Consejo","Pulsa <b>Descargar PDF completo</b> y guárdalo en el móvil. En el PDF, la barra de cada página te lleva a cualquier paso. La <b>Chuleta</b> resume todos los guiones en una hoja.")}`,
 
 "01":()=>`
