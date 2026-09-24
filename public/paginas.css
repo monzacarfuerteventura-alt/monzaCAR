@@ -133,7 +133,8 @@ h3{font-size:21px;font-weight:800;font-stretch:100%}
 .pg-foot a:hover{color:#fff}
 .pg-foot img{height:44px;width:auto;margin-bottom:12px}
 .pg-legal{grid-column:1/-1;border-top:1px solid rgba(255,255,255,.1);padding-top:18px;font-size:13px;display:flex;flex-wrap:wrap;gap:6px 14px}
-.pg-legal a{display:inline;padding:0}
+.pg-legal{align-items:center}
+.pg-legal a{display:inline-flex;align-items:center;min-height:32px;padding:0}
 @media (max-width:820px){.pg-foot .wrap{grid-template-columns:1fr 1fr}}
 @media (max-width:520px){.pg-foot .wrap{grid-template-columns:1fr}}
 /* barra fija de contacto en el móvil */

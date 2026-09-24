@@ -2,6 +2,10 @@ import type { Config } from "@netlify/functions";
 import { store, SEMILLA, type Car } from "../lib/shared.mts";
 import { EMPRESA, escH, eur, kmTxt, foto, wa, slugDe, cabecera, pie } from "../lib/paginas.mts";
 
+// «wallapop» → «Wallapop» (como se escriben los portales; igual que en la web)
+const PORTALES: Record<string, string> = { wallapop: "Wallapop", milanuncios: "Milanuncios", autoscout24: "AutoScout24", autoscout: "AutoScout24", autocasion: "Autocasión", "autocasión": "Autocasión", "coches.net": "coches.net", "coches.com": "coches.com", flexicar: "Flexicar", clicars: "Clicars", autohero: "Autohero" };
+const portales = (f: string) => String(f || "").trim().replace(/[\p{L}0-9]+(?:\.[\p{L}0-9]+)*/gu, (w) => PORTALES[w.toLowerCase()] || w);
+
 /*
   FICHA DE CADA COCHE PARA GOOGLE:  /coche/toyota-c-hr-2020-1a2b3c4d
   Página completa con fotos, datos, precio y datos estructurados (schema.org Car + Offer),
@@ -167,7 +171,7 @@ function bloqueOferta(c: Car, lista: Car[], enWeb: string, waTxt: string): strin
         <div class="ofe-row mkt"><span>Precio medio del mercado</span><s>${eur(m.media)}</s><i style="--w:100%"></i></div>
         <div class="ofe-row our"><span>Nuestro precio en Fuerteventura</span><b>${eur(c.precio)}</b><i style="--w:${ancho}%"></i></div>
       </div>
-      <p class="ofe-trans">Comparativa realizada sobre ${m.n} vehículos idénticos (mismo año, motor y rango de km) en portales automotrices${m.fuente ? " (" + escH(m.fuente) + ")" : ""}. Actualizada el ${fecha}.</p>
+      <p class="ofe-trans">Comparativa realizada sobre ${m.n} vehículos idénticos (mismo año, motor y rango de km) en portales automotrices${m.fuente ? " (" + escH(portales(m.fuente)) + ")" : ""}. Actualizada el ${fecha}.</p>
       ${c.estado === "disponible" ? `<p class="ofe-urg">⚡ ${urg}</p>
       <div class="ofe-cta"><a class="btn b-rosso" href="${enWeb}">Reservar o pedir información ahora</a><a class="btn b-wa" href="${escH(wa(waTxt))}" target="_blank" rel="noopener">WhatsApp</a></div>` : ""}
     </div></section>`;

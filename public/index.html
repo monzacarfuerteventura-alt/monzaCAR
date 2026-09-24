@@ -965,6 +965,7 @@ footer .logo svg.vc-logo{height:62px}
   .hero-split .hs-cta{flex:0 1 auto}
   .hs-bg{width:120px;height:120px;right:-14px;bottom:-20px}
   .hs-meta{font-size:13.5px}
+  .hs-meta>a{display:inline-flex;align-items:center;min-height:44px}
   .hs-kick{letter-spacing:.08em}
   .hs-alt{width:46px;height:46px;padding:0;justify-content:center;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);opacity:1}
   .hs-alt svg{width:20px;height:20px}
@@ -1876,10 +1877,13 @@ function observar(){
   document.querySelectorAll(".rv:not(.in)").forEach(el=>io.observe(el));
 }
 /* en vivo: si en el panel se publica, reserva o vende un coche, la web lo muestra sola en unos segundos */
-let firma="";
+/* Con la ficha de un coche abierta también se actualiza (precio y comparativa de mercado): antes, si el cliente
+   tenía la ficha abierta o volvía a una pestaña antigua del móvil, seguía viendo los datos de cuando la abrió. */
+let firma="", renderPendiente=false;
 async function refrescar(){
-  if(document.hidden || (typeof modal!=="undefined" && modal.open)) return;
-  cargarViendo();
+  if(document.hidden) return;
+  const abierta = typeof modal!=="undefined" && modal.open;
+  if(!abierta) cargarViendo();
   try{
     const r=await fetch(API,{cache:"no-store"}); if(!r.ok) return;
     const data=await r.json(); if(!Array.isArray(data)) return;
@@ -1888,11 +1892,19 @@ async function refrescar(){
     INTERES=ri||{};
     COCHES=ordenar(data.filter(c=>c.estado!=="vendido"));
     VENDIDOS=data.filter(c=>c.estado==="vendido").sort((a,b)=>String(b.vendidoEn||"").localeCompare(String(a.vendidoEn||"")));
-    render();
+    if(abierta){ renderPendiente=true; actualizarFichaAbierta(); } else render();
   }catch(_){}
+}
+function actualizarFichaAbierta(){
+  if(typeof gal==="undefined" || !gal.c) return;
+  const n=COCHES.find(x=>String(x.id)===String(gal.c.id)); if(!n) return;
+  const antes=JSON.stringify([gal.c.precio,gal.c.mercado||null]), ahora=JSON.stringify([n.precio,n.mercado||null]);
+  gal.c=n; if(antes===ahora) return;
+  $("#m-price").textContent=eur(n.precio); pintarOferta(n);
 }
 setInterval(refrescar,20000);
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden) refrescar(); });
+addEventListener("pageshow",e=>{ if(e.persisted) refrescar(); });
 
 async function cargar(){
   cargarInteres(); cargarViendo();
@@ -2143,8 +2155,9 @@ document.addEventListener("click",e=>{
   modal.showModal(); modal.scrollTop=0;
   empezarAVer(c);
   TRK("car",c.id);
+  refrescar(); // por si la lista que ve el cliente es de hace rato: la ficha se pone al día sola
 });
-modal.addEventListener("close",()=>{ pararVisor(); dejarDeVer(); });
+modal.addEventListener("close",()=>{ pararVisor(); dejarDeVer(); if(renderPendiente){ renderPendiente=false; render(); } });
 $("#m-360").onclick=()=>showFoto(0,true);
 $("#m-wa").addEventListener("click",()=>apuntarInteres(gal.c));
 $("#m-prev").onclick=()=>showFoto(gal.i-1);
@@ -2971,12 +2984,15 @@ const BOT=(()=>{
    ===================================================================== */
 const ICO_FUEGO='<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.6 2.2c.3 2.6-.6 4.3-2 5.9-1.5 1.7-3.6 3.4-3.6 6.9A5 5 0 0012 20a5 5 0 005-5c0-1.8-.8-3.1-1.6-4.1-.2 1-.8 1.9-1.7 2.3.4-2.8-.2-6.2-1.1-11z"/></svg>';
 const ICO_INFO='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.8h.01"/></svg>';
+/* «wallapop, coches.net» → «Wallapop, coches.net» (como se escriben los portales) */
+const PORTALES={"wallapop":"Wallapop","milanuncios":"Milanuncios","autoscout24":"AutoScout24","autoscout":"AutoScout24","autocasion":"Autocasión","autocasión":"Autocasión","coches.net":"coches.net","coches.com":"coches.com","flexicar":"Flexicar","clicars":"Clicars","autohero":"Autohero"};
+const nombrePortales=f=>String(f||"").trim().replace(/[\p{L}0-9]+(?:\.[\p{L}0-9]+)*/gu,w=>PORTALES[w.toLowerCase()]||w);
 function oferta(c){
   const m=c&&c.mercado; if(!m||!m.media||!m.n||m.n<3||c.estado==="vendido") return null;
   const dias=(Date.now()-Date.parse(m.fecha+"T12:00:00Z"))/864e5; if(!(dias<=120)) return null;
   const ahorro=Math.round(m.media-c.precio); if(ahorro<=0) return null;
   const pct=Math.round(ahorro/m.media*100); if(pct<3) return null;
-  return {media:m.media,n:m.n,fuente:m.fuente||"",fecha:m.fecha,ahorro,pct,top:pct>=10,ancho:Math.max(8,Math.round(c.precio/m.media*100))};
+  return {media:m.media,n:m.n,fuente:nombrePortales(m.fuente),fecha:m.fecha,ahorro,pct,top:pct>=10,ancho:Math.max(8,Math.round(c.precio/m.media*100))};
 }
 function badgeOferta(c){ const o=oferta(c); return o?`<span class="badge b-ofe ${o.top?"":"verde"}">−${o.pct} % ${L("vs mercado","vs market")}</span>`:""; }
 /* Urgencia con datos reales: cuánto tardan en venderse nuestros coches. Sin datos, solo invita a reservar. */
