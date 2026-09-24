@@ -492,7 +492,7 @@ dialog.dlg form{display:grid;gap:12px;padding:20px}
 .t-yo i{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-style:normal;font-weight:800}
 .t-yo small{display:block;color:var(--muted);font-size:11.5px}
 @media (max-width:560px){.t-yo span{display:none}}
-body.modo-equipo #tabs [data-tab]:not([data-tab="ordenes"]),body.modo-equipo #btn-seg,body.modo-equipo #topacts a{display:none!important}
+body.modo-equipo #tabs [data-tab]:not([data-tab="ordenes"]):not([data-tab="caja"]),body.modo-equipo:not(.con-caja) #tabs [data-tab="caja"],body.modo-equipo #btn-seg,body.modo-equipo #topacts a{display:none!important}
 body.modo-equipo #s-ordenes .head{margin-bottom:10px}
 
 /* barra y filtros */
@@ -844,6 +844,95 @@ em b.s-r,em b.s-a{background:none;color:var(--t-r)}em b.s-a{color:var(--t-a)}
   #t-print .t-ley{font-size:6.8pt;gap:5px}#t-print .t-ley i{width:11px;height:11px;font-size:6pt}
 }
 /*TALLER-CSS-FIN*/
+/*CAJA-CSS-INICIO*//* ===================== CONTROL DE CAJA ===================== */
+.cj-op{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;display:grid;gap:14px;margin-bottom:18px}
+.cj-estado{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.cj-estado>div{flex:1;min-width:180px}.cj-estado b{font-family:var(--display);font-stretch:85%;font-size:22px;text-transform:uppercase;display:block;line-height:1.1}.cj-estado small{color:var(--muted)}
+.cj-luz{width:16px;height:16px;border-radius:50%;background:#3DBF76;box-shadow:0 0 0 5px rgba(61,191,118,.22);animation:tLate 1.6s ease-in-out infinite;flex-shrink:0}
+.cj-luz.off{background:var(--muted);box-shadow:none;animation:none}
+.cj-teo{flex:0 0 auto!important;min-width:0!important;text-align:right;background:var(--surface-2);border-radius:12px;padding:8px 12px}
+.cj-teo small{display:block;font-size:11.5px}.cj-teo b{font-size:22px!important;font-family:var(--display);font-stretch:105%!important;text-transform:none!important}
+.cj-big{min-height:58px;font-size:17px;width:100%}
+.cj-botones{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:720px){.cj-botones{grid-template-columns:1fr}}
+.cj-bt{display:flex;gap:12px;align-items:center;text-align:left;border:0;border-radius:16px;padding:16px;min-height:84px;cursor:pointer;font:inherit;color:#fff}
+.cj-bt i{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.2);display:grid;place-items:center;font-style:normal;font-weight:900;font-size:24px;flex-shrink:0}
+.cj-bt b{display:block;font-size:17px}.cj-bt small{opacity:.85;font-size:13px}
+.cj-bt.ing{background:#1F8B4C}.cj-bt.egr{background:#D9481C}.cj-bt.cie{background:var(--brand);color:var(--brand-ink)}
+.cj-bt:active{transform:scale(.98)}
+.cj-pend{font-weight:600}
+.cj-h{margin:4px 0 0;font-family:var(--display);font-stretch:85%;font-size:18px;text-transform:uppercase;display:flex;gap:8px;align-items:center}
+.cj-h .num{font-size:12px;background:var(--surface-2);border-radius:999px;padding:2px 8px;font-family:var(--body)}
+.cj-movs{display:grid;gap:6px}
+.cj-mov{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;padding:10px 12px;border-radius:12px;background:var(--surface-2);margin-bottom:6px}
+.cj-mov>i{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-style:normal;font-weight:900;color:#fff;background:#1F8B4C}
+.cj-mov.egreso>i{background:#D9481C}
+.cj-mov>div{min-width:0;display:grid;gap:3px;justify-items:start}.cj-mov small{color:var(--muted);font-size:12.5px}
+.cj-mov>b{font-size:16px;white-space:nowrap}.cj-mov.egreso>b{color:var(--bad)}.cj-mov.ingreso>b{color:var(--ok)}
+.cj-mov.anulado{opacity:.55}.cj-mov.anulado>b{text-decoration:line-through}
+.cj-tk{cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.cj-tkimg img{width:120px;height:80px;object-fit:cover;border-radius:8px;display:block;margin-top:4px}
+a.chip{text-decoration:none}
+
+/* contador */
+.cj-paso{display:flex;gap:12px;align-items:center}.cj-paso small{font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}.cj-paso h2{font-size:24px}
+.cj-guia{margin:0;font-size:15px;color:var(--muted)}.cj-guia b{color:var(--ink)}
+.cj-cont{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:720px){.cj-cont{grid-template-columns:1fr}}
+.cj-cont h4{margin:0 0 6px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.cj-den{display:grid;grid-template-columns:78px auto 1fr;gap:10px;align-items:center;padding:5px 0;border-bottom:1px solid var(--line)}
+.cj-dv{font-weight:800;font-size:15px;padding:6px 8px;border-radius:8px;text-align:center;background:#E3EDE6;color:#1B4D32}
+.cj-den.mon .cj-dv{background:#F4E7CF;color:#6B4A0C;border-radius:999px}
+.cj-step{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.cj-step button{width:46px;height:46px;border:0;background:var(--surface-2);font-size:22px;font-weight:800;cursor:pointer;color:var(--ink)}
+.cj-step input{width:62px;height:46px;border:0;text-align:center;font-size:19px;font-weight:800;background:transparent;color:var(--ink)}
+.cj-step input:focus{outline:2px solid var(--accent);outline-offset:-2px}
+.cj-den>b{text-align:right;font-size:14px;color:var(--muted)}
+.cj-total{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;border-radius:14px;background:var(--brand);color:var(--brand-ink);position:sticky;bottom:10px;z-index:3}
+.cj-total b{font-family:var(--display);font-stretch:108%;font-size:28px}
+.cj-just{display:grid;gap:10px}
+.cj-acts{display:flex;gap:8px}
+
+/* formulario */
+.cj-dlg form{gap:14px}
+.cj-imp{font-size:30px!important;font-weight:800;text-align:center;padding:14px!important;font-family:var(--display);font-stretch:105%}
+.cj-foto{display:flex;gap:10px;align-items:center;margin-bottom:6px}.cj-foto.sub{opacity:.5}
+.cj-foto-add{width:120px!important;height:90px!important;border-color:var(--accent)!important;color:var(--accent)!important}
+.cj-fok{color:var(--ok);font-weight:800}
+
+/* panel del propietario */
+.cj-panel{display:grid;gap:14px}
+.cj-ph{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-top:6px}
+.cj-ph small{font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}.cj-ph h2{font-size:26px}
+.cj-ph-acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.cj-kpis{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:10px}
+@media (max-width:820px){.cj-kpis{grid-template-columns:1fr 1fr}.cj-kpi.dest{grid-column:1/-1}}
+.cj-kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:2px;align-content:start;min-width:0}
+.cj-kpi small{font-size:12px;font-weight:700;color:var(--muted)}
+.cj-kpi b{font-family:var(--display);font-stretch:105%;font-size:26px;line-height:1.1}
+.cj-kpi span{font-size:12.5px;color:var(--muted)}
+.cj-kpi em{font-style:normal;font-weight:800;font-size:12.5px;color:var(--bad)}
+.cj-kpi.dest{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}.cj-kpi.dest small,.cj-kpi.dest span{color:inherit;opacity:.8}.cj-kpi.dest b{font-size:34px}
+.cj-kpi.mal{border-color:var(--bad);background:var(--bad-soft)}.cj-kpi.mal b{color:var(--bad)}
+.cj-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+@media (max-width:820px){.cj-grid{grid-template-columns:1fr}}
+.cj-panel .card h3{margin:0 0 8px;font-family:var(--display);font-stretch:85%;font-size:18px;text-transform:uppercase}
+.t-al.vista{opacity:.6}
+.cj-bars{position:relative;height:150px;display:flex;gap:3px;align-items:stretch;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);background:linear-gradient(var(--line),var(--line)) 0 50%/100% 1px no-repeat}
+.cj-bar{position:relative;flex:1;min-width:6px;max-width:28px;border:0;background:none;cursor:pointer;padding:0}
+.cj-bar i{position:absolute;left:0;right:0;border-radius:3px}
+.cj-bar i.neg{background:var(--bad)}.cj-bar i.pos{background:#E08A2E}.cj-bar i.cero{background:var(--ok)}
+.cj-bar:hover i{filter:brightness(1.15)}
+.cj-rojo{color:var(--bad)!important}.cj-ambar{color:#B26A00!important}.cj-verde{color:var(--ok)!important}
+.cj-tur tr[data-cjturno]{cursor:pointer}.cj-tur tr.desc td{background:color-mix(in srgb,var(--bad-soft) 55%,transparent)}
+.cj-tur td small{display:block;color:var(--muted)}.cj-j{font-style:italic}
+.cj-fdesc td{background:var(--bad-soft)}
+.cj-int{padding:6px 0;border-bottom:1px solid var(--line)}.cj-int:last-of-type{border-bottom:0}
+.cj-desg{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.cj-desg span{font-size:12px;background:var(--surface-2);padding:2px 7px;border-radius:999px}
+.cj-integ.ok{border-color:var(--ok);background:var(--ok-soft)}.cj-integ.mal{border-color:var(--bad);background:var(--bad-soft)}
+.cj-integ b{font-size:16px}
+@media (max-width:560px){.cj-op{padding:14px}.cj-den{grid-template-columns:70px auto 1fr;gap:8px}.cj-step button{width:44px}.cj-step input{width:54px}.cj-tur th:nth-child(2),.cj-tur td:nth-child(2),.cj-tur th:nth-child(6),.cj-tur td:nth-child(6){display:none}}
+/*CAJA-CSS-FIN*/
 /*GUIA-CSS-INICIO*/
 /* =====================================================================
    GUÍA DE VENTA (El Método de Venta Volcano Cars · SOP-02)
@@ -1171,6 +1260,7 @@ em b.s-r,em b.s-a{background:none;color:var(--t-r)}em b.s-a{color:var(--t-a)}
     <button type="button" role="tab" data-tab="dash" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Dashboard</button>
     <button type="button" role="tab" data-tab="leads" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-6 6.5-6s5.9 2.4 6.5 6M16 4.8a3.5 3.5 0 010 6.4M18.5 14.3c1.7.9 2.8 2.9 3 5.7"/></svg>CRM <span class="badge-n" id="n-new" hidden></span></button>
     <button type="button" role="tab" data-tab="ordenes" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 00-5.4 5.2L3.5 17.3a1.8 1.8 0 002.5 2.5l5.8-5.8a4 4 0 005.2-5.4l-2.5 2.5-2.1-.4-.4-2.1 2.7-2.3z"/></svg>Taller <span class="badge-n" id="n-ord" hidden></span></button>
+    <button type="button" role="tab" data-tab="caja" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></svg>Control de Caja <span class="badge-n" id="n-caja" hidden></span></button>
     <button type="button" role="tab" data-tab="agenda" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5.5" width="16" height="14" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/></svg>Agenda <span class="badge-n" id="n-hoy" hidden></span></button>
     <button type="button" role="tab" data-tab="coches" aria-selected="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16h14M6.5 16l1.3-4.3A2 2 0 0 1 9.7 10h4.6a2 2 0 0 1 1.9 1.7L17.5 16M4 16v2.5h2.5V16M17.5 16v2.5H20V16"/></svg>Coches</button>
   </nav>
@@ -1215,6 +1305,12 @@ em b.s-r,em b.s-a{background:none;color:var(--t-r)}em b.s-a{color:var(--t-a)}
 
   <!-- FICHAS DE UNA ORDEN (FORM-01..04) -->
   <section id="s-ficha" hidden><div id="tf"></div></section>
+
+  <!-- CONTROL DE CAJA -->
+  <section id="s-caja" hidden>
+    <div class="head"><div><h1 style="font-size:28px">Control de Caja</h1><p>Apertura y cierre con arqueo ciego, cobros y salidas de efectivo con su ticket. Nada se puede borrar.</p></div></div>
+    <div id="cj"></div>
+  </section>
 
   <!-- AGENDA -->
   <section id="s-agenda" hidden>
@@ -1427,8 +1523,8 @@ let CARS = [], editing = null, fotos = [], uploading = 0, INTERES = {}, VIENDO =
 let video = null, vSubiendo = false, vNuevo = null, vAbort = null;
 
 function toast(t){ const el=$("#toast"); el.textContent=t; el.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>el.hidden=true,2600); }
-const TABS={dash:"s-dash",leads:"s-leads",ordenes:"s-ordenes",agenda:"s-agenda",coches:"s-list"};
-function show(id){ ["s-login","s-list","s-form","s-leads","s-agenda","s-dash","s-ordenes","s-guia","s-ficha"].forEach(x=>$("#"+x).hidden = x!==id); $("#topacts").hidden = id==="s-login";
+const TABS={dash:"s-dash",leads:"s-leads",ordenes:"s-ordenes",caja:"s-caja",agenda:"s-agenda",coches:"s-list"};
+function show(id){ ["s-login","s-list","s-form","s-leads","s-agenda","s-dash","s-ordenes","s-guia","s-ficha","s-caja"].forEach(x=>$("#"+x).hidden = x!==id); $("#topacts").hidden = id==="s-login";
   $("#tabsrow").hidden = !Object.values(TABS).includes(id);
   document.querySelectorAll("#tabs [data-tab]").forEach(b=>b.setAttribute("aria-selected", String(TABS[b.dataset.tab]===id)));
   window.scrollTo(0,0); }
@@ -1794,7 +1890,8 @@ let LEADS=[], ORDENES=[], filtro="activas", tipoF="", busq="", vista="lista", DW
 
 /* ---------- navegación entre pestañas ---------- */
 function abrirTab(t,push=true){
-  if(ME&&ME.equipo) t="ordenes";
+  if(ME&&ME.equipo&&!(t==="caja"&&ME.caja)) t="ordenes";
+  if(t==="caja"){ cjAbrirTab(); return; }
   if(t==="ordenes") tCabeceraTaller();
   if(t==="leads"){ show("s-leads"); renderLeads(); }
   else if(t==="ordenes"){ show("s-ordenes"); renderOrdenes(); }
@@ -1957,7 +2054,7 @@ function abrirDrawer(html){ $("#dw-body").innerHTML=html; $("#drawer").hidden=fa
 function cerrarDrawer(){ $("#drawer").hidden=true; document.body.classList.remove("dw-open"); DW=null; }
 $("#dw-bg").onclick=cerrarDrawer;
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("#drawer").hidden&&!document.querySelector("dialog[open]")) cerrarDrawer(); });
-function refrescarDrawer(){ if(!DW||$("#drawer").hidden||DW.tipo==="seguridad"||DW.tipo==="equipo") return; const foco=document.activeElement; if(foco&&foco.closest&&foco.closest("#dw-body")&&foco.matches("input,textarea,select")) return;
+function refrescarDrawer(){ if(!DW||$("#drawer").hidden||DW.tipo==="seguridad"||DW.tipo==="equipo"||String(DW.tipo).startsWith("caja")) return; const foco=document.activeElement; if(foco&&foco.closest&&foco.closest("#dw-body")&&foco.matches("input,textarea,select")) return;
   const st=$("#dw-body").scrollTop; if(DW.tipo==="lead"){ const x=LEADS.find(l=>l.id===DW.id); if(x) $("#dw-body").innerHTML=htmlLead(x); } else { const o=ORDENES.find(z=>z.token===DW.id); if(o) $("#dw-body").innerHTML=htmlOrden(o); } $("#dw-body").scrollTop=st; }
 
 function plantillas(x){
@@ -2524,7 +2621,7 @@ try{ sessionStorage.removeItem("mz_pw"); }catch(_){}          // la contraseña 
 try{ PW=sessionStorage.getItem(TOK_KEY)||""; }catch(_){ PW=""; }
 const guardarToken=t=>{ PW=t; try{ sessionStorage.setItem(TOK_KEY,t); }catch(_){} };
 function logout(msg){ PW=""; ME=null; try{ sessionStorage.removeItem(TOK_KEY); sessionStorage.removeItem("vc_me"); sessionStorage.removeItem("vc_tf"); }catch(_){}
-  document.body.classList.remove("modo-equipo"); if(typeof tUsuario==="function") tUsuario(); if(typeof TDIRTY!=="undefined") TDIRTY=false;
+  document.body.classList.remove("modo-equipo","con-caja"); if(typeof cjBadge==="function") cjBadge(0); if(typeof tUsuario==="function") tUsuario(); if(typeof TDIRTY!=="undefined") TDIRTY=false;
   if(typeof cerrarDrawer==="function") cerrarDrawer(); show("s-login");
   if(typeof msg==="string"){ $("#login-err").textContent=msg; $("#login-err").hidden=false; } }
 $("#logout").onclick=()=>logout();
@@ -2555,7 +2652,7 @@ $("#login-form").addEventListener("submit",async e=>{
     if(!r.ok||!d.token) throw new Error(d.error||"No se ha podido entrar.");
     guardarToken(d.token); $("#pw").value=""; $("#pw2").value=""; $("#f-2fa").hidden=true;
     try{ localStorage.setItem("vc_admin","1"); }catch(_){}
-    ME={rol:"gerente",nombre:"Gerente",uid:"gerente"}; tUsuario();
+    ME={rol:"gerente",nombre:"Gerente",uid:"gerente"}; tUsuario(); setTimeout(()=>cjVigilar(),1200);
     await loadList(true); await loadLeads(false); abrirTab("dash");
   }catch(err){ $("#login-err").textContent=err.message; $("#login-err").hidden=false; }
   btn.disabled=false;
@@ -2630,9 +2727,9 @@ $("#btn-seg").onclick=abrirSeguridad;
 if(PW){ fetch("/api/login",{headers:{authorization:"Bearer "+PW}}).then(async r=>{ if(!r.ok) return logout("Tu sesión ha caducado. Vuelve a entrar.");
   const yo=await r.json().catch(()=>({}));
   if(yo.equipo) return entrarEquipo(yo);
-  ME={rol:"gerente",nombre:"Gerente",uid:"gerente"}; tUsuario();
+  ME={rol:"gerente",nombre:"Gerente",uid:"gerente"}; tUsuario(); setTimeout(()=>cjVigilar(),1200);
   try{ localStorage.setItem("vc_admin","1"); }catch(_){}
-  const h=location.hash.slice(1), tab={crm:"leads",solicitudes:"leads",taller:"ordenes",agenda:"agenda",coches:"coches",dashboard:"dash"}[h]||"dash";
+  const h=location.hash.slice(1), tab={crm:"leads",solicitudes:"leads",taller:"ordenes",caja:"caja",agenda:"agenda",coches:"coches",dashboard:"dash"}[h]||"dash";
   await loadList(true); await loadLeads(false);
   let abierta=""; try{ abierta=sessionStorage.getItem("vc_tf")||""; }catch(_){}
   if(h==="fichas"&&abierta){ await tCargarEquipo(); abrirFichas(abierta); return; }
@@ -2719,13 +2816,13 @@ function tResF2(f2){ let r=0,a=0,ok=0,na=0,h=0; if(f2) for(const id of F2_IDS){ 
 
 /* ---------- modo equipo (usuario + PIN: solo ve el taller) ---------- */
 async function entrarEquipo(d){
-  ME={rol:d.rol,nombre:d.nombre,uid:d.uid,equipo:true};
+  ME={rol:d.rol,nombre:d.nombre,uid:d.uid,equipo:true,caja:!!d.caja};
   try{ sessionStorage.setItem("vc_me",JSON.stringify(ME)); }catch(_){}
-  document.body.classList.add("modo-equipo"); tUsuario();
+  document.body.classList.add("modo-equipo"); document.body.classList.toggle("con-caja",!!ME.caja); tUsuario(); if(ME.rol==="gerente") setTimeout(()=>cjVigilar(),1200);
   TVISTA=TVISTA||"mios";
   await Promise.all([tCargarEquipo(), api("/api/ordenes").then(r=>{ ORDENES=r; }).catch(()=>{})]);
   let abierta=""; try{ abierta=sessionStorage.getItem("vc_tf")||""; }catch(_){}
-  if(abierta&&location.hash==="#fichas") abrirFichas(abierta); else abrirTab("ordenes",false);
+  if(abierta&&location.hash==="#fichas") abrirFichas(abierta); else abrirTab(location.hash==="#caja"&&ME.caja?"caja":"ordenes",false);
 }
 function tUsuario(){
   let el=$("#t-yo"); if(!el){ el=document.createElement("span"); el.id="t-yo"; el.className="t-yo"; $("#topacts").prepend(el); }
@@ -3325,10 +3422,11 @@ async function tAbrirEquipo(){ DW={tipo:"equipo",id:"e"}; abrirDrawer('<div clas
   try{ const [eq,cfg]=await Promise.all([tApi("equipo"),tApi("config")]); TEQ=eq; tPintarEquipo(cfg); }catch(err){ $("#dw-body").innerHTML=`<div class="empty">${esc(err.message)}</div>`; } }
 function tPintarEquipo(cfg){
   const roles=Object.entries(T_ROL).filter(([k])=>k!=="gerente").concat([["gerente","Gerente (ve y corrige todo)"]]);
-  const fila=p=>`<details class="t-per ${p.activo?"":"baja"}"><summary><i>${esc(p.nombre.slice(0,1).toUpperCase())}</i><span><b>${esc(p.nombre)}</b><small>${esc(T_ROL[p.rol])} · usuario <b>${esc(p.usuario)}</b> · ${String(p.jornada).replace(".",",")} h/día${p.activo?"":" · de baja"}</small></span></summary>
+  const fila=p=>`<details class="t-per ${p.activo?"":"baja"}"><summary><i>${esc(p.nombre.slice(0,1).toUpperCase())}</i><span><b>${esc(p.nombre)}</b><small>${esc(T_ROL[p.rol])}${p.caja&&p.rol!=="gerente"?" · caja":""} · usuario <b>${esc(p.usuario)}</b> · ${String(p.jornada).replace(".",",")} h/día${p.activo?"":" · de baja"}</small></span></summary>
     <form class="t-perf" data-tper="${esc(p.id)}"><div class="t-g2"><div class="field"><label>Nombre</label><input class="in" name="nombre" value="${esc(p.nombre)}" maxlength="40"></div><div class="field"><label>Usuario</label><input class="in" name="usuario" value="${esc(p.usuario)}" maxlength="20" autocomplete="off"></div>
     <div class="field"><label>Puesto</label><select class="in" name="rol">${roles.map(([k,t])=>`<option value="${k}" ${p.rol===k?"selected":""}>${t}</option>`).join("")}</select></div><div class="field"><label>Horas pagadas al día</label><input class="in num" name="jornada" value="${String(p.jornada).replace(".",",")}" inputmode="decimal"></div>
     <div class="field"><label>Fecha de alta</label><input class="in" type="date" name="alta" value="${esc(p.alta)}"></div><div class="field"><label>Nuevo PIN (déjalo vacío para no cambiarlo)</label><input class="in num" name="pin" inputmode="numeric" maxlength="8" autocomplete="new-password" placeholder="6 a 8 números"></div></div>
+    <label class="t-chk"><input type="checkbox" name="caja" ${p.caja||p.rol==="gerente"?"checked":""} ${p.rol==="gerente"?"disabled":""}><span>Puede usar la caja (abrir, cerrar, cobrar y registrar salidas)</span></label>
     <div class="quick"><button class="btn b-brand b-sm">Guardar</button>${p.activo?`<button type="button" class="btn b-bad b-sm" data-tbaja="${esc(p.id)}">Dar de baja</button>`:`<button type="button" class="btn b-ghost b-sm" data-talta="${esc(p.id)}">Volver a activar</button>`}</div></form></details>`;
   $("#dw-body").innerHTML=`<div class="dw-head"><div><span class="tipo taller">Taller</span><h2 class="dw-nombre" style="margin:0">Equipo y ajustes</h2></div><button class="x" type="button" data-cerrar aria-label="Cerrar">✕</button></div>
     <section class="dw-box"><h3>Cómo entra el equipo</h3><p class="hint" style="margin:0">Cada persona abre <b>${esc(location.origin)}/admin</b> en la tablet o en su móvil, pulsa «Entrar como equipo del taller» y pone su usuario y PIN. Solo ve el taller: no ve coches en venta, clientes del CRM, ventas ni seguridad. Los intentos fallidos bloquean la conexión igual que con tu contraseña.</p></section>
@@ -3336,6 +3434,7 @@ function tPintarEquipo(cfg){
       <details class="t-per nuevo" ${TEQ.length?"":"open"}><summary><i>+</i><span><b>Añadir persona</b></span></summary><form class="t-perf" data-tper=""><div class="t-g2"><div class="field"><label>Nombre</label><input class="in" name="nombre" maxlength="40" required></div><div class="field"><label>Usuario (sin espacios)</label><input class="in" name="usuario" maxlength="20" autocomplete="off" required placeholder="pedro"></div>
       <div class="field"><label>Puesto</label><select class="in" name="rol">${roles.map(([k,t])=>`<option value="${k}">${t}</option>`).join("")}</select></div><div class="field"><label>Horas pagadas al día</label><input class="in num" name="jornada" value="${String(cfg.jornada).replace(".",",")}" inputmode="decimal"></div>
       <div class="field"><label>Fecha de alta</label><input class="in" type="date" name="alta" value="${hoyC()}"></div><div class="field"><label>PIN para entrar</label><input class="in num" name="pin" inputmode="numeric" maxlength="8" autocomplete="new-password" placeholder="6 a 8 números" required></div></div>
+      <label class="t-chk"><input type="checkbox" name="caja"><span>Puede usar la caja (abrir, cerrar, cobrar y registrar salidas)</span></label>
       <button class="btn b-acc b-sm">Añadir</button></form></details></section>
     <section class="dw-box"><h3>Ajustes del taller</h3><form class="t-perf" data-tcfg><div class="t-g2"><div class="field"><label>Tarifa mano de obra (€/h, sin IGIC)</label><input class="in num" name="tarifa" value="${String(cfg.tarifa).replace(".",",")}" inputmode="decimal"></div><div class="field"><label>Jornada por defecto (h)</label><input class="in num" name="jornada" value="${String(cfg.jornada).replace(".",",")}" inputmode="decimal"></div>
       <div class="field"><label>Justificar si se pasa más de (%)</label><input class="in num" name="umbralPct" value="${String(cfg.umbralPct).replace(".",",")}" inputmode="decimal"></div><div class="field"><label>… o más de (minutos)</label><input class="in num" name="umbralMin" value="${cfg.umbralMin}" inputmode="numeric"></div>
@@ -3344,7 +3443,7 @@ function tPintarEquipo(cfg){
 }
 $("#dw-body").addEventListener("submit",async e=>{ if(!DW||DW.tipo!=="equipo") return; e.preventDefault(); const f=e.target, d=Object.fromEntries(new FormData(f));
   try{ if(f.matches("[data-tcfg]")){ const cfg=await tApi("config","PUT",{tarifa:tNum(d.tarifa),jornada:tNum(d.jornada),umbralPct:tNum(d.umbralPct),umbralMin:tNum(d.umbralMin),igic:tNum(d.igic)}); tPintarEquipo(cfg); toast("Ajustes guardados"); return; }
-    const id=f.dataset.tper, body={...d,jornada:tNum(d.jornada)}; if(!body.pin) delete body.pin;
+    const id=f.dataset.tper, body={...d,jornada:tNum(d.jornada),caja:!!(f.querySelector("[name=caja]")||{}).checked}; if(!body.pin) delete body.pin;
     await tApi(id?"equipo/"+id:"equipo",id?"PUT":"POST",body); TEQ=await tApi("equipo"); tPintarEquipo(await tApi("config")); toast(id?"Guardado":"Añadido: ya puede entrar con su usuario y PIN");
   }catch(err){ toast(err.message); } });
 $("#dw-body").addEventListener("click",async e=>{ if(!DW||DW.tipo!=="equipo") return; const b=e.target.closest("[data-tbaja],[data-talta]"); if(!b) return;
@@ -3399,6 +3498,258 @@ function tP4(){ const x=TF.fichas.f4; if(!x) return '<p class="tp-vacio">Pendien
   ${tpKV([[["Resultado",`<b>${esc(T_RES[x.resultado]||"")}</b>`],["Motivo / observaciones",esc(x.motivo)]]])}
   <div class="tp-2">${tpFirma("Control de calidad (persona distinta del mecánico)",x.firma)}${tpFirma("Cierre del gerente",x.cierreGerente?{nombre:tNombre(x.cierreGerente.por),t:x.cierreGerente.t}:null)}</div>`; }
 /*TALLER-JS-FIN*/
+/*CAJA-JS-INICIO*//* =====================================================================
+   CONTROL DE CAJA Y PREVENCIÓN DE PÉRDIDAS
+   Arqueo ciego (apertura y cierre), cobros y salidas con ticket, cuadro
+   de mando del propietario y libro de registro encadenado.
+   Fuente: tools/caja/caja.js → se copia dentro de admin.html con
+   python3 tools/caja/inyectar.py
+   ===================================================================== */
+const CJ_BILLETES=[50000,20000,10000,5000,2000,1000,500], CJ_MONEDAS=[200,100,50,20,10,5,2,1];
+const CJ_CAT_E=[["proveedor","Pago a proveedor"],["compra","Compra rápida"],["propietario","Retiro del propietario"],["banco","Ingreso en el banco"],["otro","Otro"]];
+const CJ_CAT_I=[["taller","Cobro de taller"],["venta","Venta de coche"],["senal","Señal / reserva"],["otro","Otro"]];
+const CJ_TXT=Object.fromEntries([...CJ_CAT_E,...CJ_CAT_I]);
+const CJ_ACC={apertura:"Apertura de caja","apertura-no-cuadra":"Apertura: recuento que no cuadra",cobro:"Cobro en efectivo",salida:"Salida de dinero","ticket-añadido":"Ticket añadido después",cierre:"Cierre de caja","cierre-no-cuadra":"Cierre: recuento que no cuadra",anulacion:"Movimiento anulado (gerente)",ajuste:"Ajuste (gerente)",revision:"Descuadre revisado (gerente)"};
+let CJ=null, CJR=null, CJ_MES=hoyC().slice(0,7), CJ_CONTEO=null, CJ_MODO="", CJ_JUST=false, CJ_ALERTAS_VISTAS=new Set();
+const cjE=c=>{ const v=Math.abs(Math.round(c||0)), e=String(Math.floor(v/100)).replace(/\B(?=(\d{3})+(?!\d))/g,"."); return (c<0?"−":"")+e+","+String(v%100).padStart(2,"0")+" €"; };
+const cjD=c=>c===0?"0,00 €":(c>0?"+":"")+cjE(c);
+const cjNum=v=>{ let s=String(v||"").replace(/\s|€/g,""); if(s.includes(",")) s=s.replace(/\./g,"").replace(",","."); const n=Number(s); return Number.isFinite(n)?n:NaN; };
+const cjDen=c=>c>=100?(c/100)+" €":c+" cént.";
+const cjPuede=()=>!!ME&&(!ME.equipo||ME.caja);
+
+/* ---------- carga ---------- */
+async function cjCargar(quieto){
+  if(!quieto) $("#cj").innerHTML='<div class="empty">Cargando la caja…</div>';
+  try{
+    const [e,r]=await Promise.all([api("/api/caja/estado"),ES_GER()?api(`/api/caja/resumen?desde=${CJ_MES}-01&hasta=${finMes(CJ_MES)}`):null]);
+    CJ=e; CJR=r; cjPintar(); if(r&&CJ_MES===hoyC().slice(0,7)) cjBadge(r.alertas.filter(a=>!a.vista).length);
+  }catch(err){ $("#cj").innerHTML=`<div class="empty">${esc(err.message)}</div>`; }
+}
+function cjAbrirTab(){ if(!cjPuede()){ toast("No tienes permiso para usar la caja"); return abrirTab("ordenes"); } show("s-caja"); history.replaceState(null,"","#caja"); CJ_MODO=""; cjCargar(); }
+
+/* ---------- contador de billetes y monedas ---------- */
+function cjNuevoConteo(){ CJ_CONTEO={}; [...CJ_BILLETES,...CJ_MONEDAS].forEach(d=>CJ_CONTEO[d]=0); CJ_JUST=false; }
+const cjTotal=()=>Object.entries(CJ_CONTEO||{}).reduce((a,[d,n])=>a+ +d*n,0);
+function cjContador(){
+  const fila=d=>`<div class="cj-den ${d>=500?"bil":"mon"}"><span class="cj-dv">${cjDen(d)}</span><div class="cj-step"><button type="button" data-cjmenos="${d}" aria-label="Quitar uno de ${cjDen(d)}">−</button><input class="num" data-cjn="${d}" inputmode="numeric" value="${CJ_CONTEO[d]||""}" placeholder="0" aria-label="Cuántos de ${cjDen(d)}"><button type="button" data-cjmas="${d}" aria-label="Añadir uno de ${cjDen(d)}">+</button></div><b class="num" data-cjsub="${d}">${CJ_CONTEO[d]?cjE(d*CJ_CONTEO[d]):""}</b></div>`;
+  return `<div class="cj-cont"><div><h4>Billetes</h4>${CJ_BILLETES.map(fila).join("")}</div><div><h4>Monedas</h4>${CJ_MONEDAS.map(fila).join("")}</div></div>
+    <div class="cj-total"><span>Total que has contado</span><b class="num" id="cj-total">${cjE(cjTotal())}</b></div>`;
+}
+function cjActualizar(d){ const s=document.querySelector(`[data-cjsub="${d}"]`); if(s) s.textContent=CJ_CONTEO[d]?cjE(d*CJ_CONTEO[d]):""; const t=$("#cj-total"); if(t) t.textContent=cjE(cjTotal()); }
+
+/* ---------- pintar ---------- */
+function cjPintar(){
+  const e=CJ; if(!e) return;
+  let h=`<section class="cj-op ${e.abierta?"abierta":"cerrada"}">`;
+  if(CJ_MODO==="abrir"||CJ_MODO==="cerrar"){
+    const abrir=CJ_MODO==="abrir";
+    h+=`<div class="cj-paso"><button type="button" class="btn b-ghost b-sm" data-cjvolver>← Volver</button><div><small>${abrir?"Apertura":"Cierre ciego"}</small><h2>${abrir?"Cuenta el fondo de caja":"Cuenta todo el dinero de la caja"}</h2></div></div>
+      <p class="cj-guia">${abrir?"Cuenta billete a billete y moneda a moneda el dinero con el que empiezas el día y escribe cuántos hay de cada uno.":"Saca todo el dinero del cajón y cuéntalo. <b>La pantalla no te dice cuánto debería haber</b>: escribe solo lo que cuentas. El sistema lo compara solo."}</p>
+      ${cjContador()}
+      <div class="cj-just" ${CJ_JUST?"":"hidden"}><div class="msg bad" id="cj-msg"></div><div class="field"><label for="cj-jtxt">Explicación obligatoria (qué ha pasado)</label><textarea class="in" id="cj-jtxt" rows="3" maxlength="800" placeholder="${abrir?"Ej.: El gerente se llevó 50 € anoche para el banco y no lo registró.":"Ej.: Di cambio de 20 € en vez de 10 € a un cliente sobre las 12:00."}"></textarea><small class="hint">Mínimo 15 letras. Queda guardada con tu nombre y el gerente recibe un aviso.</small></div></div>
+      <div class="cj-acts"><button type="button" class="btn b-acc cj-big" data-cjconfirmar>${abrir?"Abrir la caja":CJ_JUST?"Cerrar con esta explicación":"Comprobar y cerrar la caja"}</button></div>`;
+  } else if(!e.abierta){
+    h+=`<div class="cj-estado"><span class="cj-luz off"></span><div><b>Caja cerrada</b><small>${e.ultimoCierre?`Último cierre: ${esc(e.ultimoCierre.nombre)} · ${esc(fechaHora(e.ultimoCierre.t))}${e.ultimoCierre.contado!=null?` · quedaron ${cjE(e.ultimoCierre.contado)}`:""}`:"Todavía no se ha abierto nunca."}</small></div></div>
+      <button type="button" class="btn b-acc cj-big" data-cjmodo="abrir">Abrir la caja</button>
+      <p class="hint">Al abrir, cuentas el fondo con el que empiezas. Si no coincide con lo que quedó en el último cierre, tendrás que explicarlo.</p>`;
+  } else {
+    const t=e.turno, movs=e.movimientos, pend=movs.filter(m=>m.sinTicket&&!m.anulado);
+    h+=`<div class="cj-estado"><span class="cj-luz"></span><div><b>Caja abierta</b><small>Abrió ${esc(t.apertura.nombre)} · ${esc(fechaHora(t.apertura.t))}${t.apertura.contado!=null?` · fondo ${cjE(t.apertura.contado)}`:""}</small></div>${e.calculo?`<div class="cj-teo"><small>Debería haber (solo lo ves tú)</small><b class="num">${cjE(e.calculo.teorico)}</b></div>`:""}</div>
+      <div class="cj-botones"><button type="button" class="cj-bt ing" data-cjform="ingreso"><i>+</i><span><b>Cobro en efectivo</b><small>Un cliente paga en dinero</small></span></button>
+        <button type="button" class="cj-bt egr" data-cjform="egreso"><i>−</i><span><b>Salida de dinero</b><small>Proveedor, compra, retiro… con ticket</small></span></button>
+        <button type="button" class="cj-bt cie" data-cjmodo="cerrar"><i>✓</i><span><b>Cerrar la caja</b><small>Arqueo ciego del final del turno</small></span></button></div>
+      ${pend.length?`<div class="msg bad cj-pend">${pend.length} salida${pend.length>1?"s":""} sin ticket. Haz la foto en cuanto lo tengas: el gerente ya ha recibido el aviso.</div>`:""}
+      <h3 class="cj-h">Movimientos de este turno <span class="num">${movs.length}</span></h3>
+      ${movs.length?`<div class="cj-movs">${movs.slice().reverse().map(m=>`<div class="cj-mov ${m.tipo} ${m.anulado?"anulado":""}"><i>${m.tipo==="egreso"?"−":"+"}</i><div><b>${esc(m.concepto)}</b><small>${esc(tHora(m.t))} · ${esc(CJ_TXT[m.categoria]||m.categoria)}${m.ref?" · "+esc(m.ref):""} · ${esc(m.porNombre)}${m.tipo==="egreso"&&m.responsableNombre&&m.responsableNombre!==m.porNombre?" · se lo lleva "+esc(m.responsableNombre):""}</small>
+        ${m.sinTicket?`<span class="chip rojo">Sin ticket</span>${m.mio||e.admin?` <label class="chipb cj-tk"><input type="file" accept="image/*" capture="environment" hidden data-cjtk="${esc(m.id)}">📷 Añadir ticket</label>`:""}`:m.foto?`<a class="chip ok" href="${FOTO(m.foto)}" target="_blank" rel="noopener">Ticket ✓</a>`:""}${m.anulado?' <span class="chip">Anulado</span>':""}</div>
+        <b class="num">${m.importe!=null?(m.tipo==="egreso"?"−":"+")+cjE(m.importe):"•••"}</b></div>`).join("")}</div>`:'<p class="t-vacio">Todavía no hay movimientos.</p>'}
+      ${!e.admin?'<p class="hint">Solo ves el importe de lo que registras tú. El total lo calcula el sistema al cerrar.</p>':""}`;
+  }
+  h+=`</section>`;
+  if(CJR) h+=cjPanel();
+  $("#cj").innerHTML=h;
+}
+
+/* ---------- formulario de cobro / salida ---------- */
+function cjForm(tipo){
+  let d=$("#dlg-cj"); if(!d){ d=document.createElement("dialog"); d.id="dlg-cj"; d.className="t-dlg cj-dlg"; document.body.appendChild(d); }
+  const eg=tipo==="egreso", cats=eg?CJ_CAT_E:CJ_CAT_I, eq=(TEQ||[]).filter(p=>p.activo);
+  const ords=(ORDENES||[]).filter(o=>o.estado!=="entregado"||Date.now()-Date.parse(o.actualizado)<7*864e5).slice(0,40);
+  d.innerHTML=`<form id="f-cj" novalidate><h2>${eg?"Salida de dinero":"Cobro en efectivo"}</h2>
+    <p class="hint">${eg?"Todo el dinero que sale de la caja se registra en el momento, con la foto del ticket o la factura.":"Registra cada cobro en efectivo en el momento de cobrarlo."}</p>
+    <div class="field"><label for="cj-imp">Importe (€) *</label><input class="in num cj-imp" id="cj-imp" inputmode="decimal" autocomplete="off" placeholder="0,00" required></div>
+    <div class="field"><label>${eg?"Tipo de salida":"Tipo de cobro"} *</label><div class="t-seg" id="cj-cat">${cats.map(([k,t])=>`<button type="button" data-v="${k}" aria-pressed="false">${t}</button>`).join("")}</div></div>
+    ${eg?`<div class="field"><label for="cj-resp">¿Quién se lleva el dinero? *</label><select class="in" id="cj-resp"><option value="${esc(ME.uid)}">${esc(ME.nombre)} (yo)</option>${eq.filter(p=>p.id!==ME.uid).map(p=>`<option value="${esc(p.id)}">${esc(p.nombre)}</option>`).join("")}${ME.uid!=="gerente"?'<option value="gerente">Gerente / propietario</option>':""}</select></div>`:""}
+    ${!eg&&ords.length?`<div class="field"><label for="cj-ord">Orden de taller (si es de una reparación)</label><select class="in" id="cj-ord"><option value="">— Ninguna —</option>${ords.map(o=>`<option value="${esc(o.token)}" data-num="${esc(o.num||"")}" data-txt="${esc((o.vehiculo.coche||"")+" "+(o.vehiculo.matricula||"").toUpperCase()+" · "+o.cliente.nombre)}">${esc((o.num||"")+" · "+(o.vehiculo.matricula||"").toUpperCase()+" · "+o.cliente.nombre)}</option>`).join("")}</select></div>`:""}
+    <div class="field"><label for="cj-con">Concepto *</label><input class="in" id="cj-con" maxlength="200" placeholder="${eg?"Ej.: 5 L aceite 5W30 en Recambios Sur":"Ej.: Cambio de pastillas, Toyota Yaris"}"></div>
+    <div class="field"><label for="cj-ref">${eg?"Nº de factura, ticket u orden *":"Nº de factura u orden"}</label><input class="in" id="cj-ref" maxlength="40" placeholder="${eg?"Ej.: F-2026-0142 · si es un retiro: nº del vale firmado":"Ej.: VC-2026-0003"}"></div>
+    ${eg?`<div class="field"><label>Foto del ticket o la factura *</label><div class="cj-foto" id="cj-foto"><label class="t-foto-add cj-foto-add"><input type="file" accept="image/*" capture="environment" hidden id="cj-file"><span>📷</span><small>Hacer foto</small></label></div>
+      <label class="t-chk"><input type="checkbox" id="cj-sin"><span>No tengo el ticket ahora. <small class="hint">El gerente recibe un aviso al momento y la salida queda marcada hasta que subas la foto.</small></span></label></div>`:""}
+    <div class="msg bad" id="cj-err" hidden></div>
+    <div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-cjcancel>Cancelar</button><button type="submit" class="btn ${eg?"b-brand":"b-acc"}" id="cj-ok">${eg?"Registrar la salida":"Registrar el cobro"}</button></div></form>`;
+  let foto="";
+  $("#cj-cat").onclick=ev=>{ const b=ev.target.closest("[data-v]"); if(!b) return; $("#cj-cat").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); if(eg&&b.dataset.v==="propietario"&&$("#cj-resp")) $("#cj-resp").value=ME.uid==="gerente"?ME.uid:"gerente"; };
+  const ord=$("#cj-ord"); if(ord) ord.onchange=()=>{ const o=ord.selectedOptions[0]; if(ord.value){ if(!$("#cj-ref").value) $("#cj-ref").value=o.dataset.num; if(!$("#cj-con").value) $("#cj-con").value="Reparación "+o.dataset.txt; const b=$("#cj-cat [data-v=taller]"); if(b) b.click(); } };
+  if(eg) $("#cj-file").onchange=async ev=>{ const f=ev.target.files[0]; ev.target.value=""; if(!f) return; $("#cj-foto").classList.add("sub"); toast("Subiendo la foto…");
+    try{ const b=await shrink(f); foto=(await api("/api/fotos",{method:"POST",headers:{"content-type":"image/jpeg"},body:b})).key; $("#cj-foto").innerHTML=`<span class="t-foto"><img src="${FOTO(foto)}" alt="Ticket"></span><small class="cj-fok">Ticket listo ✓</small>`; $("#cj-sin").checked=false; }catch(err){ toast(err.message); }
+    $("#cj-foto").classList.remove("sub"); };
+  d.querySelector("[data-cjcancel]").onclick=()=>d.close();
+  $("#f-cj").onsubmit=async ev=>{ ev.preventDefault(); const err=$("#cj-err"), btn=$("#cj-ok"); err.hidden=true;
+    const imp=cjNum($("#cj-imp").value), cat=($("#cj-cat [aria-pressed=true]")||{}).dataset?.v||"";
+    const falla=m=>{ err.textContent=m; err.hidden=false; };
+    if(!(imp>0)) return falla("Escribe el importe.");
+    if(!cat) return falla("Elige el tipo de "+(eg?"salida.":"cobro."));
+    if($("#cj-con").value.trim().length<3) return falla("Escribe el concepto.");
+    if(eg&&!$("#cj-ref").value.trim()) return falla("Escribe el nº de factura, ticket u orden.");
+    if(eg&&!foto&&!$("#cj-sin").checked) return falla("Haz la foto del ticket. Si de verdad no lo tienes, marca la casilla de abajo.");
+    btn.disabled=true;
+    try{ await api("/api/caja/movimiento",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({tipo,importe:String(imp),categoria:cat,concepto:$("#cj-con").value,ref:$("#cj-ref").value,foto,sinTicket:eg&&!foto&&$("#cj-sin").checked,responsable:eg?$("#cj-resp").value:"",orden:ord?ord.value:""})});
+      d.close(); toast(`${eg?"Salida":"Cobro"} de ${cjE(Math.round(imp*100))} registrad${eg?"a":"o"}`); cjCargar(true);
+    }catch(x){ falla(x.message); }
+    btn.disabled=false; };
+  d.showModal(); setTimeout(()=>$("#cj-imp").focus(),30);
+}
+
+/* ---------- confirmar apertura / cierre ---------- */
+async function cjConfirmar(){
+  const abrir=CJ_MODO==="abrir", btn=document.querySelector("[data-cjconfirmar]"), total=cjTotal();
+  const just=CJ_JUST?($("#cj-jtxt").value||"").trim():"";
+  if(CJ_JUST&&just.length<15){ $("#cj-msg").textContent="Escribe la explicación (mínimo 15 letras). Sin explicación no se puede "+(abrir?"abrir.":"cerrar."); $("#cj-jtxt").focus(); return; }
+  if(!abrir&&!CJ_JUST&&!confirm(`Vas a cerrar la caja con ${cjE(total)} contados. ¿Lo has contado todo?`)) return;
+  btn.disabled=true;
+  try{ const r=await api("/api/caja/"+(abrir?"abrir":"cerrar"),{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({desglose:CJ_CONTEO,justificacion:just})});
+    CJ_MODO=""; CJ_CONTEO=null; CJ_JUST=false;
+    toast(abrir?(r.descuadre?"Caja abierta. La diferencia y tu explicación quedan registradas.":"Caja abierta: el fondo cuadra"):(r.descuadre?"Caja cerrada con descuadre. Tu explicación queda registrada y el gerente recibe el aviso.":"Caja cerrada: todo cuadra ✓"));
+    await cjCargar(true); scrollTo(0,0);
+  }catch(err){
+    btn.disabled=false;
+    if(/NO cuadra|no coincide/i.test(err.message)){ const txt=document.querySelector("#cj-jtxt")?.value||""; CJ_JUST=true; cjPintar(); $("#cj-msg").textContent=err.message; $("#cj-jtxt").value=txt; document.querySelector(".cj-just").scrollIntoView({behavior:"smooth",block:"center"}); }
+    else toast(err.message);
+  }
+}
+
+/* ---------- eventos ---------- */
+$("#cj").addEventListener("click",async e=>{
+  const t=e.target, q=s=>t.closest(s);
+  const md=q("[data-cjmodo]"); if(md){ CJ_MODO=md.dataset.cjmodo; cjNuevoConteo(); if(!TEQ.length&&CJ_MODO) tCargarEquipo(); cjPintar(); scrollTo(0,0); return; }
+  if(q("[data-cjvolver]")){ if(cjTotal()&&!confirm("¿Salir sin terminar? Se pierde el conteo.")) return; CJ_MODO=""; cjPintar(); return; }
+  const mn=q("[data-cjmenos]"), ms=q("[data-cjmas]");
+  if(mn||ms){ const d=(mn||ms).dataset[mn?"cjmenos":"cjmas"]; CJ_CONTEO[d]=Math.max(0,(CJ_CONTEO[d]||0)+(ms?1:-1)); const i=document.querySelector(`[data-cjn="${d}"]`); i.value=CJ_CONTEO[d]||""; cjActualizar(d); return; }
+  if(q("[data-cjconfirmar]")){ cjConfirmar(); return; }
+  const fm=q("[data-cjform]"); if(fm){ if(!TEQ.length) await tCargarEquipo(); cjForm(fm.dataset.cjform); return; }
+  if(q("[data-cjmes]")){ CJ_MES=mesMas(CJ_MES,+q("[data-cjmes]").dataset.cjmes); cjCargar(true); return; }
+  const tr=q("[data-cjturno]"); if(tr){ cjTurno(tr.dataset.cjturno); return; }
+  if(q("[data-cjlibro]")){ cjLibro(); return; }
+  if(q("[data-cjvistas]")){ await api("/api/caja/alertas-vistas",{method:"POST",headers:{"content-type":"application/json"},body:"{}"}); cjCargar(true); cjBadge(0); return; }
+  if(q("[data-cjcsv]")){ cjCsv(); return; }
+});
+$("#cj").addEventListener("input",e=>{ const i=e.target.closest("[data-cjn]"); if(!i) return; const d=i.dataset.cjn, n=Math.max(0,Math.min(99999,parseInt(i.value.replace(/\D/g,""))||0)); CJ_CONTEO[d]=n; if(i.value&&String(n)!==i.value) i.value=n||""; cjActualizar(d); });
+$("#cj").addEventListener("change",async e=>{ const f=e.target.closest("[data-cjtk]"); if(!f||!f.files[0]) return; toast("Subiendo el ticket…");
+  try{ const b=await shrink(f.files[0]); const k=(await api("/api/fotos",{method:"POST",headers:{"content-type":"image/jpeg"},body:b})).key; await api("/api/caja/foto/"+f.dataset.cjtk,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({foto:k})}); toast("Ticket añadido ✓"); cjCargar(true); }catch(err){ toast(err.message); } });
+
+/* =====================================================================
+   CUADRO DE MANDO DEL PROPIETARIO (solo gerente)
+   ===================================================================== */
+function cjPanel(){
+  const r=CJR, cerr=r.turnos.filter(t=>t.cierre), difs=cerr.map(t=>t.cierre.diferencia).concat(r.turnos.filter(t=>t.apertura.diferencia).map(t=>t.apertura.diferencia));
+  const falt=difs.filter(d=>d<0).reduce((a,d)=>a-d,0), sobr=difs.filter(d=>d>0).reduce((a,d)=>a+d,0), nDesc=difs.filter(Boolean).length;
+  const salidas=r.turnos.flatMap(t=>t.movimientos.filter(m=>m.tipo==="egreso"&&!m.anulado)), cobros=r.turnos.flatMap(t=>t.movimientos.filter(m=>m.tipo==="ingreso"&&!m.anulado));
+  const sinTk=r.turnos.reduce((a,t)=>a+t.sinTicket,0), nuevas=r.alertas.filter(a=>!a.vista).length, A=r.ahora;
+  const maxAbs=Math.max(100,...cerr.map(t=>Math.abs(t.cierre.diferencia)));
+  const orden=cerr.slice().reverse();
+  return `<section class="cj-panel">
+  <div class="cj-ph"><div><small>Solo para el propietario</small><h2>Cuadro de mando de la caja</h2></div>
+    <div class="cj-ph-acts"><div class="mesnav"><button type="button" data-cjmes="-1" aria-label="Mes anterior">‹</button><b>${esc(nombreMes(CJ_MES))}</b><button type="button" data-cjmes="1" aria-label="Mes siguiente" ${CJ_MES>=hoyC().slice(0,7)?"disabled":""}>›</button></div><button type="button" class="btn b-ghost b-sm" data-cjlibro>Libro de registro</button><button type="button" class="btn b-ghost b-sm" data-cjcsv>Excel</button></div></div>
+  <div class="cj-kpis">
+    <div class="cj-kpi dest"><small>Efectivo teórico en el local ahora</small><b class="num">${cjE(A.teorico)}</b><span>${A.abierta?`Caja abierta por ${esc(A.nombre)}: fondo ${cjE(A.base)} + cobros ${cjE(A.ingresos)} − salidas ${cjE(A.egresos)}`:A.desde?`Caja cerrada: lo contado en el último cierre (${esc(A.nombre)}, ${esc(fechaHora(A.desde))})`:"La caja no se ha abierto todavía"}</span>${r.horasAbierta>14?`<em>Lleva ${Math.floor(r.horasAbierta)} h abierta sin cerrar</em>`:""}</div>
+    <div class="cj-kpi ${falt?"mal":""}"><small>Faltante del mes</small><b class="num">${cjE(falt)}</b><span>${nDesc} descuadre${nDesc===1?"":"s"}${sobr?` · sobrante ${cjE(sobr)}`:""}</span></div>
+    <div class="cj-kpi"><small>Cobros · salidas del mes</small><b class="num">${cjE(cobros.reduce((a,m)=>a+m.importe,0))}</b><span>salidas ${cjE(salidas.reduce((a,m)=>a+m.importe,0))} (${salidas.length})</span></div>
+    <div class="cj-kpi ${sinTk?"mal":""}"><small>Salidas sin ticket</small><b class="num">${sinTk}</b><span>${sinTk?"Pendientes de justificar":"Todas con comprobante"}</span></div>
+  </div>
+  <div class="cj-grid">
+    <section class="card cj-al"><h3>Alertas ${nuevas?`<span class="chip rojo">${nuevas} nueva${nuevas>1?"s":""}</span>`:""}</h3>${r.alertas.length?`<div class="t-als">${r.alertas.slice(0,12).map(a=>`<button type="button" class="t-al ${a.nivel==="rojo"?"":"ambar"} ${a.vista?"vista":""}" ${a.turno?`data-cjturno="${esc(a.turno)}"`:""}><i>${a.nivel==="rojo"?"⚠":"!"}</i><span><b>${esc(fechaHora(a.t))}</b> ${esc(a.txt)}</span></button>`).join("")}</div>${nuevas?'<button type="button" class="g-link" data-cjvistas style="margin-top:8px">Marcar todas como vistas</button>':""}`:'<p class="hint">Ninguna alerta. Aquí aparecen al momento los descuadres, las salidas sin ticket y los retiros grandes.</p>'}</section>
+    <section class="card"><h3>Descuadre por cierre</h3><p class="hint">Rojo: falta dinero. Ámbar: sobra. Toca una barra para ver el turno.</p>${orden.length?`<div class="cj-bars">${orden.map(t=>{ const d=t.cierre.diferencia, h=Math.max(d?6:2,Math.abs(d)/maxAbs*50); return `<button type="button" class="cj-bar" data-cjturno="${esc(t.id)}" title="${esc(fecha(t.fecha))} · ${esc(t.cierre.nombre)}: ${esc(cjD(d))}"><i class="${d<0?"neg":d>0?"pos":"cero"}" style="height:${h}%;${d<0?"top:50%":`bottom:50%`}"></i></button>`; }).join("")}</div>`:'<p class="hint">Sin cierres este mes.</p>'}</section>
+  </div>
+  <section class="card"><h3>Descuadres por empleado</h3>${r.porEmpleado.length?`<div class="tabla-wrap"><table class="tabla"><thead><tr><th>Empleado</th><th class="n">Cierres</th><th class="n">Descuadres</th><th class="n">Falta</th><th class="n">Sobra</th><th class="n">Neto</th><th class="n">Recuentos</th><th class="n">Sin ticket</th></tr></thead><tbody>${r.porEmpleado.sort((a,b)=>a.neto-b.neto).map(p=>`<tr><td><b>${esc(p.nombre)}</b></td><td class="n">${p.turnos}</td><td class="n">${p.descuadres}</td><td class="n ${p.faltante?"cj-rojo":""}">${cjE(p.faltante)}</td><td class="n">${cjE(p.sobrante)}</td><td class="n"><b class="${p.neto<0?"cj-rojo":""}">${cjD(p.neto)}</b></td><td class="n">${p.recuentos}</td><td class="n ${p.sinTicket?"cj-rojo":""}">${p.sinTicket}</td></tr>`).join("")}</tbody></table></div><p class="hint">Responde del cierre quien cierra la caja y de la apertura quien la abre. «Recuentos»: veces que alguien volvió a contar porque no cuadraba.</p>`:'<p class="hint">Sin datos este mes.</p>'}</section>
+  <section class="card"><h3>Historial de turnos</h3>${r.turnos.length?`<div class="tabla-wrap"><table class="tabla cj-tur"><thead><tr><th>Turno</th><th>Abrió / cerró</th><th class="n">Debería haber</th><th class="n">Contado</th><th class="n">Diferencia</th><th>Explicación</th></tr></thead><tbody>${r.turnos.map(t=>{ const c=t.cierre, d=c?c.diferencia:null;
+      return `<tr data-cjturno="${esc(t.id)}" tabindex="0" class="${d?"desc":""}"><td><b>${esc(fecha(t.fecha))}</b><small>${esc(tHora(t.apertura.t))}–${c?esc(tHora(c.t)):"abierta"}</small></td><td>${esc(t.apertura.nombre)}${t.apertura.diferencia?` <span class="chip rojo">apertura ${esc(cjD(t.apertura.diferencia))}</span>`:""}<small>${c?"Cerró "+esc(c.nombre):"Sin cerrar"}</small></td><td class="n num">${c?cjE(c.teorico):cjE(t.calculo.teorico)}</td><td class="n num">${c?cjE(c.contado):"—"}</td><td class="n num"><b class="${d<0?"cj-rojo":d>0?"cj-ambar":"cj-verde"}">${c?cjD(d):"—"}</b>${c&&c.intentos.length>1?`<small>${c.intentos.length} recuentos</small>`:""}</td><td>${c&&c.justificacion?`<small class="cj-j">«${esc(c.justificacion)}»</small>`:""}${t.sinTicket?' <span class="chip rojo">sin ticket</span>':""}${t.revision?' <span class="chip ok">Revisado</span>':d?' <span class="chip">Por revisar</span>':""}${t.ajustes.length?` <span class="chip">${t.ajustes.length} ajuste${t.ajustes.length>1?"s":""}</span>`:""}</td></tr>`; }).join("")}</tbody></table></div>`:'<p class="hint">No hay turnos en este mes.</p>'}</section>
+  </section>`;
+}
+function cjCsv(){
+  const filas=[["Fecha","Abrió","Hora apertura","Fondo","Diferencia apertura","Cobros","Salidas","Cerró","Hora cierre","Debería haber","Contado","Diferencia","Recuentos","Explicación","Revisado"]];
+  for(const t of CJR.turnos){ const c=t.cierre, k=t.calculo; filas.push([t.fecha,t.apertura.nombre,tHora(t.apertura.t),(k.base/100).toFixed(2).replace(".",","),(t.apertura.diferencia/100).toFixed(2).replace(".",","),(k.ingresos/100).toFixed(2).replace(".",","),(k.egresos/100).toFixed(2).replace(".",","),c?c.nombre:"",c?tHora(c.t):"",c?(c.teorico/100).toFixed(2).replace(".",","):"",c?(c.contado/100).toFixed(2).replace(".",","):"",c?(c.diferencia/100).toFixed(2).replace(".",","):"",c?c.intentos.length:"",c?c.justificacion:"",t.revision?t.revision.nota:""]); }
+  const csv="﻿"+filas.map(r=>r.map(x=>{ let v=String(x??""); if(/^[=+\-@\t\r]/.test(v)&&!/^-?\d/.test(v)) v="'"+v; return `"${v.replace(/"/g,'""')}"`; }).join(";")).join("\r\n");
+  const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"})); a.download=`volcano-cars-caja-${CJ_MES}.csv`; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500);
+}
+
+/* ---------- detalle de un turno (cajón) ---------- */
+function cjTurno(id){
+  const t=CJR&&CJR.turnos.find(x=>x.id===id); if(!t){ toast("Ese turno es de otro mes"); return; }
+  DW={tipo:"caja",id}; const c=t.cierre, k=t.calculo;
+  const desg=d=>Object.keys(d||{}).length?`<div class="cj-desg">${Object.entries(d).sort((a,b)=>b[0]-a[0]).map(([v,n])=>`<span>${n} × ${cjDen(+v)}</span>`).join("")}</div>`:'<small class="hint">Sin desglose</small>';
+  abrirDrawer(`<div class="dw-head"><div><span class="tipo">Caja</span><h2 class="dw-nombre" style="margin:0">Turno del ${esc(fechaLarga(t.fecha))}</h2></div><button class="x" type="button" data-cerrar aria-label="Cerrar">✕</button></div>
+    <section class="dw-box"><h3>Cuadre</h3><table class="tabla"><tbody>
+      <tr><td>Fondo de apertura (${esc(t.apertura.nombre)}, ${esc(tHora(t.apertura.t))})</td><td class="n num">${cjE(k.base)}</td></tr>
+      ${t.apertura.esperado!=null?`<tr><td><small>Quedó en el cierre anterior</small></td><td class="n num"><small>${cjE(t.apertura.esperado)}</small></td></tr>`:""}
+      <tr><td>+ Cobros en efectivo</td><td class="n num">${cjE(k.ingresos)}</td></tr><tr><td>− Salidas</td><td class="n num">${cjE(k.egresos)}</td></tr>
+      <tr><td><b>Debería haber</b></td><td class="n num"><b>${cjE(k.teorico)}</b></td></tr>
+      ${c?`<tr><td><b>Contado al cerrar</b> (${esc(c.nombre)}, ${esc(tHora(c.t))})</td><td class="n num"><b>${cjE(c.contado)}</b></td></tr><tr class="${c.diferencia?"cj-fdesc":""}"><td><b>Diferencia</b></td><td class="n num"><b class="${c.diferencia<0?"cj-rojo":c.diferencia>0?"cj-ambar":"cj-verde"}">${cjD(c.diferencia)}</b></td></tr>`:""}
+    </tbody></table>
+    ${t.apertura.diferencia?`<div class="msg bad" style="margin-top:10px">Apertura con diferencia de ${esc(cjD(t.apertura.diferencia))}: «${esc(t.apertura.justificacion)}»</div>`:""}
+    ${c&&c.justificacion?`<div class="msg bad" style="margin-top:10px">Explicación de ${esc(c.nombre)}: «${esc(c.justificacion)}»</div>`:""}</section>
+    ${c?`<section class="dw-box"><h3>Conteos del cierre</h3>${c.intentos.map((x,i)=>`<div class="cj-int"><b>${i+1}º · ${esc(tHora(x.t))} · ${cjE(x.contado)}</b>${desg(x.desglose)}</div>`).join("")}${c.intentos.length>1?'<p class="hint">Varios recuentos: el empleado volvió a contar porque no cuadraba. Compara los importes.</p>':""}</section>`:""}
+    <section class="dw-box"><h3>Movimientos (${t.movimientos.length})</h3>${t.movimientos.length?t.movimientos.map(m=>`<div class="cj-mov ${m.tipo} ${m.anulado?"anulado":""}"><i>${m.tipo==="egreso"?"−":"+"}</i><div><b>${esc(m.concepto)}</b><small>${esc(tHora(m.t))} · ${esc(CJ_TXT[m.categoria]||m.categoria)}${m.ref?" · "+esc(m.ref):""} · registra ${esc(m.porNombre)}${m.tipo==="egreso"?" · se lo lleva "+esc(m.responsableNombre):""}${m.ajuste?" · AJUSTE DEL GERENTE":""}</small>
+      ${m.foto?`<a href="${FOTO(m.foto)}" target="_blank" rel="noopener" class="cj-tkimg"><img src="${FOTO(m.foto)}" alt="Ticket"></a>${m.sinTicket?`<small class="cj-ambar">Ticket añadido después (${esc(fechaHora(m.fotoT))})</small>`:""}`:m.tipo==="egreso"&&!m.ajuste?'<span class="chip rojo">Sin ticket</span>':""}
+      ${m.anulado?`<small class="cj-rojo">Anulado: ${esc(m.anulado.motivo)} (${esc(fechaHora(m.anulado.t))})</small>`:`<button type="button" class="chipb" data-cjanular="${esc(m.id)}" style="margin-top:6px">Anular</button>`}</div><b class="num">${m.tipo==="egreso"?"−":"+"}${cjE(m.importe)}</b></div>`).join(""):'<p class="hint">Sin movimientos.</p>'}</section>
+    ${t.ajustes.length?`<section class="dw-box"><h3>Ajustes del gerente</h3>${t.ajustes.map(a=>`<p style="margin:0 0 6px"><b>${esc(fechaHora(a.t))}</b> · ${esc(a.tipo)} ${esc(cjD(a.importe))} · ${esc(a.concepto)}<br><small>Motivo: ${esc(a.motivo)}</small></p>`).join("")}</section>`:""}
+    ${c?`<section class="dw-box"><h3>Revisión</h3>${t.revision?`<div class="t-firmado"><span class="t-sello">✓</span><span><b>Revisado</b><small>${esc(fechaHora(t.revision.t))} · ${esc(t.revision.nota)}</small></span></div>`:`<div class="quick"><input class="in" id="cj-rev" placeholder="Qué has comprobado o decidido (p. ej. «Lo repone de su sueldo»)" maxlength="400" style="flex:1 1 240px"><button type="button" class="btn b-brand b-sm" data-cjrevisar="${esc(t.id)}">Dar por revisado</button></div>`}</section>
+    <section class="dw-box"><h3>Ajuste del gerente</h3><p class="hint" style="margin:0 0 8px">Para corregir un turno cerrado (un cobro que no se registró, una salida olvidada…). No borra nada: añade un movimiento marcado como ajuste, recalcula la diferencia y queda en el libro.</p>
+      <div class="t-g2"><div class="field"><label>Tipo</label><select class="in" id="cj-at"><option value="ingreso">Cobro no registrado (+)</option><option value="egreso">Salida no registrada (−)</option></select></div><div class="field"><label>Importe (€)</label><input class="in num" id="cj-ai" inputmode="decimal" placeholder="0,00"></div></div>
+      <div class="field" style="margin-top:8px"><label>Concepto</label><input class="in" id="cj-ac" maxlength="200"></div><div class="field" style="margin-top:8px"><label>Motivo del ajuste</label><input class="in" id="cj-am" maxlength="300"></div>
+      <button type="button" class="btn b-ghost b-sm" data-cjajuste="${esc(t.id)}" style="margin-top:10px">Añadir ajuste</button></section>`:""}
+    <p style="padding-bottom:30px"></p>`);
+}
+$("#dw-body").addEventListener("click",async e=>{ if(!DW||DW.tipo!=="caja") return; const t=e.target;
+  try{
+    const an=t.closest("[data-cjanular]"); if(an){ const m=prompt("Motivo de la anulación (queda en el libro de registro):"); if(!m||m.trim().length<5) return toast("Hace falta un motivo");
+      await api("/api/caja/anular/"+an.dataset.cjanular,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({motivo:m})}); toast("Movimiento anulado"); await cjCargar(true); cjTurno(DW.id); return; }
+    const rv=t.closest("[data-cjrevisar]"); if(rv){ await api("/api/caja/revisar/"+rv.dataset.cjrevisar,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({nota:$("#cj-rev").value})}); toast("Turno revisado"); await cjCargar(true); cjTurno(DW.id); return; }
+    const aj=t.closest("[data-cjajuste]"); if(aj){ const imp=cjNum($("#cj-ai").value); if(!(imp>0)) return toast("Escribe el importe");
+      const r=await api("/api/caja/ajuste/"+aj.dataset.cjajuste,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({tipo:$("#cj-at").value,importe:String(imp),concepto:$("#cj-ac").value,motivo:$("#cj-am").value})});
+      toast("Ajuste guardado. Nueva diferencia: "+cjD(r.diferencia)); await cjCargar(true); cjTurno(DW.id); return; }
+  }catch(err){ toast(err.message); } });
+
+/* ---------- libro de registro ---------- */
+async function cjLibro(){
+  DW={tipo:"caja-libro",id:"l"}; abrirDrawer('<div class="empty">Cargando el libro…</div>');
+  try{ const r=await api(`/api/caja/libro?desde=${CJ_MES}-01&hasta=${finMes(CJ_MES)}`);
+    $("#dw-body").innerHTML=`<div class="dw-head"><div><span class="tipo">Caja</span><h2 class="dw-nombre" style="margin:0">Libro de registro</h2></div><button class="x" type="button" data-cerrar aria-label="Cerrar">✕</button></div>
+      <section class="dw-box cj-integ ${r.integro?"ok":"mal"}"><b>${r.integro?"✓ Libro íntegro":"⚠ El libro ha sido manipulado"}</b><p class="hint" style="margin:4px 0 0">${r.integro?`${r.total} registros encadenados: cada uno lleva la huella del anterior, así que nadie puede cambiar ni borrar uno sin que se note.`:`Registros con la huella rota: ${esc(r.rotas.join(", "))}. Alguien ha tocado los datos por fuera del panel.`}</p></section>
+      <section class="dw-box"><h3>${esc(nombreMes(CJ_MES))}</h3>${r.entradas.length?`<div class="tabla-wrap"><table class="tabla t-aud"><tbody>${r.entradas.map(x=>`<tr class="${/no-cuadra|anulacion|ajuste/.test(x.accion)?"sens":""}"><td class="num"><small>#${x.n}</small><br><small>${esc(fechaHora(x.t))}</small></td><td><b>${esc(CJ_ACC[x.accion]||x.accion)}</b><small>${esc(cjResumenLog(x))}</small></td><td><b>${esc(x.nombre)}</b><small>${esc(T_ROL[x.rol]||x.rol)}</small></td></tr>`).join("")}</tbody></table></div>`:'<p class="hint">Sin registros este mes.</p>'}</section><p style="padding-bottom:30px"></p>`;
+  }catch(err){ $("#dw-body").innerHTML=`<div class="empty">${esc(err.message)}</div>`; } }
+function cjResumenLog(x){ const d=x.datos||{}, p=[];
+  if(d.importe!=null) p.push(cjE(d.importe)); if(d.concepto) p.push(d.concepto); if(d.categoria) p.push(CJ_TXT[d.categoria]||d.categoria);
+  if(d.contado!=null) p.push("contado "+cjE(d.contado)); if(d.teorico!=null) p.push("debería "+cjE(d.teorico)); if(d.diferencia) p.push("diferencia "+cjD(d.diferencia));
+  if(d.intento) p.push("recuento nº "+d.intento); if(d.sinTicket) p.push("SIN TICKET"); if(d.justificacion) p.push("«"+d.justificacion+"»"); if(d.motivo) p.push("motivo: "+d.motivo); if(d.nota) p.push(d.nota);
+  return p.join(" · "); }
+
+/* ---------- avisos en vivo para el gerente (pestaña, notificación del navegador) ---------- */
+function cjBadge(n){ const b=$("#n-caja"); if(b){ b.hidden=!n; b.textContent=n; } }
+async function cjVigilar(){
+  if(!PW||!ME||!ES_GER()||document.hidden||(ES_EQ()&&!ME.caja)) return;
+  try{ const r=await api(`/api/caja/resumen?desde=${hoyC().slice(0,7)}-01&hasta=${hoyC()}`); const nuevas=r.alertas.filter(a=>!a.vista);
+    cjBadge(nuevas.length);
+    const frescas=nuevas.filter(a=>!CJ_ALERTAS_VISTAS.has(a.id)&&Date.now()-Date.parse(a.t)<10*60e3);
+    nuevas.forEach(a=>CJ_ALERTAS_VISTAS.add(a.id));
+    if(frescas.length&&cjVigilar.ya){ const a=frescas[0]; toast("Caja: "+a.txt); pitido&&pitido();
+      try{ if("Notification" in window&&Notification.permission==="granted"){ const n=new Notification("Volcano Cars · Caja",{body:a.txt,tag:"vc-caja-"+a.id}); n.onclick=()=>{ window.focus(); cjAbrirTab(); n.close(); }; } }catch(_){ } }
+    cjVigilar.ya=true;
+    if(!$("#s-caja").hidden&&!CJ_MODO&&!document.querySelector("#dlg-cj[open]")){ CJR=CJ_MES===hoyC().slice(0,7)?r:CJR; CJ=await api("/api/caja/estado"); cjPintar(); }
+  }catch(_){ }
+}
+setInterval(cjVigilar,15000);
+setInterval(async()=>{ if(!PW||ES_GER()||$("#s-caja").hidden||CJ_MODO||document.querySelector("#dlg-cj[open]")) return; try{ CJ=await api("/api/caja/estado"); cjPintar(); }catch(_){ } },20000);
+/*CAJA-JS-FIN*/
 /*GUIA-JS-INICIO*/
 /* =====================================================================
    GUÍA DE VENTA · «El Método de Venta Volcano Cars» (SOP-02 v2.0)

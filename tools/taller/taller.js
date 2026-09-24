@@ -79,13 +79,13 @@ function tResF2(f2){ let r=0,a=0,ok=0,na=0,h=0; if(f2) for(const id of F2_IDS){ 
 
 /* ---------- modo equipo (usuario + PIN: solo ve el taller) ---------- */
 async function entrarEquipo(d){
-  ME={rol:d.rol,nombre:d.nombre,uid:d.uid,equipo:true};
+  ME={rol:d.rol,nombre:d.nombre,uid:d.uid,equipo:true,caja:!!d.caja};
   try{ sessionStorage.setItem("vc_me",JSON.stringify(ME)); }catch(_){}
-  document.body.classList.add("modo-equipo"); tUsuario();
+  document.body.classList.add("modo-equipo"); document.body.classList.toggle("con-caja",!!ME.caja); tUsuario(); if(ME.rol==="gerente") setTimeout(()=>cjVigilar(),1200);
   TVISTA=TVISTA||"mios";
   await Promise.all([tCargarEquipo(), api("/api/ordenes").then(r=>{ ORDENES=r; }).catch(()=>{})]);
   let abierta=""; try{ abierta=sessionStorage.getItem("vc_tf")||""; }catch(_){}
-  if(abierta&&location.hash==="#fichas") abrirFichas(abierta); else abrirTab("ordenes",false);
+  if(abierta&&location.hash==="#fichas") abrirFichas(abierta); else abrirTab(location.hash==="#caja"&&ME.caja?"caja":"ordenes",false);
 }
 function tUsuario(){
   let el=$("#t-yo"); if(!el){ el=document.createElement("span"); el.id="t-yo"; el.className="t-yo"; $("#topacts").prepend(el); }
@@ -685,10 +685,11 @@ async function tAbrirEquipo(){ DW={tipo:"equipo",id:"e"}; abrirDrawer('<div clas
   try{ const [eq,cfg]=await Promise.all([tApi("equipo"),tApi("config")]); TEQ=eq; tPintarEquipo(cfg); }catch(err){ $("#dw-body").innerHTML=`<div class="empty">${esc(err.message)}</div>`; } }
 function tPintarEquipo(cfg){
   const roles=Object.entries(T_ROL).filter(([k])=>k!=="gerente").concat([["gerente","Gerente (ve y corrige todo)"]]);
-  const fila=p=>`<details class="t-per ${p.activo?"":"baja"}"><summary><i>${esc(p.nombre.slice(0,1).toUpperCase())}</i><span><b>${esc(p.nombre)}</b><small>${esc(T_ROL[p.rol])} · usuario <b>${esc(p.usuario)}</b> · ${String(p.jornada).replace(".",",")} h/día${p.activo?"":" · de baja"}</small></span></summary>
+  const fila=p=>`<details class="t-per ${p.activo?"":"baja"}"><summary><i>${esc(p.nombre.slice(0,1).toUpperCase())}</i><span><b>${esc(p.nombre)}</b><small>${esc(T_ROL[p.rol])}${p.caja&&p.rol!=="gerente"?" · caja":""} · usuario <b>${esc(p.usuario)}</b> · ${String(p.jornada).replace(".",",")} h/día${p.activo?"":" · de baja"}</small></span></summary>
     <form class="t-perf" data-tper="${esc(p.id)}"><div class="t-g2"><div class="field"><label>Nombre</label><input class="in" name="nombre" value="${esc(p.nombre)}" maxlength="40"></div><div class="field"><label>Usuario</label><input class="in" name="usuario" value="${esc(p.usuario)}" maxlength="20" autocomplete="off"></div>
     <div class="field"><label>Puesto</label><select class="in" name="rol">${roles.map(([k,t])=>`<option value="${k}" ${p.rol===k?"selected":""}>${t}</option>`).join("")}</select></div><div class="field"><label>Horas pagadas al día</label><input class="in num" name="jornada" value="${String(p.jornada).replace(".",",")}" inputmode="decimal"></div>
     <div class="field"><label>Fecha de alta</label><input class="in" type="date" name="alta" value="${esc(p.alta)}"></div><div class="field"><label>Nuevo PIN (déjalo vacío para no cambiarlo)</label><input class="in num" name="pin" inputmode="numeric" maxlength="8" autocomplete="new-password" placeholder="6 a 8 números"></div></div>
+    <label class="t-chk"><input type="checkbox" name="caja" ${p.caja||p.rol==="gerente"?"checked":""} ${p.rol==="gerente"?"disabled":""}><span>Puede usar la caja (abrir, cerrar, cobrar y registrar salidas)</span></label>
     <div class="quick"><button class="btn b-brand b-sm">Guardar</button>${p.activo?`<button type="button" class="btn b-bad b-sm" data-tbaja="${esc(p.id)}">Dar de baja</button>`:`<button type="button" class="btn b-ghost b-sm" data-talta="${esc(p.id)}">Volver a activar</button>`}</div></form></details>`;
   $("#dw-body").innerHTML=`<div class="dw-head"><div><span class="tipo taller">Taller</span><h2 class="dw-nombre" style="margin:0">Equipo y ajustes</h2></div><button class="x" type="button" data-cerrar aria-label="Cerrar">✕</button></div>
     <section class="dw-box"><h3>Cómo entra el equipo</h3><p class="hint" style="margin:0">Cada persona abre <b>${esc(location.origin)}/admin</b> en la tablet o en su móvil, pulsa «Entrar como equipo del taller» y pone su usuario y PIN. Solo ve el taller: no ve coches en venta, clientes del CRM, ventas ni seguridad. Los intentos fallidos bloquean la conexión igual que con tu contraseña.</p></section>
@@ -696,6 +697,7 @@ function tPintarEquipo(cfg){
       <details class="t-per nuevo" ${TEQ.length?"":"open"}><summary><i>+</i><span><b>Añadir persona</b></span></summary><form class="t-perf" data-tper=""><div class="t-g2"><div class="field"><label>Nombre</label><input class="in" name="nombre" maxlength="40" required></div><div class="field"><label>Usuario (sin espacios)</label><input class="in" name="usuario" maxlength="20" autocomplete="off" required placeholder="pedro"></div>
       <div class="field"><label>Puesto</label><select class="in" name="rol">${roles.map(([k,t])=>`<option value="${k}">${t}</option>`).join("")}</select></div><div class="field"><label>Horas pagadas al día</label><input class="in num" name="jornada" value="${String(cfg.jornada).replace(".",",")}" inputmode="decimal"></div>
       <div class="field"><label>Fecha de alta</label><input class="in" type="date" name="alta" value="${hoyC()}"></div><div class="field"><label>PIN para entrar</label><input class="in num" name="pin" inputmode="numeric" maxlength="8" autocomplete="new-password" placeholder="6 a 8 números" required></div></div>
+      <label class="t-chk"><input type="checkbox" name="caja"><span>Puede usar la caja (abrir, cerrar, cobrar y registrar salidas)</span></label>
       <button class="btn b-acc b-sm">Añadir</button></form></details></section>
     <section class="dw-box"><h3>Ajustes del taller</h3><form class="t-perf" data-tcfg><div class="t-g2"><div class="field"><label>Tarifa mano de obra (€/h, sin IGIC)</label><input class="in num" name="tarifa" value="${String(cfg.tarifa).replace(".",",")}" inputmode="decimal"></div><div class="field"><label>Jornada por defecto (h)</label><input class="in num" name="jornada" value="${String(cfg.jornada).replace(".",",")}" inputmode="decimal"></div>
       <div class="field"><label>Justificar si se pasa más de (%)</label><input class="in num" name="umbralPct" value="${String(cfg.umbralPct).replace(".",",")}" inputmode="decimal"></div><div class="field"><label>… o más de (minutos)</label><input class="in num" name="umbralMin" value="${cfg.umbralMin}" inputmode="numeric"></div>
@@ -704,7 +706,7 @@ function tPintarEquipo(cfg){
 }
 $("#dw-body").addEventListener("submit",async e=>{ if(!DW||DW.tipo!=="equipo") return; e.preventDefault(); const f=e.target, d=Object.fromEntries(new FormData(f));
   try{ if(f.matches("[data-tcfg]")){ const cfg=await tApi("config","PUT",{tarifa:tNum(d.tarifa),jornada:tNum(d.jornada),umbralPct:tNum(d.umbralPct),umbralMin:tNum(d.umbralMin),igic:tNum(d.igic)}); tPintarEquipo(cfg); toast("Ajustes guardados"); return; }
-    const id=f.dataset.tper, body={...d,jornada:tNum(d.jornada)}; if(!body.pin) delete body.pin;
+    const id=f.dataset.tper, body={...d,jornada:tNum(d.jornada),caja:!!(f.querySelector("[name=caja]")||{}).checked}; if(!body.pin) delete body.pin;
     await tApi(id?"equipo/"+id:"equipo",id?"PUT":"POST",body); TEQ=await tApi("equipo"); tPintarEquipo(await tApi("config")); toast(id?"Guardado":"Añadido: ya puede entrar con su usuario y PIN");
   }catch(err){ toast(err.message); } });
 $("#dw-body").addEventListener("click",async e=>{ if(!DW||DW.tipo!=="equipo") return; const b=e.target.closest("[data-tbaja],[data-talta]"); if(!b) return;

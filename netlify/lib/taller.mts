@@ -10,7 +10,7 @@ const clave = () => createHash("sha256").update("vc-equipo|" + envGet("ADMIN_PAS
 
 export type Rol = "gerente" | "mecanico" | "calidad" | "recepcion";
 export const ROLES: Rol[] = ["mecanico", "calidad", "recepcion", "gerente"];
-export type Persona = { id: string; nombre: string; usuario: string; rol: Rol; jornada: number; activo: boolean; alta: string; pin?: { s: string; h: string } };
+export type Persona = { id: string; nombre: string; usuario: string; rol: Rol; jornada: number; activo: boolean; alta: string; caja?: boolean; pin?: { s: string; h: string } };
 export type Config = { tarifa: number; jornada: number; umbralPct: number; umbralMin: number; igic: number };
 export const CONFIG_DEFECTO: Config = { tarifa: 45, jornada: 8, umbralPct: 15, umbralMin: 30, igic: 7 };
 
@@ -40,15 +40,15 @@ function leerSesionEquipo(token: string) {
   if (!Number.isFinite(exp) || exp < Date.now() || iat > Date.now() + 60e3) return null;
   return { iat, exp, uid: p[4] };
 }
-export type Quien = { uid: string; nombre: string; rol: Rol; admin: boolean };
+export type Quien = { uid: string; nombre: string; rol: Rol; admin: boolean; caja: boolean };
 // Quién hace la petición: el gerente (contraseña del panel) o una persona del equipo (usuario + PIN)
 export async function quien(req: Request): Promise<Quien | null> {
-  if (await isAdmin(req)) return { uid: "gerente", nombre: "Gerente", rol: "gerente", admin: true };
+  if (await isAdmin(req)) return { uid: "gerente", nombre: "Gerente", rol: "gerente", admin: true, caja: true };
   const s = leerSesionEquipo((req.headers.get("authorization") || "").replace(/^Bearer\s+/i, ""));
   if (!s || s.iat < (await minIat())) return null;
   const p = (await leerEquipo()).find((x) => x.id === s.uid && x.activo);
   if (!p) return null;
-  return { uid: p.id, nombre: p.nombre, rol: p.rol, admin: p.rol === "gerente" };
+  return { uid: p.id, nombre: p.nombre, rol: p.rol, admin: p.rol === "gerente", caja: p.rol === "gerente" || !!p.caja };
 }
 
 // ---------- fichas ----------

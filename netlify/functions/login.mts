@@ -21,7 +21,7 @@ export default async (req: Request, context: Context) => {
     const t = leerSesion((req.headers.get("authorization") || "").replace(/^Bearer\s+/i, ""));
     if (t && (await isAdmin(req))) return json({ ok: true, exp: t.exp, rol: "gerente", nombre: "Gerente", uid: "gerente" });
     const q = await quien(req);
-    if (q) return json({ ok: true, rol: q.rol, nombre: q.nombre, uid: q.uid, equipo: true });
+    if (q) return json({ ok: true, rol: q.rol, nombre: q.nombre, uid: q.uid, caja: q.caja, equipo: true });
     return json({ error: "Sesión caducada" }, 401);
   }
   if (req.method !== "POST") return json({ error: "Método no permitido" }, 405);
@@ -51,7 +51,7 @@ export default async (req: Request, context: Context) => {
     await limpiarFallos(ip);
     const s = crearSesionEquipo(pers.id, 12);
     await registrar("login-ok", ip, ua, p, "Entrada del equipo: " + pers.nombre);
-    return json({ ok: true, token: s.token, exp: s.exp, rol: pers.rol, nombre: pers.nombre, uid: pers.id, equipo: true });
+    return json({ ok: true, token: s.token, exp: s.exp, rol: pers.rol, nombre: pers.nombre, uid: pers.id, caja: pers.rol === "gerente" || !!pers.caja, equipo: true });
   }
 
   if (!dada || !igualSeguro(dada, clave)) {

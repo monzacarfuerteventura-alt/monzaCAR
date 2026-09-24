@@ -215,7 +215,7 @@ export default async (req: Request, context: Context) => {
 
   if (recurso === "equipo") {
     const eq = await leerEquipo();
-    const publico = (x: Persona) => ({ id: x.id, nombre: x.nombre, usuario: q.admin ? x.usuario : undefined, rol: x.rol, jornada: x.jornada, activo: x.activo, alta: x.alta, conPin: !!x.pin });
+    const publico = (x: Persona) => ({ id: x.id, nombre: x.nombre, usuario: q.admin ? x.usuario : undefined, rol: x.rol, jornada: x.jornada, activo: x.activo, alta: x.alta, caja: !!x.caja, conPin: !!x.pin });
     if (req.method === "GET") return json(eq.filter((x) => q.admin || x.activo).map(publico));
     if (!q.admin) return json({ error: "Solo el gerente gestiona el equipo." }, 403);
     const id = p[3] || "";
@@ -227,7 +227,7 @@ export default async (req: Request, context: Context) => {
       const pin = String(body.pin ?? "");
       if (pin && !/^\d{6,8}$/.test(pin)) return "El PIN tiene que tener 6 a 8 números.";
       if (!prev && !pin) return "Pon un PIN de 6 números para que pueda entrar.";
-      return { id: prev?.id || "u" + crypto.randomUUID().slice(0, 8), nombre, usuario, rol: (ROLES.includes(body.rol) ? body.rol : prev?.rol || "mecanico"), jornada: num(body.jornada ?? prev?.jornada, 12) || 8, activo: body.activo === undefined ? prev?.activo ?? true : !!body.activo, alta: fechaISO(body.alta) || prev?.alta || hoyCanarias(), pin: pin ? hashPin(pin) : prev?.pin };
+      return { id: prev?.id || "u" + crypto.randomUUID().slice(0, 8), nombre, usuario, rol: (ROLES.includes(body.rol) ? body.rol : prev?.rol || "mecanico"), jornada: num(body.jornada ?? prev?.jornada, 12) || 8, activo: body.activo === undefined ? prev?.activo ?? true : !!body.activo, alta: fechaISO(body.alta) || prev?.alta || hoyCanarias(), caja: body.caja === undefined ? !!prev?.caja : body.caja === true || body.caja === "on" || body.caja === "1", pin: pin ? hashPin(pin) : prev?.pin };
     };
     if (req.method === "POST" && !id) { const r = datos(); if (typeof r === "string") return json({ error: r }, 400); eq.push(r); await tstore().setJSON("equipo", eq); return json(publico(r), 201); }
     const i = eq.findIndex((x) => x.id === id); if (i < 0) return json({ error: "No existe." }, 404);

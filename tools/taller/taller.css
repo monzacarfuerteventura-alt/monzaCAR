@@ -7,7 +7,7 @@
 .t-yo i{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-style:normal;font-weight:800}
 .t-yo small{display:block;color:var(--muted);font-size:11.5px}
 @media (max-width:560px){.t-yo span{display:none}}
-body.modo-equipo #tabs [data-tab]:not([data-tab="ordenes"]),body.modo-equipo #btn-seg,body.modo-equipo #topacts a{display:none!important}
+body.modo-equipo #tabs [data-tab]:not([data-tab="ordenes"]):not([data-tab="caja"]),body.modo-equipo:not(.con-caja) #tabs [data-tab="caja"],body.modo-equipo #btn-seg,body.modo-equipo #topacts a{display:none!important}
 body.modo-equipo #s-ordenes .head{margin-bottom:10px}
 
 /* barra y filtros */
