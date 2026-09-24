@@ -1,6 +1,7 @@
 import type { Config, Context } from "@netlify/functions";
 import { createHash } from "node:crypto";
 import { store, json, isAdmin, canalDe, enviarAviso, waNum, mismoOrigen } from "../lib/shared.mts";
+import { notificarExternos } from "../lib/notificar.mts";
 
 /*
   SOLICITUDES DE CLIENTES (mini CRM)
@@ -288,7 +289,7 @@ export default async (req: Request, context: Context) => {
       if (!v || v.id !== sol.id) return json({ error: "Esa hora se acaba de ocupar. Elige otra.", ocupada: true }, 409);
     }
     await s.setJSON("s/" + sol.id, sol);
-    const envio = avisar(sol, url.origin).catch(() => {});
+    const envio = Promise.allSettled([avisar(sol, url.origin), notificarExternos(sol as any, url.origin)]);
     if (typeof (context as any).waitUntil === "function") (context as any).waitUntil(envio); else await envio;
     return json({ ok: true, id: sol.id, cita: sol.cita });
   }

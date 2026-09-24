@@ -1618,7 +1618,7 @@ b.fn-c-ing,b.fn-c-egr{background:none;color:var(--ink)}
 
       <fieldset class="card mk">
         <legend><span class="lg-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>Comparativa de mercado <small style="font-weight:600;color:var(--muted)">(opcional)</small></legend>
-        <p class="hint">Busca en coches.net, Wallapop, Milanuncios o AutoScout24 el mismo modelo, año y motor, con kilómetros parecidos, y pega aquí sus precios. Si tu precio está por debajo de la media, la ficha enseña el bloque «¡Oferta imbatible de mercado!» con el ahorro. Tienen que ser anuncios reales: la comparativa se ve en la web con la fecha. <button type="button" class="g-link" data-guia="02">Los 3 precios (paso 02)</button></p>
+        <p class="hint">Busca en coches.net, Wallapop, Milanuncios o AutoScout24 el mismo modelo, año y motor, con kilómetros parecidos, y pega aquí sus precios. Si tu precio está por debajo de la media, la ficha enseña el bloque «Por debajo del precio medio» con la diferencia y el rango de precios. Tienen que ser anuncios reales: la comparativa se ve en la web con la fecha. <button type="button" class="g-link" data-guia="02">Los 3 precios (paso 02)</button></p>
         <div class="field"><label for="mk-precios">Precios que has encontrado</label><textarea class="in num" id="mk-precios" rows="3" placeholder="18.500, 19.200, 17.900, 18.990…"></textarea></div>
         <div class="g3">
           <div class="field"><label for="mk-media">Precio medio (€)</label><input class="in num" id="mk-media" inputmode="numeric" placeholder="Se calcula solo"></div>
@@ -1755,7 +1755,7 @@ function mkPrev(){
   if(!precio){ box.textContent="Pon el precio del coche para ver el ahorro."; return; }
   if(m.n<3){ box.classList.add("no"); box.textContent=`Con ${m.n} coche${m.n===1?"":"s"} no se muestra: compara al menos 3.`; return; }
   if(pct<3){ box.classList.add("no"); box.textContent=ahorro<=0?`Tu precio está ${eurA(-ahorro)} por encima de la media (${eurA(m.media)}): el bloque no se muestra.`:`Solo ${pct} % por debajo de la media: el bloque se muestra a partir del 3 %.`; return; }
-  box.classList.add("si"); box.textContent=`En la web: «${pct>=10?"¡Oferta imbatible de mercado!":"Precio por debajo del mercado"}» · Te ahorras ${eurA(ahorro)} · un ${pct} % más barato que la media de ${m.n} coches (${eurA(m.media)}).`;
+  box.classList.add("si"); box.textContent=`En la web: «${pct>=10?"Muy por debajo del precio medio":"Por debajo del precio medio"}» · ${eurA(ahorro)} menos que la media · un ${pct} % más barato que la media de ${m.n} anuncios (${eurA(m.media)}).`;
 }
 ["#mk-precios","#mk-media","#mk-n","#precio"].forEach(id=>$(id).addEventListener("input",mkPrev));
 
@@ -2853,34 +2853,59 @@ function pintarSeguridad(){
       <ul class="checks-seg">
         ${fila(e.claveLarga,"Contraseña fuerte",e.claveLarga?"14 caracteres o más":"Pon en Netlify una ADMIN_PASSWORD de 14 caracteres o más")}
         ${fila(e.dosPasos,"Verificación en dos pasos",e.dosPasos?"Hace falta el código del móvil para entrar":"Actívala abajo: aunque roben la contraseña, no podrán entrar")}
-        ${fila(e.avisosEmail,"Avisos por email",e.avisosEmail?"Te avisamos de bloqueos y accesos nuevos":"Configura RESEND_API_KEY en Netlify para recibirlos")}
+        ${(()=>{ const u=SEG.email&&SEG.email.ultimo, mal=e.avisosEmail&&u&&!u.ok; return fila(e.avisosEmail&&!mal,"Avisos por email",!e.avisosEmail?"Configura RESEND_API_KEY en Netlify para recibirlos":mal?"El último correo no se pudo enviar: mira «Avisos por email» abajo":"Te avisamos de bloqueos y accesos nuevos"); })()}
         ${fila(true,"Bloqueo automático","5 fallos → 15 min bloqueada; si repite, 24 h")}
         ${fila(true,"Sesiones firmadas que caducan","12 h como máximo y cierre tras 60 min sin uso")}
         ${fila(true,"Límite de peticiones y trampas para robots","Netlify frena a quien abusa; quien busca fallos queda bloqueado")}
         ${fila(true,"Cabeceras de seguridad (CSP, HSTS…)","El navegador no carga nada que no sea de la web o de Google")}
       </ul></section>
+    ${cajaEmail()}
     <section class="dw-box" id="s2fa"><h3>Verificación en dos pasos</h3>${e.dosPasos
-      ?`<p class="hint" style="margin:0 0 10px">Activada. Para entrar hace falta la contraseña y el código de tu app (Google Authenticator o similar).</p><div class="quick"><input class="in" id="c2fa" inputmode="numeric" autocomplete="one-time-code" placeholder="Código actual" style="max-width:170px"><button type="button" class="btn b-ghost b-sm" data-2fa="cambiar">Cambiar de móvil</button><button type="button" class="btn b-bad b-sm" data-2fa="desactivar">Desactivar</button></div>`
+      ?`<p class="hint" style="margin:0 0 10px">Activada. Para entrar hace falta la contraseña y el código de <b>«Volcano Cars · Panel ${esc(location.hostname.split(".")[0])}»</b> en tu app (Google Authenticator o similar).</p><div class="quick"><input class="in" id="c2fa" inputmode="numeric" autocomplete="one-time-code" placeholder="Código actual" style="max-width:170px"><button type="button" class="btn b-ghost b-sm" data-2fa="cambiar">Cambiar de móvil</button><button type="button" class="btn b-bad b-sm" data-2fa="desactivar">Desactivar</button></div>`
       :`<p class="hint" style="margin:0 0 10px">Instala <b>Google Authenticator</b> o <b>Microsoft Authenticator</b> en tu móvil y pulsa el botón. Tarda 1 minuto.</p><button type="button" class="btn b-acc b-sm" data-2fa="iniciar">Activar verificación en dos pasos</button>`}
       <div id="s2fa-paso"></div></section>
     <section class="dw-box"><h3>Sesiones</h3><p class="hint" style="margin:0 0 10px">Si has entrado desde un ordenador ajeno o crees que alguien ha visto tu contraseña, cierra todas las sesiones y cambia ADMIN_PASSWORD en Netlify.${e.sesionesDesde?` Último cierre general: ${esc(fechaHora(e.sesionesDesde))}.`:""}</p><button type="button" class="btn b-brand b-sm" data-cerrar-todas>Cerrar sesión en todos los dispositivos</button></section>
     <section class="dw-box"><h3>Conexiones bloqueadas ahora</h3>${(SEG.bloqueos||[]).length?`<div class="tabla-wrap"><table class="tabla"><tbody>${SEG.bloqueos.map(b=>`<tr><td class="num">${esc(b.ip)}</td><td>${esc(b.motivo)}<br><small>hasta ${esc(fechaHora(b.hasta))}</small></td><td class="n"><button type="button" class="chipb" data-desbloquear="${esc(b.id)}">Desbloquear</button></td></tr>`).join("")}</tbody></table></div>`:'<p class="hint" style="margin:0">Ninguna.</p>'}</section>
-    <section class="dw-box"><h3>Copia de seguridad</h3><p class="hint" style="margin:0 0 10px">Descarga todos tus datos (coches, clientes, órdenes de taller) en un archivo. Guárdalo en tu ordenador una vez al mes.</p><button type="button" class="btn b-ghost b-sm" data-backup>Descargar copia de seguridad</button></section>
+    <section class="dw-box"><h3>Copia de seguridad</h3><p class="hint" style="margin:0 0 10px">Descarga en un archivo <b>todos</b> los datos del negocio: coches, clientes y citas, órdenes del taller, equipo, caja, finanzas y almacén. Guárdalo en tu ordenador o en un pendrive <b>una vez por semana</b>. Las fotos no van dentro.</p><button type="button" class="btn b-ghost b-sm" data-backup>Descargar copia de seguridad</button></section>
     <section class="dw-box"><h3>Registro de seguridad (30 días)</h3>${reg.length?`<div class="tabla-wrap"><table class="tabla reg"><tbody>${reg.map(x=>{ const [t,c]=EVT[x.tipo]||[x.tipo,""]; return `<tr class="${c}"><td><b>${esc(t)}</b>${x.txt&&x.txt!==t?`<br><small>${esc(x.txt)}</small>`:""}</td><td><small>${esc(x.disp)}${x.pais?" · "+esc(x.pais):""}<br>${esc(x.ip)}</small></td><td class="n"><small>${esc(fechaHora(x.t))}</small></td></tr>`; }).join("")}</tbody></table></div>`:'<p class="hint" style="margin:0">Sin actividad todavía.</p>'}</section>
     <p class="hint" style="padding-bottom:30px">Las conexiones se guardan recortadas (p. ej. 83.45.x.x) y se borran a los 30 días.</p>`;
+}
+function cajaEmail(){
+  const e=SEG.estado, m=SEG.email||{destino:[],origen:"defecto",ultimo:null}, u=m.ultimo;
+  if(!e.avisosEmail) return `<section class="dw-box" id="s-email"><h3>Avisos por email</h3><p class="hint" style="margin:0">Aún no están activados. En Netlify → Project configuration → Environment variables, añade <b>RESEND_API_KEY</b> con tu clave de resend.com y vuelve a publicar la web.</p></section>`;
+  const ORIG={panel:"elegido aquí",resend:"el correo de tu cuenta de Resend",netlify:"variable AVISOS_EMAIL de Netlify",defecto:"correo por defecto"};
+  const ult=!u?`<p class="hint" style="margin:8px 0 0">Todavía no se ha enviado ninguno. Pulsa «Enviar correo de prueba».</p>`
+    : u.ok?`<div class="msg ok" style="margin-top:10px">Último correo enviado bien a <b>${esc(u.to.join(", "))}</b> · ${esc(fechaHora(u.t))}</div>`
+    : `<div class="msg bad" style="margin-top:10px"><b>El último correo no salió</b> (${esc(fechaHora(u.t))}): ${esc(u.error)}</div>`;
+  return `<section class="dw-box" id="s-email"><h3>Avisos por email</h3>
+    <p class="hint" style="margin:0 0 10px">Llegan a <b>${esc(m.destino.join(", "))}</b> <small>(${ORIG[m.origen]||""})</small>. Sin dominio propio, Resend solo deja enviar al correo con el que creaste tu cuenta de Resend: si pones otro, la web lo detecta y los manda a ese.</p>
+    <div class="quick"><input class="in" id="em-dest" type="email" placeholder="tu-correo@gmail.com" value="${esc(m.origen==="panel"?m.destino.join(", "):"")}" style="max-width:260px"><button type="button" class="btn b-ghost b-sm" data-email="destino">Guardar correo</button><button type="button" class="btn b-acc b-sm" data-email="prueba">Enviar correo de prueba</button></div>
+    ${ult}<div id="em-res"></div></section>`;
+}
+async function clickEmail(b){
+  const acc=b.dataset.email; b.disabled=true;
+  try{
+    if(acc==="destino"){ await accionSeg({accion:"email-destino",email:$("#em-dest").value}); toast("Correo de avisos guardado"); }
+    if(acc==="prueba"){ const r=await fetch("/api/seguridad",{method:"POST",headers:{"content-type":"application/json",authorization:"Bearer "+PW},body:JSON.stringify({accion:"email-prueba"})}).then(x=>x.json()).catch(()=>({ok:false,error:"No se pudo conectar."}));
+      toast(r.ok?"Correo de prueba enviado a "+r.to.join(", "):"No se pudo enviar: "+(r.error||"error")); }
+    SEG=await api("/api/seguridad"); pintarSeguridad();
+  }catch(err){ toast(err.message); b.disabled=false; }
 }
 async function accionSeg(body){ return api("/api/seguridad",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)}); }
 async function clickSeguridad(e){
   const t=e.target;
   if(t.closest("[data-cerrar-todas]")){ if(!confirm("¿Cerrar la sesión en todos los ordenadores y móviles? En este seguirás dentro.")) return; const r=await accionSeg({accion:"cerrar-sesiones"}); guardarToken(r.token); toast("Hecho: las demás sesiones ya no sirven"); SEG=await api("/api/seguridad"); pintarSeguridad(); return; }
   const d=t.closest("[data-desbloquear]"); if(d){ await accionSeg({accion:"desbloquear",id:d.dataset.desbloquear}); SEG=await api("/api/seguridad"); pintarSeguridad(); toast("Desbloqueada"); return; }
-  if(t.closest("[data-backup]")){ const datos={generado:new Date().toISOString(),coches:CARS,clientes:LEADS,ordenes:ORDENES};
-    const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([JSON.stringify(datos,null,1)],{type:"application/json"})); a.download=`volcano-cars-copia-${hoyC()}.json`; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500); toast("Copia descargada"); return; }
+  if(t.closest("[data-backup]")){ const b=t.closest("[data-backup]"); b.disabled=true; const txt=b.textContent; b.textContent="Preparando la copia…";
+    try{ const r=await fetch("/api/copia",{headers:{authorization:"Bearer "+PW}}); if(!r.ok) throw new Error(r.status===401?"Solo el gerente puede descargar la copia completa.":"No se pudo preparar la copia ("+r.status+").");
+      const blob=await r.blob(); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`volcano-cars-copia-completa-${hoyC()}.json`; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500); toast("Copia completa descargada");
+    }catch(err){ toast(err.message); } b.disabled=false; b.textContent=txt; return; }
+  const em=t.closest("[data-email]"); if(em){ clickEmail(em); return; }
   const f=t.closest("[data-2fa]"); if(!f) return;
   const acc=f.dataset["2fa"];
   if(acc==="iniciar"||acc==="cambiar"){ const r=await accionSeg({accion:"2fa-iniciar",codigo:$("#c2fa")?$("#c2fa").value:""}); seg2fa=r;
     $("#s2fa-paso").innerHTML=`<ol class="pasos2">
-      <li>Abre la app, pulsa <b>+</b> y elige <b>Escanear un código QR</b>:</li></ol>
+      <li>Abre la app, pulsa <b>+</b> y elige <b>Escanear un código QR</b>. Se guardará como <b>«Volcano Cars · ${esc(r.cuenta||"Panel")}»</b>. Si en la app ya tienes otra entrada «Volcano Cars» de una web anterior, no sirve para esta: bórrala para no confundirte.</li></ol>
       <div class="qr">${QR.svg(r.uri,210)}</div>
       <p class="hint" style="text-align:center">¿No puedes escanear? Elige «Introducir clave» y escribe:<br><b class="num" style="letter-spacing:.06em">${esc(r.secreto)}</b></p>
       <ol class="pasos2" start="2"><li>Escribe aquí el código de 6 dígitos que aparece en la app:</li></ol>
@@ -4706,7 +4731,7 @@ inicio:()=>`
   <div class="g-2"><div class="g-sino si"><b class="t c-verde">SÍ</b><ul><li>Frases cortas y datos concretos (km, año, fecha de ITV).</li><li>Decir para quién es el coche.</li><li>Contar el defecto con foto.</li><li>El mismo texto en todos los canales.</li><li>Renovar la foto de portada a los 15 días sin contactos.</li></ul></div>
     <div class="g-sino no"><b class="t c-magma">NO</b><ul><li>«Precio negociable»: invita al regateo.</li><li>«Urge vender»: suena a problema.</li><li>Mayúsculas continuas y exclamaciones.</li><li>«Impecable» sin un dato que lo pruebe.</li><li>Datos que no coinciden con FORM-02 y FORM-04.</li></ul></div></div>
   <div class="g-2">${gCall("oscuro","3 precios por coche","<b>Anuncio</b> (el que se publica) · <b>Objetivo</b> (al que queremos cerrar) · <b>Mínimo</b> (nunca por debajo y nunca se revela). Los fija el gerente antes de publicar.")}${gCall("piedra","Publicación","Mismo anuncio en la web, portales (coches.net, Wallapop, Milanuncios), redes y estado de WhatsApp, el mismo día. Coche con 45 días sin pruebas → revisión de fotos, precio y texto con el gerente.")}</div>
-  <div class="g-cierre">${gPanel("<b>Coches → editar coche.</b> Rellena la ficha y la descripción; en <b>Comparativa de mercado</b> pega los precios de anuncios reales: si el tuyo está por debajo, la web enseña «¡Oferta imbatible de mercado!». En la ficha pública, <b>Compartir</b> te da el enlace del coche para portales y WhatsApp.",[["form","+ Añadir coche"],["coches","Ver mis coches"]])}${gListo("02",GUIA_LISTO["02"],"03")}</div>`,
+  <div class="g-cierre">${gPanel("<b>Coches → editar coche.</b> Rellena la ficha y la descripción; en <b>Comparativa de mercado</b> pega los precios de anuncios reales: si el tuyo está por debajo, la web enseña «Por debajo del precio medio». En la ficha pública, <b>Compartir</b> te da el enlace del coche para portales y WhatsApp.",[["form","+ Añadir coche"],["coches","Ver mis coches"]])}${gListo("02",GUIA_LISTO["02"],"03")}</div>`,
 
 "03":()=>`
   ${gHero("03",{num:"03",titulo:"Primer contacto",intro:"Quien responde primero, gana la conversación. El objetivo no es vender el coche por WhatsApp: es entender qué busca el cliente y conseguir que venga a probarlo.",chips:[["Objetivo","Cita de prueba"],["Tiempo","Responder en < 15 min"],["Quién","Vendedor"]]})}

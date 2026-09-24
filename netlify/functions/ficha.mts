@@ -150,7 +150,7 @@ export const config: Config = {
   rateLimit: { windowLimit: 120, windowSize: 60, aggregateBy: ["ip", "domain"] },
 };
 
-// ---------- «¡Oferta imbatible de mercado!»: mismas reglas que en la web ----------
+// ---------- «Por debajo del precio medio»: mismas reglas y textos que en la web ----------
 function bloqueOferta(c: Car, lista: Car[], enWeb: string, waTxt: string): string {
   const m = c.mercado;
   if (!m || !m.media || !m.n || m.n < 3 || c.estado === "vendido") return "";
@@ -161,17 +161,19 @@ function bloqueOferta(c: Car, lista: Car[], enWeb: string, waTxt: string): strin
   const lim = Date.now() - 60 * 864e5;
   const d = lista.filter((v) => v.estado === "vendido" && v.vendidoEn && Date.parse(v.vendidoEn) > lim).map((v) => (Date.parse(v.vendidoEn!) - Date.parse(v.creado)) / 864e5).filter((x) => isFinite(x) && x >= 0);
   const med = d.length >= 2 ? d.reduce((a, b) => a + b, 0) / d.length : -1;
-  const urg = med < 0 ? "Precio por debajo del mercado: resérvalo antes de que se lo lleve otro." : med < 2 ? "Precio bajo mercado: nuestros últimos coches vendidos se fueron en menos de 48 horas." : `Precio bajo mercado: nuestros últimos coches vendidos duraron una media de ${Math.ceil(med)} días.`;
+  const urg = med < 0 ? "Por debajo del precio medio: resérvalo antes de que se lo lleve otro." : med < 2 ? "Por debajo del precio medio: nuestros últimos coches vendidos se fueron en menos de 48 horas." : `Por debajo del precio medio: nuestros últimos coches vendidos duraron una media de ${Math.ceil(med)} días.`;
+  const pr = ((m as any).precios || []).filter((x: number) => x > 0) as number[];
+  const rango = pr.length >= 2 ? `, con precios entre ${eur(Math.min(...pr))} y ${eur(Math.max(...pr))}` : "";
   const fecha = new Date(m.fecha + "T12:00:00Z").toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
   return `<section class="ofe${top ? "" : " verde"}" aria-label="Comparativa con el precio de mercado">
-    <div class="ofe-head"><b><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.6 2.2c.3 2.6-.6 4.3-2 5.9-1.5 1.7-3.6 3.4-3.6 6.9A5 5 0 0012 20a5 5 0 005-5c0-1.8-.8-3.1-1.6-4.1-.2 1-.8 1.9-1.7 2.3.4-2.8-.2-6.2-1.1-11z"/></svg>${top ? "¡Oferta imbatible de mercado!" : "Precio por debajo del mercado"}</b><span class="ofe-pct">−${pct} %</span></div>
+    <div class="ofe-head"><b><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.6 2.2c.3 2.6-.6 4.3-2 5.9-1.5 1.7-3.6 3.4-3.6 6.9A5 5 0 0012 20a5 5 0 005-5c0-1.8-.8-3.1-1.6-4.1-.2 1-.8 1.9-1.7 2.3.4-2.8-.2-6.2-1.1-11z"/></svg>${top ? "Muy por debajo del precio medio" : "Por debajo del precio medio"}</b><span class="ofe-pct">−${pct} %</span></div>
     <div class="ofe-b">
-      <div class="ofe-save"><b>Te ahorras ${eur(ahorro)}</b><span>Un ${pct} % más barato que la media</span></div>
+      <div class="ofe-save"><b>${eur(ahorro)} menos</b><span>que el precio medio de los anuncios comparados (un ${pct} % más barato)</span></div>
       <div class="ofe-bars">
         <div class="ofe-row mkt"><span>Precio medio del mercado</span><s>${eur(m.media)}</s><i style="--w:100%"></i></div>
         <div class="ofe-row our"><span>Nuestro precio en Fuerteventura</span><b>${eur(c.precio)}</b><i style="--w:${ancho}%"></i></div>
       </div>
-      <p class="ofe-trans">Comparativa realizada sobre ${m.n} vehículos idénticos (mismo año, motor y rango de km) en portales automotrices${m.fuente ? " (" + escH(portales(m.fuente)) + ")" : ""}. Actualizada el ${fecha}.</p>
+      <p class="ofe-trans">Media de ${m.n} anuncios parecidos (mismo modelo, año y kilómetros similares)${m.fuente ? " en " + escH(portales(m.fuente)) : ""}${rango}. Consultado el ${fecha}.</p>
       ${c.estado === "disponible" ? `<p class="ofe-urg">⚡ ${urg}</p>
       <div class="ofe-cta"><a class="btn b-rosso" href="${enWeb}">Reservar o pedir información ahora</a><a class="btn b-wa" href="${escH(wa(waTxt))}" target="_blank" rel="noopener">WhatsApp</a></div>` : ""}
     </div></section>`;

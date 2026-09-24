@@ -161,11 +161,15 @@ export async function verificarTotp(codigo: string): Promise<"" | "ok" | "recupe
   }
   return "";
 }
-export async function iniciar2FA() {
+// En la app sale como «Volcano Cars · Panel lestter7th»: con el nombre de la web, para no confundirla con
+// la entrada de otra web anterior (cada web tiene su propia clave y sus códigos no sirven en la otra).
+export function nombreEnApp(host: string) { return "Panel " + String(host || "").split(":")[0].split(".")[0].slice(0, 30); }
+export async function iniciar2FA(host = "") {
   const secreto = secretoNuevo();
   await s().setJSON("config/totp-pendiente", { secreto, t: Date.now() });
-  const uri = `otpauth://totp/${encodeURIComponent("Volcano Cars:Panel")}?secret=${secreto}&issuer=${encodeURIComponent("Volcano Cars")}&digits=6&period=30`;
-  return { secreto: secreto.replace(/(.{4})/g, "$1 ").trim(), uri };
+  const cuenta = nombreEnApp(host);
+  const uri = `otpauth://totp/${encodeURIComponent("Volcano Cars:" + cuenta)}?secret=${secreto}&issuer=${encodeURIComponent("Volcano Cars")}&digits=6&period=30&algorithm=SHA1`;
+  return { secreto: secreto.replace(/(.{4})/g, "$1 ").trim(), uri, cuenta };
 }
 export async function confirmar2FA(codigo: string) {
   const pend = (await s().get("config/totp-pendiente", { type: "json" }).catch(() => null)) as { secreto: string; t: number } | null;

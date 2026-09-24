@@ -243,12 +243,42 @@ export function canalDe(o: { gclid?: string; utm_source?: string; utm_medium?: s
 const escH = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 
 // Aviso por email con Resend (https://resend.com). Solo se envía si existe la variable RESEND_API_KEY.
-// Sin dominio propio verificado, Resend solo deja enviar a la dirección con la que se creó la cuenta.
-export async function enviarAviso(asunto: string, filas: [string, string][], botones: { txt: string; url: string; color?: string }[] = [], replyTo = "") {
+// Sin dominio propio verificado, Resend solo deja enviar a la dirección con la que se creó la cuenta de Resend.
+// Por eso: el destino se puede cambiar desde el panel (Seguridad → Avisos por email) y, si Resend responde
+// «solo puedes enviar a tu propio correo (x@y)», el aviso se reenvía a esa dirección y se recuerda para la próxima.
+// El resultado del último envío queda guardado para verlo en el panel.
+export type ResultadoEmail = { ok: boolean; to: string[]; error: string; t: string };
+const cfgAvisos = () => store("seguridad");
+export async function destinoAvisos(): Promise<{ to: string[]; origen: "panel" | "resend" | "netlify" | "defecto" }> {
   const env = (globalThis as any).Netlify?.env;
-  const key = env?.get("RESEND_API_KEY") || "";
-  if (!key) return false;
-  const to = (env?.get("AVISOS_EMAIL") || "volcanocars2026@gmail.com").split(",").map((x: string) => x.trim()).filter(Boolean);
+  const panel = String((await cfgAvisos().get("config/avisos-email").catch(() => "")) || "").trim();
+  if (panel) return { to: panel.split(",").map((x) => x.trim()).filter(Boolean), origen: "panel" };
+  const aprendido = String((await cfgAvisos().get("config/avisos-email-resend").catch(() => "")) || "").trim();
+  if (aprendido) return { to: [aprendido], origen: "resend" };
+  const e = String(env?.get("AVISOS_EMAIL") || "").trim();
+  if (e) return { to: e.split(",").map((x: string) => x.trim()).filter(Boolean), origen: "netlify" };
+  return { to: ["volcanocars2026@gmail.com"], origen: "defecto" };
+}
+export async function ultimoEmail(): Promise<ResultadoEmail | null> {
+  return ((await cfgAvisos().get("config/avisos-ultimo", { type: "json" }).catch(() => null)) as ResultadoEmail | null);
+}
+// Traduce los errores de Resend a algo que se entienda en el panel
+function errorResend(status: number, msg: string) {
+  if (status === 401 || status === 403 && /api key/i.test(msg)) return "La clave RESEND_API_KEY no es válida o se ha borrado en Resend. Crea otra en resend.com → API Keys y cámbiala en Netlify.";
+  if (/own email address/i.test(msg)) return "Resend (sin dominio propio) solo deja enviar al correo con el que creaste tu cuenta de Resend.";
+  if (/domain.*not verified|verify a domain/i.test(msg)) return "El remitente usa un dominio que no está verificado en Resend.";
+  if (status === 429) return "Demasiados correos seguidos: Resend ha frenado el envío. Prueba en un minuto.";
+  return `Resend ha rechazado el correo (${status}): ${msg.slice(0, 160)}`;
+}
+export async function enviarAviso(asunto: string, filas: [string, string][], botones: { txt: string; url: string; color?: string }[] = [], replyTo = "") {
+  return (await enviarEmail(asunto, filas, botones, replyTo)).ok;
+}
+export async function enviarEmail(asunto: string, filas: [string, string][], botones: { txt: string; url: string; color?: string }[] = [], replyTo = "", destino: string[] = []): Promise<ResultadoEmail> {
+  const env = (globalThis as any).Netlify?.env;
+  const key = String(env?.get("RESEND_API_KEY") || "").trim();
+  const t = new Date().toISOString();
+  if (!key) return { ok: false, to: [], error: "Falta la variable RESEND_API_KEY en Netlify.", t };
+  let to = destino.length ? destino : (await destinoAvisos()).to;
   const from = env?.get("AVISOS_REMITENTE") || "Volcano Cars <onboarding@resend.dev>";
   const html = `<!doctype html><html><body style="margin:0;background:#F2EFEA;font-family:Arial,Helvetica,sans-serif;color:#1B1B1A">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F2EFEA;padding:24px 12px"><tr><td align="center">
@@ -260,17 +290,31 @@ ${filas.filter(([, v]) => v).map(([k, v]) => `<tr><td style="padding:6px 10px 6p
 </table></td></tr>
 <tr><td style="padding:14px 22px 24px">${botones.map((b) => `<a href="${escH(b.url)}" style="display:inline-block;margin:6px 8px 0 0;background:${b.color || "#D9481C"};color:#fff;text-decoration:none;font-weight:bold;padding:12px 18px;border-radius:999px;font-size:15px">${escH(b.txt)}</a>`).join("")}</td></tr>
 </table><p style="color:#8C867D;font-size:12px">Aviso automático de la web de Volcano Cars.</p></td></tr></table></body></html>`;
-  try {
+  const mandar = async (para: string[]) => {
     const r = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
-      body: JSON.stringify({ from, to, subject: asunto, html, ...(replyTo ? { reply_to: replyTo } : {}) }),
+      body: JSON.stringify({ from, to: para, subject: asunto, html, ...(replyTo ? { reply_to: replyTo } : {}) }),
       signal: AbortSignal.timeout(8000),
     });
-    return r.ok;
-  } catch {
-    return false;
+    const d = (await r.json().catch(() => ({}))) as any;
+    return { status: r.status, ok: r.ok, msg: String(d?.message || d?.error || d?.name || "") };
+  };
+  let res: ResultadoEmail;
+  try {
+    let r = await mandar(to);
+    // Cuenta de Resend sin dominio: solo acepta el correo del dueño. Lo sacamos del propio error y reenviamos allí.
+    const propio = !r.ok && /own email address/i.test(r.msg) ? (r.msg.match(/\(([^()\s]+@[^()\s]+)\)/) || [])[1] : "";
+    if (propio && !to.includes(propio)) {
+      r = await mandar([propio]);
+      if (r.ok) { to = [propio]; await cfgAvisos().set("config/avisos-email-resend", propio).catch(() => {}); }
+    }
+    res = { ok: r.ok, to, error: r.ok ? "" : errorResend(r.status, r.msg), t };
+  } catch (e: any) {
+    res = { ok: false, to, error: e?.name === "TimeoutError" ? "Resend no ha respondido a tiempo." : "No se pudo conectar con Resend.", t };
   }
+  await cfgAvisos().setJSON("config/avisos-ultimo", res).catch(() => {});
+  return res;
 }
 
 export const waNum = (t: string) => { let d = String(t || "").replace(/[^\d]/g, ""); if (d.startsWith("00")) d = d.slice(2); if (d.length === 9) d = "34" + d; return d; };

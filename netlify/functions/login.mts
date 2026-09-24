@@ -1,6 +1,6 @@
 import type { Config, Context } from "@netlify/functions";
 import { json, isAdmin, crearSesion, leerSesion, igualSeguro, mismoOrigen } from "../lib/shared.mts";
-import { estaBloqueado, fallo, limpiarFallos, registrar, avisar, dispositivoNuevo, dosFactoresActivo, verificarTotp, dispositivo, ipCorta, pais } from "../lib/seguridad.mts";
+import { estaBloqueado, fallo, limpiarFallos, registrar, avisar, dispositivoNuevo, dosFactoresActivo, verificarTotp, dispositivo, ipCorta, pais, nombreEnApp } from "../lib/seguridad.mts";
 import { leerEquipo, pinOk, crearSesionEquipo, quien } from "../lib/taller.mts";
 
 /*
@@ -67,7 +67,8 @@ export default async (req: Request, context: Context) => {
   }
 
   if (await dosFactoresActivo()) {
-    if (!body.codigo) return json({ necesita2fa: true, error: "Escribe el código de 6 dígitos de tu app de verificación." }, 401);
+    const entrada = `«Volcano Cars · ${nombreEnApp(new URL(req.url).host)}»`;
+    if (!body.codigo) return json({ necesita2fa: true, error: `Escribe el código de 6 dígitos de ${entrada} en tu app de verificación.` }, 401);
     const r = await verificarTotp(String(body.codigo));
     if (!r) {
       await espera(900);
@@ -77,7 +78,7 @@ export default async (req: Request, context: Context) => {
         await registrar("bloqueo", ip, ua, p, "Bloqueada hasta las " + hora(hasta));
         await avisar("bloqueo2fa", "Seguridad: alguien con tu contraseña ha fallado el código de verificación", [["Conexión", ipCorta(ip)], ["Dispositivo", dispositivo(ua)], ["País", p], ["Qué hacer", "Si no has sido tú, cambia ya ADMIN_PASSWORD en Netlify."]], origin);
       }
-      return json({ necesita2fa: true, error: hasta ? `Código incorrecto. Conexión bloqueada hasta las ${hora(hasta)}.` : "Código incorrecto." }, hasta ? 429 : 401);
+      return json({ necesita2fa: true, error: hasta ? `Código incorrecto. Conexión bloqueada hasta las ${hora(hasta)}.` : `Código incorrecto. Usa el de ${entrada} (no el de otra web) y comprueba que la hora del móvil está en automático.` }, hasta ? 429 : 401);
     }
     if (r === "recuperacion") await registrar("recuperacion", ip, ua, p, "Entrada con un código de recuperación");
   }

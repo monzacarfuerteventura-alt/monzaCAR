@@ -64,7 +64,7 @@ TEXT = {
     "Ver el mapa aquí": "Show the map here",
     "Al cargarlo, Google Maps recibe tu dirección IP y puede usar cookies.": "When it loads, Google Maps receives your IP address and may use cookies.",
     "Una selección de opiniones publicadas por clientes en nuestra ficha de Google Maps.": "A selection of reviews posted by customers on our Google Maps listing (translated from Spanish).",
-    "Copiadas de Google Maps sin cambiar su contenido (algunas recortadas). No podemos verificar que cada autor haya sido cliente: puedes leerlas todas, también las negativas, en Google Maps.": "Copied from Google Maps without changing their content (some shortened) and translated. We cannot verify that every author was a customer: you can read them all, including negative ones, on Google Maps.",
+    "Opiniones publicadas en nuestra ficha de Google Maps, copiadas sin cambios (algunas recortadas). Las publica Google y nosotros no las filtramos: puedes leerlas todas, también las negativas.": "Reviews published on our Google Maps listing, copied unchanged (some shortened) and translated. Google publishes them and we don't filter them: you can read them all, including negative ones.",
     "Abrir WhatsApp": "Open WhatsApp",
     "Abrir en Google Maps": "Open in Google Maps",
     "Aceite y filtros": "Oil and filters",

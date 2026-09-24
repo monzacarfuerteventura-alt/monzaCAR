@@ -86,9 +86,9 @@ h3{font-size:21px;font-weight:800;font-stretch:100%}
 .zonas li{break-inside:avoid;padding:6px 0;border-bottom:1px dashed var(--line)}
 @media (max-width:620px){.zonas{columns:2}}
 /* ficha de coche */
-.ficha{display:grid;grid-template-columns:1.35fr 1fr;gap:28px;align-items:start;padding:22px 0 10px}
-@media (max-width:920px){.ficha{grid-template-columns:1fr}}
-.gal{display:grid;gap:10px}
+.ficha{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:28px;align-items:start;padding:22px 0 10px}
+@media (max-width:920px){.ficha{grid-template-columns:minmax(0,1fr)}}
+.gal{display:grid;gap:10px;min-width:0}
 .gal-main{aspect-ratio:16/10;border-radius:var(--r);overflow:hidden;background:var(--surface-2)}
 .gal-main img{width:100%;height:100%;object-fit:cover}
 .gal-thumbs{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px}
@@ -154,7 +154,7 @@ h3{font-size:21px;font-weight:800;font-stretch:100%}
 .ofe-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;background:linear-gradient(100deg,var(--fire1),var(--fire2));color:#fff}
 .ofe-head b{display:flex;align-items:center;gap:7px;font-family:var(--display);font-weight:900;font-size:15.5px;text-transform:uppercase;letter-spacing:.02em;line-height:1.15}
 .ofe-pct{flex-shrink:0;background:#fff;color:var(--fire1);font-weight:900;font-size:14.5px;padding:4px 10px;border-radius:999px}
-.ofe-b{padding:14px;display:grid;gap:12px}
+.ofe-b{padding:14px;display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
 .ofe-save b{display:block;font-family:var(--display);font-stretch:88%;font-weight:900;font-size:clamp(26px,7.4vw,32px);white-space:nowrap;line-height:1;color:var(--verde)}
 .ofe-save span{display:block;margin-top:4px;font-weight:700;font-size:15px}
 .ofe-bars{display:grid;gap:9px}
