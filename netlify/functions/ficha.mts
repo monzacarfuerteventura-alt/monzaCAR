@@ -105,6 +105,7 @@ ${fotos[0] ? `<meta property="og:image" content="${escH(origin + fotos[0])}">` :
   const specs: [string, string | number | null][] = [["Año", c.anio], ["Kilómetros", kmTxt(c.km)], ["Combustible", c.combustible], ["Cambio", c.cambio], ["Potencia", c.cv ? c.cv + " CV" : ""], ["Puertas", c.puertas], ["Color", c.color], ["Etiqueta DGT", c.etiqueta]];
   const waTxt = `Hola, me interesa el ${completo} (${c.anio}, ${kmTxt(c.km)}) de ${eur(c.precio)}. ¿Sigue disponible?`;
   const otros = disponibles.filter((x) => x.id !== c.id).slice(0, 3);
+  const ofe = bloqueOferta(c, lista, enWeb, waTxt);
 
   const html = cabecera(origin, titulo, desc, canonical, head, vendido ? "noindex, follow" : "index, follow, max-image-preview:large") + `
 <div class="wrap">
@@ -119,6 +120,7 @@ ${fotos[0] ? `<meta property="og:image" content="${escH(origin + fotos[0])}">` :
       <h1>${escH(nombre)}</h1>
       ${c.version ? `<div class="ver">${escH(c.version)}</div>` : ""}
       <div class="precio num">${eur(c.precio)}<small>Precio final, impuestos incluidos</small></div>
+      ${ofe}
       <dl class="specs num">${specs.filter(([, v]) => v !== null && v !== "" && v !== undefined).map(([k, v]) => `<div><dt>${k}</dt><dd>${escH(v)}</dd></div>`).join("")}</dl>
       ${vendido ? `<div class="ctas"><a class="btn b-rosso" href="/#comprar">Ver coches disponibles</a></div>` : `<div class="ctas">
         <a class="btn b-rosso" href="${enWeb}">${reservado ? "Ver en la web" : "Reservar visita y prueba"}</a>
@@ -143,3 +145,30 @@ export const config: Config = {
   path: "/coche/:slug",
   rateLimit: { windowLimit: 120, windowSize: 60, aggregateBy: ["ip", "domain"] },
 };
+
+// ---------- «¡Oferta imbatible de mercado!»: mismas reglas que en la web ----------
+function bloqueOferta(c: Car, lista: Car[], enWeb: string, waTxt: string): string {
+  const m = c.mercado;
+  if (!m || !m.media || !m.n || m.n < 3 || c.estado === "vendido") return "";
+  if (!((Date.now() - Date.parse(m.fecha + "T12:00:00Z")) / 864e5 <= 120)) return "";
+  const ahorro = Math.round(m.media - c.precio); if (ahorro <= 0) return "";
+  const pct = Math.round((ahorro / m.media) * 100); if (pct < 3) return "";
+  const top = pct >= 10, ancho = Math.max(8, Math.round((c.precio / m.media) * 100));
+  const lim = Date.now() - 60 * 864e5;
+  const d = lista.filter((v) => v.estado === "vendido" && v.vendidoEn && Date.parse(v.vendidoEn) > lim).map((v) => (Date.parse(v.vendidoEn!) - Date.parse(v.creado)) / 864e5).filter((x) => isFinite(x) && x >= 0);
+  const med = d.length >= 2 ? d.reduce((a, b) => a + b, 0) / d.length : -1;
+  const urg = med < 0 ? "Precio por debajo del mercado: resérvalo antes de que se lo lleve otro." : med < 2 ? "Precio bajo mercado: nuestros últimos coches vendidos se fueron en menos de 48 horas." : `Precio bajo mercado: nuestros últimos coches vendidos duraron una media de ${Math.ceil(med)} días.`;
+  const fecha = new Date(m.fecha + "T12:00:00Z").toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+  return `<section class="ofe${top ? "" : " verde"}" aria-label="Comparativa con el precio de mercado">
+    <div class="ofe-head"><b><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.6 2.2c.3 2.6-.6 4.3-2 5.9-1.5 1.7-3.6 3.4-3.6 6.9A5 5 0 0012 20a5 5 0 005-5c0-1.8-.8-3.1-1.6-4.1-.2 1-.8 1.9-1.7 2.3.4-2.8-.2-6.2-1.1-11z"/></svg>${top ? "¡Oferta imbatible de mercado!" : "Precio por debajo del mercado"}</b><span class="ofe-pct">−${pct} %</span></div>
+    <div class="ofe-b">
+      <div class="ofe-save"><b>Te ahorras ${eur(ahorro)}</b><span>Un ${pct} % más barato que la media</span></div>
+      <div class="ofe-bars">
+        <div class="ofe-row mkt"><span>Precio medio del mercado</span><s>${eur(m.media)}</s><i style="--w:100%"></i></div>
+        <div class="ofe-row our"><span>Nuestro precio en Fuerteventura</span><b>${eur(c.precio)}</b><i style="--w:${ancho}%"></i></div>
+      </div>
+      <p class="ofe-trans">Comparativa realizada sobre ${m.n} vehículos idénticos (mismo año, motor y rango de km) en portales automotrices${m.fuente ? " (" + escH(m.fuente) + ")" : ""}. Actualizada el ${fecha}.</p>
+      ${c.estado === "disponible" ? `<p class="ofe-urg">⚡ ${urg}</p>
+      <div class="ofe-cta"><a class="btn b-rosso" href="${enWeb}">Reservar o pedir información ahora</a><a class="btn b-wa" href="${escH(wa(waTxt))}" target="_blank" rel="noopener">WhatsApp</a></div>` : ""}
+    </div></section>`;
+}

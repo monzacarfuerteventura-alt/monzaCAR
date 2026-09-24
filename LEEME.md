@@ -94,3 +94,13 @@ Las respuestas están en `public/index.html` (busca «ASISTENTE 24/7»).
 - Cuando tengas dominio propio: cambia BASE en `tools/seo.py`, la dirección en `robots.txt` y en `public/index.html`
   (canonical, hreflang, og y JSON-LD), ejecuta `python3 tools/seo.py` y `python3 tools/build-en.py`, y da de alta el
   dominio en Google Search Console enviando `https://tudominio/sitemap.xml`.
+
+## Oferta de mercado («¡Oferta imbatible de mercado!»)
+Panel → editar coche → «Comparativa de mercado»: pega los precios de anuncios reales del mismo coche (mismo año y motor,
+km parecidos) en coches.net, Wallapop, Milanuncios… La web calcula la media, el ahorro en euros y el porcentaje, y lo
+enseña en la ficha, en la página del coche para Google y como sello «−X % vs mercado» en la tarjeta. Se puede ordenar
+el catálogo por «Mayor ahorro vs mercado».
+Reglas para que siempre sea verdad: mínimo 3 coches comparados, precio por debajo de la media (desde un 3 %) y
+comparativa de menos de 4 meses (si caduca, el bloque se oculta solo: actualízala). A partir del 10 % sale como
+«¡Oferta imbatible de mercado!»; entre el 3 y el 9 %, como «Precio por debajo del mercado».
+La frase de urgencia usa datos reales (cuánto tardaron en venderse vuestros últimos coches).

@@ -477,6 +477,12 @@ dialog.dlg form{display:grid;gap:12px;padding:20px}
 .fin-pls{display:flex;flex-wrap:wrap;gap:6px}
 .fin-pls label{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:999px;padding:6px 12px;font-weight:700;font-size:14px;cursor:pointer}
 .fin-pls input{accent-color:#D9481C}
+
+/* comparativa de mercado */
+.mk-prev{border-radius:12px;padding:12px 14px;font-size:14.5px;font-weight:600;background:var(--line)}
+.mk-prev:empty{display:none}
+.mk-prev.si{background:#E3F2E9;color:#1F7A45}
+.mk-prev.no{background:#FBE4DA;color:#B83A12}
 </style>
 </head>
 <body>
@@ -674,6 +680,19 @@ dialog.dlg form{display:grid;gap:12px;padding:20px}
         </div>
       </fieldset>
 
+      <fieldset class="card mk">
+        <legend><span class="lg-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>Comparativa de mercado <small style="font-weight:600;color:var(--muted)">(opcional)</small></legend>
+        <p class="hint">Busca en coches.net, Wallapop, Milanuncios o AutoScout24 el mismo modelo, año y motor, con kilómetros parecidos, y pega aquí sus precios. Si tu precio está por debajo de la media, la ficha enseña el bloque «¡Oferta imbatible de mercado!» con el ahorro. Tienen que ser anuncios reales: la comparativa se ve en la web con la fecha.</p>
+        <div class="field"><label for="mk-precios">Precios que has encontrado</label><textarea class="in num" id="mk-precios" rows="3" placeholder="18.500, 19.200, 17.900, 18.990…"></textarea></div>
+        <div class="g3">
+          <div class="field"><label for="mk-media">Precio medio (€)</label><input class="in num" id="mk-media" inputmode="numeric" placeholder="Se calcula solo"></div>
+          <div class="field"><label for="mk-n">Coches comparados</label><input class="in num" id="mk-n" inputmode="numeric" placeholder="Mínimo 3"></div>
+          <div class="field"><label for="mk-fecha">Fecha</label><input class="in" id="mk-fecha" type="date"></div>
+        </div>
+        <div class="field"><label for="mk-fuente">Dónde lo has mirado</label><input class="in" id="mk-fuente" maxlength="120" placeholder="coches.net, Wallapop y Milanuncios"></div>
+        <div class="mk-prev" id="mk-prev" aria-live="polite"></div>
+      </fieldset>
+
       <fieldset class="card">
         <legend>Descripción</legend>
         <div class="field"><label for="descripcion">Cuéntale al cliente cómo está el coche</label><textarea class="in" id="descripcion" placeholder="Un solo propietario, libro de mantenimiento al día, ITV pasada…"></textarea></div>
@@ -777,6 +796,30 @@ $("#fin-f").addEventListener("submit",async e=>{
   catch(err){ toast(err.message); }
 });
 
+/* ---------- comparativa de mercado ---------- */
+const numMk=t=>{ t=String(t).replace(/[^\d.,]/g,""); if(t.includes(",")) t=t.replace(/\./g,"").replace(",","."); else if(/\.\d{3}$/.test(t)) t=t.replace(/\./g,""); const n=parseFloat(t); return isFinite(n)?n:0; };
+function mkPrecios(){ return ($("#mk-precios").value.match(/\d{1,3}(?:[.\s]\d{3})+(?:,\d{1,2})?|\d+(?:,\d{1,2})?/g)||[]).map(x=>numMk(x.replace(/\s/g,"."))).filter(x=>x>100&&x<1e6); }
+function mkDatos(){
+  const pr=mkPrecios(), media=pr.length?Math.round(pr.reduce((a,b)=>a+b,0)/pr.length):Math.round(numMk($("#mk-media").value)), n=pr.length||parseInt($("#mk-n").value)||0;
+  if(!media||!n) return null;
+  return {precios:pr,media,n,fecha:$("#mk-fecha").value||new Date().toISOString().slice(0,10),fuente:$("#mk-fuente").value.trim()};
+}
+function mkPrev(){
+  const pr=mkPrecios(), box=$("#mk-prev");
+  if(pr.length){ $("#mk-media").value=Math.round(pr.reduce((a,b)=>a+b,0)/pr.length); $("#mk-n").value=pr.length; }
+  $("#mk-media").readOnly=$("#mk-n").readOnly=!!pr.length;
+  const m=mkDatos(), precio=numMk($("#precio").value);
+  box.className="mk-prev";
+  if(!m){ box.textContent=""; return; }
+  if(!$("#mk-fecha").value) $("#mk-fecha").value=m.fecha;
+  const ahorro=Math.round(m.media-precio), pct=precio?Math.round(ahorro/m.media*100):0;
+  if(!precio){ box.textContent="Pon el precio del coche para ver el ahorro."; return; }
+  if(m.n<3){ box.classList.add("no"); box.textContent=`Con ${m.n} coche${m.n===1?"":"s"} no se muestra: compara al menos 3.`; return; }
+  if(pct<3){ box.classList.add("no"); box.textContent=ahorro<=0?`Tu precio está ${eurA(-ahorro)} por encima de la media (${eurA(m.media)}): el bloque no se muestra.`:`Solo ${pct} % por debajo de la media: el bloque se muestra a partir del 3 %.`; return; }
+  box.classList.add("si"); box.textContent=`En la web: «${pct>=10?"¡Oferta imbatible de mercado!":"Precio por debajo del mercado"}» · Te ahorras ${eurA(ahorro)} · un ${pct} % más barato que la media de ${m.n} coches (${eurA(m.media)}).`;
+}
+["#mk-precios","#mk-media","#mk-n","#precio"].forEach(id=>$(id).addEventListener("input",mkPrev));
+
 /* ---------- lista ---------- */
 async function loadList(quieto){
   if(!quieto) show("s-list");
@@ -825,6 +868,8 @@ function openForm(c){
   F.forEach(k=>{ if(c && c[k]!=null) $("#"+k).value = c[k]; });
   $("#equipamiento").value = c ? (c.equipamiento||[]).join("\n") : "";
   $("#destacado").checked = !!(c && c.destacado);
+  const mk=c&&c.mercado; $("#mk-precios").value=mk&&mk.precios&&mk.precios.length?mk.precios.map(x=>eurA(x).replace(" €","")).join(", "):"";
+  $("#mk-media").value=mk?mk.media:""; $("#mk-n").value=mk?mk.n:""; $("#mk-fecha").value=mk?mk.fecha:""; $("#mk-fuente").value=mk?mk.fuente:""; mkPrev();
   if(!c){ $("#estado").value="disponible"; $("#puertas").value="5"; }
   $("#f-title").textContent = c ? `Editar ${c.marca} ${c.modelo}` : "Añadir coche";
   $("#save").textContent = c ? "Guardar cambios" : "Publicar coche";
@@ -1016,6 +1061,7 @@ $("#car-form").addEventListener("submit", async e=>{
   const data = Object.fromEntries(F.map(k=>[k,$("#"+k).value]));
   data.equipamiento = $("#equipamiento").value; data.destacado=$("#destacado").checked; data.fotos=fotos;
   data.video = video ? {...video, tipo: document.querySelector('input[name="vtipo"]:checked').value} : null;
+  data.mercado = mkDatos();
   const btn=$("#save"); btn.disabled=true;
   try{
     if(editing) await api("/api/coches/"+editing.id,{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(data)});

@@ -93,7 +93,20 @@ export type Car = {
   creado: string;
   actualizado: string;
   vendidoEn?: string;
+  mercado?: Mercado | null;
 };
+
+// Comparativa con el mercado (la rellenas en el panel mirando portales: coches.net, Wallapop, Milanuncios…)
+export type Mercado = { media: number; n: number; fuente: string; fecha: string; precios: number[] };
+function cleanMercado(v: any): Mercado | null {
+  if (!v || typeof v !== "object") return null;
+  const precios = (Array.isArray(v.precios) ? v.precios : []).map((x: unknown) => money(x)).filter((x: number | null): x is number => !!x && x > 100 && x < 1e6).slice(0, 60);
+  const media = precios.length ? Math.round(precios.reduce((a: number, b: number) => a + b, 0) / precios.length) : Math.round(money(v.media) ?? 0);
+  const n = precios.length || Math.min(500, Math.max(0, int(v.n) ?? 0));
+  if (!media || media < 100 || n < 1) return null;
+  const fecha = /^\d{4}-\d{2}-\d{2}$/.test(String(v.fecha)) ? String(v.fecha) : new Date().toISOString().slice(0, 10);
+  return { media, n, fuente: str(v.fuente, 120), fecha, precios };
+}
 
 // Vídeo 360° del coche. «vuelta»: vídeo normal dando la vuelta al coche.
 // «esferico»: grabado con cámara 360°, el cliente mueve la vista arrastrando.
@@ -187,6 +200,7 @@ export function cleanCar(input: any, prev?: Car): { car?: Car; error?: string } 
     estado: ESTADOS.includes(input.estado) ? input.estado : "disponible",
     destacado: !!input.destacado,
     video: cleanVideo(input.video),
+    mercado: cleanMercado(input.mercado),
     creado: prev?.creado || now,
     actualizado: now,
   };
