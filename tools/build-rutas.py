@@ -5,7 +5,7 @@
 import pathlib, re, html
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent / "public"
-BASE = "https://lestter5th.netlify.app"
+BASE = "https://lestter7th.netlify.app"
 RUTAS = {
     "comprar": ("Coches de ocasión en Fuerteventura con 1 año de garantía | Volcano Cars",
                 "Coches de segunda mano revisados en nuestro taller de Antigua, con 12 meses de garantía y entrega gratis en toda Fuerteventura. Precios desde 2.500 €."),

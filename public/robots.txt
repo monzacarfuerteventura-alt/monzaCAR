@@ -5,4 +5,4 @@ Disallow: /s/
 Disallow: /seguimiento.html
 Allow: /api/fotos/
 
-Sitemap: https://lestter5th.netlify.app/sitemap.xml
+Sitemap: https://lestter7th.netlify.app/sitemap.xml

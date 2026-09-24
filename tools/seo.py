@@ -5,7 +5,7 @@
 import json, pathlib, html, datetime
 from urllib.parse import quote
 
-BASE = "https://lestter5th.netlify.app"
+BASE = "https://lestter7th.netlify.app"
 OUT = pathlib.Path(__file__).resolve().parent.parent / "public"
 TEL, TEL_LINK, WA = "643 66 88 13", "+34643668813", "34643668813"
 CALLE, CP, LOC = "Calle Valle Largo, Nave 8, Polígono Industrial", "35610", "Antigua"

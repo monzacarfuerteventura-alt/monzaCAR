@@ -17,7 +17,7 @@ de conversión. Después ejecuta `python3 tools/build-en.py` para que la versió
 Mientras el ID esté vacío no se carga nada de Google ni sale el aviso de cookies.
 
 ## Publicar la web
-La web está en https://lestter5th.netlify.app y se publica sola desde GitHub
+La web está en https://lestter7th.netlify.app y se publica sola desde GitHub
 (repositorio **monzaCAR**, rama **master**). Ojo: el repositorio *monzacar-web / Monzacar-Web* NO está
 conectado a la web; lo que subas ahí no se ve.
 
