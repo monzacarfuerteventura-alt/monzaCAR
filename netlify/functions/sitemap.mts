@@ -15,7 +15,7 @@ export const PAGINAS = [
   "/pre-itv-fuerteventura/",
   "/financiacion-coches-fuerteventura/",
 ];
-const HOY_WEB = "2026-09-24"; // última vez que cambió el contenido fijo de la web
+const HOY_WEB = "2026-09-25"; // última vez que cambió el contenido fijo de la web
 
 export default async (req: Request) => {
   const o = new URL(req.url).origin;
