@@ -243,6 +243,15 @@ async function usoHoy(sumar = 0) {
   if (sumar) await s.set(k, String(n + sumar)).catch(() => {});
   return n;
 }
+function explicarGroq(status: number, d: any) {
+  const m = String(d?.error?.message || "").slice(0, 160);
+  if (status === 401) return "401 · la clave de Groq no es válida (cópiala de nuevo en console.groq.com → API Keys)";
+  if (status === 403) return "403 · Groq no permite esta petición: " + m;
+  if (status === 404) return "404 · el modelo no existe o no está disponible: " + m;
+  if (status === 429) return "429 · límite gratuito de Groq alcanzado por ahora: " + m;
+  if (status === 0) return "no se pudo conectar con Groq";
+  return `${status} · ${m || "error de Groq"}`;
+}
 async function groq(modelo: string, mensajes: unknown[], restante: number, conHerramientas: boolean) {
   const r = await fetch(GROQ_URL, {
     method: "POST",
@@ -256,6 +265,20 @@ async function groq(modelo: string, mensajes: unknown[], restante: number, conHe
 }
 
 export default async (req: Request, _context: Context) => {
+  // Comprobación rápida desde el navegador: https://TU-WEB/api/asistente?probar=1
+  // Dice si la clave está puesta y si Groq responde (sin enseñar la clave).
+  if (req.method === "GET" && new URL(req.url).searchParams.get("probar") === "1") {
+    const k = env("GROQ_API_KEY");
+    if (!k) return json({ ia: false, problema: "Falta la variable GROQ_API_KEY en Netlify (o no se ha vuelto a publicar)." });
+    const formato = k.startsWith("gsk_") ? "correcto (empieza por gsk_)" : "RARO: una clave de Groq empieza por gsk_";
+    const out: Record<string, unknown> = { ia: true, clave: { formato, largo: k.length, espacios: /\s/.test(k) ? "¡tiene espacios o saltos de línea!" : "no" } };
+    for (const m of [env("GROQ_MODEL") || "llama-3.3-70b-versatile", MODELO_PEQUENO]) {
+      const t = Date.now();
+      const { status, d } = await groq(m, [{ role: "user", content: "Responde solo: OK" }], 7000, false).catch(() => ({ status: 0, d: {} as any }));
+      out[m] = status === 200 ? `responde bien (${Date.now() - t} ms)` : `falla: ${explicarGroq(status, d)}`;
+    }
+    return json(out);
+  }
   if (req.method !== "POST") return json({ error: "Método no permitido" }, 405);
   if (!mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
   if (!env("GROQ_API_KEY")) return json({ sinIA: true, motivo: "sin-clave" }); // 200: la web usa el asistente de siempre sin ensuciar la consola
@@ -282,13 +305,13 @@ export default async (req: Request, _context: Context) => {
       const ultima = ronda === MAX_RONDAS;
       let { status, d } = await groq(modelo, mensajes, restante, !ultima);
       llamadas++;
-      if ((status === 429 || status >= 500) && modelo !== MODELO_PEQUENO) { modelo = MODELO_PEQUENO; ({ status, d } = await groq(modelo, mensajes, PRESUPUESTO_MS - (Date.now() - t0), !ultima)); llamadas++; }
+      if (status !== 200 && status !== 401 && !(status === 400 && d?.error?.code === "tool_use_failed") && modelo !== MODELO_PEQUENO) { modelo = MODELO_PEQUENO; ({ status, d } = await groq(modelo, mensajes, PRESUPUESTO_MS - (Date.now() - t0), !ultima)); llamadas++; }
       if (status === 400 && d?.error?.code === "tool_use_failed") { ({ status, d } = await groq(modelo, mensajes, PRESUPUESTO_MS - (Date.now() - t0), false)); llamadas++; }
-      if (status !== 200) throw new Error("groq " + status);
+      if (status !== 200) throw new Error(explicarGroq(status, d));
       const msg = d.choices?.[0]?.message || {};
       const calls = Array.isArray(msg.tool_calls) ? msg.tool_calls.slice(0, 3) : [];
       if (!calls.length) { texto = String(msg.content || "").trim(); break; }
-      mensajes.push({ role: "assistant", content: msg.content || "", tool_calls: calls });
+      mensajes.push({ role: "assistant", content: msg.content || null, tool_calls: calls.map((c: any) => ({ id: c.id, type: "function", function: { name: c.function?.name, arguments: c.function?.arguments || "{}" } })) });
       for (const c of calls) {
         let args: any = {};
         try { args = JSON.parse(c.function?.arguments || "{}"); } catch { args = {}; }
@@ -296,9 +319,11 @@ export default async (req: Request, _context: Context) => {
         mensajes.push({ role: "tool", tool_call_id: c.id, name: c.function?.name, content: JSON.stringify(out).slice(0, 6000) });
       }
     }
-  } catch {
+  } catch (e: any) {
     await usoHoy(llamadas);
-    return json({ sinIA: true, motivo: "error" });
+    const detalle = String(e?.name === "TimeoutError" ? "Groq ha tardado demasiado" : e?.message || e).slice(0, 220);
+    console.error("[asistente] sin respuesta de la IA:", detalle); // se ve en Netlify → Logs → Functions → asistente
+    return json({ sinIA: true, motivo: "error", detalle });
   }
   await usoHoy(llamadas);
   if (!texto) texto = ctx.acciones.length || ctx.coches.length
