@@ -1226,6 +1226,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
 </style>
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="/taller.css">
+<link rel="stylesheet" href="/conversion.css">
 <link rel="stylesheet" href="/tema.css">
 </head>
 <body>
@@ -1567,6 +1568,8 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
           <li>Repairs guaranteed for 3 months or 2,000 km</li>
         </ul>
       </div>
+      <!-- Presupuesto exprés por foto (lo pinta /conversion.js) -->
+      <section class="pf" id="t-foto" aria-labelledby="pf-h"></section>
       <form id="shop-form" class="split shop">
         <div class="tx-col">
           <div class="tx-col-head">
@@ -1691,6 +1694,8 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
         <div class="vivo" id="m-vivo" role="status" aria-live="polite" hidden></div>
         <div class="m-added" id="m-added" hidden></div>
       </div>
+      <!-- Reserva flash 50 € / lista de espera (lo pinta /conversion.js) -->
+      <section class="rsv" id="m-rsv" hidden aria-label="Reserva online"></section>
       <section class="ofe" id="m-ofe" hidden aria-label="Comparativa con el precio de mercado"></section>
       <div class="spec-table num" id="m-specs"></div>
       <p id="m-desc" style="margin:0;color:var(--muted);white-space:pre-line"></p>
@@ -1943,7 +1948,12 @@ function actualizarFichaAbierta(){
   if(typeof gal==="undefined" || !gal.c) return;
   const n=COCHES.find(x=>String(x.id)===String(gal.c.id)); if(!n) return;
   const antes=JSON.stringify([gal.c.precio,gal.c.mercado||null]), ahora=JSON.stringify([n.precio,n.mercado||null]);
-  gal.c=n; if(antes===ahora) return;
+  const cambiaEstado=gal.c.estado!==n.estado;
+  gal.c=n;
+  if(cambiaEstado){ // otro cliente lo acaba de reservar (o se ha liberado): la ficha abierta cambia sola
+    $("#m-month").textContent=n.estado==="reservado"?L("Reservado","Reserved"):L("Precio final, impuestos incluidos","Final price, taxes included");
+    $("#book-form").hidden=n.estado==="reservado"; if(window.VC_RESERVA) VC_RESERVA.pintar(n); }
+  if(antes===ahora) return;
   $("#m-price").textContent=eur(n.precio); pintarOferta(n);
 }
 setInterval(refrescar,20000);
@@ -2196,6 +2206,7 @@ document.addEventListener("click",e=>{
   $("#book-form").reset(); $("#book-ok").hidden=true; fallo("b",""); $("#b-conf").hidden=true; $("#book-form").classList.remove("done"); AG_B.st.hora=""; modoVisita();
   const res=c.estado==="reservado"; $("#book-form").hidden=res;
   finAbrir(c); pintarOferta(c);
+  if(window.VC_RESERVA) VC_RESERVA.pintar(c); // reserva flash 50 € o lista de espera
   modal.showModal(); modal.scrollTop=0;
   empezarAVer(c);
   TRK("car",c.id);
@@ -3116,5 +3127,7 @@ cargar();
 <!-- Asistente con IA (Groq). Si falta el archivo o la clave, el asistente de siempre sigue funcionando. -->
 <script src="/script-ia.js" defer></script>
 <script src="/taller-ui.js" defer></script>
+<!-- Reserva flash 50 €, lista de espera, comprobante PDF y presupuesto por foto -->
+<script src="/conversion.js" defer></script>
 </body>
 </html>

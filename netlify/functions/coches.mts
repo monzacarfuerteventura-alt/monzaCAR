@@ -1,5 +1,6 @@
 import type { Config } from "@netlify/functions";
 import { store, json, isAdmin, cleanCar, esFotoSubida, borrarVideo, SEMILLA, type Car } from "../lib/shared.mts";
+import { caducar, apartadoDe, cancelar, vender } from "../lib/reservas.mts";
 
 const KEY = "coches";
 
@@ -32,6 +33,8 @@ export default async (req: Request) => {
   if (req.method === "GET") {
     const all = url.searchParams.get("todos") === "1";
     if (all && !(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
+    // reservas online caducadas → el coche vuelve a «Disponible» antes de enseñar la lista
+    await caducar(url.origin).catch(() => {});
     const list = await load();
     // Público: coches a la venta + vendidos en los últimos 60 días (para «Vendidos recientemente»).
     const limite = Date.now() - 60 * 864e5;
@@ -71,6 +74,8 @@ export default async (req: Request) => {
 
   if (req.method === "PUT") {
     // Los botones Disponible/Reservado/Vendido de la lista mandan el coche entero, vídeo incluido.
+    // Pantalla del panel desactualizada: si mientras tanto un cliente lo ha reservado online, no se pisa la reserva
+    if (body.estado === "disponible" && list[i].estado === "reservado" && body.actualizado && body.actualizado !== list[i].actualizado && (await apartadoDe(list[i].id).catch(() => null))) body.estado = "reservado";
     const { car, error } = cleanCar(body, list[i]);
     if (error) return json({ error }, 400);
     const antes = list[i].video;
@@ -79,8 +84,15 @@ export default async (req: Request) => {
       if (ve) return json({ error: ve }, 400);
     }
     const removed = list[i].fotos.filter((f) => !car!.fotos.includes(f));
+    const antesEstado = list[i].estado;
     list[i] = car!;
     await save(list);
+    // Si tenía una reserva online y lo cambias a mano desde la lista: se cierra la reserva
+    if (antesEstado !== car!.estado && car!.estado !== "reservado") {
+      const r = await apartadoDe(car!.id).catch(() => null);
+      if (r && car!.estado === "vendido" && r.estado !== "iniciada") await vender(r, false);
+      else if (r) await cancelar(r, "liberada desde la lista de coches", false);
+    }
     const fotos = store("monzacar-fotos");
     await Promise.all(removed.filter(esFotoSubida).map((f) => fotos.delete(f)));
     // Vídeo quitado o cambiado por otro: se borra el antiguo (y su portada si ya no se usa).

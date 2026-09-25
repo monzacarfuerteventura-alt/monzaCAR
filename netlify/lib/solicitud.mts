@@ -1,0 +1,285 @@
+import { createHash } from "node:crypto";
+import { store, canalDe, enviarAviso, waNum } from "./shared.mts";
+
+/*
+  (Lógica común de las solicitudes: la usan /api/solicitudes y las reservas online)
+  SOLICITUDES DE CLIENTES (mini CRM)
+  - POST   /api/solicitudes        → la web guarda una solicitud (coche, taller, tasación o contacto)
+  - GET    /api/solicitudes        → el panel lista todas (requiere contraseña)
+  - PATCH  /api/solicitudes/:id    → el panel cambia el estado o añade notas
+  - DELETE /api/solicitudes/:id    → el panel borra una solicitud (derecho de supresión RGPD)
+  - POST   /api/solicitudes con contraseña y "manual": true → el panel apunta un cliente que llamó o vino en persona
+  CRM: cada solicitud guarda importe (€), próximo seguimiento, motivo si se pierde, primera respuesta
+  (para medir el tiempo de contestación) y un registro de actividad (notas, llamadas, WhatsApp…).
+  Si existe la variable RESEND_API_KEY, cada solicitud nueva llega también por email.
+  Cada solicitud se guarda como una entrada independiente: dos clientes a la vez nunca se pisan.
+  Las solicitudes con más de 2 años se borran solas (así lo dice la política de privacidad).
+
+  CITAS EN TIEMPO REAL
+  - GET  /api/citas?agenda=taller|visita  → huecos libres de los próximos 30 días (público)
+  - POST /api/solicitudes con "cita": {fecha, hora} → reserva el hueco y confirma al momento
+  - GET/PUT /api/citas/bloqueos            → días cerrados (vacaciones, festivos), solo el panel
+  Un coche por hora en cada agenda, de lunes a viernes, de 8:00 a 15:00 (el taller cierra a las 16:00).
+*/
+
+export const TIPOS = ["coche", "taller", "tasacion", "contacto", "financiacion"] as const;
+export const ESTADOS = ["nueva", "contactado", "cita", "ganada", "perdida"] as const;
+const FRANJAS = ["8:00-10:00", "10:00-12:00", "12:00-14:00", "14:00-16:00", ""];
+export const CONSENTIMIENTO_VERSION = "2026-09-22";
+export const RETENCION = 730 * 864e5; // 2 años
+const LIMITE_HORA = 6; // solicitudes por persona y hora (anti-spam)
+export const HORAS = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00"];
+export const AGENDAS = ["taller", "visita"] as const;
+export const HORIZONTE = 30; // días que se pueden reservar por adelantado
+const ANTELACION = 120; // minutos mínimos entre ahora y la cita
+
+export type Solicitud = {
+  id: string;
+  creado: string;
+  tipo: (typeof TIPOS)[number];
+  estado: (typeof ESTADOS)[number];
+  nombre: string;
+  telefono: string;
+  email: string;
+  mensaje: string;
+  coche: { id: string; titulo: string; precio: number | null } | null;
+  servicios: string[];
+  dia: string;
+  franja: string;
+  vehiculo: Record<string, string>;
+  origen: { canal: string; gclid: string; utm_source: string; utm_medium: string; utm_campaign: string; utm_term: string; referrer: string; landing: string };
+  idioma: string;
+  consentimiento: { version: string; fecha: string };
+  cita?: { agenda: string; fecha: string; hora: string } | null;
+  notas: string;
+  historial: { t: string; estado: string }[];
+  importe?: number | null;
+  seguimiento?: string;
+  motivo?: string;
+  primerContacto?: string;
+  actividad?: { t: string; tipo: string; txt: string }[];
+  orden?: string;
+  manual?: boolean;
+  fotos?: string[];   // presupuesto por foto (claves en el almacén «clientes-fotos»)
+  reserva?: string;   // código de la reserva online (VC-XXXXXX)
+  financiacion?: Fin | null;
+};
+// Pre-estudio de financiación pedido desde la ficha de un coche
+type Fin = { precio: number; entrada: number; importe: number; plazo: number; cuota: number; tin: number; tae: number; situacion: string; ingresos: string; entidad: string };
+const SITUACIONES = ["Asalariado fijo", "Asalariado temporal", "Autónomo", "Pensionista", "Otra"];
+const INGRESOS = ["Menos de 1.000 €", "1.000 – 1.500 €", "1.500 – 2.000 €", "2.000 – 3.000 €", "Más de 3.000 €"];
+const dinero = (v: unknown) => { const n = Number(v); return Number.isFinite(n) && n >= 0 && n < 1e7 ? Math.round(n * 100) / 100 : 0; };
+export const ACTIVIDAD = ["nota", "llamada", "whatsapp", "email", "visita", "presupuesto", "orden", "sistema"];
+export const MOTIVOS = ["", "Precio", "No contesta", "Compró en otro sitio", "Ya no lo necesita", "Sin financiación", "Coche vendido", "Otro"];
+
+export const str = (v: unknown, max = 200) => String(v ?? "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").trim().slice(0, max);
+const soloDigitos = (v: string) => v.replace(/[^\d+]/g, "");
+export const fechaISO = (v: unknown) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v ?? "")) ? String(v) : "");
+
+// ---------- calendario (hora de Canarias) ----------
+export function ahoraCanarias() {
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-CA", { timeZone: "Atlantic/Canary", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" })
+    .formatToParts(new Date()).map((x) => [x.type, x.value]));
+  return { fecha: `${p.year}-${p.month}-${p.day}`, minutos: +p.hour * 60 + +p.minute };
+}
+export const sumarDias = (f: string, n: number) => new Date(Date.parse(f + "T12:00:00Z") + n * 864e5).toISOString().slice(0, 10);
+export const diaSemana = (f: string) => new Date(f + "T12:00:00Z").getUTCDay();
+const minutos = (h: string) => +h.slice(0, 2) * 60 + +h.slice(3, 5);
+
+export async function bloqueos(): Promise<string[]> {
+  return (((await store("solicitudes").get("config/bloqueos", { type: "json" })) as string[] | null) || []);
+}
+export function huecoValido(fecha: string, hora: string, cerrados: string[]): boolean {
+  const { fecha: hoy, minutos: ahora } = ahoraCanarias();
+  if (!fechaISO(fecha) || !HORAS.includes(hora)) return false;
+  const w = diaSemana(fecha);
+  if (w === 0 || w === 6 || cerrados.includes(fecha)) return false;
+  if (fecha < hoy || fecha > sumarDias(hoy, HORIZONTE)) return false;
+  if (fecha === hoy && minutos(hora) < ahora + ANTELACION) return false;
+  return true;
+}
+export async function ocupados(agenda: string): Promise<Set<string>> {
+  const { blobs } = await store("solicitudes").list({ prefix: `slot/${agenda}/` });
+  return new Set(blobs.map((b) => b.key.slice(`slot/${agenda}/`.length)));
+}
+// Ocupa un hueco de la agenda. Si dos personas reservan a la vez, gana la última escritura: la otra recibe «ocupada».
+export async function ocuparHueco(agenda: string, fecha: string, hora: string, id: string): Promise<boolean> {
+  const s = store("solicitudes");
+  const key = `slot/${agenda}/${fecha}/${hora}`;
+  if (await s.get(key)) return false;
+  await s.setJSON(key, { id });
+  const v = (await s.get(key, { type: "json" })) as { id: string } | null;
+  return !!v && v.id === id;
+}
+
+// Fotos que manda el cliente (presupuesto por foto). Privadas: solo se ven desde el panel.
+export const FOTOS_CLIENTE = "clientes-fotos";
+export const esFotoCliente = (k: string) => /^pf-[0-9a-f-]{36}\.jpg$/.test(k);
+export async function fotosExisten(keys: string[]) {
+  const s = store(FOTOS_CLIENTE);
+  const r = await Promise.all(keys.map((k) => s.get(k + ".meta").catch(() => null)));
+  return r.every(Boolean);
+}
+export async function marcarFotosUsadas(keys: string[], id: string) {
+  const s = store(FOTOS_CLIENTE);
+  await Promise.all(keys.map(async (k) => {
+    const m = ((await s.get(k + ".meta", { type: "json" }).catch(() => null)) as any) || {};
+    await s.setJSON(k + ".meta", { ...m, usada: id });
+  }));
+}
+export async function borrarFotos(sol: { fotos?: string[] }) {
+  const s = store(FOTOS_CLIENTE);
+  await Promise.all((sol.fotos || []).filter(esFotoCliente).flatMap((k) => [s.delete(k).catch(() => {}), s.delete(k + ".meta").catch(() => {})]));
+}
+
+export async function liberar(sol: Solicitud) {
+  if (!sol.cita) return;
+  const s = store("solicitudes");
+  const key = `slot/${sol.cita.agenda}/${sol.cita.fecha}/${sol.cita.hora}`;
+  const v = (await s.get(key, { type: "json" })) as { id: string } | null;
+  if (v && v.id === sol.id) await s.delete(key);
+}
+
+const canal = (o: Record<string, string>) => canalDe(o);
+
+export function limpiar(input: any, manual = false): { s?: Solicitud; error?: string } {
+  const tipo = TIPOS.includes(input?.tipo) ? input.tipo : null;
+  if (!tipo) return { error: "Tipo de solicitud no válido." };
+  const nombre = str(input.nombre, 80);
+  const telefono = str(input.telefono, 30);
+  const email = str(input.email, 120);
+  if (nombre.length < 2) return { error: "Escribe tu nombre." };
+  if (soloDigitos(telefono).replace(/^\+/, "").length < 9) return { error: "Revisa el teléfono." };
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: "Revisa el email." };
+  if (!manual && input.acepta !== true) return { error: "Tienes que aceptar la política de privacidad." };
+
+  const o = input.origen && typeof input.origen === "object" ? input.origen : {};
+  const origen = {
+    gclid: str(o.gclid, 200),
+    utm_source: str(o.utm_source, 60),
+    utm_medium: str(o.utm_medium, 60),
+    utm_campaign: str(o.utm_campaign, 100),
+    utm_term: str(o.utm_term, 100),
+    referrer: str(o.referrer, 300),
+    landing: str(o.landing, 300),
+    canal: "",
+  };
+  origen.canal = manual ? str(input.canal, 40) || "En persona" : canal(origen);
+
+  const c = input.coche && typeof input.coche === "object" ? input.coche : null;
+  const precio = c ? Number(c.precio) : NaN;
+  const v = input.vehiculo && typeof input.vehiculo === "object" ? input.vehiculo : {};
+  const vehiculo: Record<string, string> = {};
+  for (const k of ["marca", "modelo", "anio", "km", "combustible", "estado", "matricula", "coche"]) {
+    const val = str(v[k], 80);
+    if (val) vehiculo[k] = val;
+  }
+
+  const ahora = new Date().toISOString();
+  const s: Solicitud = {
+    id: ahora.replace(/[-:.TZ]/g, "") + "-" + crypto.randomUUID().slice(0, 8),
+    creado: ahora,
+    tipo,
+    estado: "nueva",
+    nombre,
+    telefono,
+    email,
+    mensaje: str(input.mensaje, 1500),
+    coche: c ? { id: str(c.id, 64), titulo: str(c.titulo, 140), precio: Number.isFinite(precio) ? precio : null } : null,
+    servicios: (Array.isArray(input.servicios) ? input.servicios : []).map((x: unknown) => str(x, 60)).filter(Boolean).slice(0, 15),
+    dia: fechaISO(input.dia),
+    franja: FRANJAS.includes(input.franja) ? input.franja : "",
+    vehiculo,
+    origen,
+    idioma: input.idioma === "en" ? "en" : "es",
+    consentimiento: { version: manual ? "presencial" : CONSENTIMIENTO_VERSION, fecha: ahora },
+    notas: manual ? str(input.notas, 2000) : "",
+    historial: [{ t: ahora, estado: "nueva" }],
+    cita: null,
+    importe: null,
+    seguimiento: "",
+    motivo: "",
+    actividad: [],
+  };
+  const fotos = (Array.isArray(input.fotos) ? input.fotos : []).map((x: unknown) => str(x, 60)).filter(esFotoCliente).slice(0, 4);
+  if (fotos.length) s.fotos = [...new Set(fotos)];
+  if (tipo === "financiacion") {
+    const f = input.financiacion && typeof input.financiacion === "object" ? input.financiacion : {};
+    if (!s.coche) return { error: "Falta el coche." };
+    const situacion = SITUACIONES.includes(f.situacion) ? f.situacion : "";
+    const ingresos = INGRESOS.includes(f.ingresos) ? f.ingresos : "";
+    if (!manual && (!situacion || !ingresos)) return { error: "Dinos tu situación laboral y tus ingresos aproximados." };
+    s.financiacion = {
+      precio: dinero(f.precio), entrada: dinero(f.entrada), importe: dinero(f.importe),
+      plazo: Math.min(120, Math.max(0, Math.round(Number(f.plazo) || 0))), cuota: dinero(f.cuota),
+      tin: Math.min(30, dinero(f.tin)), tae: Math.min(60, dinero(f.tae)), situacion, ingresos, entidad: str(f.entidad, 80),
+    };
+    if (!manual) s.consentimiento.version = CONSENTIMIENTO_VERSION + "+financiera";
+  }
+  if (manual) {
+    s.manual = true;
+    s.estado = "contactado";
+    s.primerContacto = ahora;
+    s.historial = [{ t: ahora, estado: "contactado" }];
+    s.actividad = [{ t: ahora, tipo: "sistema", txt: "Cliente apuntado a mano (" + s.origen.canal + ")" }];
+    return { s };
+  }
+  const ci = input.cita && typeof input.cita === "object" ? input.cita : null;
+  if (ci) {
+    const agenda = tipo === "taller" ? "taller" : tipo === "coche" ? "visita" : "";
+    if (!agenda) return { error: "Este tipo de solicitud no admite cita." };
+    s.cita = { agenda, fecha: fechaISO(ci.fecha), hora: str(ci.hora, 5) };
+    s.dia = s.cita.fecha;
+    s.franja = s.cita.hora;
+    s.estado = "cita";
+    s.historial = [{ t: ahora, estado: "cita" }];
+  }
+  return { s };
+}
+
+export async function dentroDelLimite(ip: string, ua: string): Promise<boolean> {
+  const s = store("solicitudes");
+  const quien = createHash("sha256").update(ip + "|" + ua + "|mz-sol").digest("hex").slice(0, 24);
+  const key = "rl/" + quien;
+  const hace1h = Date.now() - 3600e3;
+  const lista = (((await s.get(key, { type: "json" })) as number[] | null) || []).filter((t) => t > hace1h);
+  if (lista.length >= LIMITE_HORA) return false;
+  lista.push(Date.now());
+  await s.setJSON(key, lista);
+  return true;
+}
+
+
+// ---------- aviso por email de cada solicitud nueva ----------
+const TIPO_TXT: Record<string, string> = { coche: "Interesado en un coche", taller: "Cita de taller", tasacion: "Tasación", contacto: "Consulta", financiacion: "Pre-estudio de financiación" };
+export const eurTxt = (n: number) => { const v = Math.round(n * 100) / 100, e = Math.trunc(v), c = Math.round((v - e) * 100); return String(e).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (c ? "," + String(c).padStart(2, "0") : "") + " €"; };
+export function fechaBonita(f: string) {
+  return f ? new Date(f + "T12:00:00Z").toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }) : "";
+}
+export async function avisar(x: Solicitud, origin: string) {
+  const cuando = x.cita ? `${fechaBonita(x.cita.fecha)} a las ${x.cita.hora}` : x.dia ? `${fechaBonita(x.dia)} ${x.franja}` : "";
+  const asunto = x.cita
+    ? `Nueva cita${x.tipo === "taller" ? " de taller" : " para ver coche"}: ${x.nombre} · ${cuando}`
+    : `Nueva solicitud (${TIPO_TXT[x.tipo] || x.tipo}): ${x.nombre}`;
+  const saludo = x.idioma === "en" ? `Hi ${x.nombre.split(" ")[0]}, this is Volcano Cars. ` : `Hola ${x.nombre.split(" ")[0]}, te escribimos de Volcano Cars. `;
+  const v = x.vehiculo || {};
+  await enviarAviso(asunto, [
+    ["Tipo", TIPO_TXT[x.tipo] || x.tipo],
+    ["Nombre", x.nombre],
+    ["Teléfono", x.telefono],
+    ["Email", x.email],
+    ["Cita", cuando],
+    ["Coche", x.coche ? `${x.coche.titulo}${x.coche.precio ? " · " + x.coche.precio.toLocaleString("es-ES") + " €" : ""}` : (v.coche || [v.marca, v.modelo, v.anio].filter(Boolean).join(" ")) + (v.matricula ? ` (${v.matricula})` : "")],
+    ["Servicios", (x.servicios || []).join(", ")],
+    ["Financiación", x.financiacion ? `${eurTxt(x.financiacion.importe)} a ${x.financiacion.plazo} meses · cuota ${eurTxt(x.financiacion.cuota)} · entrada ${eurTxt(x.financiacion.entrada)}` : ""],
+    ["Situación", x.financiacion ? `${x.financiacion.situacion} · ingresos ${x.financiacion.ingresos}` : ""],
+    ["Mensaje", x.mensaje],
+    ["Fotos", x.fotos?.length ? `${x.fotos.length} foto${x.fotos.length > 1 ? "s" : ""} del daño: míralas en el CRM` : ""],
+    ["Idioma", x.idioma === "en" ? "Inglés" : ""],
+    ["Viene de", x.origen?.canal || "Directo"],
+  ], [
+    { txt: "WhatsApp al cliente", url: `https://wa.me/${waNum(x.telefono)}?text=${encodeURIComponent(saludo)}`, color: "#1F8B4C" },
+    { txt: "Llamar", url: `tel:${x.telefono.replace(/[^\d+]/g, "")}`, color: "#1B1B1A" },
+    { txt: "Abrir el CRM", url: `${origin}/admin#crm` },
+  ], x.email);
+}

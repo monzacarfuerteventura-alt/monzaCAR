@@ -3,6 +3,8 @@ Disallow: /admin
 Disallow: /api/
 Disallow: /s/
 Disallow: /seguimiento.html
+Disallow: /r/
+Disallow: /reserva.html
 Allow: /api/fotos/
 
 Sitemap: https://lestter7th.netlify.app/sitemap.xml

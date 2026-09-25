@@ -96,6 +96,28 @@
     Referrer-Policy = "no-referrer"
     Cache-Control = "no-cache"
 
+# Reserva online: enlace privado de cada cliente (/r/XXXXXXXXXXXXXXXXXXXXXXXX). Fuera de Google y sin filtrar el enlace.
+[[headers]]
+  for = "/r/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    Referrer-Policy = "no-referrer"
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/reserva.html"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    Referrer-Policy = "no-referrer"
+    Cache-Control = "no-cache"
+
+[[redirects]]
+  from = "/r/*"
+  to = "/reserva.html"
+  status = 200
+
 # Seguimiento de la reparación: enlace corto que se manda al cliente (/s/XXXXXXXXXXXXXXXX)
 [[redirects]]
   from = "/s/*"

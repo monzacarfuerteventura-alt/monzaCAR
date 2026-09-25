@@ -11,10 +11,11 @@
 
   Nunca bloquean al cliente: si Telegram o Google fallan, la solicitud se guarda igual en el panel.
 */
+import { store } from "./shared.mts";
 type Lead = {
   id: string; creado: string; tipo: string; estado?: string; nombre: string; telefono: string; email?: string; mensaje?: string;
   coche?: { titulo: string; precio: number | null } | null; servicios?: string[]; vehiculo?: Record<string, string>;
-  cita?: { fecha: string; hora: string } | null; idioma?: string; origen?: { canal?: string; utm_campaign?: string; landing?: string };
+  cita?: { fecha: string; hora: string } | null; idioma?: string; fotos?: string[]; origen?: { canal?: string; utm_campaign?: string; landing?: string };
 };
 
 const env = (k: string) => String((globalThis as any).Netlify?.env?.get(k) || "").trim();
@@ -46,6 +47,7 @@ async function telegram(x: Lead, origin: string) {
     r.coche && `🚗 ${escT(r.coche)}`,
     r.servicios && `🔧 ${escT(r.servicios)}`,
     x.mensaje && `💬 ${escT(x.mensaje.slice(0, 700))}`,
+    x.fotos?.length && `📷 ${x.fotos.length} foto${x.fotos.length > 1 ? "s" : ""} del daño (van debajo)`,
     `📍 Viene de: ${escT(r.canal)}${x.idioma === "en" ? " · 🇬🇧 inglés" : ""}`,
   ].filter(Boolean).join("\n");
   const saludo = x.idioma === "en" ? `Hi ${x.nombre.split(" ")[0]}, this is Volcano Cars. ` : `Hola ${x.nombre.split(" ")[0]}, te escribimos de Volcano Cars. `;
@@ -61,6 +63,17 @@ async function telegram(x: Lead, origin: string) {
     }),
     signal: AbortSignal.timeout(6000),
   });
+  // Presupuesto por foto: las fotos del daño llegan al móvil para poder contestar enseguida
+  if (x.fotos?.length) {
+    const s = store("clientes-fotos");
+    const fotos = (await Promise.all(x.fotos.slice(0, 4).map((k) => s.get(k, { type: "arrayBuffer" }).catch(() => null)))).filter(Boolean) as ArrayBuffer[];
+    if (!fotos.length) return;
+    const fd = new FormData();
+    fd.set("chat_id", chat);
+    fd.set("media", JSON.stringify(fotos.map((_, i) => ({ type: "photo", media: `attach://f${i}`, ...(i === 0 ? { caption: `📷 ${x.nombre} · ${x.telefono}` } : {}) }))));
+    fotos.forEach((b, i) => fd.set(`f${i}`, new Blob([b], { type: "image/jpeg" }), `foto-${i + 1}.jpg`));
+    await fetch(`https://api.telegram.org/bot${token}/sendMediaGroup`, { method: "POST", body: fd, signal: AbortSignal.timeout(10000) });
+  }
 }
 
 async function sheets(x: Lead) {

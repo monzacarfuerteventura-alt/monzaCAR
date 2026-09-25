@@ -1,6 +1,7 @@
 import type { Config } from "@netlify/functions";
 import { store, SEMILLA, type Car } from "../lib/shared.mts";
 import { EMPRESA, escH, eur, kmTxt, foto, wa, slugDe, cabecera, pie } from "../lib/paginas.mts";
+import { configPublica } from "../lib/reservas.mts";
 
 // «wallapop» → «Wallapop» (como se escriben los portales; igual que en la web)
 const PORTALES: Record<string, string> = { wallapop: "Wallapop", milanuncios: "Milanuncios", autoscout24: "AutoScout24", autoscout: "AutoScout24", autocasion: "Autocasión", "autocasión": "Autocasión", "coches.net": "coches.net", "coches.com": "coches.com", flexicar: "Flexicar", clicars: "Clicars", autohero: "Autohero" };
@@ -106,6 +107,7 @@ ${fotos[0] ? `<meta property="og:image" content="${escH(origin + fotos[0])}">` :
 <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, "\\u003c")}</script>`;
 
   const enWeb = `/comprar?coche=${encodeURIComponent(c.id)}`;
+  const reservaOnline = !vendido && !reservado && (await configPublica().catch(() => ({ activa: false }))).activa;
   const specs: [string, string | number | null][] = [["Año", c.anio], ["Kilómetros", kmTxt(c.km)], ["Combustible", c.combustible], ["Cambio", c.cambio], ["Potencia", c.cv ? c.cv + " CV" : ""], ["Puertas", c.puertas], ["Color", c.color], ["Etiqueta DGT", c.etiqueta]];
   const waTxt = `Hola, me interesa el ${completo} (${c.anio}, ${kmTxt(c.km)}) de ${eur(c.precio)}. ¿Sigue disponible?`;
   const otros = disponibles.filter((x) => x.id !== c.id).slice(0, 3);
@@ -127,8 +129,10 @@ ${fotos[0] ? `<meta property="og:image" content="${escH(origin + fotos[0])}">` :
       ${ofe}
       <dl class="specs num">${specs.filter(([, v]) => v !== null && v !== "" && v !== undefined).map(([k, v]) => `<div><dt>${k}</dt><dd>${escH(v)}</dd></div>`).join("")}</dl>
       ${vendido ? `<div class="ctas"><a class="btn b-rosso" href="/comprar">Ver coches disponibles</a></div>` : `<div class="ctas">
-        <a class="btn b-rosso" href="${enWeb}">${reservado ? "Ver en la web" : "Reservar visita y prueba"}</a>
-        <a class="btn b-ink" href="${enWeb}">Calcular cuota de financiación</a>
+        ${reservado ? `<a class="btn b-rosso" href="${enWeb}&amp;espera=1">🔔 Avisarme si se cancela la reserva</a><p class="nota-rsv">Este coche está bloqueado temporalmente por otro comprador. Déjanos tu teléfono y serás el primero en enterarte si vuelve a estar disponible.</p>`
+          : reservaOnline ? `<a class="btn b-rosso" href="${enWeb}&amp;reservar=1">🔒 Reservar por 50 € (reembolsables)</a><p class="nota-rsv">Bloquéalo ahora para que no se lo lleven mientras vienes a probarlo. Sin compromiso: te lo devolvemos o lo descontamos del precio.</p>` : ""}
+        <a class="btn ${reservado || reservaOnline ? "b-ink" : "b-rosso"}" href="${enWeb}">${reservado ? "Ver en la web" : "Reservar visita y prueba"}</a>
+        <a class="btn ${reservaOnline && !reservado ? "b-ghost" : "b-ink"}" href="${enWeb}">Calcular cuota de financiación</a>
         <a class="btn b-wa" href="${escH(wa(waTxt))}" target="_blank" rel="noopener">Preguntar por WhatsApp</a>
         <a class="btn b-ghost" href="tel:${EMPRESA.telLink}">Llamar ${EMPRESA.tel}</a></div>`}
       <ul class="perks"><li>12 meses de garantía desde la entrega</li><li>Revisado en nuestro taller de Antigua</li><li>Entrega a domicilio gratis en toda Fuerteventura</li><li>Nos encargamos del cambio de nombre</li></ul>

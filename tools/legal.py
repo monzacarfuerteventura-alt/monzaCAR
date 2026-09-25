@@ -107,6 +107,9 @@ priv = HEAD.format(title="Política de privacidad", upd=ACTUALIZADO) + f"""
 
 <h2>Quién más puede verlos</h2>
 <p>No cedemos tus datos a nadie, salvo a la entidad financiera en el caso descrito más abajo y solo si nos lo autorizas. Para que la web funcione usamos proveedores que actúan por cuenta nuestra: <b>Netlify, Inc.</b> (alojamiento de la web y almacenamiento de las solicitudes, con garantías del Marco de Privacidad de Datos UE-EE. UU. y cláusulas contractuales tipo) y <b>Resend</b> (Plus Five Five, Inc.), que nos reenvía cada solicitud a nuestro correo interno para poder contestarte enseguida, con cláusulas contractuales tipo. Si decides enviarnos el mensaje por <b>WhatsApp</b>, ese envío lo gestiona WhatsApp Ireland Ltd. según sus propias condiciones. Si aceptas las cookies de medición, <b>Google Ireland Ltd.</b> recibe los datos descritos en la <a href="/cookies">política de cookies</a>. Para mostrar los tipos de letra, tu navegador los descarga de <b>Google Fonts</b>, que recibe tu dirección IP (no instala cookies). El mapa de Google Maps solo se carga si pulsas «Ver el mapa aquí».</p>
+<h2>Reserva online, lista de espera y presupuesto por foto</h2>
+<p><b>Reserva de 50 €:</b> guardamos tu nombre, teléfono, email (si lo das), el coche, la fecha de tu visita y el justificante de pago que subas, para gestionar la reserva, la devolución o la compra. Los pagos con tarjeta los procesa <b>Stripe Payments Europe, Ltd.</b> (Irlanda); nosotros no vemos ni guardamos los datos de la tarjeta. Los justificantes y los datos del pago se conservan el tiempo que exigen las leyes fiscales. <b>Lista de espera:</b> si nos dejas tu nombre y WhatsApp en un coche reservado, solo los usamos para avisarte si vuelve a estar disponible. <b>Presupuesto por foto:</b> las fotos del daño solo las ve nuestro equipo para darte el presupuesto; se borran junto con tu solicitud. En los tres casos la base legal es tu solicitud (medidas precontractuales) y puedes pedir que borremos tus datos cuando quieras.</p>
+
 <h2>Asistente con inteligencia artificial</h2>
 <p>Si escribes una pregunta en el asistente de la web, el texto de la conversación se envía a <b>Groq, Inc.</b> (Estados Unidos), que lo procesa con un modelo de inteligencia artificial para generar la respuesta; nosotros no guardamos esas conversaciones (solo quedan en tu navegador mientras tengas la pestaña abierta). El asistente es automático, puede equivocarse y no toma decisiones sobre ti: los precios, las citas y las condiciones se confirman siempre en la web o con una persona. Por favor, no escribas en el chat datos como el DNI, datos bancarios o de salud. Si quieres que te llamemos, la tarjeta del chat te pide nombre, teléfono y tu consentimiento, y esos datos se tratan como cualquier otra solicitud de la web. Si los tenemos activados, los avisos internos de cada solicitud nos llegan también por <b>Telegram</b> (Telegram FZ-LLC) y se anotan en una hoja de <b>Google Sheets</b> (Google Ireland Ltd.) de uso interno.</p>
 
@@ -163,7 +166,7 @@ cond = HEAD.format(title="Condiciones de venta, taller y garantía", upd=ACTUALI
 <h2>1. Compra de coches de ocasión</h2>
 <ul>
 <li><b>Precio:</b> el precio publicado es el precio final, con todos los impuestos incluidos. Si hay gastos adicionales (por ejemplo, una financiación que tú elijas), te los diremos por escrito antes de firmar.</li>
-<li><b>Reservas:</b> reservar una visita en la web no te obliga a nada ni aparta el coche. Si quieres reservarlo, lo acordamos en el taller y te damos un justificante de la señal con sus condiciones.</li>
+<li><b>Reservas:</b> reservar una visita en la web no te obliga a nada ni aparta el coche. Para apartarlo puedes hacer la <a href="#reserva">reserva online de 50 €</a> (reembolsable) o acordarlo con nosotros en el taller.</li>
 <li><b>Dónde se compra:</b> la compraventa se firma en nuestras instalaciones, con contrato por escrito. Por eso no hay derecho de desistimiento de 14 días, que solo existe en compras a distancia o fuera del establecimiento.</li>
 <li><b>Documentación:</b> te entregamos el permiso de circulación, la ficha técnica con la ITV en vigor, las llaves y el historial que tengamos. Nos encargamos del cambio de titularidad en Tráfico.</li>
 <li><b>Entrega a domicilio gratis:</b> una vez firmada la compraventa, te llevamos el coche sin coste a la dirección que nos digas dentro de la isla de Fuerteventura, el día y a la hora que acordemos contigo. Si lo prefieres, puedes recogerlo en nuestro taller de Antigua. La entrega a domicilio no cambia dónde se firma el contrato, y la garantía empieza a contar el día que recibes el coche.</li>
@@ -196,7 +199,18 @@ cond = HEAD.format(title="Condiciones de venta, taller y garantía", upd=ACTUALI
 <li>El descuento se aplica directamente en la factura. No se aplica a las piezas ni a la pintura como material, solo a la mano de obra.</li>
 </ul>
 
-<h2>5. Citas online</h2>
+<h2 id="reserva">5. Reserva online de 50 € (reembolsable)</h2>
+<ul>
+<li><b>Qué es:</b> pagas 50 € y el coche queda apartado para ti durante <b>48 horas</b> desde que confirmamos el pago. Mientras dure la reserva, nadie más puede comprarlo ni reservarlo.</li>
+<li><b>100 % reembolsable:</b> si decides no comprarlo, por el motivo que sea, te devolvemos los 50 € íntegros por el mismo medio de pago en un plazo máximo de 14 días naturales desde que nos lo pidas. No es una señal de arras: no te obliga a comprar ni tiene penalización.</li>
+<li><b>A cuenta del precio:</b> si compras el coche, los 50 € se descuentan del precio final.</li>
+<li><b>Cómo se paga:</b> con tarjeta, Google Pay o Apple Pay a través de Stripe (la web nunca ve los datos de tu tarjeta), o por transferencia o Bizum subiendo el justificante. Con transferencia o Bizum el coche aparece como reservado al subir el justificante; si en 12 horas no hemos recibido el dinero, la reserva se anula y te avisamos.</li>
+<li><b>Cuando pasan las 48 horas:</b> te llamamos. Si lo necesitas (por ejemplo, porque esperas la respuesta de la financiera), podemos ampliar la reserva; si no, la liberamos y te devolvemos los 50 €.</li>
+<li><b>Si dos personas pagan a la vez:</b> el coche es para quien completó antes el pago; a la otra persona le devolvemos el importe íntegro.</li>
+<li><b>Comprobante:</b> al reservar recibes un comprobante en PDF y un enlace privado para consultar tu reserva. No es una factura: la factura se emite al formalizar la compra.</li>
+</ul>
+
+<h2>6. Citas online</h2>
 <ul>
 <li>Al reservar día y hora en la web, la cita queda confirmada al momento y la hora deja de estar disponible para otros clientes.</li>
 <li>Si no puedes venir, avísanos por WhatsApp o por teléfono para liberar la hora. Si llegas más de 20 minutos tarde y hay otro cliente, puede que tengamos que darte otra hora.</li>
@@ -204,7 +218,7 @@ cond = HEAD.format(title="Condiciones de venta, taller y garantía", upd=ACTUALI
 <li>La cita de taller no es un presupuesto: el presupuesto por escrito te lo damos al revisar el coche.</li>
 </ul>
 
-<h2>6. Reclamaciones</h2>
+<h2>7. Reclamaciones</h2>
 <p>Si algo no ha ido bien, cuéntanoslo primero: casi todo se arregla hablando. También puedes pedir en el taller una <b>hoja de reclamaciones oficial</b> del Gobierno de Canarias, o acudir a los servicios de consumo de tu ayuntamiento o del Gobierno de Canarias y al sistema arbitral de consumo.</p>
 """ + FOOT
 

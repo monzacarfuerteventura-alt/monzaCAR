@@ -284,3 +284,6 @@ h3{font-size:21px;font-weight:800;font-stretch:100%}
 .lc-movil{display:none}
 @media (max-width:960px){.lc-movil{display:flex}.lc-movil .btn{width:100%}}
 #reserva{scroll-margin-top:84px}
+
+/* reserva online 50 € (ficha de cada coche) */
+.nota-rsv{flex-basis:100%;margin:-2px 0 6px;font-size:13.5px;line-height:1.45;color:var(--muted)}
