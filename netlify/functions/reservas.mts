@@ -5,6 +5,7 @@ import { notificarExternos } from "../lib/notificar.mts";
 import { limpiar, huecoValido, bloqueos, ocuparHueco, avisar, str } from "../lib/solicitud.mts";
 import {
   R, DOCS, IMPORTE, MIN_PAGO_TARJETA, MIN_PAGO_TRANSFER, HORAS_RESERVA, type Reserva, type Metodo, type Espera,
+  type Entrega, MUNICIPIOS_ENTREGA, FRANJAS_ENTREGA, etiquetaEntrega,
   leer, guardar, nota, apartar, apartadoDe, activa, leerCoches, configPublica, leerConfig, ibanValido, stripeActivo,
   nuevoToken, nuevoCodigo, vistaPublica, pasarAPendiente, confirmar, cancelar, vender, leerEspera, guardarEspera,
   avisarGerente, caducar, crearPagoTarjeta, comprobarPago, alPagarConTarjeta, firmaStripeValida, msgVuelveDisponible, msgConfirmacion,
@@ -158,7 +159,19 @@ export default async (req: Request, context: Context) => {
     const coche = (await leerCoches()).find((c) => c.id === str(i.cocheId, 64));
     if (!coche || coche.estado === "vendido") return json({ error: T("Este coche ya no está a la venta.", "This car is no longer for sale.") }, 404);
     if (coche.estado !== "disponible") return json({ reservado: true, error: T("Este coche acaba de ser reservado por otra persona.", "This car has just been reserved by someone else.") }, 409);
-    const ci = i.cita && typeof i.cita === "object" ? { fecha: str(i.cita.fecha, 10), hora: str(i.cita.hora, 5) } : null;
+    // «🚚 Te lo llevamos a domicilio»: municipio, dirección, día laborable (mañana a +30 días) y tramo obligatorios
+    let entrega: Entrega | null = null;
+    if (i.entrega && typeof i.entrega === "object") {
+      const e = i.entrega, fecha = str(e.fecha, 10), hoy = new Intl.DateTimeFormat("en-CA", { timeZone: "Atlantic/Canary" }).format(new Date());
+      const dias = /^\d{4}-\d{2}-\d{2}$/.test(fecha) ? Math.round((Date.parse(fecha + "T12:00:00Z") - Date.parse(hoy + "T12:00:00Z")) / 864e5) : -1;
+      const semana = dias >= 0 ? new Date(fecha + "T12:00:00Z").getUTCDay() : -1;
+      entrega = { municipio: str(e.municipio, 40), direccion: str(e.direccion, 200).replace(/\s+/g, " "), fecha, franja: str(e.franja, 10) };
+      if (!MUNICIPIOS_ENTREGA.includes(entrega.municipio)) return json({ error: T("Elige el municipio de la entrega.", "Choose the delivery area.") }, 400);
+      if (entrega.direccion.length < 8) return json({ error: T("Escribe la dirección exacta de la entrega.", "Please write the full delivery address.") }, 400);
+      if (dias < 1 || dias > 30 || semana === 0 || semana === 6) return json({ error: T("Elige un día de entrega de lunes a viernes.", "Choose a delivery day, Monday to Friday.") }, 400);
+      if (!FRANJAS_ENTREGA.includes(entrega.franja)) return json({ error: T("Elige mañana o tarde para la entrega.", "Choose morning or afternoon for the delivery.") }, 400);
+    }
+    const ci = !entrega && i.cita && typeof i.cita === "object" ? { fecha: str(i.cita.fecha, 10), hora: str(i.cita.hora, 5) } : null;
     if (ci && !huecoValido(ci.fecha, ci.hora, await bloqueos())) return json({ ocupada: true, error: T("Esa hora ya no está disponible. Elige otra.", "That time is no longer available. Please choose another.") }, 409);
     if (!(await limite(context.ip || "", req.headers.get("user-agent") || "", "reserva", 5))) return json({ error: T("Demasiados intentos seguidos. Escríbenos por WhatsApp y te lo apartamos.", "Too many attempts. Message us on WhatsApp and we'll hold it for you.") }, 429);
 
@@ -166,7 +179,7 @@ export default async (req: Request, context: Context) => {
     const r: Reserva = {
       token: nuevoToken(), codigo: nuevoCodigo(), estado: "iniciada", metodo, importe: IMPORTE,
       coche: { id: coche.id, titulo: titulo(coche), version: coche.version || "", anio: coche.anio, precio: coche.precio, foto: coche.fotos[0] || coche.video?.poster || "" },
-      nombre, telefono, email, idioma: en ? "en" : "es", cita: ci,
+      nombre, telefono, email, idioma: en ? "en" : "es", cita: ci, entrega,
       creado: t, hastaPago: new Date(Date.now() + (metodo === "tarjeta" ? MIN_PAGO_TARJETA : MIN_PAGO_TRANSFER) * 60e3).toISOString(),
       historial: [{ t, txt: `Reserva empezada en la web (${metodo})` }],
     };
@@ -175,7 +188,7 @@ export default async (req: Request, context: Context) => {
     // cliente en el CRM (con su visita, si la ha elegido)
     const { s: sol } = limpiar({
       tipo: "coche", nombre, telefono, email, acepta: true, idioma: r.idioma, origen: i.origen || {}, cita: ci,
-      mensaje: `🔒 Reserva online de ${IMPORTE} € (${r.codigo}) · ${metodo === "tarjeta" ? "tarjeta / Google Pay" : metodo}. ${ci ? "Viene a verlo y probarlo en la cita." : "Sin cita todavía."}`,
+      mensaje: `${entrega ? "🚚 " + etiquetaEntrega(entrega) + " " : ""}🔒 Reserva online de ${IMPORTE} € (${r.codigo}) · ${metodo === "tarjeta" ? "tarjeta / Google Pay" : metodo}. ${entrega ? "Quiere que se lo llevemos a domicilio." : ci ? "Viene a verlo y probarlo en la cita." : "Sin cita todavía."}`,
       coche: { id: coche.id, titulo: `${titulo(coche)} ${coche.version || ""} ${coche.anio}`.replace(/\s+/g, " ").trim(), precio: coche.precio },
     });
     if (sol) {

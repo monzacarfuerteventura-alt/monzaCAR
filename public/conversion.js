@@ -72,12 +72,25 @@
     if (btn) { const antes = btn.innerHTML; btn.classList.add("ok"); btn.innerHTML = ok ? L("✓ Copiado", "✓ Copied") : L("Mantén pulsado para copiar", "Long-press to copy"); setTimeout(() => { btn.classList.remove("ok"); btn.innerHTML = antes; }, 1600); }
   }
 
+  /* ---------------- entrega a domicilio (mismos datos que el servidor) ---------------- */
+  const MUNI_ENTREGA = ["Morro Jable / Pájara", "Tuineje / Gran Tarajal", "Antigua", "Puerto del Rosario", "La Oliva / Corralejo", "Betancuria"];
+  const hoyC = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Atlantic/Canary" }).format(new Date());
+  // los próximos 10 días laborables (de lunes a viernes), a partir de mañana
+  function diasEntrega(n = 10) {
+    const out = []; let t = Date.parse(hoyC() + "T12:00:00Z");
+    while (out.length < n) { t += 864e5; const d = new Date(t); if (d.getUTCDay() % 6) out.push(d.toISOString().slice(0, 10)); }
+    return out;
+  }
+  const fechaCorta = (f) => { const s = new Date(f + "T12:00:00Z").toLocaleDateString(LOC, { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" }); return s.charAt(0).toUpperCase() + s.slice(1); };
+  const etiquetaEntrega = (e) => `[ENTREGA A DOMICILIO SOLICITADA - DIRECCIÓN: ${e.direccion}, ${e.municipio} · ${new Date(e.fecha + "T12:00:00Z").toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" })} · ${e.franja.toLowerCase()}]`;
+
   /* ---------------- mensajes de WhatsApp (mismos textos que el servidor) ---------------- */
   const MSG = {
     // confirmación tras reservar
     confirmacion(r, enlace) {
       const n = r.nombre.split(" ")[0];
-      const cuando = r.cita ? L(` Nos vemos el ${fechaLarga(r.cita.fecha)} a las ${r.cita.hora} en nuestra exposición de Antigua para probarlo.`, ` See you on ${fechaLarga(r.cita.fecha)} at ${r.cita.hora} at our showroom in Antigua to test drive it.`)
+      const cuando = r.entrega ? L(` Te lo llevamos gratis a ${r.entrega.municipio} el ${fechaLarga(r.entrega.fecha)} por la ${r.entrega.franja.toLowerCase()}; te llamamos para confirmar la hora.`, ` We'll bring it to you in ${r.entrega.municipio} on ${fechaLarga(r.entrega.fecha)} (${r.entrega.franja === "Mañana" ? "morning" : "afternoon"}), free of charge; we'll call you to confirm the time.`)
+        : r.cita ? L(` Nos vemos el ${fechaLarga(r.cita.fecha)} a las ${r.cita.hora} en nuestra exposición de Antigua para probarlo.`, ` See you on ${fechaLarga(r.cita.fecha)} at ${r.cita.hora} at our showroom in Antigua to test drive it.`)
         : L(" Ven a probarlo a nuestra exposición de Antigua cuando te venga bien.", " Come and test drive it at our showroom in Antigua whenever suits you.");
       return L(`¡Enhorabuena, ${n}! Tu ${r.coche.titulo} ha sido bloqueado con éxito en Volcano Cars. Tienes 48 horas de reserva exclusiva.${cuando} Tu comprobante: ${enlace}`,
         `Congratulations, ${n}! Your ${r.coche.titulo} has been successfully reserved at Volcano Cars. You have 48 hours of exclusive reservation.${cuando} Your receipt: ${enlace}`);
@@ -87,7 +100,7 @@
       return L(`¡Buenas noticias, ${nombre.split(" ")[0]}! El ${titulo} vuelve a estar disponible en Volcano Cars. Sé el primero en reservarlo: ${enlace}`,
         `Good news, ${nombre.split(" ")[0]}! The ${titulo} is available again at Volcano Cars. Be the first to reserve it: ${enlace}`);
     },
-    justificante(r) { return L(`Hola, he hecho el pago de la reserva ${r.codigo} del ${r.coche.titulo} (50 €). Os mando el justificante.`, `Hi, I've paid the reservation ${r.codigo} for the ${r.coche.titulo} (€50). Here's the receipt.`); },
+    justificante(r) { return (r.entrega ? etiquetaEntrega(r.entrega) + " " : "") + L(`Hola, he hecho el pago de la reserva ${r.codigo} del ${r.coche.titulo} (50 €). Os mando el justificante.`, `Hi, I've paid the reservation ${r.codigo} for the ${r.coche.titulo} (€50). Here's the receipt.`); },
   };
 
   /* =====================================================================
@@ -224,7 +237,8 @@
       [L("Forma de pago", "Payment method"), METODO_TXT[r.metodo] || r.metodo],
       [r.pagado ? L("Pagado el", "Paid on") : L("Pago", "Payment"), r.pagado ? fechaHora(r.pagado) : r.estado === "pendiente" ? L("Justificante recibido: estamos comprobando el pago", "Receipt received: we're checking the payment") : ""],
       [L("Reservado hasta", "Reserved until"), r.hasta ? fechaHora(r.hasta) : r.estado === "pendiente" ? L("48 horas desde que confirmemos el pago", "48 hours from payment confirmation") : ""],
-      [L("Visita y prueba", "Visit & test drive"), r.cita ? `${fechaLarga(r.cita.fecha)}, ${r.cita.hora} h` : L("Cuando te venga bien (llámanos para quedar)", "Whenever suits you (call us to arrange)")],
+      r.entrega ? [L("Entrega a domicilio (gratis)", "Home delivery (free)"), `${r.entrega.direccion}, ${r.entrega.municipio} · ${fechaLarga(r.entrega.fecha)}, ${L(r.entrega.franja.toLowerCase(), r.entrega.franja === "Mañana" ? "morning" : "afternoon")}`]
+        : [L("Visita y prueba", "Visit & test drive"), r.cita ? `${fechaLarga(r.cita.fecha)}, ${r.cita.hora} h` : L("Cuando te venga bien (llámanos para quedar)", "Whenever suits you (call us to arrange)")],
     ]);
     // cláusula
     y += 4;
@@ -304,12 +318,13 @@
         <div><dt>${pend ? L("Importe", "Amount") : L("Pagado", "Paid")}</dt><dd>${eur2(r.importe)} · ${esc(METODO_TXT[r.metodo] || r.metodo)}</dd></div>
         <div><dt>${L("Reservado hasta", "Reserved until")}</dt><dd>${r.hasta ? esc(fechaHora(r.hasta)) : L("48 h desde que confirmemos el pago", "48 h from payment confirmation")}</dd></div>
         ${r.cita ? `<div><dt>${L("Visita y prueba", "Visit & test drive")}</dt><dd>${esc(fechaLarga(r.cita.fecha))} · ${esc(r.cita.hora)} h</dd></div>` : ""}
+        ${r.entrega ? `<div><dt>${L("🚚 Entrega a domicilio", "🚚 Home delivery")}</dt><dd>${esc(r.entrega.direccion)}, ${esc(r.entrega.municipio)} · ${esc(fechaLarga(r.entrega.fecha))}, ${esc(L(r.entrega.franja.toLowerCase(), r.entrega.franja === "Mañana" ? "morning" : "afternoon"))}</dd></div>` : ""}
       </dl>
       <div class="rsv-acts">
         <button type="button" class="btn btn-rosso" data-pdf>${L("📄 Descargar comprobante PDF", "📄 Download PDF receipt")}</button>
         <a class="btn btn-wa" target="_blank" rel="noopener" data-reenviar href="${waCompartir(mensaje || MSG.confirmacion(r, enlace))}">${IC.wa}${L("Reenviar por WhatsApp", "Share on WhatsApp")}</a>
         ${r.cita && typeof ics === "function" ? `<a class="btn btn-ghost" download="visita-volcano-cars.ics" href="${ics(r.cita.fecha, r.cita.hora, "Volcano Cars · " + L("Prueba del ", "Test drive: ") + r.coche.titulo, L("Reserva ", "Reservation ") + r.codigo)}">${IC.cal}${L("Añadir la visita al calendario", "Add visit to calendar")}</a>` : ""}
-        <a class="btn btn-ghost" href="${esc(EMP.mapaEnlace || "https://maps.google.com")}" target="_blank" rel="noopener">${L("Cómo llegar", "Directions")}</a>
+        ${r.entrega ? "" : `<a class="btn btn-ghost" href="${esc(EMP.mapaEnlace || "https://maps.google.com")}" target="_blank" rel="noopener">${L("Cómo llegar", "Directions")}</a>`}
       </div>
       <p class="rsv-fine">${L("Guarda este enlace: ahí verás tu reserva y podrás volver a descargar el comprobante.", "Keep this link: it shows your reservation and lets you download the receipt again.")} <a href="${esc(enlace)}">${esc(enlace.replace(/^https?:\/\//, ""))}</a></p>
     </div>`;
@@ -426,8 +441,21 @@
         <div class="field"><label for="rsv-t">WhatsApp</label><input class="input" id="rsv-t" type="tel" autocomplete="tel" inputmode="tel" required placeholder="6XX XX XX XX"></div></div>
       <div class="field"><label for="rsv-e">${L("Email (opcional, para el comprobante)", "Email (optional, for the receipt)")}</label><input class="input" id="rsv-e" type="email" autocomplete="email"></div>
       <fieldset class="rsv-fs"><legend>${L("¿Cuándo vienes a verlo y probarlo?", "When will you come to see and test drive it?")}</legend>
-        <div class="modo" role="radiogroup"><label><input type="radio" name="rsv-cuando" value="cita" checked><span>${L("Elegir día y hora", "Pick a day and time")}</span></label><label><input type="radio" name="rsv-cuando" value="luego"><span>${L("Aún no lo sé", "Not sure yet")}</span></label></div>
-        <div class="agenda" id="rsv-ag" aria-live="polite"></div></fieldset>
+        <div class="modo" role="radiogroup"><label><input type="radio" name="rsv-cuando" value="cita" checked><span>${L("Elegir día y hora", "Pick a day and time")}</span></label><label><input type="radio" name="rsv-cuando" value="domicilio"><span class="rsv-dom-op">${L("🚚 Te lo llevamos a domicilio", "🚚 We bring it to your door")}<small>${L("(Gratis en Fuerteventura)", "(Free anywhere in Fuerteventura)")}</small></span></label></div>
+        <div class="agenda" id="rsv-ag" aria-live="polite"></div>
+        <div class="rsv-dom" id="rsv-dom" hidden>
+          <p class="rsv-dom-intro">${L("Te lo llevamos <b>gratis</b> a cualquier punto de la isla para que lo veas y lo pruebes en tu puerta. Te llamamos para confirmar la hora exacta.", "We bring it <b>free</b> anywhere on the island so you can see and test drive it at your door. We'll call you to confirm the exact time.")}</p>
+          <div class="field"><label for="rsv-mun">${L("Municipio / localidad", "Town / area")}</label>
+            <select class="input" id="rsv-mun"><option value="">${L("Elige tu municipio", "Choose your area")}</option>${MUNI_ENTREGA.map((m) => `<option>${esc(m)}</option>`).join("")}</select></div>
+          <div class="field"><label for="rsv-dir">${L("Dirección exacta de entrega", "Exact delivery address")}</label>
+            <input class="input" id="rsv-dir" autocomplete="street-address" maxlength="200" placeholder="${L("Calle, número, piso, puerta, referencia o C.P.", "Street, number, floor, door, landmark or postcode")}"></div>
+          <div class="row2">
+            <div class="field"><label for="rsv-fe">${L("Día de entrega", "Delivery day")}</label>
+              <select class="input" id="rsv-fe"><option value="">${L("Elige el día", "Choose the day")}</option>${diasEntrega().map((f) => `<option value="${f}">${esc(fechaCorta(f))}</option>`).join("")}</select></div>
+            <div class="field"><span class="rsv-lbl" id="rsv-fr-l">${L("Tramo horario preferido", "Preferred time")}</span>
+              <div class="modo" role="radiogroup" aria-labelledby="rsv-fr-l"><label><input type="radio" name="rsv-franja" value="Mañana"><span>${L("Mañana", "Morning")}</span></label><label><input type="radio" name="rsv-franja" value="Tarde"><span>${L("Tarde", "Afternoon")}</span></label></div></div>
+          </div>
+        </div></fieldset>
       <fieldset class="rsv-fs"><legend>${L("¿Cómo quieres pagar los 50 €?", "How do you want to pay the €50?")}</legend>
         <div class="rsv-met">${metodos.map(([k, ic, t, s], i) => `<label><input type="radio" name="rsv-m" value="${k}" ${i === 0 ? "checked" : ""}><span class="rsv-met-in"><span class="rsv-met-ic">${ic}</span><span><b>${t}</b><small>${s}</small></span></span></label>`).join("")}</div></fieldset>
       <input class="hp" type="text" id="rsv-web" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -442,21 +470,36 @@
     const agEl = $("#rsv-ag", d);
     AG = typeof Agenda === "function" ? Agenda(agEl, "visita", (m) => fallo(m || "")) : null;
     if (AG) AG.cargar(); else agEl.hidden = true;
-    d.querySelectorAll("input[name=rsv-cuando]").forEach((x) => x.addEventListener("change", () => { agEl.hidden = !AG || x.value !== "cita" || !x.checked; }));
+    const domEl = $("#rsv-dom", d);
+    ["input", "change"].forEach((t) => domEl.addEventListener(t, () => { if (!$("#rsv-err", d).hidden) fallo(""); }));
+    d.querySelectorAll("input[name=rsv-cuando]").forEach((x) => x.addEventListener("change", () => {
+      if (!x.checked) return;
+      agEl.hidden = !AG || x.value !== "cita";
+      domEl.hidden = x.value !== "domicilio";
+      if (x.value === "domicilio") { fallo(""); trk("clk", "reserva-domicilio", c.id); setTimeout(() => domEl.scrollIntoView({ block: "nearest", behavior: "smooth" }), 60); }
+    }));
     $(".rsv-form", d).addEventListener("submit", async (e) => {
       e.preventDefault(); fallo("");
       const nombre = $("#rsv-n", d).value.trim(), telefono = $("#rsv-t", d).value.trim(), email = $("#rsv-e", d).value.trim();
-      const conCita = AG && (d.querySelector("input[name=rsv-cuando]:checked") || {}).value === "cita";
+      const cuando = (d.querySelector("input[name=rsv-cuando]:checked") || {}).value;
+      const conCita = AG && cuando === "cita", aDomicilio = cuando === "domicilio";
+      const entrega = aDomicilio ? { municipio: $("#rsv-mun", d).value, direccion: $("#rsv-dir", d).value.trim(), fecha: $("#rsv-fe", d).value, franja: (d.querySelector("input[name=rsv-franja]:checked") || {}).value || "" } : null;
       const metodo = (d.querySelector("input[name=rsv-m]:checked") || {}).value;
       if (nombre.length < 2) { fallo(L("Escribe tu nombre.", "Please write your name.")); $("#rsv-n", d).focus(); return; }
       if (!telOk(telefono)) { fallo(L("Revisa el número de WhatsApp.", "Please check your WhatsApp number.")); $("#rsv-t", d).focus(); return; }
       if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { fallo(L("Revisa el email.", "Please check your email.")); $("#rsv-e", d).focus(); return; }
-      if (conCita && !AG.st.hora) { fallo(L("Elige el día y la hora de la visita (o marca «Aún no lo sé»).", "Pick the visit day and time (or choose «Not sure yet»).")); agEl.scrollIntoView({ block: "center", behavior: "smooth" }); return; }
+      if (conCita && !AG.st.hora) { fallo(L("Elige el día y la hora de la visita (o marca «Te lo llevamos a domicilio»).", "Pick the visit day and time (or choose «We bring it to your door»).")); agEl.scrollIntoView({ block: "center", behavior: "smooth" }); return; }
+      if (entrega) {
+        if (!entrega.municipio) { fallo(L("Elige el municipio de la entrega.", "Choose the delivery area.")); $("#rsv-mun", d).focus(); return; }
+        if (entrega.direccion.length < 8) { fallo(L("Escribe la dirección exacta: calle, número y piso o puerta.", "Please write the full address: street, number and floor or door.")); $("#rsv-dir", d).focus(); return; }
+        if (!entrega.fecha) { fallo(L("Elige el día de la entrega.", "Choose the delivery day.")); $("#rsv-fe", d).focus(); return; }
+        if (!entrega.franja) { fallo(L("Elige mañana o tarde para la entrega.", "Choose morning or afternoon.")); d.querySelector("input[name=rsv-franja]").focus(); return; }
+      }
       if (!$("#rsv-ok", d).checked) { fallo(L("Marca la casilla de las condiciones para continuar.", "Please tick the terms box to continue.")); return; }
       const btn = $(".rsv-go", d); btn.disabled = true; btn.classList.add("busy");
       try {
         const j = await api("/api/reservas", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({
-          cocheId: c.id, nombre, telefono, email, metodo, cita: conCita ? { fecha: AG.st.fecha, hora: AG.st.hora } : null,
+          cocheId: c.id, nombre, telefono, email, metodo, cita: conCita ? { fecha: AG.st.fecha, hora: AG.st.hora } : null, entrega,
           acepta: true, web: $("#rsv-web", d).value, idioma: EN ? "en" : "es", origen: ORIG }) });
         if (!j.token) return;
         guardado.poner(MIS, c.id, { token: j.token, codigo: j.codigo, t: Date.now() });

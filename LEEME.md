@@ -120,3 +120,9 @@ Detalle completo en `tools/CAMBIOS-CAPTACION.md`. Resumen:
 - **Agente de WhatsApp con IA** fuera de horario: `/api/whatsapp`, guion y puesta en marcha en `tools/whatsapp/SYSTEM-PROMPT.md`. Variables `WA_TOKEN`, `WA_PHONE_ID`, `WA_APP_SECRET`, `WA_VERIFY_TOKEN` (y `WA_MODO`).
 - **Etiqueta «Powered by Netlify»**: apágala en Project configuration → General → Powered by Netlify badge.
 - La dirección de la web para Google (canonical, robots, hreflang) es ahora **https://volcanocars.com**.
+
+## Reserva online: «🚚 Te lo llevamos a domicilio» (25-09-2026)
+En el modal de reserva de 50 €, la opción «Aún no lo sé» se ha cambiado por «🚚 Te lo llevamos a domicilio (Gratis en Fuerteventura)».
+Al elegirla se piden municipio, dirección exacta, día (lunes a viernes, próximos 10 días laborables) y mañana o tarde; son obligatorios (web y servidor).
+La dirección llega con la etiqueta `[ENTREGA A DOMICILIO SOLICITADA - DIRECCIÓN: …]` en el CRM, en el email y en Telegram, en el WhatsApp del justificante de Bizum/transferencia,
+en el mensaje de confirmación, en el comprobante PDF y en Panel → Coches → Reservas (con enlace al mapa).

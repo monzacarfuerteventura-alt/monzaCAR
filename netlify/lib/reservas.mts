@@ -38,12 +38,20 @@ export type Reserva = {
   coche: { id: string; titulo: string; version: string; anio: number; precio: number; foto: string; matricula?: string };
   nombre: string; telefono: string; email: string; idioma: "es" | "en";
   cita: { fecha: string; hora: string } | null;
+  entrega?: Entrega | null; // «🚚 Te lo llevamos a domicilio» en vez de venir a la exposición
   creado: string; hastaPago: string; justificante?: string; justificanteEn?: string; hastaVerificar?: string;
   pagado?: string; hasta?: string; cerrado?: string; motivo?: string; reembolso?: "pendiente" | "hecho" | "";
   stripe?: { sesion: string; pago?: string; url?: string };
   solicitud?: string; avisoVencida?: boolean;
   historial: { t: string; txt: string }[];
 };
+// ---------------- entrega a domicilio (gratis en Fuerteventura) ----------------
+export type Entrega = { municipio: string; direccion: string; fecha: string; franja: string };
+export const MUNICIPIOS_ENTREGA = ["Morro Jable / Pájara", "Tuineje / Gran Tarajal", "Antigua", "Puerto del Rosario", "La Oliva / Corralejo", "Betancuria"];
+export const FRANJAS_ENTREGA = ["Mañana", "Tarde"];
+export function etiquetaEntrega(e: Entrega) {
+  return `[ENTREGA A DOMICILIO SOLICITADA - DIRECCIÓN: ${e.direccion}, ${e.municipio} · ${fechaLarga(e.fecha)} · ${e.franja.toLowerCase()}]`;
+}
 export type Espera = { id: string; nombre: string; telefono: string; idioma: "es" | "en"; t: string; avisado?: string };
 export type Config = { activa: boolean; iban: string; titular: string; banco: string; bizum: string };
 
@@ -145,7 +153,7 @@ export async function vistaPublica(r: Reserva) {
   const esperandoPago = r.estado === "iniciada" && r.metodo !== "tarjeta";
   return {
     codigo: r.codigo, estado: r.estado, metodo: r.metodo, importe: r.importe, idioma: r.idioma,
-    coche: r.coche, nombre: r.nombre, telefono: r.telefono, cita: r.cita,
+    coche: r.coche, nombre: r.nombre, telefono: r.telefono, cita: r.cita, entrega: r.entrega || null,
     creado: r.creado, hastaPago: r.hastaPago, hastaVerificar: r.hastaVerificar || "", pagado: r.pagado || "", hasta: r.hasta || "",
     justificante: !!r.justificante, motivo: r.estado === "cancelada" ? r.motivo || "" : "",
     pago: esperandoPago ? { concepto: concepto(r), transferencia: cfg.transferencia, bizum: cfg.bizum } : null,
@@ -211,7 +219,8 @@ export function msgVuelveDisponible(e: { nombre: string; idioma?: string }, titu
 }
 export function msgConfirmacion(r: Reserva, enlace: string) {
   const n = r.nombre.split(" ")[0], en = r.idioma === "en";
-  const cuando = r.cita ? (en ? ` See you on ${fechaLarga(r.cita.fecha, true)} at ${r.cita.hora} at our showroom in Antigua to test drive it.` : ` Nos vemos el ${fechaLarga(r.cita.fecha)} a las ${r.cita.hora} en nuestra exposición de Antigua para probarlo.`)
+  const cuando = r.entrega ? (en ? ` We'll bring it to you in ${r.entrega.municipio} on ${fechaLarga(r.entrega.fecha, true)} (${r.entrega.franja === "Mañana" ? "morning" : "afternoon"}), free of charge; we'll call you to confirm the time.` : ` Te lo llevamos gratis a ${r.entrega.municipio} el ${fechaLarga(r.entrega.fecha)} por la ${r.entrega.franja.toLowerCase()}; te llamamos para confirmar la hora.`)
+    : r.cita ? (en ? ` See you on ${fechaLarga(r.cita.fecha, true)} at ${r.cita.hora} at our showroom in Antigua to test drive it.` : ` Nos vemos el ${fechaLarga(r.cita.fecha)} a las ${r.cita.hora} en nuestra exposición de Antigua para probarlo.`)
     : (en ? " Come and test drive it at our showroom in Antigua whenever suits you." : " Ven a probarlo a nuestra exposición de Antigua cuando te venga bien.");
   return en
     ? `Congratulations, ${n}! Your ${r.coche.titulo} has been successfully reserved at Volcano Cars. You have ${HORAS_RESERVA} hours of exclusive reservation.${cuando} Your receipt: ${enlace}`
@@ -252,12 +261,15 @@ export async function avisarGerente(tipo: "pendiente" | "pagada" | "liberada" | 
     conflicto: [`⚠️ Pago con tarjeta recibido tarde: ${titulo}`, `El cliente pagó cuando el coche ya no estaba apartado para él. Devuélvele los ${IMPORTE} € desde Stripe o llámale.`],
     espera: [`🔔 Nueva persona en la lista de espera: ${titulo}`, `${extra.persona?.nombre || ""} · ${extra.persona?.telefono || ""} quiere que le avises si se cancela la reserva.`],
   };
-  const [asunto, texto] = T[tipo];
+  const [asunto0, texto] = T[tipo];
+  // entrega a domicilio: la dirección va la primera, con su etiqueta, en el email y en Telegram
+  const asunto = r?.entrega && tipo !== "liberada" ? "🚚 " + asunto0 : asunto0;
   const filas: [string, string][] = r ? [
+    ["Entrega", r.entrega ? etiquetaEntrega(r.entrega) : ""],
     ["Coche", `${r.coche.titulo} ${r.coche.anio} · ${r.coche.precio.toLocaleString("es-ES")} €`],
     ["Cliente", `${r.nombre} · ${r.telefono}`], ["Email", r.email],
     ["Código", r.codigo], ["Pago", `${IMPORTE} € · ${r.metodo === "tarjeta" ? "tarjeta / Google Pay / Apple Pay (Stripe)" : r.metodo}`],
-    ["Visita", r.cita ? `${fechaLarga(r.cita.fecha)} a las ${r.cita.hora}` : ""],
+    ["Visita", r.cita ? `${fechaLarga(r.cita.fecha)} a las ${r.cita.hora}` : r.entrega ? "No viene: se lo llevamos a domicilio (ver Entrega)" : ""],
     ["Reserva hasta", r.hasta ? fechaHora(r.hasta) : r.hastaVerificar ? `se libera sola el ${fechaHora(r.hastaVerificar)} si no la confirmas` : ""],
   ] : [];
   const lista = (extra.espera || []).slice(0, 8);

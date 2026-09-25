@@ -4725,7 +4725,8 @@ const rvEnlaceCoche = (id) => `${location.origin}/comprar?coche=${encodeURICompo
 // Mismos textos que la web (netlify/lib/reservas.mts)
 function rvMsgConfirmacion(r) {
   const n = r.nombre.split(" ")[0];
-  const cuando = r.cita ? ` Nos vemos el ${rvFecha(r.cita.fecha)} a las ${r.cita.hora} en nuestra exposición de Antigua para probarlo.` : " Ven a probarlo a nuestra exposición de Antigua cuando te venga bien.";
+  const cuando = r.entrega ? ` Te lo llevamos gratis a ${r.entrega.municipio} el ${rvFecha(r.entrega.fecha)} por la ${r.entrega.franja.toLowerCase()}; te llamamos para confirmar la hora.`
+    : r.cita ? ` Nos vemos el ${rvFecha(r.cita.fecha)} a las ${r.cita.hora} en nuestra exposición de Antigua para probarlo.` : " Ven a probarlo a nuestra exposición de Antigua cuando te venga bien.";
   return r.idioma === "en"
     ? `Congratulations, ${n}! Your ${r.coche.titulo} has been successfully reserved at Volcano Cars. You have 48 hours of exclusive reservation.${r.cita ? ` See you on ${r.cita.fecha} at ${r.cita.hora} at our showroom in Antigua to test drive it.` : ""} Your receipt: ${location.origin}/r/${r.token}`
     : `¡Enhorabuena, ${n}! Tu ${r.coche.titulo} ha sido bloqueado con éxito en Volcano Cars. Tienes 48 horas de reserva exclusiva.${cuando} Tu comprobante: ${location.origin}/r/${r.token}`;
@@ -4763,7 +4764,8 @@ function rvTarjeta(r) {
     <dl class="rv-dl">
       <div><dt>Cliente</dt><dd>${esc(r.nombre)} · <a href="tel:${esc(r.telefono.replace(/[^\d+]/g, ""))}">${esc(r.telefono)}</a>${r.email ? ` · ${esc(r.email)}` : ""}</dd></div>
       <div><dt>Pago</dt><dd>${eurA(r.importe)} · ${esc(rvMetodo[r.metodo] || r.metodo)}${r.pagado ? ` · pagado ${esc(rvCuando(r.pagado))}` : ""}${r.reembolso === "pendiente" ? ' · <b class="rv-warn">devolución pendiente</b>' : r.reembolso === "hecho" ? " · devuelto" : ""}</dd></div>
-      <div><dt>Visita</dt><dd>${r.cita ? esc(rvFecha(r.cita.fecha) + " · " + r.cita.hora + " h") : "Sin fecha: llámale para quedar"}</dd></div>
+      ${r.entrega ? `<div><dt>🚚 Entrega</dt><dd><b>${esc(r.entrega.direccion)}, ${esc(r.entrega.municipio)}</b> · ${esc(rvFecha(r.entrega.fecha))} · ${esc(r.entrega.franja.toLowerCase())} · <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.entrega.direccion + ", " + r.entrega.municipio + ", Fuerteventura")}" target="_blank" rel="noopener">Ver en el mapa</a></dd></div>`
+        : `<div><dt>Visita</dt><dd>${r.cita ? esc(rvFecha(r.cita.fecha) + " · " + r.cita.hora + " h") : "Sin fecha: llámale para quedar"}</dd></div>`}
       ${plazo ? `<div><dt>Plazo</dt><dd>${plazo}</dd></div>` : ""}
     </dl>
     ${r.justificante ? `<div class="rv-doc">${doc ? (doc.pdf ? `<a class="btn b-ghost b-sm" href="${doc.url}" download="justificante-${esc(r.codigo)}.pdf">Descargar el justificante (PDF)</a>` : `<img src="${doc.url}" alt="Justificante de ${esc(r.nombre)}">`) : `<button type="button" class="btn b-ghost b-sm" data-rv-doc>Ver el justificante</button>`}</div>` : ""}
