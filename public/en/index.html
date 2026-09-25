@@ -187,14 +187,33 @@ html[data-vista="comprar"] #v-comprar,html[data-vista="taller"] #v-taller,html[d
 }
 
 /* ---------- Marquee ---------- */
-.marquee{overflow:hidden;background:var(--surface);border-bottom:1px solid var(--line);padding-block:22px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
-.mq-track{display:flex;width:max-content;animation:mq 38s linear infinite}
-.mq-track span{font-family:var(--display);font-stretch:82%;font-weight:800;font-size:clamp(22px,3vw,34px);letter-spacing:-.01em;white-space:nowrap;padding-inline:26px;display:flex;align-items:center;gap:52px}
-.mq-track span:nth-child(even){color:transparent;-webkit-text-stroke:1.2px var(--ink)}
-.mq-track span::after{content:"";width:12px;height:12px;border-radius:3px;transform:rotate(45deg);background:var(--rosso);flex-shrink:0}
-.mq-track span:nth-child(3n)::after{background:var(--ink)}
+/* ---------- Cinta de lava (ticker) ----------
+   Fondo de roca volcánica, dos grietas de lava incandescente que fluyen arriba y abajo,
+   textos alternos en blanco con halo y en degradado de lava, iconos y «brasas» que laten. */
+.marquee{position:relative;overflow:hidden;isolation:isolate;padding-block:15px;
+  background:radial-gradient(90% 160% at 50% 130%,rgba(217,74,38,.30),transparent 62%),radial-gradient(40% 120% at 12% -30%,rgba(255,122,61,.12),transparent 70%),linear-gradient(180deg,#0B0706,#150906 55%,#0B0706);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.marquee::before,.marquee::after{content:"";position:absolute;left:0;right:0;height:2px;z-index:1;pointer-events:none;
+  background:linear-gradient(90deg,#3A0E04,#C83E1A 18%,#FFB36B 30%,#D94A26 44%,#5A1606 58%,#FF7A3D 76%,#FFD08A 84%,#3A0E04);background-size:200% 100%;
+  box-shadow:0 0 12px 1px rgba(255,106,43,.55),0 0 30px 4px rgba(217,74,38,.22);animation:lavaFluye 7s linear infinite}
+.marquee::before{top:0}
+.marquee::after{bottom:0;animation-direction:reverse}
+.mq-track{position:relative;z-index:2;display:flex;width:max-content;animation:mq 42s linear infinite}
+.mq-track span{display:flex;align-items:center;gap:12px;padding-inline:20px;white-space:nowrap;font-family:var(--display);font-stretch:82%;font-weight:800;
+  font-size:clamp(19px,2.5vw,29px);letter-spacing:.015em;text-transform:uppercase;color:#FFF1E6;text-shadow:0 0 16px rgba(255,106,43,.38)}
+.mq-track span:nth-child(even){color:transparent;text-shadow:none;background:linear-gradient(90deg,#FFC98A,#FF6A2B 35%,#D94A26 55%,#FF9A52 80%,#FFC98A);background-size:200% 100%;
+  -webkit-background-clip:text;background-clip:text;animation:lavaFluye 5s linear infinite;filter:drop-shadow(0 0 9px rgba(255,90,31,.35))}
+.mq-track svg{width:.9em;height:.9em;flex-shrink:0;color:#FF7A3D;filter:drop-shadow(0 0 6px rgba(255,106,43,.75))}
+/* brasa entre texto y texto */
+.mq-track span::after{content:"";width:9px;height:9px;margin-left:28px;flex-shrink:0;border-radius:2px;transform:rotate(45deg);
+  background:radial-gradient(circle at 35% 35%,#FFE6B8,#FF7A3D 45%,#C83E1A);box-shadow:0 0 10px 2px rgba(255,106,43,.7),0 0 22px 6px rgba(217,74,38,.22);animation:brasa 2.4s ease-in-out infinite}
+.mq-track span:nth-child(3n)::after{animation-delay:-1.2s}
 @keyframes mq{to{transform:translateX(-50%)}}
+@keyframes lavaFluye{to{background-position:-200% 0}}
+@keyframes brasa{50%{opacity:.55;box-shadow:0 0 5px 1px rgba(255,106,43,.5),0 0 10px 2px rgba(217,74,38,.12)}}
 .marquee:hover .mq-track{animation-play-state:paused}
+@media (max-width:700px){.marquee{padding-block:11px}.mq-track span{padding-inline:14px;gap:9px}.mq-track span::after{margin-left:18px;width:7px;height:7px}}
+@media (prefers-reduced-motion:reduce){.mq-track,.marquee::before,.marquee::after,.mq-track span,.mq-track span::after{animation:none}}
 
 /* ---------- Sections ---------- */
 section.block{padding-block:64px}
@@ -206,7 +225,7 @@ section.block{padding-block:64px}
 
 /* ---------- Car cards ---------- */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(290px,100%),1fr));gap:24px}
-@media (min-width:980px){#home-grid,#cat-grid{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:980px){#cat-grid{grid-template-columns:repeat(3,1fr)}}
 .car{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;text-align:left;padding:0;transition:transform .45s var(--ease),box-shadow .45s var(--ease),border-color .3s}
 .car:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:transparent}
 .car-img{aspect-ratio:16/10;max-width:100%;background:linear-gradient(160deg,var(--surface-2),var(--ground));position:relative;display:grid;place-items:center;overflow:hidden}
@@ -1398,52 +1417,25 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
     <div class="tricolore"></div>
   </section>
 
-  <div class="marquee" aria-hidden="true"><div class="mq-track">
-    <span>Body repair and paint</span><span>Quick servicing</span><span>Checked cars</span><span>Diagnostics</span><span>Pre-ITV (MOT) check</span><span>Tyres</span>
-    <span>Body repair and paint</span><span>Quick servicing</span><span>Checked cars</span><span>Diagnostics</span><span>Pre-ITV (MOT) check</span><span>Tyres</span>
+  <!-- Cinta de lava (ticker): textos e iconos en movimiento con resplandor volcánico -->
+  <div class="marquee lava" aria-hidden="true"><div class="mq-track">
+    <span><svg aria-hidden="true"><use href="#tx-dent"/></svg>Body repair and paint</span><span><svg aria-hidden="true"><use href="#tx-oil"/></svg>Quick servicing</span><span><svg aria-hidden="true"><use href="#tx-car"/></svg>Checked cars</span><span><svg aria-hidden="true"><use href="#tx-scan"/></svg>Diagnostics</span><span><svg aria-hidden="true"><use href="#tx-itv"/></svg>Pre-ITV (MOT) check</span><span><svg aria-hidden="true"><use href="#tx-tyre"/></svg>Tyres</span>
+    <span><svg aria-hidden="true"><use href="#tx-dent"/></svg>Body repair and paint</span><span><svg aria-hidden="true"><use href="#tx-oil"/></svg>Quick servicing</span><span><svg aria-hidden="true"><use href="#tx-car"/></svg>Checked cars</span><span><svg aria-hidden="true"><use href="#tx-scan"/></svg>Diagnostics</span><span><svg aria-hidden="true"><use href="#tx-itv"/></svg>Pre-ITV (MOT) check</span><span><svg aria-hidden="true"><use href="#tx-tyre"/></svg>Tyres</span>
   </div></div>
 
-  <section class="block reviews-sec" id="resenas">
+  <!-- Cómo comprar: justo debajo de la cinta de lava -->
+  <section class="block" id="como-comprar">
     <div class="wrap">
-      <div class="sec-head rv">
-        <div><div class="eyebrow">Google Maps reviews</div><h2>Straight from our <span class="serif">customers.</span></h2><p>A selection of reviews posted by customers on our Google Maps listing (translated from Spanish).</p></div>
+      <div class="sec-head rv"><div><div class="eyebrow">It's that easy</div><h2>Buying at <span class="serif">Volcano Cars</span></h2></div></div>
+      <div class="steps" id="buy-steps">
+        <div class="step lux rv"><div class="n">01</div><h3>Choose your car</h3><p>Check the photos, mileage and equipment. All prices are final, taxes included.</p></div>
+        <div class="step lux rv d1"><div class="n">02</div><h3>Test drive it</h3><p>Visit us in Antigua and take it for a relaxed test drive whenever suits you.</p></div>
+        <div class="step lux rv d2"><div class="n">03</div><h3>We deliver it</h3><p>Pay in full, we handle the ownership transfer and deliver it to your door for free, anywhere on Fuerteventura.</p></div>
       </div>
-      <div class="reviews" id="reviews">
-        <article class="rev rv">
-          <span class="q" aria-hidden="true">“</span>
-          <div class="stars" aria-label="5 out of 5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div>
-          <blockquote>Fantastic paint job on our camper… True professionals, very attentive and friendly. Highly recommended.</blockquote>
-          <div class="reply"><b>Volcano Cars replied:</b> Thank you, always at your service. It's a pleasure to work with customers like you.</div>
-          <div class="who"><span class="ava" style="background:#E8710A">O</span><span><b>Orlinda del Mazo</b><small>Local Guide · Body & paint</small></span></div>
-        </article>
-        <article class="rev rv d1">
-          <span class="q" aria-hidden="true">“</span>
-          <div class="stars" aria-label="5 out of 5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div>
-          <blockquote>Highly recommended, reliable and fairly priced. And unbeatably quick, definitely the best.</blockquote>
-          <div class="who"><span class="ava" style="background:#C2185B">H</span><span><b>Herbert Jakobs</b><small>Local Guide · Body & paint</small></span></div>
-        </article>
-        <article class="rev rv d2">
-          <span class="q" aria-hidden="true">“</span>
-          <div class="stars" aria-label="5 out of 5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div>
-          <blockquote>A big thank you: very kind, helpful, efficient and fairly priced. Failing the MOT (ITV) and having you just around the corner was great. Thanks again, see you soon! 😉</blockquote>
-          <div class="who"><span class="ava" style="background:#8D6E63">Y</span><span><b>Ylenia Suárez García</b><small>Local Guide · Mechanics</small></span></div>
-        </article>
-      </div>
-      <div class="dots" id="rev-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
-      <div class="src rv"><span>Reviews published on our Google Maps listing, copied unchanged (some shortened) and translated. Google publishes them and we don't filter them: you can read them all, including negative ones.</span><a class="btn btn-glass" id="rev-link" target="_blank" rel="noopener">See all on Google Maps <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a></div>
     </div>
   </section>
 
-  <section class="block" id="home-sec">
-    <div class="wrap">
-      <div class="sec-head rv">
-        <div><div class="eyebrow">Cars for sale</div><h2>Just <span class="serif">arrived</span></h2></div>
-        <a class="btn btn-ghost" href="#comprar" data-go="comprar">See all <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
-      </div>
-      <div class="grid rv d1" id="home-grid"></div>
-    </div>
-  </section>
-
+  <!-- Te lo llevamos a casa: justo debajo de «Cómo comprar» -->
   <section class="block" id="entrega" style="padding-top:0">
     <div class="wrap">
       <div class="entrega rv">
@@ -1517,17 +1509,6 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
     </div>
   </section>
 
-  <section class="block">
-    <div class="wrap">
-      <div class="sec-head rv"><div><div class="eyebrow">It's that easy</div><h2>Buying at <span class="serif">Volcano Cars</span></h2></div></div>
-      <div class="steps" id="buy-steps">
-        <div class="step lux rv"><div class="n">01</div><h3>Choose your car</h3><p>Check the photos, mileage and equipment. All prices are final, taxes included.</p></div>
-        <div class="step lux rv d1"><div class="n">02</div><h3>Test drive it</h3><p>Visit us in Antigua and take it for a relaxed test drive whenever suits you.</p></div>
-        <div class="step lux rv d2"><div class="n">03</div><h3>We deliver it</h3><p>Pay in full, we handle the ownership transfer and deliver it to your door for free, anywhere on Fuerteventura.</p></div>
-      </div>
-    </div>
-  </section>
-
   <section class="block" style="padding-top:0">
     <div class="wrap">
       <div class="visit rv">
@@ -1545,6 +1526,38 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
           <div><dt>Right now</dt><dd><span class="status" data-status><i></i><span>…</span></span></dd></div>
         </dl>
       </div>
+    </div>
+  </section>
+
+  <!-- Prueba social al cierre: reseñas de Google Maps justo antes del pie -->
+  <section class="block reviews-sec" id="resenas">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div><div class="eyebrow">Google Maps reviews</div><h2>Straight from our <span class="serif">customers.</span></h2><p>A selection of reviews posted by customers on our Google Maps listing (translated from Spanish).</p></div>
+      </div>
+      <div class="reviews" id="reviews">
+        <article class="rev rv">
+          <span class="q" aria-hidden="true">“</span>
+          <div class="stars" aria-label="5 out of 5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div>
+          <blockquote>Fantastic paint job on our camper… True professionals, very attentive and friendly. Highly recommended.</blockquote>
+          <div class="reply"><b>Volcano Cars replied:</b> Thank you, always at your service. It's a pleasure to work with customers like you.</div>
+          <div class="who"><span class="ava" style="background:#E8710A">O</span><span><b>Orlinda del Mazo</b><small>Local Guide · Body & paint</small></span></div>
+        </article>
+        <article class="rev rv d1">
+          <span class="q" aria-hidden="true">“</span>
+          <div class="stars" aria-label="5 out of 5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div>
+          <blockquote>Highly recommended, reliable and fairly priced. And unbeatably quick, definitely the best.</blockquote>
+          <div class="who"><span class="ava" style="background:#C2185B">H</span><span><b>Herbert Jakobs</b><small>Local Guide · Body & paint</small></span></div>
+        </article>
+        <article class="rev rv d2">
+          <span class="q" aria-hidden="true">“</span>
+          <div class="stars" aria-label="5 out of 5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div>
+          <blockquote>A big thank you: very kind, helpful, efficient and fairly priced. Failing the MOT (ITV) and having you just around the corner was great. Thanks again, see you soon! 😉</blockquote>
+          <div class="who"><span class="ava" style="background:#8D6E63">Y</span><span><b>Ylenia Suárez García</b><small>Local Guide · Mechanics</small></span></div>
+        </article>
+      </div>
+      <div class="dots" id="rev-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+      <div class="src rv"><span>Reviews published on our Google Maps listing, copied unchanged (some shortened) and translated. Google publishes them and we don't filter them: you can read them all, including negative ones.</span><a class="btn btn-glass" id="rev-link" target="_blank" rel="noopener">See all on Google Maps <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a></div>
     </div>
   </section>
 </div>
@@ -1917,10 +1930,7 @@ function pintarStockHero(){
 /* catálogo */
 function render(){
   pintarCatalogo();
-  const d = COCHES.find(c=>c.destacado && c.estado!=="reservado");
-  const inicio = (d ? [d, ...COCHES.filter(c=>c!==d)] : COCHES).slice(0,3);
-  $("#home-grid").innerHTML = inicio.length ? inicio.map(card).join("") : vacio;
-  $("#home-sec").hidden = false;
+  // (la portada ya no enseña coches: el botón «Ver catálogo disponible» lleva al catálogo completo)
   pintarStockHero();
   const vs = VENDIDOS.slice(0,6).map(soldCard).join("");
   $("#sold-grid").innerHTML = $("#cat-sold").innerHTML = vs;
@@ -1983,7 +1993,7 @@ addEventListener("pageshow",e=>{ if(e.persisted) refrescar(); });
 
 async function cargar(){
   cargarInteres(); cargarViendo();
-  $("#cat-grid").innerHTML = $("#home-grid").innerHTML = cargando;
+  $("#cat-grid").innerHTML = cargando;
   try{
     const r = await fetch(API, {cache:"no-store"});
     if(!r.ok) throw new Error(r.status);
@@ -1996,7 +2006,7 @@ async function cargar(){
     if(COCHES_FIJOS.length){ COCHES = ordenar(COCHES_FIJOS); render(); return; }
     if(DEMO && window.DEMO_COCHES){ COCHES = window.DEMO_COCHES; render(); return; }
     const msg = `<div class="empty" style="grid-column:1/-1"><b style="color:var(--ink)">We couldn't load the cars.</b><br>Reload the page or call us on ${EMPRESA.telefono}.</div>`;
-    $("#cat-grid").innerHTML = $("#home-grid").innerHTML = msg;
+    $("#cat-grid").innerHTML = msg;
   }
 }
 
