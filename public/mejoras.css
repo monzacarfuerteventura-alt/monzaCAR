@@ -1,0 +1,99 @@
+/* =====================================================================
+   VOLCANO CARS · MEJORAS DE CAPTACIÓN  (mejoras.css)
+   Alertas por pueblo (.al-*), Historial Sin Sorpresas (.hist-*) y ajustes
+   del móvil. Usa las variables de marca de la web (--rosso, --surface…),
+   así que respeta el tema claro/oscuro. Solo afecta a sus propias clases.
+   ===================================================================== */
+
+/* ---------------- 1. alertas de coches nuevos por pueblo ---------------- */
+.al{
+  --al-acc:var(--rosso,#D9481C);
+  position:relative;margin:34px 0 8px;padding:22px;border-radius:22px;overflow:hidden;
+  background:
+    radial-gradient(520px 200px at 100% 0,color-mix(in srgb,var(--al-acc) 18%,transparent),transparent 70%),
+    linear-gradient(180deg,color-mix(in srgb,var(--surface,#1B1B1A) 92%,#fff 8%),var(--surface,#1B1B1A));
+  border:1.5px solid color-mix(in srgb,var(--al-acc) 45%,var(--line,#35342F));
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--al-acc) 10%,transparent),0 24px 60px -34px color-mix(in srgb,var(--al-acc) 70%,transparent);
+  color:var(--ink,#F2EFEA);
+  opacity:0;transform:translateY(14px);transition:opacity .5s cubic-bezier(.2,.7,.2,1),transform .5s cubic-bezier(.2,.7,.2,1);
+}
+.al.vista,.al:focus-within,.al.hecho{opacity:1;transform:none}
+.al [hidden]{display:none!important}
+.al-head{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}
+.al-bell{position:relative;display:grid;place-items:center;width:52px;height:52px;border-radius:16px;color:#fff;background:linear-gradient(180deg,#E4552F,var(--al-acc));box-shadow:0 10px 24px -10px color-mix(in srgb,var(--al-acc) 80%,transparent)}
+.al-bell i{position:absolute;top:9px;right:10px;width:10px;height:10px;border-radius:50%;background:#3DDC84;border:2px solid var(--al-acc)}
+.al.vista .al-bell svg{animation:alRing 1.2s .4s cubic-bezier(.36,.07,.19,.97) 2}
+@keyframes alRing{0%,100%{transform:rotate(0)}15%{transform:rotate(14deg)}30%{transform:rotate(-12deg)}45%{transform:rotate(9deg)}60%{transform:rotate(-6deg)}75%{transform:rotate(3deg)}}
+.al-kicker{display:block;font-size:11.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--rosso-text,#FF8A5E);margin-bottom:4px}
+.al h3{margin:0;font-family:var(--display,inherit);font-size:clamp(21px,5.2vw,28px);line-height:1.12;letter-spacing:-.01em;text-transform:none}
+.al-head p{margin:6px 0 0;color:var(--muted,#A9A49B);font-size:15.5px;line-height:1.45}
+.al-why{list-style:none;margin:16px 0 4px;padding:0;display:grid;gap:7px}
+.al-why li{display:flex;gap:9px;align-items:flex-start;font-size:14.5px;line-height:1.4;color:var(--ink,#F2EFEA)}
+.al-why svg{flex:none;margin-top:2px;color:var(--verde,#3DBF76)}
+.al-f{display:grid;gap:16px;margin-top:16px}
+.al-set{border:0;margin:0;padding:0;min-width:0;display:grid;gap:10px}
+.al-set legend{display:flex;align-items:center;gap:7px;padding:0;margin-bottom:10px;font-weight:700;font-size:15px;color:var(--ink,#F2EFEA)}
+.al-set legend small{font-weight:500;color:var(--muted,#A9A49B)}
+.al-set legend svg{color:var(--rosso-text,#FF8A5E)}
+.al-chips{display:flex;flex-wrap:wrap;gap:8px}
+.al-chip{position:relative;cursor:pointer}
+.al-chip input{position:absolute;opacity:0;width:1px;height:1px}
+.al-chip span{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:999px;border:1.5px solid var(--line,#35342F);background:var(--surface-2,#252523);font-weight:600;font-size:14.5px;transition:border-color .2s,background .2s,color .2s,transform .15s}
+.al-chip:hover span{border-color:color-mix(in srgb,var(--al-acc) 60%,var(--line,#35342F))}
+.al-chip input:checked+span{background:var(--al-acc);border-color:var(--al-acc);color:#fff;box-shadow:0 8px 20px -10px color-mix(in srgb,var(--al-acc) 90%,transparent)}
+.al-chip input:focus-visible+span{outline:3px solid var(--al-acc);outline-offset:2px}
+.al-chip input:active+span{transform:scale(.97)}
+.al-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.al-ctx{margin:0;padding:9px 12px;border-radius:12px;font-size:13.5px;color:var(--muted,#A9A49B);background:color-mix(in srgb,var(--al-acc) 8%,transparent);border:1px dashed color-mix(in srgb,var(--al-acc) 35%,transparent)}
+.al-ctx b{color:var(--ink,#F2EFEA)}
+.al .consent{margin:0}
+.al-go{width:100%;min-height:54px}
+.al-go.busy{opacity:.75}
+.al-fine{display:block;margin-top:-6px;text-align:center;color:var(--muted,#A9A49B);font-size:12.5px}
+.al-done{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;margin-top:14px;padding:16px;border-radius:16px;background:color-mix(in srgb,var(--verde,#3DBF76) 10%,transparent);border:1px solid color-mix(in srgb,var(--verde,#3DBF76) 40%,transparent)}
+.al-done-ic{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--verde,#3DBF76);color:#fff}
+.al-done h4{margin:0 0 6px;font-size:19px;line-height:1.2}
+.al-done p{margin:0 0 8px;font-size:14.5px;line-height:1.45;color:var(--ink,#F2EFEA)}
+.al-tip{padding:9px 12px;border-radius:12px;background:var(--surface-2,#252523)}
+.al-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.al-acts .btn{padding:12px 18px;font-size:15px}
+@media (min-width:900px){
+  .al{padding:28px 30px;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);column-gap:34px;align-items:start}
+  .al-head,.al-why{grid-column:1}
+  .al-why{align-self:start}
+  .al-f,.al-done{grid-column:2;grid-row:1 / span 3;margin-top:0}
+}
+@media (max-width:420px){.al{padding:18px 16px}.al-chip span{padding:0 13px;font-size:14px}.al-row .field label{font-size:12.5px}}
+@media (max-width:350px){.al-row{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.al{opacity:1;transform:none;transition:none}.al.vista .al-bell svg{animation:none}}
+
+/* ---------------- 2. Historial Sin Sorpresas (ficha del coche) ---------------- */
+.hist{margin:14px 0 18px;display:grid;gap:8px}
+.hist-btn{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:13px 14px;border-radius:16px;text-decoration:none;color:var(--ink,#F2EFEA);
+  border:1.5px solid color-mix(in srgb,var(--verde,#3DBF76) 70%,transparent);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--verde,#3DBF76) 14%,transparent),color-mix(in srgb,var(--verde,#3DBF76) 6%,transparent));
+  transition:transform .2s,box-shadow .2s,background .2s}
+.hist-btn:hover{transform:translateY(-2px);box-shadow:0 14px 30px -18px color-mix(in srgb,var(--verde,#3DBF76) 90%,transparent)}
+.hist-btn:focus-visible{outline:3px solid var(--verde,#3DBF76);outline-offset:2px}
+.hist-ic{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:var(--verde,#3DBF76);color:#fff}
+.hist-tx b{display:block;font-size:15.5px;line-height:1.25}
+.hist-tx small{display:block;margin-top:3px;font-size:12.5px;line-height:1.4;color:var(--muted,#A9A49B)}
+.hist-dl{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;border:1.5px solid color-mix(in srgb,var(--verde,#3DBF76) 60%,transparent);color:var(--verde,#3DBF76)}
+.hist-sub{margin:0;font-size:13px;line-height:1.5;color:var(--muted,#A9A49B)}
+.hist-sub a{color:var(--ink,#F2EFEA)}
+.hist-seal{display:inline-flex;align-items:center;gap:5px;margin-right:7px;padding:2px 9px 2px 7px;border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--verde,#3DBF76);background:color-mix(in srgb,var(--verde,#3DBF76) 14%,transparent);vertical-align:1px}
+
+/* ---------------- 3. móvil: nada tapado por las barras fijas ----------------
+   La web ya deja hueco a la barra de secciones (main/footer + --badge). Además:
+   - al saltar a un ancla o enfocar un campo, el navegador deja libre la zona de la barra de abajo;
+   - la ficha del coche respeta la zona del gesto de inicio del iPhone. */
+@media (max-width:900px){
+  html{scroll-padding-bottom:calc(110px + var(--badge,0px) + env(safe-area-inset-bottom,0px))}
+  #car-modal .m-body{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+  .al{scroll-margin-bottom:calc(110px + var(--badge,0px))}
+}
+/* Etiqueta «Powered by Netlify»: la solución buena es apagarla en Netlify (Project configuration →
+   General → Powered by Netlify badge → Off; no hace falta volver a publicar). Esto es solo un respaldo:
+   si Netlify la vuelve a pintar, no se ve y la barra de secciones baja a su sitio (--badge pasa a 0). */
+#nl-badge-frame{display:none!important}
+@media (max-width:420px){.hist-btn{grid-template-columns:auto 1fr;padding:12px}.hist-dl{display:none}.hist-ic{width:40px;height:40px;border-radius:12px}.hist-ic svg{width:24px;height:24px}.hist-tx b{font-size:15px}}

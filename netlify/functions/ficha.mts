@@ -85,7 +85,7 @@ export default async (req: Request) => {
           itemCondition: "https://schema.org/UsedCondition",
           url: canonical,
           areaServed: { "@type": "Place", name: "Fuerteventura" },
-          seller: { "@type": "AutoDealer", "@id": origin + "/#negocio", name: "Volcano Cars", telephone: "+34643668813", address: { "@type": "PostalAddress", streetAddress: EMPRESA.calle, postalCode: EMPRESA.cp, addressLocality: EMPRESA.localidad, addressRegion: "Las Palmas", addressCountry: "ES" } },
+          seller: { "@type": "AutoDealer", "@id": origin + "/#negocio", name: "Volcano Cars", telephone: "+34677960348", address: { "@type": "PostalAddress", streetAddress: EMPRESA.calle, postalCode: EMPRESA.cp, addressLocality: EMPRESA.localidad, addressRegion: "Las Palmas", addressCountry: "ES" } },
         },
       },
       {
@@ -112,6 +112,10 @@ ${fotos[0] ? `<meta property="og:image" content="${escH(origin + fotos[0])}">` :
   const waTxt = `Hola, me interesa el ${completo} (${c.anio}, ${kmTxt(c.km)}) de ${eur(c.precio)}. ¿Sigue disponible?`;
   const otros = disponibles.filter((x) => x.id !== c.id).slice(0, 3);
   const ofe = bloqueOferta(c, lista, enWeb, waTxt);
+  // «Historial Sin Sorpresas»: solo si el taller ha subido el PDF de este coche (FORM-02 + FORM-04)
+  const informe = ((await store("monzacar-informes").get("indice", { type: "json" }).catch(() => null)) as Record<string, { fecha: string }> | null)?.[c.id];
+  const hist = informe && !vendido ? `<style>.hist{display:flex;gap:12px;align-items:center;margin:14px 0 4px;padding:13px 14px;border-radius:14px;border:1.5px solid #1F8B4C;background:#EAF6EF;color:#123D24;text-decoration:none}.hist:hover{background:#DDF1E5}.hist svg{flex:none}.hist b{display:block;font-size:15px}.hist small{display:block;font-size:12.5px;line-height:1.35;color:#2E5A40}</style>
+      <a class="hist" href="/api/informes/${encodeURIComponent(c.id)}" download><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/><path d="M9 14.5l2 2 4-4"/></svg><span><b>📄 Descargar Historial Sin Sorpresas (PDF)</b><small>Inspección 360° de 80 puntos (FORM-02) y control de calidad pre-entrega FORM-04 firmado por el taller. Informe publicado el ${escH(new Date(informe.fecha).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric", timeZone: "Atlantic/Canary" }))}.</small></span></a>` : "";
 
   const html = cabecera(origin, titulo, desc, canonical, head, vendido ? "noindex, follow" : "index, follow, max-image-preview:large") + `
 <div class="wrap">
@@ -126,6 +130,7 @@ ${fotos[0] ? `<meta property="og:image" content="${escH(origin + fotos[0])}">` :
       <h1>${escH(nombre)}</h1>
       ${c.version ? `<div class="ver">${escH(c.version)}</div>` : ""}
       <div class="precio num">${eur(c.precio)}<small>Precio final, impuestos incluidos</small></div>
+      ${hist}
       ${ofe}
       <dl class="specs num">${specs.filter(([, v]) => v !== null && v !== "" && v !== undefined).map(([k, v]) => `<div><dt>${k}</dt><dd>${escH(v)}</dd></div>`).join("")}</dl>
       ${vendido ? `<div class="ctas"><a class="btn b-rosso" href="/comprar">Ver coches disponibles</a></div>` : `<div class="ctas">

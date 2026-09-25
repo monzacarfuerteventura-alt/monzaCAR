@@ -7,7 +7,11 @@
      2. LISTA DE ESPERA en los coches RESERVADOS.
      3. CONFIRMACIÓN + COMPROBANTE PDF (generado aquí mismo, sin jsPDF:
         la web no carga código de otras webs) y reenvío por WhatsApp.
-     4. PRESUPUESTO POR FOTO en el taller (arrastrar o hacer la foto).
+     4. PRESUPUESTO POR FOTO en el taller (arrastrar o hacer la foto),
+        con el interruptor «⚡ Prioridad Taller» (+10 % sobre el presupuesto
+        final, solo si lo acepta): la solicitud llega marcada con
+        [SOLICITUD VIP - PRIORIDAD ALTA +10%] en el email, Telegram, Sheets y CRM.
+        Enlace directo que lo abre ya activado: /taller#prioridad
    Se usa en la web (index.html, /comprar, /taller, inglés) y en el
    enlace privado de cada reserva (/r/…, reserva.html).
    No toca nada de lo que ya funcionaba: si falta este archivo, la web
@@ -21,7 +25,7 @@
   const L = (es, en) => (EN ? en : es);
   const LOC = EN ? "en-GB" : "es-ES";
   const EMP = typeof EMPRESA !== "undefined" ? EMPRESA : {
-    telefono: "643 66 88 13", telefonoLlamar: "+34643668813", whatsapp: "34643668813", email: "volcanocars2026@gmail.com",
+    telefono: "677 96 03 48", telefonoLlamar: "+34677960348", whatsapp: "34677960348", email: "volcanocars2026@gmail.com",
     direccion: "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua, Las Palmas", mapaEnlace: "https://maps.app.goo.gl/dz8icDhkUkB4oznd8",
   };
   const $ = (s, r = document) => r.querySelector(s);
@@ -609,6 +613,17 @@
           <div class="field"><label for="pf-c">${L("Coche", "Car")}</label><input class="input" id="pf-c" placeholder="${L("Ej. Ibiza 2015", "E.g. Ibiza 2015")}"></div>
           <div class="field"><label for="pf-m">${L("¿Qué le pasó?", "What happened?")}</label><input class="input" id="pf-m" placeholder="${L("Opcional", "Optional")}"></div>
         </div>
+        <label class="pf-vip" for="pf-vip">
+          <input type="checkbox" id="pf-vip" role="switch" aria-describedby="pf-vip-d">
+          <span class="pf-vip-sw" aria-hidden="true"><i></i></span>
+          <span class="pf-vip-tx">
+            <span class="pf-vip-tag">⚡ ${L("Prioridad Taller", "Workshop Priority")}</span>
+            <b>${L("Servicio Exprés Prioritario ⚡ (+10 %)", "Priority Express Service ⚡ (+10%)")}</b>
+            <span id="pf-vip-d">${L("¿Tienes prisa o no puedes quedarte sin coche? Activando esta opción, reorganizamos la agenda del taller para que tu vehículo entre a box en cuanto lo traigas, por delante de la lista de espera, por solo un 10 % adicional sobre el presupuesto final.", "In a hurry, or can't be without your car? Switch this on and we rearrange the workshop schedule so your car goes into a bay as soon as you bring it in, ahead of the waiting list, for just 10% on top of the final quote.")}</span>
+            <em>${L("¿Sería una mala idea pagar un 10 % extra para saltarte la cola de espera y tener tu coche listo cuanto antes?", "Would it be a bad idea to pay 10% extra to skip the queue and get your car back sooner?")}</em>
+            <small class="pf-vip-fine">${L("Ejemplo: presupuesto de 300 € → 330 € con prioridad. Solo se cobra si aceptas el presupuesto y haces la reparación. Adelanta la mano de obra; si hace falta una pieza, depende de lo que tarde en llegar.", "Example: a €300 quote becomes €330 with priority. Only charged if you accept the quote and go ahead. It brings the labour forward; if a part is needed, it depends on delivery time.")}</small>
+          </span>
+        </label>
         <input class="hp" type="text" id="pf-web" tabindex="-1" autocomplete="off" aria-hidden="true">
         <label class="consent"><input type="checkbox" id="pf-ok"><span>${L("Acepto que Volcano Cars use estos datos y fotos solo para darme el presupuesto. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacidad</a>.", "I agree Volcano Cars may use these details and photos only to quote me. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacy</a>.")}</span></label>
         <div class="form-err" id="pf-err" role="alert" hidden></div>
@@ -624,6 +639,11 @@
     };
     bar.addEventListener("click", () => abrir(!box.classList.contains("open")));
     if (/^#(foto|presupuesto-foto)$/.test(location.hash)) abrir(true);
+    if (/^#(prioridad|vip)$/.test(location.hash)) { abrir(true); $("#pf-vip", box).checked = true; }
+    const vip = $("#pf-vip", box), txtBoton = () => (vip.checked ? L("Enviar con Prioridad Taller ⚡", "Send with Workshop Priority ⚡") : L("Enviar fotos y pedir presupuesto", "Send photos and get a quote"));
+    const pintarVip = () => { box.classList.toggle("vip-on", vip.checked); $(".pf-go span", box).textContent = txtBoton(); };
+    vip.addEventListener("change", () => { pintarVip(); trk("clk", vip.checked ? "vip-on" : "vip-off", "taller"); });
+    pintarVip();
     const form = $(".pf-box", box), drop = $(".pf-drop", box), th = $(".pf-thumbs", box);
     const fallo = (m) => { const el = $("#pf-err", box); el.textContent = m || ""; el.hidden = !m; if (m) el.scrollIntoView({ block: "nearest", behavior: "smooth" }); };
     const pintar = () => {
@@ -651,6 +671,7 @@
     form.addEventListener("submit", async (e) => {
       e.preventDefault(); fallo("");
       const nombre = $("#pf-n", box).value.trim(), telefono = $("#pf-t", box).value.trim(), coche = $("#pf-c", box).value.trim(), nota = $("#pf-m", box).value.trim();
+      const prioridad = $("#pf-vip", box).checked, TAG = "[SOLICITUD VIP - PRIORIDAD ALTA +10%]";
       if (!fotos.length) { fallo(L("Añade al menos una foto del daño.", "Add at least one photo of the damage.")); drop.focus(); return; }
       if (nombre.length < 2) { fallo(L("Escribe tu nombre.", "Please write your name.")); $("#pf-n", box).focus(); return; }
       if (!telOk(telefono)) { fallo(L("Revisa el número de WhatsApp.", "Please check your WhatsApp number.")); $("#pf-t", box).focus(); return; }
@@ -667,17 +688,23 @@
         $("span", btn).textContent = L("Enviando…", "Sending…");
         await api("/api/solicitudes", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({
           tipo: "taller", nombre, telefono, servicios: [L("Presupuesto por foto", "Quote from photo")], vehiculo: coche ? { coche } : {},
-          mensaje: `📷 ${L("Presupuesto por foto", "Quote from photo")}${nota ? ": " + nota : ""}`, fotos: claves,
+          mensaje: `📷 ${L("Presupuesto por foto", "Quote from photo")}${nota ? ": " + nota : ""}`, fotos: claves, prioridad,
           acepta: true, web: $("#pf-web", box).value, idioma: EN ? "en" : "es", origen: ORIG }) });
-        medirC("solicitud"); trk("clk", "foto-enviada", "foto"); hecho = true;
+        medirC("solicitud"); trk("clk", "foto-enviada", prioridad ? "vip" : "foto"); hecho = true;
         const ok = $(".pf-ok", box);
-        ok.innerHTML = `<div class="rsv-done-ic">${IC.ok}</div><div><h4>${L("¡Fotos recibidas!", "Photos received!")}</h4>
+        const waTxt = L(`Hola, soy ${nombre}. Acabo de mandaros ${fotos.length} foto${fotos.length > 1 ? "s" : ""} por la web para un presupuesto${coche ? " del " + coche : ""}.`, `Hi, I'm ${nombre}. I've just sent ${fotos.length} photo${fotos.length > 1 ? "s" : ""} on the website for a quote${coche ? " for my " + coche : ""}.`);
+        ok.innerHTML = prioridad
+          ? `<div class="rsv-done-ic">${IC.ok}</div><div><h4>⚡ ${L("¡Prioridad Taller activada!", "Workshop Priority is on!")}</h4>
+          <p>${rapido ? L("Tu presupuesto pasa el primero de la cola: te lo mandamos por WhatsApp enseguida. En cuanto lo aceptes, tu coche entra a box por delante de la lista de espera.", "Your quote jumps the queue: we'll send it on WhatsApp right away. As soon as you accept it, your car goes into a bay ahead of the waiting list.") : L("Tu presupuesto será el primero que contestemos al abrir (L–V, 8:00). En cuanto lo aceptes, tu coche entra a box por delante de la lista de espera.", "Yours will be the first quote we answer when we open (Mon–Fri, 8:00). As soon as you accept it, your car goes into a bay ahead of the waiting list.")}</p>
+          <p class="pf-vip-note">${L("El +10 % solo se aplica si aceptas el presupuesto y haces la reparación.", "The +10% only applies if you accept the quote and go ahead with the repair.")}</p>
+          <a class="btn btn-wa" target="_blank" rel="noopener" href="${waEmpresa(TAG + " " + waTxt + L(" He activado la Prioridad Taller (+10 %).", " I've switched on Workshop Priority (+10%)."))}">${IC.wa}${L("Confirmar la prioridad por WhatsApp", "Confirm priority on WhatsApp")}</a></div>`
+          : `<div class="rsv-done-ic">${IC.ok}</div><div><h4>${L("¡Fotos recibidas!", "Photos received!")}</h4>
           <p>${rapido ? L("Te escribimos por WhatsApp con el presupuesto estimado en menos de 1 hora.", "We'll message you on WhatsApp with the estimated quote in under 1 hour.") : L("Te escribimos por WhatsApp con el presupuesto estimado en cuanto abramos (L–V, 8:00).", "We'll message you on WhatsApp with the estimated quote as soon as we open (Mon–Fri, 8:00).")}</p>
-          <a class="btn btn-wa" target="_blank" rel="noopener" href="${waEmpresa(L(`Hola, soy ${nombre}. Acabo de mandaros ${fotos.length} foto${fotos.length > 1 ? "s" : ""} por la web para un presupuesto${coche ? " del " + coche : ""}.`, `Hi, I'm ${nombre}. I've just sent ${fotos.length} photo${fotos.length > 1 ? "s" : ""} on the website for a quote${coche ? " for my " + coche : ""}.`))}">${IC.wa}${L("¿Prisa? Escríbenos ya", "In a hurry? Message us now")}</a></div>`;
+          <a class="btn btn-wa" target="_blank" rel="noopener" href="${waEmpresa(waTxt)}">${IC.wa}${L("¿Prisa? Escríbenos ya", "In a hurry? Message us now")}</a></div>`;
         form.querySelectorAll(":scope > :not(.pf-ok)").forEach((x) => (x.hidden = true));
         ok.hidden = false; ok.scrollIntoView({ block: "nearest", behavior: "smooth" });
       } catch (err) { fallo(err.message); }
-      finally { btn.disabled = false; btn.classList.remove("busy"); if (!hecho) $("span", btn).textContent = L("Enviar fotos y pedir presupuesto", "Send photos and get a quote"); }
+      finally { btn.disabled = false; btn.classList.remove("busy"); if (!hecho) $("span", btn).textContent = txtBoton(); }
     });
   }
 

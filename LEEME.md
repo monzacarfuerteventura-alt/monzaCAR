@@ -111,3 +111,12 @@ Panel → Coches → «¿No sabes cómo publicar y vender?» (o /admin#guia). Se
 También hay enlaces a la guía dentro del formulario del coche (fotos, descripción, comparativa) y en el CRM.
 «Descargar PDF completo» abre «Imprimir» con el manual en A4 (portada + 9 páginas enlazadas): elige «Guardar como PDF».
 Textos: tools/guia/guia.js · estilos: tools/guia/guia.css · después ejecuta  python3 tools/guia/inyectar.py
+
+## Mejoras de captación (25-09-2026)
+Detalle completo en `tools/CAMBIOS-CAPTACION.md`. Resumen:
+- **Alertas de coches por pueblo** bajo el catálogo (`/comprar#alertas`) → CRM tipo «Alerta». En el panel, al añadir un coche, «Alertas que encajan» da el WhatsApp de cada cliente para avisarle antes de publicarlo.
+- **⚡ Prioridad Taller (+10 %)** en el Presupuesto Exprés por foto (`/taller#prioridad`) → etiqueta `[SOLICITUD VIP - PRIORIDAD ALTA +10%]` en email, Telegram, Sheets y CRM.
+- **Historial Sin Sorpresas**: PDF (FORM-02 + FORM-04) por coche, se sube en el panel (ficha del coche) y sale en la web solo si existe. `/api/informes`.
+- **Agente de WhatsApp con IA** fuera de horario: `/api/whatsapp`, guion y puesta en marcha en `tools/whatsapp/SYSTEM-PROMPT.md`. Variables `WA_TOKEN`, `WA_PHONE_ID`, `WA_APP_SECRET`, `WA_VERIFY_TOKEN` (y `WA_MODO`).
+- **Etiqueta «Powered by Netlify»**: apágala en Project configuration → General → Powered by Netlify badge.
+- La dirección de la web para Google (canonical, robots, hreflang) es ahora **https://volcanocars.com**.

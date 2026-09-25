@@ -138,7 +138,7 @@ body{background:radial-gradient(900px 500px at 100% -10%,color-mix(in srgb,var(-
 /* solicitudes */
 #leads .lead,#agenda .lead{border-left:5px solid var(--c1)}
 .lead{--c1:#3B6FD8;transition:transform .3s,box-shadow .3s}
-.lead.t-taller{--c1:#1F9D6B}.lead.t-tasacion{--c1:#E08A2E}.lead.t-contacto{--c1:#67635D}.lead.t-financiacion{--c1:#7A3FC4}
+.lead.t-alerta{--c1:#0E8C9A}.lr.t-alerta{--c1:#0E8C9A}.kb-card.t-alerta{--c1:#0E8C9A}.tipo.alerta{background:#DDF3F5;color:#0B6A74}.chip.vip{background:#F2B350;color:#1B1B1A;font-weight:800}.lead.t-taller{--c1:#1F9D6B}.lead.t-tasacion{--c1:#E08A2E}.lead.t-contacto{--c1:#67635D}.lead.t-financiacion{--c1:#7A3FC4}
 .lead:hover{transform:translateY(-2px);box-shadow:0 16px 32px -20px var(--c1)}
 #leads .lead.nueva{border-left-color:var(--c1)}
 .lead.nueva{box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 35%,transparent)}
@@ -1487,7 +1487,7 @@ b.fn-c-ing,b.fn-c-egr{background:none;color:var(--ink)}
     <div class="tareas" id="tareas"></div>
     <div class="tools">
       <input class="in" id="busq" type="search" placeholder="Buscar nombre, teléfono, matrícula, coche…" aria-label="Buscar">
-      <select class="in" id="tipoF" aria-label="Tipo"><option value="">Todos</option><option value="taller">Taller</option><option value="coche">Coches</option><option value="financiacion">Financiación</option><option value="contacto">Consultas</option><option value="tasacion">Tasaciones (antiguas)</option></select>
+      <select class="in" id="tipoF" aria-label="Tipo"><option value="">Todos</option><option value="taller">Taller</option><option value="coche">Coches</option><option value="financiacion">Financiación</option><option value="contacto">Consultas</option><option value="alerta">Alertas de coches</option><option value="tasacion">Tasaciones (antiguas)</option></select>
       <div class="segv" id="vistas" role="group" aria-label="Vista"><button type="button" data-vista="lista">Lista</button><button type="button" data-vista="embudo">Embudo</button><button type="button" data-vista="clientes">Clientes</button></div>
     </div>
     <div class="filters" id="filters"></div>
@@ -1634,6 +1634,10 @@ b.fn-c-ing,b.fn-c-egr{background:none;color:var(--ink)}
         </div>
         <div class="msg bad" id="v-err" role="alert" hidden></div>
       </fieldset>
+
+      <!-- Historial Sin Sorpresas (PDF del FORM-02 + FORM-04) y alertas de clientes que encajan · /panel-mejoras.js -->
+      <fieldset class="card" id="hist-card"></fieldset>
+      <fieldset class="card" id="al-match"></fieldset>
 
       <fieldset class="card">
         <legend><span class="lg-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16h14M6.5 16l1.3-4.3A2 2 0 0 1 9.7 10h4.6a2 2 0 0 1 1.9 1.7L17.5 16M4 16v2.5h2.5V16M17.5 16v2.5H20V16"/></svg></span>El coche</legend>
@@ -1859,6 +1863,7 @@ function openForm(c){
   $("#del").hidden = !c; $("#form-err").hidden = true;
   video = c && c.video ? {...c.video} : null; vNuevo = null; vSubiendo = false;
   pintarVideo(); renderPhotos(); show("s-form");
+  if(window.VC_PANEL) VC_PANEL.coche(c);
 }
 function renderPhotos(){
   const done = fotos.map((k,i)=>`
@@ -2071,7 +2076,7 @@ $("#del").onclick = async ()=>{
 const hoyC=()=>{ try{ return new Intl.DateTimeFormat("en-CA",{timeZone:"Atlantic/Canary"}).format(new Date()); }catch(_){ return new Date().toISOString().slice(0,10); } };
 const fechaLarga=d=>{ const t=new Date(d+"T12:00:00Z").toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long",timeZone:"UTC"}); return t[0].toUpperCase()+t.slice(1); };
 const EST={nueva:"Nueva",contactado:"Contactado",cita:"Cita",ganada:"Ganada",perdida:"Perdida"};
-const TIPO={coche:"Coche",taller:"Taller",tasacion:"Tasación",contacto:"Consulta",financiacion:"Financiación"};
+const TIPO={coche:"Coche",taller:"Taller",tasacion:"Tasación",contacto:"Consulta",financiacion:"Financiación",alerta:"Alerta"};
 const REVIEW="https://g.page/r/Caeh6Wr6CwtNECE/review";
 const MOTIVOS=["Precio","No contesta","Compró en otro sitio","Ya no lo necesita","Sin financiación","Coche vendido","Otro"];
 const CANALES_MANUAL=["Teléfono","En persona","WhatsApp","Recomendación","Redes sociales","Otro"];
@@ -2091,6 +2096,7 @@ const sumaDias=(f,n)=>new Date(Date.parse(f+"T12:00:00Z")+n*864e5).toISOString()
 const abiertas=x=>["nueva","contactado","cita"].includes(x.estado);
 const cierre=x=>{ const h=(x.historial||[]).filter(e=>e.estado==="ganada").pop(); return h?h.t:(x.estado==="ganada"?x.creado:null); };
 function queEs(x){
+  if(x.alerta) return "🔔 "+[x.alerta.zona,x.alerta.presupuesto,x.alerta.carroceria!=="Cualquiera"?x.alerta.carroceria:"",x.alerta.cambio,x.alerta.busqueda].filter(Boolean).join(" · ");
   if(x.coche) return (x.tipo==="financiacion"?"Financiación del ":"")+x.coche.titulo;
   const v=x.vehiculo||{}, s=(x.servicios||[]).join(", "), c=v.coche||[v.marca,v.modelo,v.anio].filter(Boolean).join(" ");
   return [s,c+(v.matricula?" ("+v.matricula+")":"")].filter(t=>t&&t.trim()).join(" · ")||(x.mensaje||"").slice(0,80)||TIPO[x.tipo]||x.tipo;
@@ -2176,6 +2182,7 @@ function filtrados(){
 }
 function chipsLead(x){
   const c=[];
+  if(x.prioridad) c.push(`<span class="chip vip" title="[SOLICITUD VIP - PRIORIDAD ALTA +10%]">⚡ VIP +10 %</span>`);
   if(x.cita && x.estado!=="perdida") c.push(`<span class="chip">${IC.cal}${esc(fecha(x.cita.fecha))} · ${esc(x.cita.hora)}</span>`);
   if(x.seguimiento && abiertas(x)) c.push(`<span class="chip ${vencido(x)?"rojo":""}">${IC.flag}${x.seguimiento===hoyC()?"Hoy":esc(fecha(x.seguimiento))}</span>`);
   if(x.importe) c.push(`<span class="chip eur">${eur(x.importe)}</span>`);
@@ -2281,6 +2288,12 @@ function refrescarDrawer(){ if(!DW||$("#drawer").hidden||DW.tipo==="seguridad"||
 function plantillas(x){
   const n=x.nombre.split(" ")[0], en=x.idioma==="en", o=x.orden?ORDENES.find(z=>z.token===x.orden):null, link=o?location.origin+"/s/"+o.token:"";
   const L=[["Primer contacto",en?`Hi ${n}, this is Volcano Cars. Thanks for your request: ${queEs(x)}. When is a good time to call you?`:`Hola ${n}, te escribimos de Volcano Cars por tu solicitud: ${queEs(x)}. ¿Cuándo te viene bien que te llamemos?`]];
+  // ⚡ Prioridad Taller (+10 %): confirmación con el presupuesto y cierre con pregunta orientada al «no» (Chris Voss)
+  if(x.prioridad) L.unshift(["⚡ Presupuesto VIP (+10 %)",en?`Hi ${n}, this is Volcano Cars ⚡ We've got your Express Quote with *Workshop Priority* on. Your estimate is ___ € (+10% priority = ___ €, only if you go ahead). As soon as you say yes, your car goes into a bay ahead of the waiting list. Would it be a bad idea to bring it in today at ___:___?`:`Hola ${n}, te escribimos de Volcano Cars ⚡ Tenemos tu Presupuesto Exprés con la *Prioridad Taller* activada. Tu presupuesto estimado es ___ € (+10 % de prioridad = ___ €, solo si haces la reparación). En cuanto nos digas que sí, tu coche entra a box por delante de la lista de espera. ¿Sería una mala idea traerlo hoy a las ___:___?`]);
+  // 🔔 Alertas de coches: alta y aviso de coche nuevo (antes de anunciarlo)
+  if(x.alerta){ const a=x.alerta;
+    L.unshift(["🔔 Confirmar alta en avisos",en?`Hi ${n}, this is Volcano Cars 🔔 You're on our new-car alert list (${a.zona}${a.presupuesto?", "+a.presupuesto:""}). When a car that fits comes in, you'll hear it here before we advertise it. Save this number so our messages reach you. Reply STOP any time and we'll remove you.`:`Hola ${n}, te escribimos de Volcano Cars 🔔 Ya estás en la lista de avisos de coches nuevos (${a.zona}${a.presupuesto?", "+a.presupuesto.toLowerCase():""}). Cuando entre uno que encaje, te lo contamos por aquí antes de anunciarlo. Guarda este número para que te lleguen los avisos. Si en algún momento no quieres más, responde BAJA y te quitamos.`]);
+    L.push(["🚗 Aviso: coche nuevo",en?`Hi ${n}, Volcano Cars here 🔔 As promised, you're hearing it first: a ___ (year ___, ___ km) for ___ € has just come in, checked in our workshop with a 1-year warranty${a.zona!=="Otro pueblo"?" and free delivery to "+a.zona:""}. It goes online tomorrow. Would it be a bad idea to hold it for you until you see it?`:`Hola ${n}, te escribimos de Volcano Cars 🔔 Como te prometimos, te enteras antes que nadie: acaba de entrar un ___ (año ___, ___ km) por ___ €, revisado en nuestro taller y con 1 año de garantía${a.zona!=="Otro pueblo"?", y te lo llevamos gratis a "+a.zona:""}. Mañana lo publicamos. ¿Sería una mala idea guardártelo hasta que lo veas?`]); }
   if(x.cita) L.push(["Recordar la cita",en?`Hi ${n}, a quick reminder of your appointment at Volcano Cars on ${fechaLarga(x.cita.fecha)} at ${x.cita.hora}. Calle Valle Largo, Unit 8, Antigua. See you soon!`:`Hola ${n}, te recordamos tu cita en Volcano Cars el ${fechaLarga(x.cita.fecha).toLowerCase()} a las ${x.cita.hora}. Calle Valle Largo, Nave 8, Antigua. ¡Te esperamos!`]);
   if(x.coche) L.push(["Seguimiento del coche",en?`Hi ${n}, did you get a chance to think about the ${x.coche.titulo}? We can reserve it for you or send you more photos and the 360° video.`:`Hola ${n}, ¿pudiste pensar lo del ${x.coche.titulo}? Si quieres te lo reservamos o te mandamos más fotos y el vídeo 360°.`]);
   if(x.financiacion){ const f=x.financiacion; L.push(["Documentos para financiar",en?`Hi ${n}, thanks for your finance request for the ${x.coche?x.coche.titulo:"car"} (${eurA(f.importe)} over ${f.plazo} months). To send it to the lender we need: ID card/NIE (both sides), your last 2 payslips (or last tax return if self-employed) and a bank certificate with your IBAN. You can bring them to the workshop or we can call you to explain.`:`Hola ${n}, gracias por tu solicitud de financiación del ${x.coche?x.coche.titulo:"coche"} (${eurA(f.importe)} a ${f.plazo} meses). Para enviarla a la financiera necesitamos: DNI o NIE por las dos caras, las 2 últimas nóminas (o la última declaración de la renta si eres autónomo) y un certificado de titularidad de tu cuenta. Puedes traerlos al taller o te llamamos y te lo explicamos.`]);
@@ -4964,7 +4977,7 @@ inicio:()=>`
   ${gHero("02",{num:"02",titulo:"Publicar el anuncio",intro:"El título dice qué es. La primera línea, para quién es. El resto quita miedos. Todos los datos coinciden con FORM-02 y FORM-04.",chips:[["Objetivo","Mensajes y llamadas"],["Tiempo","< 48 h"],["Quién","Vendedor"]]})}
   ${gHazlo(["Fija con el gerente los <b>3 precios</b>: anuncio, objetivo y mínimo. Solo el de anuncio se publica.","Rellena la ficha en el panel: marca, modelo, versión, año, km, <b>precio final con IGIC</b>, combustible, cambio y etiqueta.","Escribe la descripción con la plantilla: <b>para quién · por qué este · lo que debes saber</b>. Equipamiento, una línea por cosa.","Haz la <b>comparativa de mercado</b> con al menos 3 anuncios reales del mismo coche y pégala en el panel.","Publica y copia el mismo texto en portales, redes y estado de WhatsApp. Usa <b>Compartir</b> para mandar el enlace del coche."])}
   <div class="g-sec">${gH("Anatomía de un anuncio de alto impacto")}<dl class="g-anat">
-    ${[["Título","Qué es","c-magma","Seat Ibiza 1.0 TSI Style · 2019 · 68.000 km · Gasolina · Manual","En el panel: marca + modelo + versión (la web lo monta sola)"],["Para quién","Conecta","c-magma","Ideal para moverte a diario por la isla: consume poco y cabe en cualquier aparcamiento.","Primera línea de la descripción"],["Por qué este","Da confianza","c-gris","Revisado en nuestro taller (FORM-02): aceite, filtros y pastillas nuevos · ITV hasta 06/2027 · 2 llaves y libro.","Descripción"],["Equipamiento","Lo que se usa","c-gris","Aire acondicionado · pantalla con CarPlay y Android Auto · sensores traseros · control de crucero.","Equipamiento: una línea por elemento"],["Transparencia","Quita miedos","c-ambar","Lo que debes saber: pequeño rayón en el paragolpes trasero (foto 24).","Descripción + foto 24"],["Garantía","Seguridad","c-gris","12 meses de garantía · cambio de nombre incluido · entrega gratis en toda Fuerteventura · financiación disponible.","La web lo añade sola en cada ficha"],["Precio","Claro","c-gris","10.990 € · precio final, IGIC incluido.","Precio (con céntimos si hace falta)"],["Llamada","Acción","c-verde","Ven a probarlo sin compromiso a Antigua. Escríbenos por WhatsApp al 643 66 88 13.","Portales y redes (en la web ya hay botones)"]].map(([t,s,c,v,p])=>`<div><dt class="${c}">${t}<small>${s}</small></dt><dd>${v}<em>${p}</em></dd></div>`).join("")}</dl></div>
+    ${[["Título","Qué es","c-magma","Seat Ibiza 1.0 TSI Style · 2019 · 68.000 km · Gasolina · Manual","En el panel: marca + modelo + versión (la web lo monta sola)"],["Para quién","Conecta","c-magma","Ideal para moverte a diario por la isla: consume poco y cabe en cualquier aparcamiento.","Primera línea de la descripción"],["Por qué este","Da confianza","c-gris","Revisado en nuestro taller (FORM-02): aceite, filtros y pastillas nuevos · ITV hasta 06/2027 · 2 llaves y libro.","Descripción"],["Equipamiento","Lo que se usa","c-gris","Aire acondicionado · pantalla con CarPlay y Android Auto · sensores traseros · control de crucero.","Equipamiento: una línea por elemento"],["Transparencia","Quita miedos","c-ambar","Lo que debes saber: pequeño rayón en el paragolpes trasero (foto 24).","Descripción + foto 24"],["Garantía","Seguridad","c-gris","12 meses de garantía · cambio de nombre incluido · entrega gratis en toda Fuerteventura · financiación disponible.","La web lo añade sola en cada ficha"],["Precio","Claro","c-gris","10.990 € · precio final, IGIC incluido.","Precio (con céntimos si hace falta)"],["Llamada","Acción","c-verde","Ven a probarlo sin compromiso a Antigua. Escríbenos por WhatsApp al 677 96 03 48.","Portales y redes (en la web ya hay botones)"]].map(([t,s,c,v,p])=>`<div><dt class="${c}">${t}<small>${s}</small></dt><dd>${v}<em>${p}</em></dd></div>`).join("")}</dl></div>
   <div class="g-2"><div class="g-sino si"><b class="t c-verde">SÍ</b><ul><li>Frases cortas y datos concretos (km, año, fecha de ITV).</li><li>Decir para quién es el coche.</li><li>Contar el defecto con foto.</li><li>El mismo texto en todos los canales.</li><li>Renovar la foto de portada a los 15 días sin contactos.</li></ul></div>
     <div class="g-sino no"><b class="t c-magma">NO</b><ul><li>«Precio negociable»: invita al regateo.</li><li>«Urge vender»: suena a problema.</li><li>Mayúsculas continuas y exclamaciones.</li><li>«Impecable» sin un dato que lo pruebe.</li><li>Datos que no coinciden con FORM-02 y FORM-04.</li></ul></div></div>
   <div class="g-2">${gCall("oscuro","3 precios por coche","<b>Anuncio</b> (el que se publica) · <b>Objetivo</b> (al que queremos cerrar) · <b>Mínimo</b> (nunca por debajo y nunca se revela). Los fija el gerente antes de publicar.")}${gCall("piedra","Publicación","Mismo anuncio en la web, portales (coches.net, Wallapop, Milanuncios), redes y estado de WhatsApp, el mismo día. Coche con 45 días sin pruebas → revisión de fotos, precio y texto con el gerente.")}</div>
@@ -5043,7 +5056,7 @@ chuleta:()=>`
   ${gCall("oscuro","Tono","Voz tranquila y grave · silencio después de cada técnica · nunca «pero» después de una etiqueta · nada gratis: cada rebaja, a cambio de algo.")}`,
 
 anexo:()=>`
-  ${gHero("anexo",{eyebrow:"ANEXO A · UNA HOJA POR PRUEBA",titulo:"Condiciones de la prueba en carretera",intro:`Volcano Cars · ${typeof EMPRESA_DIR!=="undefined"?EMPRESA_DIR:"Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua"} · 643 66 88 13. Rellenar y firmar antes de salir.`})}
+  ${gHero("anexo",{eyebrow:"ANEXO A · UNA HOJA POR PRUEBA",titulo:"Condiciones de la prueba en carretera",intro:`Volcano Cars · ${typeof EMPRESA_DIR!=="undefined"?EMPRESA_DIR:"Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua"} · 677 96 03 48. Rellenar y firmar antes de salir.`})}
   <div class="no-pdf" style="display:flex;justify-content:flex-end"><button type="button" class="btn b-brand b-sm" data-gimprimir="anexo">Imprimir solo el Anexo A</button></div>
   <div class="g-form">${["Vehículo","Matrícula","Km salida","Combustible salida","Conductor","DNI / NIE","Nº de carnet","Caducidad del carnet","Hora de salida","Hora de vuelta","Km vuelta","Acompañante Volcano Cars"].map(t=>`<div><b>${t}</b><span></span></div>`).join("")}</div>
   <div class="g-sec">${gH("El conductor declara que:")}<ol class="g-decl">
@@ -5120,5 +5133,7 @@ async function guiaPDF(solo){
 }
 /*GUIA-JS-FIN*/
 </script>
+<!-- Historial Sin Sorpresas (subir PDF) y «Alertas que encajan» al dar de alta un coche -->
+<script src="/panel-mejoras.js" defer></script>
 </body>
 </html>

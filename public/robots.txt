@@ -7,4 +7,4 @@ Disallow: /r/
 Disallow: /reserva.html
 Allow: /api/fotos/
 
-Sitemap: https://lestter7th.netlify.app/sitemap.xml
+Sitemap: https://volcanocars.com/sitemap.xml
