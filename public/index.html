@@ -196,9 +196,10 @@ html[data-vista="comprar"] #v-comprar,html[data-vista="taller"] #v-taller,html[d
 .marquee:hover .mq-track{animation-play-state:paused}
 
 /* ---------- Sections ---------- */
-section.block{padding-block:88px}
-@media (max-width:700px){section.block{padding-block:60px}}
-.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:34px}
+section.block{padding-block:64px}
+@media (max-width:700px){section.block{padding-block:40px}}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:26px}
+@media (max-width:700px){.sec-head{margin-bottom:18px}.sec-head h2{margin-top:10px}.sec-head p{font-size:16px;margin-top:8px}}
 .sec-head h2{font-size:clamp(32px,4.4vw,56px);margin-top:14px}
 .sec-head p{margin:12px 0 0;color:var(--muted);max-width:58ch;font-size:17.5px}
 
@@ -288,10 +289,10 @@ section.block{padding-block:88px}
 textarea.input{min-height:120px;resize:vertical}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media (max-width:460px){.row2{grid-template-columns:1fr}}
-.split{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:start}
+.split{display:grid;grid-template-columns:1fr 1.1fr;gap:40px;align-items:start}
 .split.shop{grid-template-columns:1.3fr 1fr}
-@media (max-width:900px){.split,.split.shop{grid-template-columns:1fr;gap:32px}}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:26px;padding:32px;box-shadow:var(--shadow);display:grid;gap:18px}
+@media (max-width:900px){.split,.split.shop{grid-template-columns:1fr;gap:22px}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:var(--shadow);display:grid;gap:16px}
 @media (max-width:520px){.panel{padding:22px;border-radius:22px}}
 .panel h3{font-size:28px}
 .note{font-size:13.5px;color:var(--muted);margin:0}
@@ -301,7 +302,8 @@ textarea.input{min-height:120px;resize:vertical}
 .ok-msg{background:var(--verde-soft);color:var(--verde);font-weight:600;padding:14px 16px;border-radius:14px;border-left:4px solid var(--verde);display:flex;align-items:center;gap:10px;animation:popIn .4s cubic-bezier(.34,1.56,.64,1)}.ok-msg::before{content:"✓";font-size:20px;flex-shrink:0}
 @keyframes popIn{from{opacity:0;transform:scale(.92) translateY(-8px)}to{opacity:1;transform:none}}
 .page-h{font-size:clamp(38px,5.4vw,68px);margin-top:14px}
-.page-lead{color:var(--muted);font-size:18.5px;max-width:48ch;margin:18px 0 0}
+.page-lead{color:var(--muted);font-size:18px;max-width:48ch;margin:14px 0 0}
+@media (max-width:700px){.page-lead{font-size:16px;margin-top:10px}}
 
 /* ---------- Services ---------- */
 .services{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
@@ -394,7 +396,7 @@ dialog::backdrop{background:rgba(8,9,10,.66);backdrop-filter:blur(6px)}
 footer{background:var(--night);color:#F2EFEA;margin-top:40px}
 footer .logo{color:#F2EFEA}
 footer .logo-tag{color:rgba(242,239,234,.55)}
-.foot{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.2fr;gap:36px;padding-block:64px 44px;font-size:15px}
+.foot{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.2fr;gap:32px;padding-block:52px 36px;font-size:15px}
 .foot h4{margin:0 0 14px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:rgba(242,239,234,.5)}
 .foot a{display:block;text-decoration:none;padding:4px 0;color:rgba(242,239,234,.85);transition:color .2s}
 .foot a:hover{color:#fff}
@@ -405,7 +407,7 @@ footer .logo-tag{color:rgba(242,239,234,.55)}
 .zonas-foot a{color:rgba(242,239,234,.72);text-decoration:none;margin-right:12px;white-space:nowrap}
 .zonas-foot a:hover{color:#fff;text-decoration:underline}
 .legal{border-top:1px solid var(--night-line);padding-block:20px;font-size:13px;color:rgba(242,239,234,.5);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-@media (max-width:860px){.foot{grid-template-columns:1fr 1fr;padding-block:48px 32px}}
+@media (max-width:860px){.foot{grid-template-columns:1fr 1fr;padding-block:36px 24px}}
 /* móvil: el logo va a lo ancho y las columnas no se salen de la pantalla (antes se cortaban a 360–390 px) */
 @media (max-width:560px){.foot{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 18px}.foot>div:first-child{grid-column:1/-1}.foot a{overflow-wrap:anywhere}footer .logo svg.vc-logo{max-width:100%}}
 @media (max-width:900px){footer{padding-bottom:96px}}
@@ -1222,6 +1224,48 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
 .badge.b-ofe{top:46px;left:12px;right:auto;background:linear-gradient(100deg,#D9481C,#F2994A);color:#fff;display:inline-flex;align-items:center;gap:5px}
 .badge.b-ofe.verde{background:#1F8B4C}
 @media (prefers-reduced-motion:reduce){.ofe-head b svg{animation:none}.ofe-row i::after{transition:none}}
+
+/* =====================================================================
+   INTERFAZ COMPACTA (menos espacios muertos, más información sin scroll)
+   Solo reduce márgenes y rellenos: no cambia ningún contenido ni función.
+   ===================================================================== */
+.hero-in{padding-block:64px 72px;min-height:min(70vh,680px)}
+.hero-ctas,.hero-meta{margin-top:26px}
+.feature{padding:32px;min-height:320px}
+.stat{padding:26px 22px}
+.step{padding:24px}
+.step .n{font-size:52px}
+.step h3{margin:14px 0 6px}
+.steps{gap:18px}
+.duo{gap:18px}
+.visit{padding:44px;gap:32px}
+.visit dl{gap:14px}
+.visit .acts{margin-top:22px}
+.rev{padding:24px 22px 22px;gap:14px}
+@media (max-width:900px){.hero-in{padding-block:28px 36px;gap:24px}}
+@media (max-width:700px){
+  .duo{gap:12px}
+  .feature{padding:22px;padding-top:80px;min-height:0;gap:10px;border-radius:20px}
+  .feature .big-ic{width:60px;height:60px;top:18px;right:18px}
+  .feature h3{font-size:28px}
+  .feature ul{margin:2px 0 6px;gap:6px}
+  .feature li{padding:5px 10px;font-size:12.5px}
+  .stat{padding:16px 12px}
+  .stat .st-ic{width:36px;height:36px;border-radius:11px;margin-bottom:10px}
+  .stat span{margin-top:6px;font-size:13.5px}
+  .steps{gap:10px}
+  .step{padding:16px 18px;display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:center}
+  .step .n{font-size:40px;grid-row:span 2}
+  .step h3{margin:0 0 2px;font-size:20px}
+  .step p{font-size:14.5px}
+  .visit{padding:26px 20px;gap:20px;border-radius:22px}
+  .visit dl{gap:10px}
+  .visit dd{font-size:16px}
+  .visit .acts{margin-top:16px}
+  .rev{padding:20px 18px 18px;gap:12px}
+  .rev blockquote{font-size:16px}
+  .panel{padding:20px}
+}
 </style>
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="/taller.css">
@@ -1589,10 +1633,6 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
           </ol>
           <div class="resumen" id="t-resumen" aria-live="polite"></div>
           <div class="tx-estim" id="t-estimado" aria-live="polite" hidden></div>
-          <div class="modo" role="radiogroup" aria-label="Tipo de solicitud">
-            <label><input type="radio" name="t-modo" value="cita" checked><span>Reservar día y hora</span></label>
-            <label><input type="radio" name="t-modo" value="presu"><span>Solo pedir presupuesto</span></label>
-          </div>
           <div class="row2">
             <div class="field"><label for="t-car">Coche</label><input class="input" id="t-car" required placeholder="Ej. Golf 2016"></div>
             <div class="field"><label for="t-plate">Matrícula (opcional)</label><input class="input" id="t-plate" placeholder="1234 ABC"></div>
@@ -2274,7 +2314,7 @@ async function guardar(pref, datos, btn, conWhatsApp=true, msgError=""){
 
 /* ---------- calendario de citas en tiempo real ---------- */
 function Agenda(el, agenda, alCambiar){
-  const st={dias:[], fecha:"", hora:"", error:false, cargado:false};
+  const st={dias:[], fecha:"", hora:"", error:false, cargado:false, lleno:false};
   const libres=d=>d.horas.filter(h=>h.libre).length;
   function pintar(){
     if(st.error){ el.innerHTML=`<p class="ag-empty">${L("No hemos podido cargar el calendario. Envía la solicitud y te llamamos para darte hora.","We couldn't load the calendar. Send your request and we'll call you with a time.")}</p>`; return; }
@@ -2286,14 +2326,14 @@ function Agenda(el, agenda, alCambiar){
     const d=st.dias.find(x=>x.fecha===st.fecha);
     const horas=d? d.horas.map(h=>`<button type="button" class="ag-h" data-h="${h.hora}" aria-pressed="${h.hora===st.hora}" ${h.libre?"":"disabled"} aria-label="${h.hora}${h.libre?"":" "+L("ocupada","taken")}">${h.hora}</button>`).join("") : "";
     el.innerHTML=`<div class="ag-head"><b>${L("Elige día y hora","Pick a day and time")}</b><span class="ag-live"><i></i>${L("Horas libres en tiempo real","Live availability")}</span></div>
-      ${st.dias.some(libres)?`<div class="ag-days">${dias}</div><div class="ag-hours">${horas}</div>`:`<p class="ag-empty">${L("No quedan horas libres en los próximos días. Elige «Solo pedir presupuesto» y te llamamos.","No free times in the coming days. Choose the other option and we'll call you.")}</p>`}
+      ${st.dias.some(libres)?`<div class="ag-days">${dias}</div><div class="ag-hours">${horas}</div>`:`<p class="ag-empty">${L("No quedan horas libres en los próximos días. Envía la solicitud y te llamamos para darte hora.","No free times in the coming days. Send your request and we'll call you with a time.")}</p>`}
       <p class="ag-sel ${st.hora?"ok":""}">${st.hora?"✓ "+fechaBonita(st.fecha)+", "+st.hora+" h":L("Toca un día y después una hora.","Tap a day, then a time.")}</p>`;
     const nd=el.querySelector(".ag-days"); if(nd) nd.scrollLeft=sl;
   }
   async function cargar(){
     try{
       const r=await fetch("/api/citas?agenda="+agenda,{cache:"no-store"}); if(!r.ok) throw 0;
-      const j=await r.json(); st.dias=(j.dias||[]).filter(d=>!d.cerrado); st.cargado=true; st.error=false;
+      const j=await r.json(); st.dias=(j.dias||[]).filter(d=>!d.cerrado); st.cargado=true; st.error=false; st.lleno=!st.dias.some(libres);
       if(st.hora){ const d=st.dias.find(x=>x.fecha===st.fecha), h=d&&d.horas.find(x=>x.hora===st.hora);
         if(!h||!h.libre){ st.hora=""; alCambiar(L("La hora que elegiste se acaba de ocupar. Elige otra.","The time you picked has just been taken. Please choose another one.")); } }
       const d=st.dias.find(x=>x.fecha===st.fecha);
@@ -2344,7 +2384,8 @@ $("#shop-form").addEventListener("submit",async e=>{
   e.preventDefault();
   if(!comprobar("t",[["#t-car",L("Dinos qué coche es.","Tell us which car it is.")],["#t-name",L("Escribe tu nombre.","Please enter your name.")],["#t-phone",L("Escribe tu teléfono.","Please enter your phone number.")]])) return;
   if(!telValido($("#t-phone").value)){ fallo("t",L("Revisa el teléfono.","Please check the phone number.")); return; }
-  const p=picked(), conCita=modoDe("t-modo")==="cita" && !AG_T.st.error;
+  // Sin calendario (error o sin horas libres) la solicitud se envía igual y te llamamos para darte hora
+  const p=picked(), conCita=modoDe("t-modo")==="cita" && !AG_T.st.error && !AG_T.st.lleno;
   if(conCita && !AG_T.st.hora){ fallo("t",L("Elige el día y la hora de tu cita.","Choose the day and time of your appointment.")); $("#t-agenda").scrollIntoView({block:"center",behavior:"smooth"}); return; }
   const coche=$("#t-car").value+($("#t-plate").value?" ("+$("#t-plate").value+")":"");
   const t=L(`Hola Volcano Cars, quiero pedir presupuesto en el taller.\n\nCoche: ${coche}\nServicios: ${p.length?p.join(", "):"sin especificar"}\n${$("#t-msg").value?"Detalles: "+$("#t-msg").value+"\n":""}\nNombre: ${$("#t-name").value}\nTeléfono: ${$("#t-phone").value}`,
@@ -2388,7 +2429,7 @@ function actualizarPasos(){
   const p1=picked().length>0 || !!$("#t-msg").value.trim();
   const p2=!!$("#t-car").value.trim() && !!$("#t-name").value.trim() && telValido($("#t-phone").value);
   const cita=modoDe("t-modo")==="cita";
-  const p3=cita ? !!AG_T.st.hora : true;
+  const p3=cita && !AG_T.st.error && !AG_T.st.lleno ? !!AG_T.st.hora : true;
   const hechos=[p1,p2,p3]; const actual=hechos.indexOf(false);
   document.querySelectorAll("#t-pasos li").forEach((li,i)=>{ li.classList.toggle("hecho",hechos[i]); li.classList.toggle("actual",i===actual); });
   document.querySelector('#t-pasos li[data-paso="3"] span').textContent = cita ? L("Día y hora","Day & time") : L("Presupuesto","Quote");

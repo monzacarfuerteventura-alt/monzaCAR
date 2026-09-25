@@ -1,0 +1,586 @@
+diff --git a/public/conversion.css b/public/conversion.css
+index ca592b7..7d80b2a 100644
+--- a/public/conversion.css
++++ b/public/conversion.css
+@@ -181,47 +181,74 @@
+ .rsv-wait-pay { display: flex; align-items: center; gap: 12px; padding: 18px 0; }
+ .rsv-spin { width: 26px; height: 26px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, .15); border-top-color: var(--vc-acc); animation: rsv-gira .8s linear infinite; }
+ 
+-/* ---------------- taller: presupuesto por foto ---------------- */
++/* ---------------- taller: presupuesto exprés por foto (acordeón, plegado por defecto) ---------------- */
+ .pf {
+-  display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 26px; align-items: start;
+-  margin: 0 0 28px; padding: 26px; border-radius: 22px; border: 1px solid rgba(217, 74, 38, .35);
+-  background: radial-gradient(520px 260px at 0 0, rgba(217, 74, 38, .16), transparent 70%), linear-gradient(180deg, #1D1D1F, #161617);
+-  box-shadow: 0 24px 60px -34px var(--vc-glow);
++  margin: 0 0 16px; border-radius: 16px; border: 1px solid rgba(217, 74, 38, .4); overflow: hidden;
++  background: radial-gradient(420px 120px at 0 0, rgba(217, 74, 38, .16), transparent 70%), linear-gradient(180deg, #1D1D1F, #171718);
++  transition: box-shadow .3s, border-color .3s;
+ }
+-.pf-kicker { display: inline-flex; align-items: center; gap: 8px; font: 700 12px var(--vc-tech); letter-spacing: .16em; text-transform: uppercase; color: var(--vc-acc-txt); }
+-.pf-txt h3 { margin: 10px 0 10px; font-size: clamp(24px, 3.4vw, 34px); line-height: 1.05; }
+-.pf-txt p { margin: 0; color: rgba(255, 255, 255, .82); font-size: 16px; line-height: 1.55; }
+-.pf-pts { display: grid; gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; font: 600 14px var(--vc-tech); }
+-.pf-pts li { display: flex; align-items: center; gap: 9px; }
+-.pf-pts li::before { content: ""; width: 18px; height: 18px; flex: none; border-radius: 50%; background: rgba(217, 74, 38, .18) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3.2 3.2L15 7' fill='none' stroke='%23FF8A5C' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px no-repeat; }
+-.pf-steps { display: grid; gap: 10px; margin: 22px 0 0; padding: 16px 0 0; list-style: none; border-top: 1px solid var(--vc-line); }
+-.pf-steps li { display: grid; grid-template-columns: 32px 1fr; gap: 12px; align-items: start; }
+-.pf-steps i { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; font: 700 14px var(--vc-tech); font-style: normal; color: #FFFFFF; background: linear-gradient(180deg, #E4552F, var(--vc-acc-2)); box-shadow: 0 8px 18px -8px var(--vc-glow); }
+-.pf-steps b { display: block; font-size: 15px; }
+-.pf-steps span { color: var(--vc-muted); font-size: 13.5px; line-height: 1.45; }
+-.pf-box { display: grid; gap: 14px; min-width: 0; }
++.pf.open { border-color: rgba(217, 74, 38, .65); box-shadow: 0 18px 44px -26px var(--vc-glow); }
++.pf-bar {
++  display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; background: none;
++  color: #FFFFFF; font: inherit; text-align: left; cursor: pointer;
++}
++.pf-bar:focus-visible { outline: 3px solid var(--vc-acc-txt); outline-offset: -3px; border-radius: 16px; }
++.pf-bar-ic { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 12px; font-size: 21px; background: rgba(217, 74, 38, .16); border: 1px solid rgba(217, 74, 38, .35); }
++.pf-bar-txt { flex: 1; min-width: 0; display: grid; gap: 2px; }
++.pf-bar-h { font-size: 15.5px; line-height: 1.3; color: rgba(255, 255, 255, .9); }
++.pf-bar-h b { color: #FFFFFF; }
++.pf-bar-txt small { color: var(--vc-muted); font-size: 12.5px; line-height: 1.3; }
++.pf-bar-go {
++  display: inline-flex; align-items: center; gap: 6px; flex: none; padding: 9px 14px; border-radius: 999px;
++  font: 700 13.5px var(--vc-tech); letter-spacing: .03em; color: #FFFFFF;
++  background: linear-gradient(180deg, #E4552F, var(--vc-acc) 45%, var(--vc-acc-2)); box-shadow: 0 8px 20px -10px var(--vc-glow);
++}
++.pf-bar-go svg { transition: transform .3s; }
++.pf.open .pf-bar-go { background: rgba(255, 255, 255, .08); box-shadow: none; border: 1px solid var(--vc-line-2); }
++.pf.open .pf-bar-go svg { transform: rotate(180deg); }
++.pf-bar:hover .pf-bar-go { filter: brightness(1.08); }
++/* despliegue suave (0fr → 1fr) */
++.pf-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .32s cubic-bezier(.2, .8, .2, 1); }
++.pf.open .pf-panel { grid-template-rows: 1fr; }
++.pf-panel-in { min-height: 0; overflow: hidden; }
++.pf-box { display: grid; gap: 10px; min-width: 0; padding: 2px 14px 14px; }
+ .pf-drop {
+-  display: grid; justify-items: center; gap: 8px; padding: 22px 16px; text-align: center; border-radius: 18px; cursor: pointer;
++  display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 8px 12px; padding: 12px; border-radius: 14px; cursor: pointer;
+   border: 1.5px dashed rgba(217, 74, 38, .65); background: rgba(217, 74, 38, .06); transition: background .2s, box-shadow .2s, border-color .2s;
+ }
+-.pf-drop:hover, .pf-drop:focus-visible, .pf-drop.over { background: rgba(217, 74, 38, .13); border-color: var(--vc-acc); box-shadow: 0 0 26px -8px var(--vc-glow); outline: none; }
+-.pf-drop.has { padding: 14px 16px; }
+-.pf-drop.has .pf-drop-ic, .pf-drop.has > b, .pf-drop.has .pf-or { display: none; }
+-.pf-drop-ic { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 16px; background: rgba(217, 74, 38, .16); color: var(--vc-acc-txt); }
+-.pf-drop > b { font-size: 17px; }
+-.pf-or { font-size: 13px; color: var(--vc-muted); }
+-.pf-btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+-.pf-btns .btn { padding: 12px 18px; font-size: 15px; }
+-.pf-drop small { color: var(--vc-muted); font-size: 13px; }
+-.pf-thumbs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
++.pf-drop:hover, .pf-drop:focus-visible, .pf-drop.over { background: rgba(217, 74, 38, .13); border-color: var(--vc-acc); box-shadow: 0 0 22px -8px var(--vc-glow); outline: none; }
++.pf-drop-ic { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: rgba(217, 74, 38, .16); color: var(--vc-acc-txt); }
++.pf-drop-ic svg { width: 22px; height: 22px; }
++.pf-drop-txt b { display: block; font-size: 14.5px; line-height: 1.25; }
++.pf-drop-txt small { color: var(--vc-muted); font-size: 12.5px; }
++.pf-btns { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
++.pf-btns .btn { padding: 10px 14px; font-size: 14.5px; min-height: 42px; }
++.pf-drop.has { grid-template-columns: 1fr; padding: 10px; }
++.pf-drop.has .pf-drop-ic, .pf-drop.has .pf-drop-txt { display: none; }
++.pf-thumbs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+ .pf-thumbs:empty { display: none; }
+-.pf-thumbs figure { position: relative; margin: 0; aspect-ratio: 1; border-radius: 12px; overflow: hidden; border: 1px solid var(--vc-line-2); }
++.pf-thumbs figure { position: relative; margin: 0; aspect-ratio: 1; border-radius: 10px; overflow: hidden; border: 1px solid var(--vc-line-2); }
+ .pf-thumbs img { width: 100%; height: 100%; object-fit: cover; display: block; }
+-.pf-thumbs button { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; border-radius: 50%; border: 0; background: rgba(0, 0, 0, .7); color: #FFFFFF; font-size: 17px; line-height: 1; cursor: pointer; }
+-.pf-go { width: 100%; min-height: 54px; font-family: var(--vc-tech); letter-spacing: .03em; }
+-.pf-ok { display: grid; gap: 10px; justify-items: start; padding: 18px; border-radius: 16px; background: rgba(61, 220, 132, .08); border: 1px solid rgba(61, 220, 132, .3); }
+-.pf-ok h4 { margin: 0; font-size: 20px; }
+-.pf-ok p { margin: 0; color: rgba(255, 255, 255, .88); }
++.pf-thumbs button { position: absolute; top: 3px; right: 3px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: rgba(0, 0, 0, .72); color: #FFFFFF; font-size: 16px; line-height: 1; cursor: pointer; }
++.pf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
++.pf .field { gap: 4px; }
++.pf .field label { font-size: 12px; }
++.pf .input { padding: 10px 12px; border-radius: 11px; font-size: 16px; }
++.pf .consent { font-size: 12.5px; line-height: 1.4; gap: 8px; }
++.pf-go { width: 100%; min-height: 48px; padding: 12px 18px; font-family: var(--vc-tech); letter-spacing: .03em; }
++.pf-ok { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; padding: 14px; border-radius: 14px; background: rgba(61, 220, 132, .08); border: 1px solid rgba(61, 220, 132, .3); }
++.pf-ok .rsv-done-ic { width: 44px; height: 44px; }
++.pf-ok .rsv-done-ic svg { width: 24px; height: 24px; }
++.pf-ok h4 { margin: 0 0 4px; font-size: 18px; }
++.pf-ok p { margin: 0 0 10px; color: rgba(255, 255, 255, .88); font-size: 14.5px; }
++.pf-ok .btn { padding: 10px 16px; font-size: 14.5px; }
++@media (min-width: 900px) {
++  .pf-box { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); column-gap: 16px; align-items: start; }
++  .pf-drop, .pf-thumbs { grid-column: 1; }
++  .pf-grid, .pf .consent, .pf-box .form-err, .pf-go { grid-column: 2; }
++  .pf-drop { grid-row: 1 / span 2; }
++  .pf-ok { grid-column: 1 / -1; }
++}
+ 
+ /* ---------------- página /r/ sin la hoja de la web ---------------- */
+ .rsv-solo .btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 0; cursor: pointer; padding: 14px 22px; border-radius: 999px; font-weight: 700; font-size: 15.5px; text-decoration: none; }
+@@ -233,9 +260,15 @@
+ 
+ /* ---------------- móvil ---------------- */
+ @media (max-width: 760px) {
+-  .pf { grid-template-columns: 1fr; padding: 18px; gap: 18px; }
+-  .pf-steps { display: none; }
+-  .pf-thumbs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
++  .pf-bar { padding: 10px 12px; gap: 10px; }
++  .pf-bar-ic { width: 36px; height: 36px; font-size: 19px; }
++  .pf-bar-h { font-size: 14px; line-height: 1.3; }
++  .pf-bar-h b { display: block; }
++  .pf-bar-txt small { display: none; }
++  /* en el móvil el botón es solo la flecha: el texto cabe en 2 líneas */
++  .pf-bar-go { width: 34px; height: 34px; padding: 0; justify-content: center; }
++  .pf-bar-go-t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
++  .pf-box { padding: 0 12px 12px; }
+ }
+ @media (max-width: 520px) {
+   .rsv-dlg { width: 100vw; max-width: 100vw; max-height: 100dvh; height: 100dvh; margin: 0; border-radius: 0; border: 0; }
+@@ -253,7 +286,7 @@
+   .rsv-cta { font-size: 15px; padding: 13px 14px; }
+   .rsv-page-card { padding: 16px; border-radius: 18px; }
+   .rsv-page-car img { width: 84px; height: 64px; }
+-  .rsv-dlg .row2, .pf .row2 { grid-template-columns: 1fr; }
++  .rsv-dlg .row2 { grid-template-columns: 1fr; }
+ }
+ 
+ @keyframes rsv-pulso { 0% { box-shadow: 0 0 0 0 rgba(61, 220, 132, .55); } 70% { box-shadow: 0 0 0 8px rgba(61, 220, 132, 0); } 100% { box-shadow: 0 0 0 0 rgba(61, 220, 132, 0); } }
+diff --git a/public/conversion.js b/public/conversion.js
+index 3cdbfe0..1a9cfca 100644
+--- a/public/conversion.js
++++ b/public/conversion.js
+@@ -586,53 +586,46 @@
+     const MAX_F = 4;
+     const rapido = abiertoAhora();
+     const tactil = matchMedia("(pointer: coarse)").matches; // en el móvil, botón para abrir la cámara directamente
+-    box.innerHTML = `<div class="pf-txt">
+-        <span class="pf-kicker"><span class="tx-led" aria-hidden="true"></span>${L("Presupuesto exprés por foto", "Express quote from a photo")}</span>
+-        <h3 id="pf-h">${L("¿Tienes un golpe, arañazo o quieres pintar tu coche?", "Got a dent or scratch, or want your car painted?")}</h3>
+-        <p>${rapido ? L("Sube una foto del daño y te enviamos un presupuesto estimado por WhatsApp en menos de 1 hora.", "Upload a photo of the damage and we'll send you an estimated quote on WhatsApp in under 1 hour.")
+-          : L("Sube una foto del daño y te enviamos un presupuesto estimado por WhatsApp en menos de 1 hora desde que abrimos (L–V, 8:00).", "Upload a photo of the damage and we'll send you an estimated quote on WhatsApp within 1 hour of opening (Mon–Fri, 8:00).")}</p>
+-        <ul class="pf-pts"><li>${L("Gratis y sin compromiso", "Free, no obligation")}</li><li>${L("Respuesta por WhatsApp", "Reply on WhatsApp")}</li><li>${L("Precio final por escrito al ver el coche", "Final written price once we see the car")}</li></ul>
+-        <ol class="pf-steps" aria-label="${L("Cómo funciona", "How it works")}">
+-          <li><i>1</i><span><b>${L("Haz la foto", "Take the photo")}</b>${L("De cerca y de lejos, con buena luz", "Close-up and from further away, in good light")}</span></li>
+-          <li><i>2</i><span><b>${L("Te respondemos por WhatsApp", "We reply on WhatsApp")}</b>${L("Con un presupuesto estimado", "With an estimated quote")}</span></li>
+-          <li><i>3</i><span><b>${L("Lo traes el día que elijas", "Bring it in on the day you choose")}</b>${L("Precio cerrado por escrito antes de empezar", "Fixed written price before we start")}</span></li>
+-        </ol>
+-      </div>
++    // Plegado por defecto: una barra compacta que se despliega al tocarla (no quita sitio al resto del taller)
++    box.innerHTML = `<button type="button" class="pf-bar" aria-expanded="false" aria-controls="pf-panel">
++        <span class="pf-bar-ic" aria-hidden="true">📸</span>
++        <span class="pf-bar-txt"><span class="pf-bar-h" id="pf-h"><b>${L("Servicio Express por foto:", "Express photo service:")}</b> ${L("recibe tu presupuesto en menos de 1h", "get your quote in under 1h")}</span>
++          <small>${rapido ? L("Gratis y sin compromiso · te contestamos por WhatsApp", "Free, no obligation · we reply on WhatsApp") : L("Gratis y sin compromiso · te contestamos al abrir (L–V, 8:00)", "Free, no obligation · we reply when we open (Mon–Fri, 8:00)")}</small></span>
++        <span class="pf-bar-go"><span class="pf-bar-go-t" data-abrir>${L("Enviar foto", "Send photo")}</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>
++      </button>
++      <div class="pf-panel" id="pf-panel" role="region" aria-labelledby="pf-h" inert><div class="pf-panel-in">
+       <form class="pf-box" novalidate>
+         <div class="pf-drop" tabindex="0" role="button" aria-describedby="pf-hint">
+           <span class="pf-drop-ic">${IC.cam}</span>
+-          <b>${L("Arrastra aquí las fotos", "Drag your photos here")}</b>
+-          <span class="pf-or">${L("o", "or")}</span>
+-          <span class="pf-btns">${tactil ? `<label class="btn btn-rosso"><input type="file" accept="image/*" capture="environment" hidden data-cam>${L("Hacer foto", "Take a photo")}</label>` : ""}
+-          <label class="btn ${tactil ? "btn-ghost" : "btn-rosso"}"><input type="file" accept="image/*" multiple hidden data-gal>${tactil ? L("Elegir de la galería", "Choose from gallery") : L("Elegir fotos", "Choose photos")}</label></span>
+-          <small id="pf-hint">${L("Hasta 4 fotos: una de cerca y otra de lejos ayuda mucho.", "Up to 4 photos: one close-up and one from further away helps a lot.")}</small>
++          <span class="pf-drop-txt"><b>${L("¿Golpe, arañazo o pintura? Sube la foto", "Dent, scratch or paint? Upload the photo")}</b>
++          <small id="pf-hint">${L("Hasta 4 fotos · de cerca y de lejos", "Up to 4 photos · close-up and from further away")}</small></span>
++          <span class="pf-btns">${tactil ? `<label class="btn btn-rosso"><input type="file" accept="image/*" capture="environment" hidden data-cam>${L("Hacer foto", "Take photo")}</label>` : ""}
++          <label class="btn ${tactil ? "btn-ghost" : "btn-rosso"}"><input type="file" accept="image/*" multiple hidden data-gal>${tactil ? L("Galería", "Gallery") : L("Elegir fotos", "Choose photos")}</label></span>
+         </div>
+         <div class="pf-thumbs" aria-live="polite"></div>
+-        <div class="modo" role="radiogroup" aria-label="${L("Qué prefieres", "What would you like")}">
+-          <label><input type="radio" name="pf-modo" value="foto" checked><span>${L("Presupuesto por foto", "Quote from photo")}</span></label>
+-          <label><input type="radio" name="pf-modo" value="cita"><span>${L("Traerlo al taller", "Bring it in")}</span></label>
++        <div class="pf-grid">
++          <div class="field"><label for="pf-n">${L("Nombre", "Name")}</label><input class="input" id="pf-n" autocomplete="name"></div>
++          <div class="field"><label for="pf-t">WhatsApp</label><input class="input" id="pf-t" type="tel" inputmode="tel" autocomplete="tel" placeholder="6XX XX XX XX"></div>
++          <div class="field"><label for="pf-c">${L("Coche", "Car")}</label><input class="input" id="pf-c" placeholder="${L("Ej. Ibiza 2015", "E.g. Ibiza 2015")}"></div>
++          <div class="field"><label for="pf-m">${L("¿Qué le pasó?", "What happened?")}</label><input class="input" id="pf-m" placeholder="${L("Opcional", "Optional")}"></div>
+         </div>
+-        <div class="row2"><div class="field"><label for="pf-n">${L("Tu nombre", "Your name")}</label><input class="input" id="pf-n" autocomplete="name"></div>
+-          <div class="field"><label for="pf-t">WhatsApp</label><input class="input" id="pf-t" type="tel" inputmode="tel" autocomplete="tel" placeholder="6XX XX XX XX"></div></div>
+-        <div class="row2"><div class="field"><label for="pf-c">${L("Coche", "Car")}</label><input class="input" id="pf-c" placeholder="${L("Ej. Seat Ibiza 2015", "E.g. Seat Ibiza 2015")}"></div>
+-          <div class="field"><label for="pf-m">${L("¿Qué le pasó? (opcional)", "What happened? (optional)")}</label><input class="input" id="pf-m" placeholder="${L("Ej. Roce en la puerta trasera", "E.g. Scrape on the rear door")}"></div></div>
+-        <div class="agenda" id="pf-ag" aria-live="polite" hidden></div>
+         <input class="hp" type="text" id="pf-web" tabindex="-1" autocomplete="off" aria-hidden="true">
+-        <label class="consent"><input type="checkbox" id="pf-ok"><span>${L("Acepto que Volcano Cars use estos datos y fotos solo para darme el presupuesto. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Política de privacidad</a>.", "I agree Volcano Cars may use these details and photos only to quote me. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacy policy</a>.")}</span></label>
++        <label class="consent"><input type="checkbox" id="pf-ok"><span>${L("Acepto que Volcano Cars use estos datos y fotos solo para darme el presupuesto. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacidad</a>.", "I agree Volcano Cars may use these details and photos only to quote me. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacy</a>.")}</span></label>
+         <div class="form-err" id="pf-err" role="alert" hidden></div>
+         <button class="btn btn-rosso pf-go" type="submit"><span>${L("Enviar fotos y pedir presupuesto", "Send photos and get a quote")}</span></button>
+         <div class="pf-ok" hidden></div>
+-      </form>`;
+-    const form = $(".pf-box", box), drop = $(".pf-drop", box), th = $(".pf-thumbs", box), agEl = $("#pf-ag", box);
++      </form></div></div>`;
++    const bar = $(".pf-bar", box), panel = $("#pf-panel", box);
++    const abrir = (si) => {
++      box.classList.toggle("open", si); bar.setAttribute("aria-expanded", String(si));
++      if (si) panel.removeAttribute("inert"); else panel.setAttribute("inert", "");
++      $("[data-abrir]", bar).textContent = si ? L("Cerrar", "Close") : L("Enviar foto", "Send photo");
++      if (si) trk("clk", "foto-abrir", "");
++    };
++    bar.addEventListener("click", () => abrir(!box.classList.contains("open")));
++    if (/^#(foto|presupuesto-foto)$/.test(location.hash)) abrir(true);
++    const form = $(".pf-box", box), drop = $(".pf-drop", box), th = $(".pf-thumbs", box);
+     const fallo = (m) => { const el = $("#pf-err", box); el.textContent = m || ""; el.hidden = !m; if (m) el.scrollIntoView({ block: "nearest", behavior: "smooth" }); };
+-    let AGF = null;
+-    const modo = () => (form.querySelector("input[name=pf-modo]:checked") || {}).value || "foto";
+-    form.querySelectorAll("input[name=pf-modo]").forEach((x) => x.addEventListener("change", () => {
+-      const cita = modo() === "cita";
+-      agEl.hidden = !cita;
+-      if (cita && !AGF && typeof Agenda === "function") { AGF = Agenda(agEl, "taller", (m) => fallo(m || "")); AGF.cargar(); }
+-      $(".pf-go span", box).textContent = cita ? L("Enviar fotos y reservar cita", "Send photos and book") : L("Enviar fotos y pedir presupuesto", "Send photos and get a quote");
+-    }));
+     const pintar = () => {
+       th.innerHTML = fotos.map((f, i) => `<figure><img src="${f.url}" alt="${L("Foto", "Photo")} ${i + 1}"><button type="button" data-q="${i}" aria-label="${L("Quitar foto", "Remove photo")} ${i + 1}">×</button></figure>`).join("");
+       drop.classList.toggle("has", fotos.length > 0);
+@@ -653,16 +646,17 @@
+     ["dragleave", "drop"].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
+     drop.addEventListener("drop", (e) => añadir(e.dataTransfer.files || []));
+     drop.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("[data-gal]", box).click(); } });
++    // la barra también acepta que suelten la foto encima: se despliega sola
++    ["dragenter", "dragover"].forEach((t) => bar.addEventListener(t, (e) => { e.preventDefault(); if (!box.classList.contains("open")) abrir(true); }));
+     form.addEventListener("submit", async (e) => {
+       e.preventDefault(); fallo("");
+       const nombre = $("#pf-n", box).value.trim(), telefono = $("#pf-t", box).value.trim(), coche = $("#pf-c", box).value.trim(), nota = $("#pf-m", box).value.trim();
+-      const cita = modo() === "cita";
+       if (!fotos.length) { fallo(L("Añade al menos una foto del daño.", "Add at least one photo of the damage.")); drop.focus(); return; }
+       if (nombre.length < 2) { fallo(L("Escribe tu nombre.", "Please write your name.")); $("#pf-n", box).focus(); return; }
+       if (!telOk(telefono)) { fallo(L("Revisa el número de WhatsApp.", "Please check your WhatsApp number.")); $("#pf-t", box).focus(); return; }
+-      if (cita && !(AGF && AGF.st.hora)) { fallo(L("Elige día y hora para traerlo.", "Pick a day and time to bring it in.")); return; }
+       if (!$("#pf-ok", box).checked) { fallo(L("Marca la casilla de privacidad para poder enviarlo.", "Please tick the privacy box so we can send it.")); return; }
+       const btn = $(".pf-go", box); btn.disabled = true; btn.classList.add("busy");
++      let hecho = false;
+       try {
+         const claves = [];
+         for (let i = 0; i < fotos.length; i++) {
+@@ -674,17 +668,16 @@
+         await api("/api/solicitudes", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({
+           tipo: "taller", nombre, telefono, servicios: [L("Presupuesto por foto", "Quote from photo")], vehiculo: coche ? { coche } : {},
+           mensaje: `📷 ${L("Presupuesto por foto", "Quote from photo")}${nota ? ": " + nota : ""}`, fotos: claves,
+-          cita: cita ? { fecha: AGF.st.fecha, hora: AGF.st.hora } : null, acepta: true, web: $("#pf-web", box).value, idioma: EN ? "en" : "es", origen: ORIG }) });
+-        medirC("solicitud"); trk("clk", "foto-enviada", cita ? "cita" : "foto");
++          acepta: true, web: $("#pf-web", box).value, idioma: EN ? "en" : "es", origen: ORIG }) });
++        medirC("solicitud"); trk("clk", "foto-enviada", "foto"); hecho = true;
+         const ok = $(".pf-ok", box);
+-        ok.innerHTML = `<div class="rsv-done-ic">${IC.ok}</div><h4>${L("¡Fotos recibidas!", "Photos received!")}</h4>
+-          <p>${cita ? L(`Cita confirmada: ${fechaLarga(AGF.st.fecha)} a las ${AGF.st.hora}. Antes de que vengas te mandamos el presupuesto estimado por WhatsApp.`, `Appointment confirmed: ${fechaLarga(AGF.st.fecha)} at ${AGF.st.hora}. Before you come we'll send the estimated quote on WhatsApp.`)
+-            : rapido ? L("Te escribimos por WhatsApp con el presupuesto estimado en menos de 1 hora.", "We'll message you on WhatsApp with the estimated quote in under 1 hour.") : L("Te escribimos por WhatsApp con el presupuesto estimado en cuanto abramos (L–V, 8:00).", "We'll message you on WhatsApp with the estimated quote as soon as we open (Mon–Fri, 8:00).")}</p>
+-          <a class="btn btn-wa" target="_blank" rel="noopener" href="${waEmpresa(L(`Hola, soy ${nombre}. Acabo de mandaros ${fotos.length} foto${fotos.length > 1 ? "s" : ""} por la web para un presupuesto${coche ? " del " + coche : ""}.`, `Hi, I'm ${nombre}. I've just sent ${fotos.length} photo${fotos.length > 1 ? "s" : ""} on the website for a quote${coche ? " for my " + coche : ""}.`))}">${IC.wa}${L("¿Prisa? Escríbenos ya", "In a hurry? Message us now")}</a>`;
++        ok.innerHTML = `<div class="rsv-done-ic">${IC.ok}</div><div><h4>${L("¡Fotos recibidas!", "Photos received!")}</h4>
++          <p>${rapido ? L("Te escribimos por WhatsApp con el presupuesto estimado en menos de 1 hora.", "We'll message you on WhatsApp with the estimated quote in under 1 hour.") : L("Te escribimos por WhatsApp con el presupuesto estimado en cuanto abramos (L–V, 8:00).", "We'll message you on WhatsApp with the estimated quote as soon as we open (Mon–Fri, 8:00).")}</p>
++          <a class="btn btn-wa" target="_blank" rel="noopener" href="${waEmpresa(L(`Hola, soy ${nombre}. Acabo de mandaros ${fotos.length} foto${fotos.length > 1 ? "s" : ""} por la web para un presupuesto${coche ? " del " + coche : ""}.`, `Hi, I'm ${nombre}. I've just sent ${fotos.length} photo${fotos.length > 1 ? "s" : ""} on the website for a quote${coche ? " for my " + coche : ""}.`))}">${IC.wa}${L("¿Prisa? Escríbenos ya", "In a hurry? Message us now")}</a></div>`;
+         form.querySelectorAll(":scope > :not(.pf-ok)").forEach((x) => (x.hidden = true));
+         ok.hidden = false; ok.scrollIntoView({ block: "nearest", behavior: "smooth" });
+-      } catch (err) { fallo(err.message); if (err.ocupada && AGF) AGF.cargar(); }
+-      finally { btn.disabled = false; btn.classList.remove("busy"); if (!$(".pf-ok", box).hidden) return; $("span", btn).textContent = modo() === "cita" ? L("Enviar fotos y reservar cita", "Send photos and book") : L("Enviar fotos y pedir presupuesto", "Send photos and get a quote"); }
++      } catch (err) { fallo(err.message); }
++      finally { btn.disabled = false; btn.classList.remove("busy"); if (!hecho) $("span", btn).textContent = L("Enviar fotos y pedir presupuesto", "Send photos and get a quote"); }
+     });
+   }
+ 
+diff --git a/public/index.html b/public/index.html
+index 9f524db..4b6827b 100644
+--- a/public/index.html
++++ b/public/index.html
+@@ -196,9 +196,10 @@ html[data-vista="comprar"] #v-comprar,html[data-vista="taller"] #v-taller,html[d
+ .marquee:hover .mq-track{animation-play-state:paused}
+ 
+ /* ---------- Sections ---------- */
+-section.block{padding-block:88px}
+-@media (max-width:700px){section.block{padding-block:60px}}
+-.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:34px}
++section.block{padding-block:64px}
++@media (max-width:700px){section.block{padding-block:40px}}
++.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:26px}
++@media (max-width:700px){.sec-head{margin-bottom:18px}.sec-head h2{margin-top:10px}.sec-head p{font-size:16px;margin-top:8px}}
+ .sec-head h2{font-size:clamp(32px,4.4vw,56px);margin-top:14px}
+ .sec-head p{margin:12px 0 0;color:var(--muted);max-width:58ch;font-size:17.5px}
+ 
+@@ -288,10 +289,10 @@ section.block{padding-block:88px}
+ textarea.input{min-height:120px;resize:vertical}
+ .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+ @media (max-width:460px){.row2{grid-template-columns:1fr}}
+-.split{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:start}
++.split{display:grid;grid-template-columns:1fr 1.1fr;gap:40px;align-items:start}
+ .split.shop{grid-template-columns:1.3fr 1fr}
+-@media (max-width:900px){.split,.split.shop{grid-template-columns:1fr;gap:32px}}
+-.panel{background:var(--surface);border:1px solid var(--line);border-radius:26px;padding:32px;box-shadow:var(--shadow);display:grid;gap:18px}
++@media (max-width:900px){.split,.split.shop{grid-template-columns:1fr;gap:22px}}
++.panel{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:var(--shadow);display:grid;gap:16px}
+ @media (max-width:520px){.panel{padding:22px;border-radius:22px}}
+ .panel h3{font-size:28px}
+ .note{font-size:13.5px;color:var(--muted);margin:0}
+@@ -301,7 +302,8 @@ textarea.input{min-height:120px;resize:vertical}
+ .ok-msg{background:var(--verde-soft);color:var(--verde);font-weight:600;padding:14px 16px;border-radius:14px;border-left:4px solid var(--verde);display:flex;align-items:center;gap:10px;animation:popIn .4s cubic-bezier(.34,1.56,.64,1)}.ok-msg::before{content:"✓";font-size:20px;flex-shrink:0}
+ @keyframes popIn{from{opacity:0;transform:scale(.92) translateY(-8px)}to{opacity:1;transform:none}}
+ .page-h{font-size:clamp(38px,5.4vw,68px);margin-top:14px}
+-.page-lead{color:var(--muted);font-size:18.5px;max-width:48ch;margin:18px 0 0}
++.page-lead{color:var(--muted);font-size:18px;max-width:48ch;margin:14px 0 0}
++@media (max-width:700px){.page-lead{font-size:16px;margin-top:10px}}
+ 
+ /* ---------- Services ---------- */
+ .services{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+@@ -394,7 +396,7 @@ dialog::backdrop{background:rgba(8,9,10,.66);backdrop-filter:blur(6px)}
+ footer{background:var(--night);color:#F2EFEA;margin-top:40px}
+ footer .logo{color:#F2EFEA}
+ footer .logo-tag{color:rgba(242,239,234,.55)}
+-.foot{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.2fr;gap:36px;padding-block:64px 44px;font-size:15px}
++.foot{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.2fr;gap:32px;padding-block:52px 36px;font-size:15px}
+ .foot h4{margin:0 0 14px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:rgba(242,239,234,.5)}
+ .foot a{display:block;text-decoration:none;padding:4px 0;color:rgba(242,239,234,.85);transition:color .2s}
+ .foot a:hover{color:#fff}
+@@ -405,7 +407,7 @@ footer .logo-tag{color:rgba(242,239,234,.55)}
+ .zonas-foot a{color:rgba(242,239,234,.72);text-decoration:none;margin-right:12px;white-space:nowrap}
+ .zonas-foot a:hover{color:#fff;text-decoration:underline}
+ .legal{border-top:1px solid var(--night-line);padding-block:20px;font-size:13px;color:rgba(242,239,234,.5);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+-@media (max-width:860px){.foot{grid-template-columns:1fr 1fr;padding-block:48px 32px}}
++@media (max-width:860px){.foot{grid-template-columns:1fr 1fr;padding-block:36px 24px}}
+ /* móvil: el logo va a lo ancho y las columnas no se salen de la pantalla (antes se cortaban a 360–390 px) */
+ @media (max-width:560px){.foot{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 18px}.foot>div:first-child{grid-column:1/-1}.foot a{overflow-wrap:anywhere}footer .logo svg.vc-logo{max-width:100%}}
+ @media (max-width:900px){footer{padding-bottom:96px}}
+@@ -1222,6 +1224,48 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
+ .badge.b-ofe{top:46px;left:12px;right:auto;background:linear-gradient(100deg,#D9481C,#F2994A);color:#fff;display:inline-flex;align-items:center;gap:5px}
+ .badge.b-ofe.verde{background:#1F8B4C}
+ @media (prefers-reduced-motion:reduce){.ofe-head b svg{animation:none}.ofe-row i::after{transition:none}}
++
++/* =====================================================================
++   INTERFAZ COMPACTA (menos espacios muertos, más información sin scroll)
++   Solo reduce márgenes y rellenos: no cambia ningún contenido ni función.
++   ===================================================================== */
++.hero-in{padding-block:64px 72px;min-height:min(70vh,680px)}
++.hero-ctas,.hero-meta{margin-top:26px}
++.feature{padding:32px;min-height:320px}
++.stat{padding:26px 22px}
++.step{padding:24px}
++.step .n{font-size:52px}
++.step h3{margin:14px 0 6px}
++.steps{gap:18px}
++.duo{gap:18px}
++.visit{padding:44px;gap:32px}
++.visit dl{gap:14px}
++.visit .acts{margin-top:22px}
++.rev{padding:24px 22px 22px;gap:14px}
++@media (max-width:900px){.hero-in{padding-block:28px 36px;gap:24px}}
++@media (max-width:700px){
++  .duo{gap:12px}
++  .feature{padding:22px;padding-top:80px;min-height:0;gap:10px;border-radius:20px}
++  .feature .big-ic{width:60px;height:60px;top:18px;right:18px}
++  .feature h3{font-size:28px}
++  .feature ul{margin:2px 0 6px;gap:6px}
++  .feature li{padding:5px 10px;font-size:12.5px}
++  .stat{padding:16px 12px}
++  .stat .st-ic{width:36px;height:36px;border-radius:11px;margin-bottom:10px}
++  .stat span{margin-top:6px;font-size:13.5px}
++  .steps{gap:10px}
++  .step{padding:16px 18px;display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:center}
++  .step .n{font-size:40px;grid-row:span 2}
++  .step h3{margin:0 0 2px;font-size:20px}
++  .step p{font-size:14.5px}
++  .visit{padding:26px 20px;gap:20px;border-radius:22px}
++  .visit dl{gap:10px}
++  .visit dd{font-size:16px}
++  .visit .acts{margin-top:16px}
++  .rev{padding:20px 18px 18px;gap:12px}
++  .rev blockquote{font-size:16px}
++  .panel{padding:20px}
++}
+ </style>
+ <script>document.documentElement.classList.add("js")</script>
+ <link rel="stylesheet" href="/taller.css">
+@@ -1589,10 +1633,6 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
+           </ol>
+           <div class="resumen" id="t-resumen" aria-live="polite"></div>
+           <div class="tx-estim" id="t-estimado" aria-live="polite" hidden></div>
+-          <div class="modo" role="radiogroup" aria-label="Tipo de solicitud">
+-            <label><input type="radio" name="t-modo" value="cita" checked><span>Reservar día y hora</span></label>
+-            <label><input type="radio" name="t-modo" value="presu"><span>Solo pedir presupuesto</span></label>
+-          </div>
+           <div class="row2">
+             <div class="field"><label for="t-car">Coche</label><input class="input" id="t-car" required placeholder="Ej. Golf 2016"></div>
+             <div class="field"><label for="t-plate">Matrícula (opcional)</label><input class="input" id="t-plate" placeholder="1234 ABC"></div>
+@@ -2274,7 +2314,7 @@ async function guardar(pref, datos, btn, conWhatsApp=true, msgError=""){
+ 
+ /* ---------- calendario de citas en tiempo real ---------- */
+ function Agenda(el, agenda, alCambiar){
+-  const st={dias:[], fecha:"", hora:"", error:false, cargado:false};
++  const st={dias:[], fecha:"", hora:"", error:false, cargado:false, lleno:false};
+   const libres=d=>d.horas.filter(h=>h.libre).length;
+   function pintar(){
+     if(st.error){ el.innerHTML=`<p class="ag-empty">${L("No hemos podido cargar el calendario. Envía la solicitud y te llamamos para darte hora.","We couldn't load the calendar. Send your request and we'll call you with a time.")}</p>`; return; }
+@@ -2286,14 +2326,14 @@ function Agenda(el, agenda, alCambiar){
+     const d=st.dias.find(x=>x.fecha===st.fecha);
+     const horas=d? d.horas.map(h=>`<button type="button" class="ag-h" data-h="${h.hora}" aria-pressed="${h.hora===st.hora}" ${h.libre?"":"disabled"} aria-label="${h.hora}${h.libre?"":" "+L("ocupada","taken")}">${h.hora}</button>`).join("") : "";
+     el.innerHTML=`<div class="ag-head"><b>${L("Elige día y hora","Pick a day and time")}</b><span class="ag-live"><i></i>${L("Horas libres en tiempo real","Live availability")}</span></div>
+-      ${st.dias.some(libres)?`<div class="ag-days">${dias}</div><div class="ag-hours">${horas}</div>`:`<p class="ag-empty">${L("No quedan horas libres en los próximos días. Elige «Solo pedir presupuesto» y te llamamos.","No free times in the coming days. Choose the other option and we'll call you.")}</p>`}
++      ${st.dias.some(libres)?`<div class="ag-days">${dias}</div><div class="ag-hours">${horas}</div>`:`<p class="ag-empty">${L("No quedan horas libres en los próximos días. Envía la solicitud y te llamamos para darte hora.","No free times in the coming days. Send your request and we'll call you with a time.")}</p>`}
+       <p class="ag-sel ${st.hora?"ok":""}">${st.hora?"✓ "+fechaBonita(st.fecha)+", "+st.hora+" h":L("Toca un día y después una hora.","Tap a day, then a time.")}</p>`;
+     const nd=el.querySelector(".ag-days"); if(nd) nd.scrollLeft=sl;
+   }
+   async function cargar(){
+     try{
+       const r=await fetch("/api/citas?agenda="+agenda,{cache:"no-store"}); if(!r.ok) throw 0;
+-      const j=await r.json(); st.dias=(j.dias||[]).filter(d=>!d.cerrado); st.cargado=true; st.error=false;
++      const j=await r.json(); st.dias=(j.dias||[]).filter(d=>!d.cerrado); st.cargado=true; st.error=false; st.lleno=!st.dias.some(libres);
+       if(st.hora){ const d=st.dias.find(x=>x.fecha===st.fecha), h=d&&d.horas.find(x=>x.hora===st.hora);
+         if(!h||!h.libre){ st.hora=""; alCambiar(L("La hora que elegiste se acaba de ocupar. Elige otra.","The time you picked has just been taken. Please choose another one.")); } }
+       const d=st.dias.find(x=>x.fecha===st.fecha);
+@@ -2344,7 +2384,8 @@ $("#shop-form").addEventListener("submit",async e=>{
+   e.preventDefault();
+   if(!comprobar("t",[["#t-car",L("Dinos qué coche es.","Tell us which car it is.")],["#t-name",L("Escribe tu nombre.","Please enter your name.")],["#t-phone",L("Escribe tu teléfono.","Please enter your phone number.")]])) return;
+   if(!telValido($("#t-phone").value)){ fallo("t",L("Revisa el teléfono.","Please check the phone number.")); return; }
+-  const p=picked(), conCita=modoDe("t-modo")==="cita" && !AG_T.st.error;
++  // Sin calendario (error o sin horas libres) la solicitud se envía igual y te llamamos para darte hora
++  const p=picked(), conCita=modoDe("t-modo")==="cita" && !AG_T.st.error && !AG_T.st.lleno;
+   if(conCita && !AG_T.st.hora){ fallo("t",L("Elige el día y la hora de tu cita.","Choose the day and time of your appointment.")); $("#t-agenda").scrollIntoView({block:"center",behavior:"smooth"}); return; }
+   const coche=$("#t-car").value+($("#t-plate").value?" ("+$("#t-plate").value+")":"");
+   const t=L(`Hola Volcano Cars, quiero pedir presupuesto en el taller.\n\nCoche: ${coche}\nServicios: ${p.length?p.join(", "):"sin especificar"}\n${$("#t-msg").value?"Detalles: "+$("#t-msg").value+"\n":""}\nNombre: ${$("#t-name").value}\nTeléfono: ${$("#t-phone").value}`,
+@@ -2388,7 +2429,7 @@ function actualizarPasos(){
+   const p1=picked().length>0 || !!$("#t-msg").value.trim();
+   const p2=!!$("#t-car").value.trim() && !!$("#t-name").value.trim() && telValido($("#t-phone").value);
+   const cita=modoDe("t-modo")==="cita";
+-  const p3=cita ? !!AG_T.st.hora : true;
++  const p3=cita && !AG_T.st.error && !AG_T.st.lleno ? !!AG_T.st.hora : true;
+   const hechos=[p1,p2,p3]; const actual=hechos.indexOf(false);
+   document.querySelectorAll("#t-pasos li").forEach((li,i)=>{ li.classList.toggle("hecho",hechos[i]); li.classList.toggle("actual",i===actual); });
+   document.querySelector('#t-pasos li[data-paso="3"] span').textContent = cita ? L("Día y hora","Day & time") : L("Presupuesto","Quote");
+diff --git a/public/taller.css b/public/taller.css
+index b9275a5..af429f8 100644
+--- a/public/taller.css
++++ b/public/taller.css
+@@ -58,18 +58,18 @@
+   background-size: 44px 44px;
+   mask-image: linear-gradient(180deg, #000 0, transparent 520px);
+ }
+-#v-taller .block.tx { padding-block: clamp(40px, 6vw, 72px) 64px; background: none; }
++#v-taller .block.tx { padding-block: clamp(22px, 3.6vw, 44px) 44px; background: none; }
+ 
+ /* ---------------- cabecera ---------------- */
+ #v-taller .tx-hero {
+-  display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 28px 48px; align-items: end; margin-bottom: 26px;
++  display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px 40px; align-items: end; margin-bottom: 18px;
+ }
+ #v-taller .tx-kicker {
+   display: inline-flex; align-items: center; gap: 9px;
+   font-family: var(--tx-tech); font-weight: 700; letter-spacing: .2em; color: var(--tx-acc-txt);
+ }
+ #v-taller .tx-kicker::before { display: none; }
+-#v-taller .page-h { color: #FFFFFF; margin: 10px 0 12px; }
++#v-taller .page-h { color: #FFFFFF; margin: 8px 0 8px; }
+ #v-taller .page-h .serif { color: var(--tx-acc-txt); }
+ #v-taller .tx-hero p { margin: 0; color: var(--tx-muted); font-size: 17px; max-width: 54ch; }
+ #v-taller .tx-led {
+@@ -81,7 +81,7 @@
+ 
+ #v-taller .tx-kpis { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+ #v-taller .tx-kpis li {
+-  display: flex; align-items: center; gap: 10px; min-height: 58px; padding: 10px 14px;
++  display: flex; align-items: center; gap: 10px; min-height: 50px; padding: 8px 12px;
+   border: 1px solid var(--tx-line); border-radius: var(--tx-r-s);
+   background: linear-gradient(180deg, rgba(255, 255, 255, .045), rgba(255, 255, 255, .015));
+   backdrop-filter: blur(6px); font-size: 13px; color: var(--tx-muted); line-height: 1.3;
+@@ -96,7 +96,7 @@
+ /* ---------------- sello de garantía holográfico ---------------- */
+ #v-taller .garantia.tx-holo {
+   --holo: conic-gradient(from var(--holo-a, 0deg), #D94A26, #FF9B6A, #F4E3C1, #7FD8FF, #B08CFF, #FF8A5C, #D94A26);
+-  position: relative; margin: 0 0 30px; padding: 22px 28px; border-radius: 20px;
++  position: relative; margin: 0 0 16px; padding: 16px 22px; border-radius: 18px;
+   background: linear-gradient(135deg, #1B1B1D, #111112 60%);
+   border: 1px solid transparent;
+   background-clip: padding-box;
+@@ -118,7 +118,7 @@
+ }
+ @property --holo-a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+ @keyframes txHolo { to { --holo-a: 360deg; } }
+-#v-taller .sello { width: 124px; height: 124px; }
++#v-taller .sello { width: 104px; height: 104px; }
+ #v-taller .sello::before {
+   content: ""; position: absolute; inset: 6px; border-radius: 50%;
+   background: var(--holo); filter: saturate(1.1); opacity: .9;
+@@ -151,7 +151,7 @@
+ 
+ /* ---------------- columnas ---------------- */
+ #v-taller .split.shop { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 28px; }
+-#v-taller .tx-col { min-width: 0; display: grid; gap: 14px; align-content: start; }
++#v-taller .tx-col { min-width: 0; display: grid; gap: 10px; align-content: start; }
+ #v-taller .tx-col-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+ #v-taller .tx-step-t { display: inline-flex; align-items: center; gap: 10px; font-family: var(--tx-tech); font-weight: 700; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; }
+ #v-taller .tx-step-t i {
+@@ -166,14 +166,14 @@
+ #v-taller .tx-count.on { color: #FFFFFF; border-color: var(--tx-acc); background: rgba(217, 74, 38, .14); box-shadow: 0 0 18px -4px var(--tx-glow); }
+ 
+ /* ---------------- tarjetas de servicio estilo app ---------------- */
+-#v-taller .services { grid-template-columns: repeat(auto-fill, minmax(232px, 1fr)); gap: 10px; }
++#v-taller .services { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+ #v-taller .svc-group {
+   margin-top: 6px; font-family: var(--tx-tech); letter-spacing: .22em; color: var(--tx-muted);
+ }
+ #v-taller .svc-group::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--tx-line-2), transparent); }
+ #v-taller .svc, #v-taller .svc.mec { --c1: var(--tx-acc); --c2: #FF7A45; }
+ #v-taller .svc label {
+-  min-height: 78px; padding: 14px 46px 14px 14px; gap: 13px;
++  min-height: 64px; padding: 10px 44px 10px 11px; gap: 11px;
+   border: 1px solid var(--tx-line); border-radius: var(--tx-r);
+   background:
+     radial-gradient(220px circle at var(--mx, -200px) var(--my, -200px), rgba(217, 74, 38, .16), transparent 60%),
+@@ -188,12 +188,12 @@
+   box-shadow: 0 0 0 1px rgba(217, 74, 38, .25), 0 16px 38px -16px var(--tx-glow), inset 0 1px 0 rgba(255, 255, 255, .06);
+ }
+ #v-taller .svc .ic {
+-  width: 48px; height: 48px; border-radius: 13px; color: var(--tx-acc-txt);
++  width: 42px; height: 42px; border-radius: 12px; color: var(--tx-acc-txt);
+   background: linear-gradient(145deg, #2B2B2E, #161617);
+   border: 1px solid var(--tx-line-2);
+   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 6px 14px -8px #000;
+ }
+-#v-taller .svc .ic svg { width: 26px; height: 26px; }
++#v-taller .svc .ic svg { width: 23px; height: 23px; }
+ #v-taller .svc label:hover .ic { transform: none; color: #FFFFFF; border-color: rgba(217, 74, 38, .6); }
+ #v-taller .svc b { color: #FFFFFF; font-size: 15px; font-weight: 700; }
+ #v-taller .svc small { color: var(--tx-muted); font-size: 12.5px; }
+@@ -369,27 +369,39 @@
+   #v-taller .split.shop { grid-template-columns: 1fr; }
+ }
+ @media (max-width: 720px) {
+-  #v-taller .garantia.tx-holo { grid-template-columns: auto 1fr; padding: 18px; gap: 16px; }
+-  #v-taller .garantia.tx-holo .g-pts { grid-column: 1 / -1; border-left: 0; padding: 14px 0 0; border-top: 1px solid var(--tx-line); white-space: normal; }
+-  #v-taller .sello { width: 92px; height: 92px; }
+-  #v-taller .sello-in { inset: 18px; }
+-  #v-taller .sello-in b { font-size: 24px; }
+-  #v-taller .sello-in span { font-size: 9px; }
++  /* garantía compacta: sello pequeño a la izquierda y texto; los 3 puntos ya están arriba (fila de datos) */
++  #v-taller .garantia.tx-holo { grid-template-columns: auto 1fr; padding: 12px 14px; gap: 12px; align-items: center; }
++  #v-taller .garantia.tx-holo .g-pts { display: none; }
++  #v-taller .sello { width: 68px; height: 68px; }
++  #v-taller .sello-in { inset: 12px; }
++  #v-taller .sello-in b { font-size: 17px; }
++  #v-taller .sello-in span { font-size: 7px; }
++  #v-taller .g-txt > span:last-child { margin-top: 4px; }
++  #v-taller .g-eyebrow { font-size: 10px; gap: 6px; }
++  #v-taller .g-txt > b { font-size: 15px; line-height: 1.25; }
++  #v-taller .g-txt > span:last-child { font-size: 12.5px; line-height: 1.4; }
+ }
+ @media (max-width: 560px) {
+   #v-taller .tx-kpis { grid-template-columns: 1fr 1fr; gap: 8px; }
+   #v-taller .tx-kpis li { min-height: 0; padding: 10px 11px; font-size: 12px; }
+   #v-taller .tx-kpis b { font-size: 13px; }
+-  #v-taller .services { grid-template-columns: 1fr; gap: 8px; }
+-  #v-taller .svc label { min-height: 68px; padding: 11px 44px 11px 11px; }
+-  #v-taller .svc .ic { width: 42px; height: 42px; border-radius: 11px; }
+-  #v-taller .panel.tx-panel { padding: 18px 16px; border-radius: 18px; }
+-  #v-taller .tx-panel h3 { font-size: 22px; }
+-  #v-taller .garantia.tx-holo { grid-template-columns: 1fr; justify-items: start; }
+-  #v-taller .garantia.tx-holo .sello { justify-self: start; }
++  /* servicios en 2 columnas, tipo app: se ven todos casi sin hacer scroll */
++  #v-taller .services { grid-template-columns: 1fr 1fr; gap: 7px; }
++  #v-taller .svc label { min-height: 54px; padding: 8px 28px 8px 8px; gap: 8px; border-radius: 13px; }
++  #v-taller .svc .ic { width: 32px; height: 32px; border-radius: 9px; }
++  #v-taller .svc .ic svg { width: 18px; height: 18px; }
++  #v-taller .svc b { font-size: 13px; line-height: 1.2; }
++  #v-taller .svc small { display: none; }
++  #v-taller .svc .tick { top: 7px; right: 7px; margin-top: 0; width: 17px; height: 17px; border-radius: 6px; }
++  #v-taller .svc .tick svg { width: 11px; height: 11px; }
++  #v-taller .svc-group { margin-top: 2px; font-size: 11px; }
++  #v-taller .panel.tx-panel { padding: 16px 14px; border-radius: 18px; gap: 12px; }
++  #v-taller .tx-panel h3 { font-size: 21px; }
++  #v-taller .tx-hero p { font-size: 15px; }
+ }
+ @media (max-width: 380px) {
+-  #v-taller .tx-kpis { grid-template-columns: 1fr; }
++  #v-taller .tx-kpis li { padding: 8px 9px; gap: 7px; }
++  #v-taller .tx-kpis li > svg { display: none; }
+ }
+ 
+ /* menos movimiento si el sistema lo pide */

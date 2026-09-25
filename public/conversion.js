@@ -586,53 +586,46 @@
     const MAX_F = 4;
     const rapido = abiertoAhora();
     const tactil = matchMedia("(pointer: coarse)").matches; // en el móvil, botón para abrir la cámara directamente
-    box.innerHTML = `<div class="pf-txt">
-        <span class="pf-kicker"><span class="tx-led" aria-hidden="true"></span>${L("Presupuesto exprés por foto", "Express quote from a photo")}</span>
-        <h3 id="pf-h">${L("¿Tienes un golpe, arañazo o quieres pintar tu coche?", "Got a dent or scratch, or want your car painted?")}</h3>
-        <p>${rapido ? L("Sube una foto del daño y te enviamos un presupuesto estimado por WhatsApp en menos de 1 hora.", "Upload a photo of the damage and we'll send you an estimated quote on WhatsApp in under 1 hour.")
-          : L("Sube una foto del daño y te enviamos un presupuesto estimado por WhatsApp en menos de 1 hora desde que abrimos (L–V, 8:00).", "Upload a photo of the damage and we'll send you an estimated quote on WhatsApp within 1 hour of opening (Mon–Fri, 8:00).")}</p>
-        <ul class="pf-pts"><li>${L("Gratis y sin compromiso", "Free, no obligation")}</li><li>${L("Respuesta por WhatsApp", "Reply on WhatsApp")}</li><li>${L("Precio final por escrito al ver el coche", "Final written price once we see the car")}</li></ul>
-        <ol class="pf-steps" aria-label="${L("Cómo funciona", "How it works")}">
-          <li><i>1</i><span><b>${L("Haz la foto", "Take the photo")}</b>${L("De cerca y de lejos, con buena luz", "Close-up and from further away, in good light")}</span></li>
-          <li><i>2</i><span><b>${L("Te respondemos por WhatsApp", "We reply on WhatsApp")}</b>${L("Con un presupuesto estimado", "With an estimated quote")}</span></li>
-          <li><i>3</i><span><b>${L("Lo traes el día que elijas", "Bring it in on the day you choose")}</b>${L("Precio cerrado por escrito antes de empezar", "Fixed written price before we start")}</span></li>
-        </ol>
-      </div>
+    // Plegado por defecto: una barra compacta que se despliega al tocarla (no quita sitio al resto del taller)
+    box.innerHTML = `<button type="button" class="pf-bar" aria-expanded="false" aria-controls="pf-panel">
+        <span class="pf-bar-ic" aria-hidden="true">📸</span>
+        <span class="pf-bar-txt"><span class="pf-bar-h" id="pf-h"><b>${L("Servicio Express por foto:", "Express photo service:")}</b> ${L("recibe tu presupuesto en menos de 1h", "get your quote in under 1h")}</span>
+          <small>${rapido ? L("Gratis y sin compromiso · te contestamos por WhatsApp", "Free, no obligation · we reply on WhatsApp") : L("Gratis y sin compromiso · te contestamos al abrir (L–V, 8:00)", "Free, no obligation · we reply when we open (Mon–Fri, 8:00)")}</small></span>
+        <span class="pf-bar-go"><span class="pf-bar-go-t" data-abrir>${L("Enviar foto", "Send photo")}</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>
+      </button>
+      <div class="pf-panel" id="pf-panel" role="region" aria-labelledby="pf-h" inert><div class="pf-panel-in">
       <form class="pf-box" novalidate>
         <div class="pf-drop" tabindex="0" role="button" aria-describedby="pf-hint">
           <span class="pf-drop-ic">${IC.cam}</span>
-          <b>${L("Arrastra aquí las fotos", "Drag your photos here")}</b>
-          <span class="pf-or">${L("o", "or")}</span>
-          <span class="pf-btns">${tactil ? `<label class="btn btn-rosso"><input type="file" accept="image/*" capture="environment" hidden data-cam>${L("Hacer foto", "Take a photo")}</label>` : ""}
-          <label class="btn ${tactil ? "btn-ghost" : "btn-rosso"}"><input type="file" accept="image/*" multiple hidden data-gal>${tactil ? L("Elegir de la galería", "Choose from gallery") : L("Elegir fotos", "Choose photos")}</label></span>
-          <small id="pf-hint">${L("Hasta 4 fotos: una de cerca y otra de lejos ayuda mucho.", "Up to 4 photos: one close-up and one from further away helps a lot.")}</small>
+          <span class="pf-drop-txt"><b>${L("¿Golpe, arañazo o pintura? Sube la foto", "Dent, scratch or paint? Upload the photo")}</b>
+          <small id="pf-hint">${L("Hasta 4 fotos · de cerca y de lejos", "Up to 4 photos · close-up and from further away")}</small></span>
+          <span class="pf-btns">${tactil ? `<label class="btn btn-rosso"><input type="file" accept="image/*" capture="environment" hidden data-cam>${L("Hacer foto", "Take photo")}</label>` : ""}
+          <label class="btn ${tactil ? "btn-ghost" : "btn-rosso"}"><input type="file" accept="image/*" multiple hidden data-gal>${tactil ? L("Galería", "Gallery") : L("Elegir fotos", "Choose photos")}</label></span>
         </div>
         <div class="pf-thumbs" aria-live="polite"></div>
-        <div class="modo" role="radiogroup" aria-label="${L("Qué prefieres", "What would you like")}">
-          <label><input type="radio" name="pf-modo" value="foto" checked><span>${L("Presupuesto por foto", "Quote from photo")}</span></label>
-          <label><input type="radio" name="pf-modo" value="cita"><span>${L("Traerlo al taller", "Bring it in")}</span></label>
+        <div class="pf-grid">
+          <div class="field"><label for="pf-n">${L("Nombre", "Name")}</label><input class="input" id="pf-n" autocomplete="name"></div>
+          <div class="field"><label for="pf-t">WhatsApp</label><input class="input" id="pf-t" type="tel" inputmode="tel" autocomplete="tel" placeholder="6XX XX XX XX"></div>
+          <div class="field"><label for="pf-c">${L("Coche", "Car")}</label><input class="input" id="pf-c" placeholder="${L("Ej. Ibiza 2015", "E.g. Ibiza 2015")}"></div>
+          <div class="field"><label for="pf-m">${L("¿Qué le pasó?", "What happened?")}</label><input class="input" id="pf-m" placeholder="${L("Opcional", "Optional")}"></div>
         </div>
-        <div class="row2"><div class="field"><label for="pf-n">${L("Tu nombre", "Your name")}</label><input class="input" id="pf-n" autocomplete="name"></div>
-          <div class="field"><label for="pf-t">WhatsApp</label><input class="input" id="pf-t" type="tel" inputmode="tel" autocomplete="tel" placeholder="6XX XX XX XX"></div></div>
-        <div class="row2"><div class="field"><label for="pf-c">${L("Coche", "Car")}</label><input class="input" id="pf-c" placeholder="${L("Ej. Seat Ibiza 2015", "E.g. Seat Ibiza 2015")}"></div>
-          <div class="field"><label for="pf-m">${L("¿Qué le pasó? (opcional)", "What happened? (optional)")}</label><input class="input" id="pf-m" placeholder="${L("Ej. Roce en la puerta trasera", "E.g. Scrape on the rear door")}"></div></div>
-        <div class="agenda" id="pf-ag" aria-live="polite" hidden></div>
         <input class="hp" type="text" id="pf-web" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <label class="consent"><input type="checkbox" id="pf-ok"><span>${L("Acepto que Volcano Cars use estos datos y fotos solo para darme el presupuesto. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Política de privacidad</a>.", "I agree Volcano Cars may use these details and photos only to quote me. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacy policy</a>.")}</span></label>
+        <label class="consent"><input type="checkbox" id="pf-ok"><span>${L("Acepto que Volcano Cars use estos datos y fotos solo para darme el presupuesto. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacidad</a>.", "I agree Volcano Cars may use these details and photos only to quote me. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacy</a>.")}</span></label>
         <div class="form-err" id="pf-err" role="alert" hidden></div>
         <button class="btn btn-rosso pf-go" type="submit"><span>${L("Enviar fotos y pedir presupuesto", "Send photos and get a quote")}</span></button>
         <div class="pf-ok" hidden></div>
-      </form>`;
-    const form = $(".pf-box", box), drop = $(".pf-drop", box), th = $(".pf-thumbs", box), agEl = $("#pf-ag", box);
+      </form></div></div>`;
+    const bar = $(".pf-bar", box), panel = $("#pf-panel", box);
+    const abrir = (si) => {
+      box.classList.toggle("open", si); bar.setAttribute("aria-expanded", String(si));
+      if (si) panel.removeAttribute("inert"); else panel.setAttribute("inert", "");
+      $("[data-abrir]", bar).textContent = si ? L("Cerrar", "Close") : L("Enviar foto", "Send photo");
+      if (si) trk("clk", "foto-abrir", "");
+    };
+    bar.addEventListener("click", () => abrir(!box.classList.contains("open")));
+    if (/^#(foto|presupuesto-foto)$/.test(location.hash)) abrir(true);
+    const form = $(".pf-box", box), drop = $(".pf-drop", box), th = $(".pf-thumbs", box);
     const fallo = (m) => { const el = $("#pf-err", box); el.textContent = m || ""; el.hidden = !m; if (m) el.scrollIntoView({ block: "nearest", behavior: "smooth" }); };
-    let AGF = null;
-    const modo = () => (form.querySelector("input[name=pf-modo]:checked") || {}).value || "foto";
-    form.querySelectorAll("input[name=pf-modo]").forEach((x) => x.addEventListener("change", () => {
-      const cita = modo() === "cita";
-      agEl.hidden = !cita;
-      if (cita && !AGF && typeof Agenda === "function") { AGF = Agenda(agEl, "taller", (m) => fallo(m || "")); AGF.cargar(); }
-      $(".pf-go span", box).textContent = cita ? L("Enviar fotos y reservar cita", "Send photos and book") : L("Enviar fotos y pedir presupuesto", "Send photos and get a quote");
-    }));
     const pintar = () => {
       th.innerHTML = fotos.map((f, i) => `<figure><img src="${f.url}" alt="${L("Foto", "Photo")} ${i + 1}"><button type="button" data-q="${i}" aria-label="${L("Quitar foto", "Remove photo")} ${i + 1}">×</button></figure>`).join("");
       drop.classList.toggle("has", fotos.length > 0);
@@ -653,16 +646,17 @@
     ["dragleave", "drop"].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
     drop.addEventListener("drop", (e) => añadir(e.dataTransfer.files || []));
     drop.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("[data-gal]", box).click(); } });
+    // la barra también acepta que suelten la foto encima: se despliega sola
+    ["dragenter", "dragover"].forEach((t) => bar.addEventListener(t, (e) => { e.preventDefault(); if (!box.classList.contains("open")) abrir(true); }));
     form.addEventListener("submit", async (e) => {
       e.preventDefault(); fallo("");
       const nombre = $("#pf-n", box).value.trim(), telefono = $("#pf-t", box).value.trim(), coche = $("#pf-c", box).value.trim(), nota = $("#pf-m", box).value.trim();
-      const cita = modo() === "cita";
       if (!fotos.length) { fallo(L("Añade al menos una foto del daño.", "Add at least one photo of the damage.")); drop.focus(); return; }
       if (nombre.length < 2) { fallo(L("Escribe tu nombre.", "Please write your name.")); $("#pf-n", box).focus(); return; }
       if (!telOk(telefono)) { fallo(L("Revisa el número de WhatsApp.", "Please check your WhatsApp number.")); $("#pf-t", box).focus(); return; }
-      if (cita && !(AGF && AGF.st.hora)) { fallo(L("Elige día y hora para traerlo.", "Pick a day and time to bring it in.")); return; }
       if (!$("#pf-ok", box).checked) { fallo(L("Marca la casilla de privacidad para poder enviarlo.", "Please tick the privacy box so we can send it.")); return; }
       const btn = $(".pf-go", box); btn.disabled = true; btn.classList.add("busy");
+      let hecho = false;
       try {
         const claves = [];
         for (let i = 0; i < fotos.length; i++) {
@@ -674,17 +668,16 @@
         await api("/api/solicitudes", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({
           tipo: "taller", nombre, telefono, servicios: [L("Presupuesto por foto", "Quote from photo")], vehiculo: coche ? { coche } : {},
           mensaje: `📷 ${L("Presupuesto por foto", "Quote from photo")}${nota ? ": " + nota : ""}`, fotos: claves,
-          cita: cita ? { fecha: AGF.st.fecha, hora: AGF.st.hora } : null, acepta: true, web: $("#pf-web", box).value, idioma: EN ? "en" : "es", origen: ORIG }) });
-        medirC("solicitud"); trk("clk", "foto-enviada", cita ? "cita" : "foto");
+          acepta: true, web: $("#pf-web", box).value, idioma: EN ? "en" : "es", origen: ORIG }) });
+        medirC("solicitud"); trk("clk", "foto-enviada", "foto"); hecho = true;
         const ok = $(".pf-ok", box);
-        ok.innerHTML = `<div class="rsv-done-ic">${IC.ok}</div><h4>${L("¡Fotos recibidas!", "Photos received!")}</h4>
-          <p>${cita ? L(`Cita confirmada: ${fechaLarga(AGF.st.fecha)} a las ${AGF.st.hora}. Antes de que vengas te mandamos el presupuesto estimado por WhatsApp.`, `Appointment confirmed: ${fechaLarga(AGF.st.fecha)} at ${AGF.st.hora}. Before you come we'll send the estimated quote on WhatsApp.`)
-            : rapido ? L("Te escribimos por WhatsApp con el presupuesto estimado en menos de 1 hora.", "We'll message you on WhatsApp with the estimated quote in under 1 hour.") : L("Te escribimos por WhatsApp con el presupuesto estimado en cuanto abramos (L–V, 8:00).", "We'll message you on WhatsApp with the estimated quote as soon as we open (Mon–Fri, 8:00).")}</p>
-          <a class="btn btn-wa" target="_blank" rel="noopener" href="${waEmpresa(L(`Hola, soy ${nombre}. Acabo de mandaros ${fotos.length} foto${fotos.length > 1 ? "s" : ""} por la web para un presupuesto${coche ? " del " + coche : ""}.`, `Hi, I'm ${nombre}. I've just sent ${fotos.length} photo${fotos.length > 1 ? "s" : ""} on the website for a quote${coche ? " for my " + coche : ""}.`))}">${IC.wa}${L("¿Prisa? Escríbenos ya", "In a hurry? Message us now")}</a>`;
+        ok.innerHTML = `<div class="rsv-done-ic">${IC.ok}</div><div><h4>${L("¡Fotos recibidas!", "Photos received!")}</h4>
+          <p>${rapido ? L("Te escribimos por WhatsApp con el presupuesto estimado en menos de 1 hora.", "We'll message you on WhatsApp with the estimated quote in under 1 hour.") : L("Te escribimos por WhatsApp con el presupuesto estimado en cuanto abramos (L–V, 8:00).", "We'll message you on WhatsApp with the estimated quote as soon as we open (Mon–Fri, 8:00).")}</p>
+          <a class="btn btn-wa" target="_blank" rel="noopener" href="${waEmpresa(L(`Hola, soy ${nombre}. Acabo de mandaros ${fotos.length} foto${fotos.length > 1 ? "s" : ""} por la web para un presupuesto${coche ? " del " + coche : ""}.`, `Hi, I'm ${nombre}. I've just sent ${fotos.length} photo${fotos.length > 1 ? "s" : ""} on the website for a quote${coche ? " for my " + coche : ""}.`))}">${IC.wa}${L("¿Prisa? Escríbenos ya", "In a hurry? Message us now")}</a></div>`;
         form.querySelectorAll(":scope > :not(.pf-ok)").forEach((x) => (x.hidden = true));
         ok.hidden = false; ok.scrollIntoView({ block: "nearest", behavior: "smooth" });
-      } catch (err) { fallo(err.message); if (err.ocupada && AGF) AGF.cargar(); }
-      finally { btn.disabled = false; btn.classList.remove("busy"); if (!$(".pf-ok", box).hidden) return; $("span", btn).textContent = modo() === "cita" ? L("Enviar fotos y reservar cita", "Send photos and book") : L("Enviar fotos y pedir presupuesto", "Send photos and get a quote"); }
+      } catch (err) { fallo(err.message); }
+      finally { btn.disabled = false; btn.classList.remove("busy"); if (!hecho) $("span", btn).textContent = L("Enviar fotos y pedir presupuesto", "Send photos and get a quote"); }
     });
   }
 
