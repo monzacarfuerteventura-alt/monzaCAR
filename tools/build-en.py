@@ -345,8 +345,6 @@ RAW = [
     ('c.estado==="reservado"?"Reservado":"Precio final, impuestos incluidos"', 'c.estado==="reservado"?"Reserved":"Final price, taxes included"'),
     ('[["Año",c.anio],["Kilómetros",km(c.km)],["Combustible",T(c.combustible)],["Cambio",T(c.cambio)],["Potencia",c.cv?c.cv+" CV":""],["Puertas",c.puertas],["Color",c.color],["Etiqueta DGT",c.etiqueta]]',
      '[["Year",c.anio],["Mileage",km(c.km)],["Fuel",T(c.combustible)],["Gearbox",T(c.cambio)],["Power",c.cv?c.cv+" hp":""],["Doors",c.puertas],["Colour",c.color],["DGT label",c.etiqueta]]'),
-    ('wa(`Hola, me interesa el ${c.marca} ${c.modelo} ${c.version||""} (${c.anio}, ${km(c.km)}) de ${eur(c.precio)}. ¿Sigue disponible?`)',
-     'wa(`Hi, I\'m interested in the ${c.marca} ${c.modelo} ${c.version||""} (${c.anio}, ${km(c.km)}) for ${eur(c.precio)}. Is it still available?`)'),
     # validación y errores
     ('"Marca la casilla de privacidad para poder enviarlo."', '"Please tick the privacy box so we can send it."'),
     ('"No hemos podido guardar la solicitud, pero el mensaje de WhatsApp lleva todos tus datos: envíalo y te atendemos igual."', '"We couldn\'t save your request, but the WhatsApp message has all your details: send it and we\'ll help you just the same."'),

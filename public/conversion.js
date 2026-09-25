@@ -387,7 +387,7 @@
     if (!CFG) config().then(pinta);
   }
   document.addEventListener("click", (e) => {
-    if (e.target.closest("#m-rsv [data-reservar]")) { const c = typeof gal !== "undefined" && gal.c; if (c) abrirReserva(c); }
+    if (e.target.closest("#m-rsv [data-reservar]")) { const c = typeof gal !== "undefined" && gal.c; if (c) { try { if (typeof apuntarInteres === "function") apuntarInteres(c); } catch (_) {} abrirReserva(c); } }
     if (e.target.closest("#m-rsv [data-espera]")) { const c = typeof gal !== "undefined" && gal.c; if (c) abrirEspera(c); }
   });
 

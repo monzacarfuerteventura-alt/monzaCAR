@@ -371,9 +371,6 @@ dialog::backdrop{background:rgba(8,9,10,.66);backdrop-filter:blur(6px)}
 .spec-table b{font-size:16px}
 .x{position:absolute;top:14px;right:14px;width:42px;height:42px;border-radius:50%;border:0;background:rgba(255,255,255,.94);color:#1B1B1A;font-size:24px;line-height:1;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.2);z-index:3;transition:transform .25s var(--ease)}
 .x:hover{transform:rotate(90deg)}
-.m-actions{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:10px}
-@media (max-width:620px){.m-actions{grid-template-columns:1fr 1fr}.m-actions #m-wa{grid-column:1/-1}}
-.m-actions .btn{padding-inline:14px}
 .gal{position:relative}
 .gal .m-img{background:#0b0c0d}
 .gal .m-img img{object-fit:contain;animation:fade .45s var(--ease)}
@@ -695,8 +692,6 @@ footer .logo-tag{color:rgba(242,239,234,.55)}
 .m-book{border-top:1px solid var(--line);padding-top:22px;display:grid;gap:14px}
 .m-book h4{margin:0;font-family:var(--display);font-stretch:112%;font-weight:800;font-size:20px}
 .m-book>p{margin:-6px 0 0;color:var(--muted);font-size:14.5px}
-.guarantee{display:flex;gap:12px;align-items:center;background:var(--verde-soft);color:var(--verde);border-radius:14px;padding:12px 14px;font-weight:600;font-size:14.5px}
-.guarantee svg{flex-shrink:0}
 .ck{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:80;max-width:560px;margin-inline:auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow-lg);padding:18px 20px;display:grid;gap:12px;font-size:14.5px}
 .ck p{margin:0;color:var(--muted)}
 .ck p b{color:var(--ink)}
@@ -734,10 +729,6 @@ footer .logo-tag{color:rgba(242,239,234,.55)}
 .m-added{color:var(--muted);background:var(--surface-2)}
 .m-added svg{flex-shrink:0}
 /* ficha: entrega */
-.m-perk{display:flex;gap:12px;align-items:center;border-radius:14px;padding:12px 14px;font-weight:600;font-size:14.5px;color:#B83A12;background:#FBE4DA}
-.m-perk svg{flex-shrink:0}
-@media all{:root:not([data-theme="light"]) .m-perk{color:#FF9A6E;background:#3A1D12}}
-:root[data-theme="dark"] .m-perk{color:#FF9A6E;background:#3A1D12}
 
 /* sello 360° en la foto */
 .v360b{position:absolute;z-index:1;left:12px;bottom:12px;display:inline-flex;align-items:center;gap:7px;padding:6px 11px 6px 8px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.06em;color:#fff;
@@ -810,12 +801,6 @@ footer .logo-tag{color:rgba(242,239,234,.55)}
 @keyframes ruta{0%{top:4px}45%,55%{top:calc(100% - 32px)}100%{top:4px}}
 @media (max-width:900px){.entrega{grid-template-columns:1fr;padding:34px 22px;gap:28px;border-radius:24px}}
 /* comprar: aviso de entrega */
-.entrega-mini{display:flex;align-items:center;gap:14px;margin:0 0 22px;padding:14px 18px;border-radius:18px;background:linear-gradient(135deg,#FBE4DA,color-mix(in srgb,#FBE4DA 40%,var(--surface)));border:1px solid color-mix(in srgb,#B83A12 18%,var(--line))}
-.entrega-mini .em-ic{flex-shrink:0;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#B83A12,#F2994A);box-shadow:0 10px 22px -10px #B83A12}
-.entrega-mini b{display:block;font-size:15.5px}
-.entrega-mini small{color:var(--muted);font-size:14px}
-@media all{:root:not([data-theme="light"]) .entrega-mini{background:linear-gradient(135deg,#3A1D12,var(--surface))}}
-:root[data-theme="dark"] .entrega-mini{background:linear-gradient(135deg,#3A1D12,var(--surface))}
 .trust li:nth-child(4){animation-delay:.36s}
 @media (prefers-reduced-motion:reduce){.ruta li{opacity:1;transform:none}.ruta .camion{top:4px}}
 
@@ -1225,6 +1210,10 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
 .badge.b-ofe.verde{background:#1F8B4C}
 @media (prefers-reduced-motion:reduce){.ofe-head b svg{animation:none}.ofe-row i::after{transition:none}}
 
+/* Ficha: la oferta de mercado lleva directa a la reserva de 50 € (sin botones repetidos entre medias) */
+#m-ofe:not([hidden]) + #m-rsv:not([hidden]){margin-top:-10px}
+#m-ofe:has(+ #m-rsv:not([hidden])) .ofe-cta{display:none}
+#m-ofe:has(+ #m-rsv:not([hidden])) .ofe-urg{margin-bottom:0}
 /* =====================================================================
    INTERFAZ COMPACTA (menos espacios muertos, más información sin scroll)
    Solo reduce márgenes y rellenos: no cambia ningún contenido ni función.
@@ -1564,7 +1553,6 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
   <section class="block">
     <div class="wrap">
       <div class="sec-head"><div><div class="eyebrow">Comprar coche</div><h2 class="page-h">Coches <span class="serif">disponibles</span></h2><p>Todos revisados en nuestro taller y con 12 meses de garantía.</p></div></div>
-      <div class="entrega-mini"><span class="em-ic"><svg width="22" height="22"><use href="#i-truck"/></svg></span><div><b>Entrega a domicilio gratis en toda Fuerteventura</b><small>De Corralejo a Morro Jable, sin coste y el día que tú elijas.</small></div></div>
       <div class="fx" id="fx" hidden></div>
       <p class="count num" id="count" style="font-weight:600;margin:0 0 18px"></p>
       <div class="grid" id="cat-grid"></div>
@@ -1733,21 +1721,14 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
         <div class="vivo" id="m-vivo" role="status" aria-live="polite" hidden></div>
         <div class="m-added" id="m-added" hidden></div>
       </div>
-      <!-- Reserva flash 50 € / lista de espera (lo pinta /conversion.js) -->
-      <section class="rsv" id="m-rsv" hidden aria-label="Reserva online"></section>
+      <!-- 1º la oferta frente al precio de mercado, 2º justo debajo la reserva de 50 € (la pinta /conversion.js) -->
       <section class="ofe" id="m-ofe" hidden aria-label="Comparativa con el precio de mercado"></section>
+      <section class="rsv" id="m-rsv" hidden aria-label="Reserva online"></section>
       <div class="spec-table num" id="m-specs"></div>
       <p id="m-desc" style="margin:0;color:var(--muted);white-space:pre-line"></p>
       <div id="m-eq" hidden><h4 class="eq-h">Equipamiento</h4><ul class="eq"></ul></div>
       <div class="demand m-demand" id="m-demand" hidden></div>
       <section class="fin" id="m-fin" hidden></section>
-      <div class="guarantee"><svg width="22" height="22"><use href="#i-itv"/></svg><span>12 meses de garantía · revisado en nuestro taller · cambio de nombre incluido · <a href="/condiciones" style="color:inherit">condiciones</a></span></div>
-      <div class="m-perk"><svg width="22" height="22"><use href="#i-truck"/></svg><span>Entrega a domicilio gratis en cualquier punto de Fuerteventura, o recógelo en Antigua</span></div>
-      <div class="m-actions">
-        <a class="btn btn-wa" id="m-wa" target="_blank" rel="noopener"><svg width="18" height="18"><use href="#i-wa"/></svg>Preguntar por WhatsApp</a>
-        <a class="btn btn-ghost" id="m-call"><svg width="18" height="18"><use href="#i-phone"/></svg>Llamar</a>
-        <a class="btn btn-ghost" id="m-share" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="M8.2 10.8l7.6-4.1M8.2 13.2l7.6 4.1"/></svg>Compartir</a>
-      </div>
       <form class="m-book" id="book-form" novalidate>
         <h4>Ven a verlo y pruébalo</h4>
         <p>Elige día y hora y te lo tenemos preparado. Sin compromiso.</p>
@@ -2240,8 +2221,6 @@ document.addEventListener("click",e=>{
   const eq=c.equipamiento||[];
   $("#m-eq").hidden=!eq.length; $("#m-eq ul").innerHTML=eq.map(x=>`<li>${esc(x)}</li>`).join("");
   const dm=demanda(c,"m-demand"); $("#m-demand").hidden=!dm; if(dm) $("#m-demand").innerHTML=dm.replace(/^<div[^>]*>|<\/div>$/g,"");
-  $("#m-wa").href=wa(`Hola, me interesa el ${c.marca} ${c.modelo} ${c.version||""} (${c.anio}, ${km(c.km)}) de ${eur(c.precio)}. ¿Sigue disponible?`);
-  $("#m-call").href=tel;
   $("#book-form").reset(); $("#book-ok").hidden=true; fallo("b",""); $("#b-conf").hidden=true; $("#book-form").classList.remove("done"); AG_B.st.hora=""; modoVisita();
   const res=c.estado==="reservado"; $("#book-form").hidden=res;
   finAbrir(c); pintarOferta(c);
@@ -2253,7 +2232,6 @@ document.addEventListener("click",e=>{
 });
 modal.addEventListener("close",()=>{ pararVisor(); dejarDeVer(); if(renderPendiente){ renderPendiente=false; render(); } });
 $("#m-360").onclick=()=>showFoto(0,true);
-$("#m-wa").addEventListener("click",()=>apuntarInteres(gal.c));
 $("#m-prev").onclick=()=>showFoto(gal.i-1);
 $("#m-next").onclick=()=>showFoto(gal.i+1);
 $("#m-thumbs").addEventListener("click",e=>{ const b=e.target.closest("[data-j]"); if(b) showFoto(+b.dataset.j, true); });
@@ -3141,13 +3119,6 @@ function slugDe(c){
   return (b?b+"-":"")+c.id.slice(0,8).toLowerCase();
 }
 const fichaURL=c=>location.origin+"/coche/"+slugDe(c);
-$("#m-share").addEventListener("click",async e=>{
-  e.preventDefault(); const c=gal.c; if(!c) return;
-  const url=fichaURL(c), t=`${c.marca} ${c.modelo} ${c.anio} · ${eur(c.precio)} · Volcano Cars`;
-  TRK("clk","compartir",c.id.slice(0,20));
-  if(navigator.share){ try{ await navigator.share({title:t,url}); return; }catch(_){ return; } }
-  window.open(wa(t+"\n"+url),"_blank","noopener");
-});
 let abiertoDesdeEnlace=false;
 function abrirDesdeEnlace(){
   if(abiertoDesdeEnlace) return; const id=new URLSearchParams(location.search).get("coche"); if(!id) return;
