@@ -24,7 +24,7 @@ Si la IA no está configurada o falla, contesta el asistente de siempre. **Nada 
 ### Cómo va una conversación
 
 ```
-Cliente escribe ─► script-ia.js ─► /api/asistente (Netlify) ─► Groq (Llama 3.3 70B)
+Cliente escribe ─► script-ia.js ─► /api/asistente (Netlify) ─► Groq (GPT-OSS 120B)
                                         │  ▲
                         herramientas ◄──┘  └── datos reales: coches del panel,
                         (en tu servidor)       /api/citas, financiación
@@ -49,8 +49,8 @@ Todo se configura en **Netlify → tu proyecto → Project configuration → Env
 3. En Netlify crea la variable **`GROQ_API_KEY`** con esa clave.
 
 Opcionales:
-- `GROQ_MODEL`: el modelo principal. Por defecto es `llama-3.3-70b-versatile`.
-- `IA_LIMITE_DIA`: llamadas a Groq al día antes de pasar al modelo pequeño (`llama-3.1-8b-instant`). Por defecto son 800.
+- `GROQ_MODEL`: el modelo principal. Por defecto es `openai/gpt-oss-120b`. `GROQ_MODEL_RESPALDO`: el de respaldo, por defecto `openai/gpt-oss-20b`. Si Groq retira un modelo, el asistente elige solo otro disponible.
+- `IA_LIMITE_DIA`: llamadas a Groq al día antes de pasar al modelo de respaldo. Por defecto son 800.
 
 ### 2.2 Avisos por Telegram (opcional, gratis)
 
@@ -85,7 +85,7 @@ Sigue las instrucciones de la cabecera de `tools/asistente/google-script.js`. En
 
 ## 3. Coste y límites (0 € al mes)
 
-- **Groq, plan gratis:** el modelo grande permite unas 1.000 peticiones al día y 30 por minuto; el pequeño, unas 14.400 al día. Cada pregunta del cliente usa entre 1 y 3 peticiones. Al llegar a `IA_LIMITE_DIA` el asistente pasa solo al modelo pequeño; si Groq no responde, contesta el asistente de siempre. Los límites los fija Groq y pueden cambiar: consúltalos en console.groq.com → Settings → Limits.
+- **Groq, plan gratis:** cada modelo tiene un límite de peticiones por minuto y por día; los tuyos los ves en console.groq.com → Settings → Limits. Cada pregunta del cliente usa entre 1 y 3 peticiones. Al llegar a `IA_LIMITE_DIA` el asistente pasa solo al modelo de respaldo, y si Groq no responde contesta el asistente de siempre.
 - **Telegram y Google Apps Script:** gratis.
 - **Netlify:** cada pregunta es una llamada a una función, que gasta una pequeña parte de los créditos del plan (igual que cualquier formulario). Publicar sigue costando 15 créditos cada vez.
 - **Protecciones incluidas:** máximo 20 preguntas por minuto y conexión, mensajes de hasta 600 caracteres, historial de 14 mensajes y un tiempo máximo de 9 segundos por respuesta.

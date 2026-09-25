@@ -4,10 +4,26 @@
 import pathlib, re, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent / "public"
+# tema «high-tech» siempre activo en la portada (y por tanto en inglés y en /comprar, /taller, /contacto)
+import runpy as _rp
+_rp.run_path(str(pathlib.Path(__file__).with_name("tema.py")))
 src = (ROOT / "index.html").read_text(encoding="utf-8")
 
 # ---------- 1. Textos visibles del HTML (entre etiquetas) ----------
 TEXT = {
+    # taller «high-tech»
+    "Taller Volcano Cars · Antigua": "Volcano Cars workshop · Antigua",
+    "Cita online": "Online booking",
+    "Confirmada al momento": "Confirmed instantly",
+    "Presupuesto por escrito": "Written quote",
+    "Antes de tocar nada": "Before any work",
+    "Todas las marcas": "All makes",
+    "Mecánica, chapa y pintura": "Mechanics, bodywork and paint",
+    "Certificado": "Certified",
+    "Reparación garantizada 3 meses o 2.000 km": "Repairs guaranteed for 3 months or 2,000 km",
+    "Elige los servicios": "Choose your services",
+    "Ninguno marcado": "None selected",
+    "Horas en tiempo real": "Live availability",
     "1 año de garantía": "1-year warranty",
     "Revisados en nuestro taller": "Checked in our own workshop",
     "Cita online al momento": "Instant online booking",
@@ -244,6 +260,7 @@ TEXT = {
 
 # ---------- 2. Atributos (placeholder, aria-label, alt, title) ----------
 ATTR = {
+    "Así trabajamos": "How we work",
     "Llamar a Volcano Cars": "Call Volcano Cars",
     "Entrega gratis en toda Fuerteventura, de Corralejo a Morro Jable": "Free delivery anywhere on Fuerteventura, from Corralejo to Morro Jable",
     "Por qué Volcano Cars": "Why Volcano Cars",

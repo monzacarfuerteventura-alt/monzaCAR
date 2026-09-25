@@ -15,13 +15,38 @@ import { leerFin } from "./financiacion.mts";
 
   Variables en Netlify:
     GROQ_API_KEY     (obligatoria para la IA; gratis en console.groq.com → API Keys)
-    GROQ_MODEL       (opcional; por defecto llama-3.3-70b-versatile)
-    IA_LIMITE_DIA    (opcional; llamadas a Groq al día antes de pasar al modelo pequeño; por defecto 800)
+    GROQ_MODEL           (opcional; por defecto openai/gpt-oss-120b)
+    GROQ_MODEL_RESPALDO  (opcional; por defecto openai/gpt-oss-20b, más rápido y con más cupo)
+    IA_LIMITE_DIA        (opcional; llamadas a Groq al día antes de pasar al modelo de respaldo; por defecto 800)
+  Si Groq retira un modelo (como hizo con Llama 3 en agosto de 2026), el asistente pregunta a Groq qué modelos
+  hay y usa el primero de la lista PREFERIDOS que esté disponible: no se rompe.
   Sin GROQ_API_KEY, o si Groq falla, responde { sinIA: true } (código 200) y la web usa el asistente de siempre.
 */
 
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
-const MODELO_PEQUENO = "llama-3.1-8b-instant";
+const PREFERIDOS = ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.8-27b", "moonshotai/kimi-k2-instruct", "meta-llama/llama-4-maverick-17b-128e-instruct", "llama-3.3-70b-versatile", "llama-3.1-8b-instant"];
+const principal = () => env("GROQ_MODEL") || "openai/gpt-oss-120b";
+const respaldo = () => env("GROQ_MODEL_RESPALDO") || "openai/gpt-oss-20b";
+const retirados = new Set<string>();        // modelos que Groq ha dicho que no existen (se recuerda mientras la función esté viva)
+let catalogo: string[] | null = null;
+async function modelosDeGroq(): Promise<string[]> {
+  if (catalogo) return catalogo;
+  const r = await fetch("https://api.groq.com/openai/v1/models", { headers: { authorization: `Bearer ${env("GROQ_API_KEY")}` }, signal: AbortSignal.timeout(4000) });
+  const d = (await r.json().catch(() => ({}))) as any;
+  catalogo = (Array.isArray(d?.data) ? d.data : []).filter((m: any) => m && m.active !== false).map((m: any) => String(m.id))
+    .filter((id: string) => !/whisper|tts|guard|playai|orpheus|compound|distil|embed|vision-only/i.test(id));
+  return catalogo!;
+}
+// Orden en que se prueban los modelos para una pregunta
+async function candidatos(usarRespaldo: boolean, descubrir: boolean) {
+  const base = usarRespaldo ? [respaldo(), principal()] : [principal(), respaldo()];
+  let lista = base;
+  if (descubrir) {
+    const hay = await modelosDeGroq().catch(() => [] as string[]);
+    lista = [...base, ...PREFERIDOS, ...hay].filter((m) => hay.includes(m));
+  }
+  return [...new Set(lista)].filter((m) => !retirados.has(m));
+}
 const MAX_MENSAJES = 14, MAX_CHARS = 600, MAX_RONDAS = 4, PRESUPUESTO_MS = 9000;
 const SERVICIOS: Record<string, string> = {
   golpes: "Golpes y abolladuras", pintura: "Pintura", aranazos: "Arañazos y rozaduras", aceite: "Cambio de aceite y filtros",
@@ -256,8 +281,10 @@ async function groq(modelo: string, mensajes: unknown[], restante: number, conHe
   const r = await fetch(GROQ_URL, {
     method: "POST",
     headers: { authorization: `Bearer ${env("GROQ_API_KEY")}`, "content-type": "application/json" },
-    body: JSON.stringify({ model: modelo, messages: mensajes, temperature: 0.3, max_tokens: 450,
-      ...(conHerramientas ? { tools: TOOLS, tool_choice: "auto", parallel_tool_calls: false } : {}) }),
+    body: JSON.stringify({ model: modelo, messages: mensajes, temperature: 0.3,
+      // los modelos gpt-oss «piensan» antes de responder: poco razonamiento (más rápido) y margen de tokens para ello
+      ...(/gpt-oss/.test(modelo) ? { reasoning_effort: "low", include_reasoning: false, max_completion_tokens: 1400 } : { max_tokens: 500 }),
+      ...(conHerramientas ? { tools: TOOLS, tool_choice: "auto" } : {}) }),
     signal: AbortSignal.timeout(Math.max(1500, Math.min(7000, restante))),
   });
   const d = (await r.json().catch(() => ({}))) as any;
@@ -272,7 +299,9 @@ export default async (req: Request, _context: Context) => {
     if (!k) return json({ ia: false, problema: "Falta la variable GROQ_API_KEY en Netlify (o no se ha vuelto a publicar)." });
     const formato = k.startsWith("gsk_") ? "correcto (empieza por gsk_)" : "RARO: una clave de Groq empieza por gsk_";
     const out: Record<string, unknown> = { ia: true, clave: { formato, largo: k.length, espacios: /\s/.test(k) ? "¡tiene espacios o saltos de línea!" : "no" } };
-    for (const m of [env("GROQ_MODEL") || "llama-3.3-70b-versatile", MODELO_PEQUENO]) {
+    const hay = await modelosDeGroq().catch(() => [] as string[]);
+    out.modelos_disponibles_en_tu_cuenta = hay.length ? hay.slice(0, 20) : "no se pudo leer la lista";
+    for (const m of [...new Set([principal(), respaldo(), ...PREFERIDOS.filter((x) => hay.includes(x)).slice(0, 1)])]) {
       const t = Date.now();
       const { status, d } = await groq(m, [{ role: "user", content: "Responde solo: OK" }], 7000, false).catch(() => ({ status: 0, d: {} as any }));
       out[m] = status === 200 ? `responde bien (${Date.now() - t} ms)` : `falla: ${explicarGroq(status, d)}`;
@@ -293,7 +322,8 @@ export default async (req: Request, _context: Context) => {
   const t0 = Date.now(), origin = new URL(req.url).origin;
   const ctx: Ctx = { origin, acciones: [], coches: [] };
   const usados = await usoHoy();
-  let modelo = usados >= (Number(env("IA_LIMITE_DIA")) || 800) ? MODELO_PEQUENO : env("GROQ_MODEL") || "llama-3.3-70b-versatile";
+  const usarRespaldo = usados >= (Number(env("IA_LIMITE_DIA")) || 800);
+  let modelo = "";
   const pagina = body?.pagina && typeof body.pagina === "object" ? body.pagina : {};
   const contexto = pagina.cocheId ? `\n(El cliente tiene abierta la ficha del coche id=${String(pagina.cocheId).slice(0, 64)}.)` : pagina.vista ? `\n(El cliente está en la sección «${String(pagina.vista).slice(0, 20)}» de la web.)` : "";
   const mensajes: any[] = [{ role: "system", content: (await instrucciones(idioma)) + contexto }, ...hist];
@@ -303,10 +333,20 @@ export default async (req: Request, _context: Context) => {
       const restante = PRESUPUESTO_MS - (Date.now() - t0);
       if (restante < 1500) break;
       const ultima = ronda === MAX_RONDAS;
-      let { status, d } = await groq(modelo, mensajes, restante, !ultima);
-      llamadas++;
-      if (status !== 200 && status !== 401 && !(status === 400 && d?.error?.code === "tool_use_failed") && modelo !== MODELO_PEQUENO) { modelo = MODELO_PEQUENO; ({ status, d } = await groq(modelo, mensajes, PRESUPUESTO_MS - (Date.now() - t0), !ultima)); llamadas++; }
-      if (status === 400 && d?.error?.code === "tool_use_failed") { ({ status, d } = await groq(modelo, mensajes, PRESUPUESTO_MS - (Date.now() - t0), false)); llamadas++; }
+      // prueba el modelo que ya funcionó; si Groq dice que no existe, que hay límite o que falla, pasa al siguiente
+      let status = 0, d: any = {}, descubierto = false;
+      let cola = modelo ? [modelo, ...(await candidatos(usarRespaldo, false)).filter((m) => m !== modelo)] : await candidatos(usarRespaldo, false);
+      for (let i = 0; i < cola.length && PRESUPUESTO_MS - (Date.now() - t0) > 1200; i++) {
+        const m = cola[i];
+        ({ status, d } = await groq(m, mensajes, PRESUPUESTO_MS - (Date.now() - t0), !ultima)); llamadas++;
+        if (status === 400 && d?.error?.code === "tool_use_failed") { ({ status, d } = await groq(m, mensajes, PRESUPUESTO_MS - (Date.now() - t0), false)); llamadas++; }
+        if (status === 200) { modelo = m; break; }
+        if (status === 401) break;
+        if (status === 404 || /does not exist|decommission|not found/i.test(String(d?.error?.message || ""))) {
+          retirados.add(m); catalogo = null;
+          if (!descubierto) { descubierto = true; cola = [...cola.slice(0, i + 1), ...(await candidatos(usarRespaldo, true)).filter((x) => !cola.includes(x))]; }
+        }
+      }
       if (status !== 200) throw new Error(explicarGroq(status, d));
       const msg = d.choices?.[0]?.message || {};
       const calls = Array.isArray(msg.tool_calls) ? msg.tool_calls.slice(0, 3) : [];

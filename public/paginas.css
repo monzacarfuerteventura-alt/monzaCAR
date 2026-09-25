@@ -1,7 +1,7 @@
 /* Estilo de las páginas de servicios y de las fichas de coches (Volcano Cars) */
 :root{--ground:#F2EFEA;--surface:#FFFFFF;--surface-2:#E9E5DF;--line:#DCD8D1;--ink:#1B1B1A;--muted:#67635D;--rosso:#D9481C;--rosso-text:#B83A12;--rosso-soft:#FBE4DA;--verde:#1F8B4C;--night:#1B1B1A;--warm:#F2994A;
   --display:"Archivo","Arial Narrow",Arial,sans-serif;--body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;--ease:cubic-bezier(.2,.7,.2,1);--r:22px;color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ground:#121210;--surface:#1C1C1A;--surface-2:#262623;--line:#33322E;--ink:#F2EFEA;--muted:#A8A29A;--rosso-text:#FF8A5C;--rosso-soft:#3A2015;color-scheme:dark}}
+@media all{:root:not([data-theme="light"]){--ground:#121210;--surface:#1C1C1A;--surface-2:#262623;--line:#33322E;--ink:#F2EFEA;--muted:#A8A29A;--rosso-text:#FF8A5C;--rosso-soft:#3A2015;color-scheme:dark}}
 :root[data-theme="dark"]{--ground:#121210;--surface:#1C1C1A;--surface-2:#262623;--line:#33322E;--ink:#F2EFEA;--muted:#A8A29A;--rosso-text:#FF8A5C;--rosso-soft:#3A2015;color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -272,7 +272,7 @@ h3{font-size:21px;font-weight:800;font-stretch:100%}
 .lc-conf{margin-top:14px;display:grid;gap:8px;background:#E3F2E9;color:#14532d;border-radius:18px;padding:18px}
 .lc-conf b{font-family:var(--display);font-size:22px;text-transform:uppercase}
 .lc-conf p{margin:0}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .lc-conf{background:#12301f;color:#c9f0d8}}
+@media all{:root:not([data-theme="light"]) .lc-conf{background:#12301f;color:#c9f0d8}}
 :root[data-theme="dark"] .lc-conf{background:#12301f;color:#c9f0d8}
 @media (max-width:520px){
   .lc-prop{padding:14px;gap:12px}

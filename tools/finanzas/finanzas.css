@@ -1,6 +1,6 @@
 /* ===================== FINANZAS ===================== */
 :root{--fn-ing:#2a78d6;--fn-egr:#eb6834}
-@media (prefers-color-scheme:dark){:root{--fn-ing:#3987e5;--fn-egr:#d95926}}
+@media all{:root{--fn-ing:#3987e5;--fn-egr:#d95926}}
 .fn-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
 .fn-acts{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
 @media (max-width:720px){.fn-acts{margin-left:0;width:100%}.fn-acts .btn{flex:1 1 auto}}

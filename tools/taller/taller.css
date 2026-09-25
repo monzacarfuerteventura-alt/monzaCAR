@@ -1,7 +1,7 @@
 /* ===================== TALLER · SOP-01 (fichas FORM-01..04) ===================== */
 :root{--t-ok:#1F8B4C;--t-okS:#E3F2E9;--t-a:#B26A00;--t-aS:#FDF0D8;--t-r:#C62D1F;--t-rS:#FBE4E1;--t-na:#67635D;--t-naS:#ECE9E4;
   --t-car:#FFFFFF;--t-carl:#5A564F;--t-glass:#DCE7F2;--t-wheel:#2B2A28;--t-rim:#B9B4AC}
-@media (prefers-color-scheme:dark){:root{--t-okS:#15301F;--t-a:#F2B350;--t-aS:#3A2B10;--t-r:#F2918A;--t-rS:#3A1D1B;--t-na:#A9A49B;--t-naS:#2C2B28;
+@media all{:root{--t-okS:#15301F;--t-a:#F2B350;--t-aS:#3A2B10;--t-r:#F2918A;--t-rS:#3A1D1B;--t-na:#A9A49B;--t-naS:#2C2B28;
   --t-car:#2A2927;--t-carl:#A9A49B;--t-glass:#2E3C4B;--t-wheel:#0E0E0D;--t-rim:#67635D}}
 .t-yo{display:inline-flex;align-items:center;gap:8px;padding:3px 10px 3px 3px;border-radius:999px;background:var(--surface-2);font-size:13px;line-height:1.15}
 .t-yo i{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-style:normal;font-weight:800}
@@ -358,7 +358,7 @@ em b.s-r,em b.s-a{background:none;color:var(--t-r)}em b.s-a{color:var(--t-a)}
   #t-print .tp-inv{width:auto!important;color:#1B1B1A!important;font-size:7.6pt!important}
   #t-print .t-ley{font-size:6.8pt;gap:5px}#t-print .t-ley i{width:11px;height:11px;font-size:6pt}
 }
-@media (prefers-color-scheme:dark){.t-semhint b.s-a,.t-sem button.s-a[aria-pressed="true"],.t-seg button.s-a[aria-pressed="true"],.t-fb.vivo{color:#1B1B1A}}
+@media all{.t-semhint b.s-a,.t-sem button.s-a[aria-pressed="true"],.t-seg button.s-a[aria-pressed="true"],.t-fb.vivo{color:#1B1B1A}}
 /* hueco al final para que ninguna etiqueta flotante (p. ej. «Powered by Netlify») tape el último botón */
 .dw-body::after{content:"";display:block;height:80px}
 main.wrap{padding-bottom:110px}

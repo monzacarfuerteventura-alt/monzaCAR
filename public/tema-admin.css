@@ -1,0 +1,140 @@
+/* =====================================================================
+   VOLCANO CARS · TEMA «HIGH-TECH» DEL PANEL  (tema-admin.css)
+   ---------------------------------------------------------------------
+   Mismo estilo que la web y el taller: carbón, naranja volcánico,
+   letra técnica y brillos suaves. Solo cambia el aspecto: ninguna ID
+   ni clase que use el panel. Al imprimir (informes, órdenes del taller,
+   etiquetas, finanzas, guía) todo vuelve a salir en claro.
+   ===================================================================== */
+
+html:root {
+  --tx-bg: #121212;
+  --tx-card: #1E1E1E;
+  --tx-card-2: #262628;
+  --tx-line: rgba(255, 255, 255, .09);
+  --tx-line-2: rgba(255, 255, 255, .16);
+  --tx-acc: #D94A26;
+  --tx-acc-2: #C83E1A;
+  --tx-acc-txt: #FF8A5C;
+  --tx-glow: rgba(217, 74, 38, .55);
+  --tx-ok: #3DDC84;
+  --tx-tech: "Titillium Web", "Archivo", system-ui, sans-serif;
+
+  --ground: var(--tx-bg);
+  --surface: var(--tx-card);
+  --surface-2: var(--tx-card-2);
+  --line: var(--tx-line-2);
+  --ink: #FFFFFF;
+  --muted: rgba(255, 255, 255, .64);
+  --brand: #FFFFFF;
+  --brand-ink: #0E0E0F;
+  --brand-soft: rgba(217, 74, 38, .2);
+  --accent: var(--tx-acc);
+  --accent-ink: #FFFFFF;
+  --ok: var(--tx-ok);
+  --ok-soft: rgba(61, 220, 132, .12);
+  --bad: #FF8A7F;
+  --bad-soft: rgba(231, 76, 60, .14);
+  color-scheme: dark;
+}
+
+/* fondo */
+html:root body {
+  background:
+    radial-gradient(900px 480px at 100% -8%, rgba(217, 74, 38, .14), transparent 60%),
+    radial-gradient(700px 400px at -10% 110%, rgba(200, 62, 26, .07), transparent 60%),
+    linear-gradient(rgba(255, 255, 255, .025) 1px, transparent 1px) 0 0 / 44px 44px,
+    linear-gradient(90deg, rgba(255, 255, 255, .025) 1px, transparent 1px) 0 0 / 44px 44px,
+    var(--tx-bg);
+  background-attachment: fixed;
+}
+::selection { background: rgba(217, 74, 38, .45); color: #FFFFFF; }
+html { scrollbar-color: #3A3A3D #0E0E0F; }
+:focus-visible { outline-color: var(--tx-acc-txt); }
+
+/* cabecera y pestañas */
+.top { background: rgba(12, 12, 13, .82); border-bottom-color: var(--tx-line); backdrop-filter: blur(14px); }
+.top::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; pointer-events: none; background: linear-gradient(90deg, transparent, rgba(217, 74, 38, .6), transparent); }
+.logo i { background: linear-gradient(135deg, var(--tx-acc), var(--tx-acc-2)); color: #FFFFFF; box-shadow: 0 8px 18px -8px var(--tx-glow); }
+.logo span { color: var(--tx-acc-txt); }
+.bar .tag, .tag, .pill, .kpi span, .field label, legend, .tabs button, .t-lbl, .kicker {
+  font-family: var(--tx-tech);
+}
+.field label { letter-spacing: .08em; text-transform: uppercase; font-size: 12px; font-weight: 700; }
+.tabsrow { background: rgba(18, 18, 18, .88); backdrop-filter: blur(10px); }
+.tabs { background: #0E0E0F; border: 1px solid var(--tx-line); }
+.tabs button { letter-spacing: .03em; }
+.tabs button[aria-selected="true"] { background: linear-gradient(180deg, #2C2C2F, #232325); color: #FFFFFF; box-shadow: inset 0 0 0 1px rgba(217, 74, 38, .6), 0 0 14px -4px var(--tx-glow); }
+.tabs button[aria-selected="true"] svg { color: var(--tx-acc-txt); }
+
+/* botones */
+.b-acc {
+  background: linear-gradient(180deg, #E4552F, var(--tx-acc) 45%, var(--tx-acc-2)) !important; color: #FFFFFF;
+  box-shadow: 0 12px 26px -12px var(--tx-glow), inset 0 1px 0 rgba(255, 255, 255, .22) !important;
+}
+.b-acc:hover { box-shadow: 0 16px 34px -12px var(--tx-glow), 0 0 0 1px rgba(255, 138, 92, .45) !important; }
+.b-brand { background: #FFFFFF; color: #0E0E0F; }
+.b-ghost { background: rgba(255, 255, 255, .03); border-color: var(--tx-line-2); color: #FFFFFF; }
+.b-ghost:hover { border-color: var(--tx-acc); box-shadow: 0 0 16px -6px var(--tx-glow); }
+.b-bad { border-color: rgba(255, 138, 127, .6); }
+
+/* tarjetas, filas, cajas */
+.card, .row, .kpi, .dw-box, .empty, .login, .drop, .ph {
+  border-color: var(--tx-line-2);
+}
+.card, .row, .kpi, .dw-box {
+  background: linear-gradient(180deg, #202022, #19191A);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 1px 2px rgba(0, 0, 0, .4);
+}
+.row:hover, .kpi:hover, .card.lux:hover {
+  border-color: rgba(217, 74, 38, .55);
+  box-shadow: 0 0 0 1px rgba(217, 74, 38, .22), 0 18px 40px -20px var(--tx-glow);
+}
+.login { background: linear-gradient(180deg, rgba(34, 34, 36, .95), rgba(22, 22, 23, .97)); box-shadow: 0 40px 90px -40px rgba(0, 0, 0, .9), 0 0 0 1px var(--tx-line-2) !important; }
+.login::before { background: linear-gradient(90deg, transparent, var(--tx-acc), #FF9B6A, transparent) !important; height: 2px !important; box-shadow: 0 0 14px var(--tx-glow); }
+.kpi b { font-family: var(--tx-tech); font-weight: 700; }
+.drawer, .dw { background: #141415; border-color: var(--tx-line-2); }
+.toast { background: #FFFFFF; color: #0E0E0F; box-shadow: 0 20px 50px -18px rgba(0, 0, 0, .9), 0 0 0 1px rgba(217, 74, 38, .35); }
+.foot { background: rgba(18, 18, 18, .92); backdrop-filter: blur(10px); border-top-color: var(--tx-line); }
+
+/* tarjetas destacadas (valor del inventario, efectivo en caja, flujo de caja…): brillo naranja en vez de blanco */
+.cj-kpi.dest, .fn-kpi.hero, .al-kpi.dest {
+  background: linear-gradient(135deg, rgba(217, 74, 38, .24), rgba(217, 74, 38, .06)) !important;
+  color: #FFFFFF !important; border-color: rgba(217, 74, 38, .55) !important;
+  box-shadow: 0 0 0 1px rgba(217, 74, 38, .2), 0 16px 40px -18px var(--tx-glow);
+  --brand-ink: #FFFFFF; --muted: rgba(255, 255, 255, .72);
+}
+.cj-kpi.dest *, .fn-kpi.hero *, .al-kpi.dest * { color: inherit; }
+.cj-kpi.dest b, .fn-kpi.hero b, .al-kpi.dest b { font-family: var(--tx-tech); text-shadow: 0 0 18px var(--tx-glow); }
+
+/* campos */
+.in, select.in, textarea.in, .row select {
+  background: #101011; border: 1px solid var(--tx-line-2); color: #FFFFFF;
+}
+.in::placeholder { color: rgba(255, 255, 255, .34); }
+.in:hover { border-color: rgba(255, 255, 255, .26); }
+.in:focus { border-color: var(--tx-acc) !important; box-shadow: 0 0 0 4px rgba(217, 74, 38, .2), 0 0 18px -6px var(--tx-glow) !important; }
+.check input, input[type=checkbox], input[type=radio] { accent-color: var(--tx-acc); }
+
+/* píldoras de estado y tablas */
+.pill { background: rgba(255, 255, 255, .06); border: 1px solid var(--tx-line); letter-spacing: .03em; }
+.pill.disponible { background: rgba(61, 220, 132, .12); color: var(--tx-ok); border-color: rgba(61, 220, 132, .3); }
+.pill.reservado { background: rgba(242, 179, 80, .12); color: #F2B350; border-color: rgba(242, 179, 80, .3); }
+th { font-family: var(--tx-tech); letter-spacing: .06em; }
+.tabla tr:hover td { background: rgba(217, 74, 38, .05); }
+
+/* ---------------- imprimir: siempre en claro (informes, órdenes, etiquetas…) ---------------- */
+@media print {
+  html:root {
+    --ground: #FFFFFF; --surface: #FFFFFF; --surface-2: #E9E5DF; --line: #DCD8D1;
+    --ink: #1B1B1A; --muted: #67635D; --brand: #1B1B1A; --brand-ink: #FFFFFF; --brand-soft: #E9E5DF;
+    --accent: #D9481C; --accent-ink: #FFFFFF; --ok: #1F8B4C; --ok-soft: #E3F2E9; --bad: #B3261E; --bad-soft: #FBE9E7;
+    --t-ok: #1F8B4C; --t-okS: #E3F2E9; --t-a: #B26A00; --t-aS: #FDF0D8; --t-r: #C62D1F; --t-rS: #FBE4E1; --t-na: #67635D; --t-naS: #ECE9E4;
+    --t-car: #FFFFFF; --t-carl: #5A564F; --t-glass: #DCE7F2; --t-wheel: #2B2A28; --t-rim: #B9B4AC;
+    --fn-ing: #2a78d6; --fn-egr: #eb6834;
+    color-scheme: light;
+  }
+  html:root body { background: #FFFFFF !important; color: #1B1B1A; }
+  .card, .row, .kpi, .dw-box { background: #FFFFFF !important; box-shadow: none !important; }
+  .top::after { display: none; }
+}

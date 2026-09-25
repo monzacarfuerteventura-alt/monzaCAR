@@ -7,7 +7,7 @@
 <title>Panel Volcano Cars</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,700..900&family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,700..900&family=Figtree:wght@400;500;600;700&family=Titillium+Web:wght@600;700&display=swap">
 <style>
 :root{
   --ground:#F2EFEA; --surface:#FFFFFF; --surface-2:#E9E5DF; --line:#DCD8D1;
@@ -15,7 +15,7 @@
   --accent:#D9481C; --accent-ink:#FFFFFF; --ok:#1F8B4C; --ok-soft:#E3F2E9; --bad:#B3261E; --bad-soft:#FBE9E7;
   --display:"Archivo","Arial Narrow",Arial,sans-serif; --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
-@media (prefers-color-scheme:dark){:root{
+@media all{:root{
   --ground:#121211; --surface:#1B1B1A; --surface-2:#252523; --line:#35342F;
   --ink:#F2EFEA; --muted:#A9A49B; --brand:#F2EFEA; --brand-ink:#1B1B1A; --brand-soft:#252523;
   --accent:#E5562A; --accent-ink:#FFFFFF; --ok:#3DBF76; --ok-soft:#14291D; --bad:#F2918A; --bad-soft:#3A1D1B;
@@ -188,7 +188,7 @@ legend{display:flex;align-items:center;gap:10px}
 .lead textarea{min-height:60px;font-size:15px}
 .tipo{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--surface-2);margin-right:6px;vertical-align:2px}
 .tipo.coche{background:#E3ECFA;color:#1D4E9E}.tipo.financiacion{background:#EFE6FB;color:#5B2A9E}.tipo.taller{background:#FDEBD3;color:#8A4B00}.tipo.tasacion{background:var(--ok-soft);color:var(--ok)}
-@media (prefers-color-scheme:dark){.tipo.coche{background:#17243A;color:#9CC0F5}.tipo.taller{background:#33240F;color:#F2C07C}}
+@media all{.tipo.coche{background:#17243A;color:#9CC0F5}.tipo.taller{background:#33240F;color:#F2C07C}}
 .b-wa{background:#1F8B4C;color:#fff}
 .tabsrow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
 .tabsrow .tabs{margin-bottom:0}
@@ -232,7 +232,7 @@ legend{display:flex;align-items:center;gap:10px}
 .vtipo label:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:2px}
 .vacts{display:flex;gap:8px;flex-wrap:wrap}
 .pill.v3{background:#1B1B1A;color:#fff}
-@media (prefers-color-scheme:dark){.pill.v3{background:#F2EFEA;color:#1B1B1A}}
+@media all{.pill.v3{background:#F2EFEA;color:#1B1B1A}}
 .pill.viendo{background:var(--bad-soft);color:var(--accent);display:inline-flex;align-items:center;gap:6px}
 .pill.viendo::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;animation:latido 1.8s infinite}
 /* ---------- móvil (Android e iPhone, 320–440 px) ---------- */
@@ -486,7 +486,7 @@ dialog.dlg form{display:grid;gap:12px;padding:20px}
 /*TALLER-CSS-INICIO*//* ===================== TALLER · SOP-01 (fichas FORM-01..04) ===================== */
 :root{--t-ok:#1F8B4C;--t-okS:#E3F2E9;--t-a:#B26A00;--t-aS:#FDF0D8;--t-r:#C62D1F;--t-rS:#FBE4E1;--t-na:#67635D;--t-naS:#ECE9E4;
   --t-car:#FFFFFF;--t-carl:#5A564F;--t-glass:#DCE7F2;--t-wheel:#2B2A28;--t-rim:#B9B4AC}
-@media (prefers-color-scheme:dark){:root{--t-okS:#15301F;--t-a:#F2B350;--t-aS:#3A2B10;--t-r:#F2918A;--t-rS:#3A1D1B;--t-na:#A9A49B;--t-naS:#2C2B28;
+@media all{:root{--t-okS:#15301F;--t-a:#F2B350;--t-aS:#3A2B10;--t-r:#F2918A;--t-rS:#3A1D1B;--t-na:#A9A49B;--t-naS:#2C2B28;
   --t-car:#2A2927;--t-carl:#A9A49B;--t-glass:#2E3C4B;--t-wheel:#0E0E0D;--t-rim:#67635D}}
 .t-yo{display:inline-flex;align-items:center;gap:8px;padding:3px 10px 3px 3px;border-radius:999px;background:var(--surface-2);font-size:13px;line-height:1.15}
 .t-yo i{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-style:normal;font-weight:800}
@@ -843,7 +843,7 @@ em b.s-r,em b.s-a{background:none;color:var(--t-r)}em b.s-a{color:var(--t-a)}
   #t-print .tp-inv{width:auto!important;color:#1B1B1A!important;font-size:7.6pt!important}
   #t-print .t-ley{font-size:6.8pt;gap:5px}#t-print .t-ley i{width:11px;height:11px;font-size:6pt}
 }
-@media (prefers-color-scheme:dark){.t-semhint b.s-a,.t-sem button.s-a[aria-pressed="true"],.t-seg button.s-a[aria-pressed="true"],.t-fb.vivo{color:#1B1B1A}}
+@media all{.t-semhint b.s-a,.t-sem button.s-a[aria-pressed="true"],.t-seg button.s-a[aria-pressed="true"],.t-fb.vivo{color:#1B1B1A}}
 /* hueco al final para que ninguna etiqueta flotante (p. ej. «Powered by Netlify») tape el último botón */
 .dw-body::after{content:"";display:block;height:80px}
 main.wrap{padding-bottom:110px}
@@ -940,7 +940,7 @@ a.chip{text-decoration:none}
 /*CAJA-CSS-FIN*/
 /*FINANZAS-CSS-INICIO*//* ===================== FINANZAS ===================== */
 :root{--fn-ing:#2a78d6;--fn-egr:#eb6834}
-@media (prefers-color-scheme:dark){:root{--fn-ing:#3987e5;--fn-egr:#d95926}}
+@media all{:root{--fn-ing:#3987e5;--fn-egr:#d95926}}
 .fn-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
 .fn-acts{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
 @media (max-width:720px){.fn-acts{margin-left:0;width:100%}.fn-acts .btn{flex:1 1 auto}}
@@ -1044,7 +1044,7 @@ b.fn-c-ing,b.fn-c-egr{background:none;color:var(--ink)}
 .al-hd{display:grid;gap:3px;justify-items:start;min-width:0}.al-hd>b{font-size:15.5px;line-height:1.2}.al-hd small{color:var(--muted);font-size:12.5px}
 .al-est{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:3px 8px;border-radius:999px}
 .al-est.ok{background:var(--ok-soft);color:var(--ok)}.al-est.uso{background:#E1E9F7;color:#2F55A4}.al-est.mant{background:var(--t-aS,#FDF0D8);color:var(--t-a,#B26A00)}.al-est.mal{background:var(--bad-soft);color:var(--bad)}
-@media (prefers-color-scheme:dark){.al-est.uso{background:#1C2A45;color:#9DB7EE}}
+@media all{.al-est.uso{background:#1C2A45;color:#9DB7EE}}
 .al-quien b{color:var(--ink)}
 .al-hacts{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .al-mas{position:relative;margin-left:auto}.al-mas summary{list-style:none;cursor:pointer;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);font-weight:900}
@@ -1381,6 +1381,7 @@ b.fn-c-ing,b.fn-c-egr{background:none;color:var(--ink)}
 .g-pnav a.on{background:#D9481C}
 /*GUIA-CSS-FIN*/
 </style>
+<link rel="stylesheet" href="/tema-admin.css">
 </head>
 <body>
 <header class="top">

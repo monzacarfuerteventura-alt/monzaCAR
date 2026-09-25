@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Volcano Cars · Coches de ocasión con 1 año de garantía, chapa y pintura y mecánica en Fuerteventura</title>
 <meta name="description" content="Volcano Cars: los mejores coches de ocasión en Fuerteventura, revisados en nuestro taller y con 1 año de garantía. Entrega a domicilio gratis en toda la isla. Chapa y pintura y mecánica rápida en Antigua con cita online al momento.">
-<meta name="theme-color" content="#1B1B1A">
+<meta name="theme-color" content="#121212">
 <meta property="og:title" content="Volcano Cars · Chapa y pintura, mecánica rápida y coches de ocasión">
 <meta property="og:description" content="Coches de ocasión revisados con 1 año de garantía y entrega gratis en toda Fuerteventura. Taller mecánico y chapa y pintura en Antigua con cita online.">
 <meta property="og:image" content="https://lestter7th.netlify.app/coches/opel-astra-2010/anuncio.jpg">
@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Figtree:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Figtree:wght@400;500;600;700&family=Titillium+Web:wght@600;700&display=swap">
 <link rel="canonical" href="https://lestter7th.netlify.app/">
 <link rel="alternate" hreflang="es" href="https://lestter7th.netlify.app/">
 <link rel="alternate" hreflang="en" href="https://lestter7th.netlify.app/en/">
@@ -44,7 +44,7 @@
   --r:18px; --ease:cubic-bezier(.2,.7,.2,1);
   color-scheme:light;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+@media all{:root:not([data-theme="light"]){
   --ground:#121211; --surface:#1B1B1A; --surface-2:#252523; --line:#35342F;
   --ink:#F2EFEA; --muted:#A9A49B;
   --rosso:#E5562A; --rosso-ink:#FFFFFF; --rosso-soft:#3A1D12; --rosso-text:#FF8A5E;
@@ -711,7 +711,7 @@ footer .logo-tag{color:rgba(242,239,234,.55)}
 /* chips de ventajas en la tarjeta */
 .perks{display:flex;flex-wrap:wrap;gap:6px}
 .d-chip{color:#B83A12;background:#FBE4DA}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .d-chip{color:#FF9A6E;background:#3A1D12}}
+@media all{:root:not([data-theme="light"]) .d-chip{color:#FF9A6E;background:#3A1D12}}
 :root[data-theme="dark"] .d-chip{color:#FF9A6E;background:#3A1D12}
 /* senales: nuevo · anadido hace · viendo ahora */
 .c-sig{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:13px;color:var(--muted);font-weight:600;min-height:20px}
@@ -734,7 +734,7 @@ footer .logo-tag{color:rgba(242,239,234,.55)}
 /* ficha: entrega */
 .m-perk{display:flex;gap:12px;align-items:center;border-radius:14px;padding:12px 14px;font-weight:600;font-size:14.5px;color:#B83A12;background:#FBE4DA}
 .m-perk svg{flex-shrink:0}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .m-perk{color:#FF9A6E;background:#3A1D12}}
+@media all{:root:not([data-theme="light"]) .m-perk{color:#FF9A6E;background:#3A1D12}}
 :root[data-theme="dark"] .m-perk{color:#FF9A6E;background:#3A1D12}
 
 /* sello 360° en la foto */
@@ -812,7 +812,7 @@ footer .logo-tag{color:rgba(242,239,234,.55)}
 .entrega-mini .em-ic{flex-shrink:0;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#B83A12,#F2994A);box-shadow:0 10px 22px -10px #B83A12}
 .entrega-mini b{display:block;font-size:15.5px}
 .entrega-mini small{color:var(--muted);font-size:14px}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .entrega-mini{background:linear-gradient(135deg,#3A1D12,var(--surface))}}
+@media all{:root:not([data-theme="light"]) .entrega-mini{background:linear-gradient(135deg,#3A1D12,var(--surface))}}
 :root[data-theme="dark"] .entrega-mini{background:linear-gradient(135deg,#3A1D12,var(--surface))}
 .trust li:nth-child(4){animation-delay:.36s}
 @media (prefers-reduced-motion:reduce){.ruta li{opacity:1;transform:none}.ruta .camion{top:4px}}
@@ -1224,6 +1224,8 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
 @media (prefers-reduced-motion:reduce){.ofe-head b svg{animation:none}.ofe-row i::after{transition:none}}
 </style>
 <script>document.documentElement.classList.add("js")</script>
+<link rel="stylesheet" href="/taller.css">
+<link rel="stylesheet" href="/tema.css">
 </head>
 <body>
 <!-- SVG sprites -->
@@ -1250,6 +1252,22 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
   <symbol id="i-wa" viewBox="0 0 24 24"><path d="M4 20l1.2-4.1A8 8 0 1112 20a8 8 0 01-3.9-1L4 20z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 9c0 3 2.5 5.8 6 6l1-1.5-2-1-1 .8c-1-.4-2-1.4-2.4-2.4l.8-1-1-2L9 9z" fill="currentColor"/></symbol>
   <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2 6.3 20.3l1.2-6.4L2.8 9.5l6.4-.8z" fill="currentColor"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <!-- iconos técnicos del taller (trazo 1.6, 24×24) -->
+  <symbol id="tx-dent" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15.5V13l2-4.2A2 2 0 016.8 7.6h7.6a2 2 0 011.5.7L19 12l1.4.6c.4.2.6.6.6 1v1.9"/><path d="M3 15.5h1.6M9.4 15.5h5.2M19.4 15.5H21"/><circle cx="7" cy="16" r="2"/><circle cx="17" cy="16" r="2"/><path d="M10.2 7.6l1 2.2-1.5 1.3 1.3 1.7"/><path d="M14.5 3.5l.6 1.6M18 4.4l-.9 1.4M11.3 4.4l.9 1.4" opacity=".7"/></g></symbol>
+  <symbol id="tx-spray" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 8h6.5a2 2 0 012 2v1.5a2 2 0 01-2 2H8z"/><path d="M8 9.5H5.5M16.5 10.7h2.2M10 13.5l-1.2 6.7a1 1 0 001 1.2h1.4a1 1 0 001-.8l1.2-7.1M11 8V5.5a1.5 1.5 0 013 0V8"/><path d="M20.5 8.5v.01M21.5 11v.01M20.5 13.5v.01" stroke-width="2"/></g></symbol>
+  <symbol id="tx-paint" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2.5"/><path d="M6.5 12.5l4.5-5M9.5 13l3-3.4" opacity=".8"/><path d="M16.5 17.5l1 2.5 1-2.5 2.5-1-2.5-1-1-2.5-1 2.5-2.5 1z"/></g></symbol>
+  <symbol id="tx-oil" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11.5h3l2-2h6l4.5-2.5v2l-3.5 5.5H8.5l-2-2h-3z"/><path d="M6.5 9.5V8h3M20 7l1.5-1"/><path d="M19 15.5s-1.6 1.9-1.6 3a1.6 1.6 0 003.2 0c0-1.1-1.6-3-1.6-3z"/></g></symbol>
+  <symbol id="tx-disc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="13" r="8"/><circle cx="11" cy="13" r="2.4"/><path d="M11 5.8v1.4M17.2 11.5l-1.3.4M6.1 11.9l-1.3-.4M8.4 18.8l.8-1.2M13.6 18.8l-.8-1.2"/><path d="M15.5 4.2a9.5 9.5 0 014.8 6.1l-2.4.8a7 7 0 00-3.4-4.6z" fill="currentColor" fill-opacity=".18"/></g></symbol>
+  <symbol id="tx-tyre" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.2"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M18.4 5.6l-1.6 1.6M7.2 16.8l-1.6 1.6"/><circle cx="12" cy="12" r="1" fill="currentColor"/></g></symbol>
+  <symbol id="tx-scan" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="12" rx="2.5"/><path d="M6 11h2.5l1.5-3 2.5 6 1.8-4.2H18"/><path d="M9 20h6M12 16.5V20"/></g></symbol>
+  <symbol id="tx-itv" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7.5 3v5.2c0 4.6-3.2 8.4-7.5 9.8-4.3-1.4-7.5-5.2-7.5-9.8V6z"/><path d="M8.7 12.2l2.3 2.3 4.4-4.9"/></g></symbol>
+  <symbol id="tx-snow" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5v19M3.8 7.2l16.4 9.6M20.2 7.2L3.8 16.8"/><path d="M9.5 4l2.5 2 2.5-2M9.5 20l2.5-2 2.5 2M4.3 10.5l3.1-.6-1-3M19.7 13.5l-3.1.6 1 3M19.7 10.5l-3.1-.6 1-3M4.3 13.5l3.1.6-1 3"/></g></symbol>
+  <symbol id="tx-belt" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7.5" r="3.8"/><circle cx="17" cy="16" r="3.8"/><circle cx="7" cy="7.5" r="1.1" fill="currentColor"/><circle cx="17" cy="16" r="1.1" fill="currentColor"/><path d="M3.3 8.5l10 9.6M10.7 6.5l10 9.6"/><circle cx="18.5" cy="5.5" r="1.8"/></g></symbol>
+  <symbol id="tx-bolt" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12.5" rx="2.2"/><path d="M6.5 7V5h3v2M14.5 7V5h3v2M6 11.5h3M7.5 10v3M15 11.5h3"/><path d="M12.6 12.5l-1.9 3h2.4l-1.8 3" /></g></symbol>
+  <symbol id="tx-more" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 00-5.2 5.2L3.8 17.2a1.6 1.6 0 002.3 2.3l5.7-5.7a4 4 0 005.2-5.2l-2.4 2.4-2.1-.5-.5-2.1z"/><path d="M18 15v5M15.5 17.5h5"/></g></symbol>
+  <symbol id="tx-cal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4M8.5 14l2.2 2.2 4.8-4.7"/></g></symbol>
+  <symbol id="tx-doc" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8.5L19 7.5V21H6z"/><path d="M14 3v5h5M9 12h7M9 15.5h7M9 19h4"/></g></symbol>
+  <symbol id="tx-car" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16v-3.5l1.7-4.3A2 2 0 017.6 7h8.8a2 2 0 011.9 1.2L20 12.5V16"/><path d="M3 16h18M4.5 12.5h15"/><circle cx="7.5" cy="16.5" r="1.8"/><circle cx="16.5" cy="16.5" r="1.8"/></g></symbol>
   <symbol id="i-oil" viewBox="0 0 24 24"><path d="M12 3s-5 6-5 10a5 5 0 0010 0c0-4-5-10-5-10z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
   <symbol id="i-disc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
   <symbol id="i-tyre" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3.5v4M12 16.5v4M3.5 12h4M16.5 12h4" stroke="currentColor" stroke-width="1.8"/></symbol>
@@ -1516,35 +1534,58 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
 
 <!-- ================= TALLER ================= -->
 <div class="view" id="v-taller" hidden>
-  <section class="block">
+  <!-- TALLER · diseño «high-tech» (estilos en /taller.css). Mismas ID y clases de siempre: la reserva no cambia. -->
+  <section class="block tx">
     <div class="wrap">
-      <div class="sec-head"><div><div class="eyebrow">Taller Volcano Cars</div><h2 class="page-h">¿Qué le hacemos <span class="serif">a tu coche?</span></h2><p>Marca uno o varios servicios, elige día y hora y tu cita queda confirmada al momento. Trabajamos con todas las marcas.</p></div></div>
-      <div class="garantia">
+      <header class="tx-hero">
+        <div class="tx-hero-txt">
+          <div class="eyebrow tx-kicker"><span class="tx-led" aria-hidden="true"></span>Taller Volcano Cars · Antigua</div>
+          <h2 class="page-h">¿Qué le hacemos <span class="serif">a tu coche?</span></h2>
+          <p>Marca uno o varios servicios, elige día y hora y tu cita queda confirmada al momento. Trabajamos con todas las marcas.</p>
+        </div>
+        <ul class="tx-kpis" aria-label="Así trabajamos">
+          <li><span class="status" data-status><i></i><span>Lunes a viernes, de 8:00 a 16:00</span></span></li>
+          <li><svg width="18" height="18" aria-hidden="true"><use href="#tx-cal"/></svg><span><b>Cita online</b>Confirmada al momento</span></li>
+          <li><svg width="18" height="18" aria-hidden="true"><use href="#tx-doc"/></svg><span><b>Presupuesto por escrito</b>Antes de tocar nada</span></li>
+          <li><svg width="18" height="18" aria-hidden="true"><use href="#tx-car"/></svg><span><b>Todas las marcas</b>Mecánica, chapa y pintura</span></li>
+        </ul>
+      </header>
+      <div class="garantia tx-holo">
         <div class="sello" aria-hidden="true">
           <svg class="sello-aro" viewBox="0 0 120 120"><defs><path id="sello-c" d="M60,60 m-47,0 a47,47 0 1,1 94,0 a47,47 0 1,1 -94,0"/></defs><text><textPath href="#sello-c" textLength="292">GARANTÍA DE PLAZO · VOLCANO CARS · GARANTÍA DE PLAZO · VOLCANO CARS ·</textPath></text></svg>
           <div class="sello-in"><b>10<small>%</small></b><span>por día</span></div>
         </div>
         <div class="g-txt">
-          <span class="g-eyebrow">Compromiso Volcano Cars</span>
+          <span class="g-eyebrow"><span class="tx-cert">Certificado</span>Compromiso Volcano Cars</span>
           <b>Tu coche listo a tiempo o te devolvemos parte del dinero.</b>
           <span>Si no está listo el día acordado, te descontamos el 10 % de la mano de obra por cada día de retraso, hasta el 50 %. <a href="/condiciones#plazo">Ver condiciones</a></span>
         </div>
         <ul class="g-pts">
           <li>Fecha de entrega por escrito</li>
           <li>Presupuesto antes de tocar nada</li>
-          <li>3 meses o 2.000 km de garantía</li>
+          <li>Reparación garantizada 3 meses o 2.000 km</li>
         </ul>
       </div>
       <form id="shop-form" class="split shop">
-        <div class="services" id="services"></div>
-        <div class="panel">
-          <h3>Reserva tu cita</h3>
+        <div class="tx-col">
+          <div class="tx-col-head">
+            <span class="tx-step-t"><i>01</i>Elige los servicios</span>
+            <span class="tx-count" id="t-count" aria-live="polite">Ninguno marcado</span>
+          </div>
+          <div class="services" id="services"></div>
+        </div>
+        <div class="panel tx-panel">
+          <div class="tx-panel-head">
+            <h3>Reserva tu cita</h3>
+            <span class="tx-badge"><span class="tx-led" aria-hidden="true"></span>Horas en tiempo real</span>
+          </div>
           <ol class="pasos" id="t-pasos" aria-label="Progreso de tu reserva">
             <li data-paso="1"><i>1</i><span>Servicios</span></li>
             <li data-paso="2"><i>2</i><span>Tus datos</span></li>
             <li data-paso="3"><i>3</i><span>Día y hora</span></li>
           </ol>
           <div class="resumen" id="t-resumen" aria-live="polite"></div>
+          <div class="tx-estim" id="t-estimado" aria-live="polite" hidden></div>
           <div class="modo" role="radiogroup" aria-label="Tipo de solicitud">
             <label><input type="radio" name="t-modo" value="cita" checked><span>Reservar día y hora</span></label>
             <label><input type="radio" name="t-modo" value="presu"><span>Solo pedir presupuesto</span></label>
@@ -1560,8 +1601,8 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
           </div>
           <div class="agenda" id="t-agenda" aria-live="polite"></div>
           <input class="hp" type="text" name="web" id="t-web" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <label class="consent"><input type="checkbox" id="t-ok" required><span>Acepto que Volcano Cars use estos datos solo para responder a mi solicitud. Puedo pedir que los borren cuando quiera. <a href="/privacidad" target="_blank" rel="noopener">Política de privacidad</a>.</span></label>
-        <div class="form-err" id="t-err" role="alert" hidden></div>
+          <label class="consent"><input type="checkbox" id="t-ok" required><span>Acepto que Volcano Cars use estos datos solo para responder a mi solicitud. Puedo pedir que los borren cuando quiera. <a href="/privacidad" target="_blank" rel="noopener">Política de privacidad</a>.</span></label>
+          <div class="form-err" id="t-err" role="alert" hidden></div>
           <button class="btn btn-rosso" type="submit" id="t-btn"><span id="t-btn-t">Confirmar cita</span> <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></button>
           <p class="note" id="t-sel" hidden></p>
           <p class="note" id="t-note">La cita queda confirmada al momento. Si luego no puedes venir, avísanos por WhatsApp.</p>
@@ -2174,7 +2215,7 @@ modal.addEventListener("click",e=>{ if(e.target===modal) modal.close(); });
 
 /* taller */
 const TICK='<svg width="14" height="14" viewBox="0 0 20 20"><path d="M5 10.5l3.2 3.2L15 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-const svcHTML=s=>`<div class="svc ${s.g==="car"?"":"mec"}"><input type="checkbox" id="sv-${s.k}" value="${s.n}" data-k="${s.k}"><label for="sv-${s.k}"><span class="ic"><svg width="22" height="22"><use href="#i-${s.i}"/></svg></span><span><b>${s.n}</b><small>${s.d}</small></span><span class="tick" aria-hidden="true">${TICK}</span></label></div>`;
+const svcHTML=s=>`<div class="svc ${s.g==="car"?"":"mec"}"><input type="checkbox" id="sv-${s.k}" value="${s.n}" data-k="${s.k}"><label for="sv-${s.k}"><span class="ic"><svg width="24" height="24"><use href="#tx-${s.i}"/></svg></span><span><b>${s.n}</b><small>${s.d}</small></span><span class="tick" aria-hidden="true">${TICK}</span></label></div>`;
 $("#services").innerHTML=
   `<div class="svc-group">${IDIOMA==="en"?"Bodywork":"Carrocería"}</div>`+SERVICIOS.filter(s=>s.g==="car").map(svcHTML).join("")+
   `<div class="svc-group">${IDIOMA==="en"?"Mechanics":"Mecánica"}</div>`+SERVICIOS.filter(s=>s.g!=="car").map(svcHTML).join("");
@@ -2328,7 +2369,7 @@ document.addEventListener("pointermove",e=>{ const el=e.target.closest&&e.target
 function pintarResumen(){
   const sel=[...document.querySelectorAll("#services input:checked")].map(i=>SERVICIOS.find(s=>s.k===i.dataset.k)).filter(Boolean);
   $("#t-resumen").innerHTML = sel.length
-    ? sel.map(s=>`<button type="button" class="chip-s ${s.g==="car"?"":"mec"}" data-quitar="${s.k}" aria-label="${L("Quitar","Remove")} ${s.n}"><span class="ci"><svg width="13" height="13"><use href="#i-${s.i}"/></svg></span>${s.n}<span class="chip-x" aria-hidden="true">×</span></button>`).join("")
+    ? sel.map(s=>`<button type="button" class="chip-s ${s.g==="car"?"":"mec"}" data-quitar="${s.k}" aria-label="${L("Quitar","Remove")} ${s.n}"><span class="ci"><svg width="13" height="13"><use href="#tx-${s.i}"/></svg></span>${s.n}<span class="chip-x" aria-hidden="true">×</span></button>`).join("")
     : `<p class="res-vacio"><svg width="18" height="18"><use href="#i-arrow"/></svg>${L("Toca los servicios que necesitas","Tap the services you need")}</p>`;
   actualizarPasos();
 }
@@ -3073,5 +3114,6 @@ cargar();
 </script>
 <!-- Asistente con IA (Groq). Si falta el archivo o la clave, el asistente de siempre sigue funcionando. -->
 <script src="/script-ia.js" defer></script>
+<script src="/taller-ui.js" defer></script>
 </body>
 </html>

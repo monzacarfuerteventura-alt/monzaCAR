@@ -21,7 +21,7 @@ HEAD = """<!doctype html>
 <meta name="robots" content="noindex, follow">
 <style>
 :root{{--ground:#F2EFEA;--surface:#FFFFFF;--line:#DCD8D1;--ink:#1B1B1A;--muted:#6B655E;--rosso:#D9481C;color-scheme:light}}
-@media (prefers-color-scheme:dark){{:root:not([data-theme="light"]){{--ground:#0D0E10;--surface:#16181B;--line:#2A2E33;--ink:#F3EFE9;--muted:#A49E97;--rosso:#E0413F;color-scheme:dark}}}}
+@media all{{:root:not([data-theme="light"]){{--ground:#0D0E10;--surface:#16181B;--line:#2A2E33;--ink:#F3EFE9;--muted:#A49E97;--rosso:#E0413F;color-scheme:dark}}}}
 :root[data-theme="dark"]{{--ground:#0D0E10;--surface:#16181B;--line:#2A2E33;--ink:#F3EFE9;--muted:#A49E97;--rosso:#E0413F;color-scheme:dark}}
 *{{box-sizing:border-box}}
 body{{margin:0;background:var(--ground);color:var(--ink);font:16.5px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}}
@@ -37,6 +37,7 @@ th,td{{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vert
 .tw{{overflow-x:auto}}
 .en{{border-left:4px solid var(--rosso);padding:12px 16px;background:var(--surface);border-radius:0 12px 12px 0;color:var(--muted);font-size:15px}}
 </style>
+<link rel="stylesheet" href="/tema.css">
 </head>
 <body>
 <main class="wrap">

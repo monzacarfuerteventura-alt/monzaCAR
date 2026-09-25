@@ -1,0 +1,200 @@
+/* =====================================================================
+   VOLCANO CARS · TEMA «HIGH-TECH» DE TODA LA WEB  (tema.css)
+   ---------------------------------------------------------------------
+   El mismo estilo del taller en toda la web pública: portada, catálogo,
+   ficha del coche, contacto, páginas de pueblos y servicios, legales,
+   seguimiento de la reparación, chat y avisos.
+   Funciona sobre las variables de color que ya usaba la web (su modo
+   oscuro, ahora siempre activo gracias a tools/tema.py): no cambia
+   ninguna ID ni clase que use el JavaScript.
+   Colores oficiales: naranja volcánico #D94A26 / #C83E1A · carbón
+   #121212 / #1E1E1E · blanco #FFFFFF.
+   ===================================================================== */
+
+html:root:not([data-theme="light"]) {
+  --tx-bg: #121212;
+  --tx-bg-2: #0B0B0C;
+  --tx-card: #1E1E1E;
+  --tx-card-2: #262628;
+  --tx-line: rgba(255, 255, 255, .09);
+  --tx-line-2: rgba(255, 255, 255, .16);
+  --tx-acc: #D94A26;
+  --tx-acc-2: #C83E1A;
+  --tx-acc-txt: #FF8A5C;
+  --tx-glow: rgba(217, 74, 38, .55);
+  --tx-ok: #3DDC84;
+  --tx-muted: rgba(255, 255, 255, .64);
+  --tx-tech: "Titillium Web", "Archivo", system-ui, sans-serif;
+
+  /* variables que usa toda la web */
+  --ground: var(--tx-bg);
+  --surface: var(--tx-card);
+  --surface-2: var(--tx-card-2);
+  --line: var(--tx-line);
+  --ink: #FFFFFF;
+  --muted: var(--tx-muted);
+  --rosso: var(--tx-acc);
+  --rosso-ink: #FFFFFF;
+  --rosso-soft: rgba(217, 74, 38, .15);
+  --rosso-text: var(--tx-acc-txt);
+  --verde: var(--tx-ok);
+  --verde-soft: rgba(61, 220, 132, .1);
+  --night: #0B0B0C;
+  --night-2: #161617;
+  --night-line: rgba(255, 255, 255, .09);
+  --warm: #FF9B6A;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .5), 0 14px 34px -14px rgba(0, 0, 0, .7);
+  --shadow-lg: 0 2px 6px rgba(0, 0, 0, .5), 0 40px 80px -30px rgba(0, 0, 0, .85);
+  color-scheme: dark;
+}
+
+/* ---------------- fondo: carbón, halos volcánicos y retícula técnica ---------------- */
+html:root:not([data-theme="light"]) body { background: var(--tx-bg); color: #FFFFFF; }
+html:root:not([data-theme="light"]) body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(900px 480px at 92% -6%, rgba(217, 74, 38, .16), transparent 60%),
+    radial-gradient(700px 420px at -8% 40%, rgba(200, 62, 26, .08), transparent 65%),
+    linear-gradient(rgba(255, 255, 255, .028) 1px, transparent 1px) 0 0 / 44px 44px,
+    linear-gradient(90deg, rgba(255, 255, 255, .028) 1px, transparent 1px) 0 0 / 44px 44px;
+}
+::selection { background: rgba(217, 74, 38, .45); color: #FFFFFF; }
+html { scrollbar-color: #3A3A3D #0E0E0F; }
+:focus-visible { outline-color: var(--tx-acc-txt); }
+
+/* ---------------- letra técnica en etiquetas y cifras ---------------- */
+.eyebrow, .g-eyebrow, .lc-kicker, .kicker, .hs-kick, .ag-head b, .badge, .d-chip, .m-perk, .svc-group,
+.pasos li, .field > label, .stat small, [data-cuenta], .num, .ofe-pct, .ofe-save b, .lc-tag, .tag {
+  font-family: var(--tx-tech);
+}
+.eyebrow { color: var(--tx-acc-txt); letter-spacing: .2em; }
+.eyebrow::before { background: var(--tx-acc); box-shadow: 0 0 10px var(--tx-glow); }
+h1 .serif, h2 .serif, .page-h .serif { color: var(--tx-acc-txt); }
+
+/* ---------------- cabecera y menú ---------------- */
+header.top { background: rgba(12, 12, 13, .72); border-bottom: 1px solid var(--tx-line); }
+header.top.scrolled { background: rgba(12, 12, 13, .9); border-bottom-color: var(--tx-line-2); box-shadow: 0 10px 30px -18px #000; }
+header.top::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(217, 74, 38, .6), transparent);
+}
+.logo { color: #FFFFFF; }
+.mtabs, nav.mtabs {
+  background: rgba(20, 20, 21, .86) !important; border: 1px solid var(--tx-line-2) !important;
+  backdrop-filter: blur(14px); box-shadow: 0 18px 40px -16px rgba(0, 0, 0, .8) !important;
+}
+.mtabs a { color: var(--tx-muted); }
+.mtabs a[aria-current="page"], .mtabs a.on { color: #FFFFFF; background: rgba(217, 74, 38, .18) !important; box-shadow: inset 0 0 0 1px rgba(217, 74, 38, .45); }
+
+/* ---------------- botones ---------------- */
+.btn { letter-spacing: .01em; }
+.btn-rosso, .b-rosso {
+  background: linear-gradient(180deg, #E4552F, var(--tx-acc) 45%, var(--tx-acc-2)) !important; color: #FFFFFF !important;
+  box-shadow: 0 14px 30px -12px var(--tx-glow), inset 0 1px 0 rgba(255, 255, 255, .22);
+  overflow: hidden;
+}
+.btn-rosso::after {
+  content: ""; position: absolute; inset: 0; transform: translateX(-120%); pointer-events: none; border-radius: inherit;
+  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, .26) 50%, transparent 70%);
+  transition: transform .8s cubic-bezier(.2, .8, .2, 1);
+}
+.btn-rosso:hover::after { transform: translateX(120%); }
+.btn-rosso:hover { box-shadow: 0 18px 40px -12px var(--tx-glow), 0 0 0 1px rgba(255, 138, 92, .45), inset 0 1px 0 rgba(255, 255, 255, .28); }
+.btn-ghost { background: rgba(255, 255, 255, .04); border-color: var(--tx-line-2); color: #FFFFFF; }
+.btn-ghost:hover { border-color: var(--tx-acc); box-shadow: 0 0 18px -6px var(--tx-glow); }
+.btn-ink { background: #FFFFFF; color: #0E0E0F; }
+.btn-glass { border-color: var(--tx-line-2); }
+.btn-wa, .b-wa { background: linear-gradient(180deg, #25A35B, #1F8B4C); box-shadow: 0 12px 26px -12px rgba(37, 163, 91, .6); }
+
+/* ---------------- tarjetas y paneles ---------------- */
+.car, .panel, .metodo, .rev, .hs-card, .lc-car, .otro, .info > div, .banda, .card, .ofe, .pg-card, .lc-card {
+  border-color: var(--tx-line-2);
+}
+.car {
+  background: linear-gradient(180deg, #202022, #19191A);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 1px 2px rgba(0, 0, 0, .4);
+}
+.car:hover, .lc-car:hover, .otro:hover, .metodo:hover {
+  border-color: rgba(217, 74, 38, .6);
+  box-shadow: 0 0 0 1px rgba(217, 74, 38, .25), 0 22px 50px -22px var(--tx-glow);
+}
+.panel {
+  background: linear-gradient(180deg, rgba(34, 34, 36, .92), rgba(22, 22, 23, .96));
+  box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .9), inset 0 1px 0 rgba(255, 255, 255, .07);
+  position: relative;
+}
+.panel::before {
+  content: ""; position: absolute; left: 22px; right: 22px; top: 0; height: 2px; border-radius: 2px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--tx-acc), #FF9B6A, transparent); box-shadow: 0 0 14px var(--tx-glow);
+}
+.rev { background: linear-gradient(160deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, .02)); }
+.reviews-sec, .entrega, .cta-band { background-color: #0E0E0F; }
+
+/* ---------------- campos de formulario ---------------- */
+.input, select.input, textarea.input, .lc-in, .pg-in {
+  background: #101011; border: 1px solid var(--tx-line-2); color: #FFFFFF;
+}
+.input::placeholder { color: rgba(255, 255, 255, .34); }
+.input:hover { border-color: rgba(255, 255, 255, .26); }
+.input:focus { border-color: var(--tx-acc); box-shadow: 0 0 0 4px rgba(217, 74, 38, .2), 0 0 18px -6px var(--tx-glow); }
+.consent a, .note a { color: var(--tx-acc-txt); }
+
+/* agenda en píldoras en toda la web (visitas a coches incluidas) */
+.ag-day { border: 1px solid var(--tx-line-2); background: #151516; }
+.ag-day[aria-pressed="true"] { background: linear-gradient(180deg, var(--tx-acc), var(--tx-acc-2)); border-color: transparent; color: #FFFFFF; box-shadow: 0 12px 26px -10px var(--tx-glow); }
+.ag-day[aria-pressed="true"] small { color: rgba(255, 255, 255, .86); }
+.ag-h { border-radius: 999px; border: 1px solid var(--tx-line-2); background: #151516; font-family: var(--tx-tech); font-weight: 700; }
+.ag-h:hover:not(:disabled) { border-color: var(--tx-acc); box-shadow: 0 0 14px -4px var(--tx-glow); }
+.ag-h[aria-pressed="true"] { background: #FFFFFF; color: #0E0E0F; border-color: #FFFFFF; box-shadow: 0 0 0 3px rgba(217, 74, 38, .55); }
+.ag-live, .ag-sel.ok { color: var(--tx-ok); }
+.modo { background: #0E0E0F; border: 1px solid var(--tx-line); }
+.modo input:checked + span { background: linear-gradient(180deg, #2C2C2F, #232325); color: #FFFFFF; box-shadow: inset 0 0 0 1px rgba(217, 74, 38, .6); }
+
+/* chips, filtros y etiquetas */
+.chip, .fchip, .qf button, .fil-row button, .chips button {
+  border-color: var(--tx-line-2);
+}
+.chip[aria-pressed="true"], .fchip[aria-pressed="true"], .qf button[aria-pressed="true"], .chips button[aria-pressed="true"],
+.chip.on, .fchip.on {
+  background: rgba(217, 74, 38, .18) !important; border-color: var(--tx-acc) !important; color: #FFFFFF !important; box-shadow: 0 0 14px -4px var(--tx-glow);
+}
+
+/* ---------------- ficha del coche (ventana) ---------------- */
+dialog { background: #171718; border: 1px solid var(--tx-line-2); box-shadow: 0 50px 120px rgba(0, 0, 0, .75), 0 0 0 1px rgba(0, 0, 0, .5); }
+dialog::backdrop { background: rgba(5, 5, 6, .74); }
+
+/* ---------------- chat, avisos y cookies ---------------- */
+.bot { background: #121212; border-color: var(--tx-line-2); box-shadow: 0 40px 90px rgba(0, 0, 0, .7), 0 0 0 1px rgba(217, 74, 38, .18); }
+.bot-f { background: #171718; border-top-color: var(--tx-line); }
+.bot-f input { background: #0E0E0F; border-color: var(--tx-line-2); }
+.bm.b { background: #1E1E1E; border-color: var(--tx-line-2); }
+.bm.u { background: linear-gradient(180deg, #E4552F, var(--tx-acc-2)); color: #FFFFFF; }
+.b-acts button, .b-acts a { background: #1B1B1C; border-color: var(--tx-line-2); color: #FFFFFF; }
+.b-acts button:hover, .b-acts a:hover { border-color: var(--tx-acc); box-shadow: 0 0 12px -4px var(--tx-glow); }
+.bot-fab { box-shadow: 0 12px 30px var(--tx-glow), 0 0 0 1px rgba(255, 255, 255, .12) inset; }
+.ck { background: #171718; border-color: var(--tx-line-2); box-shadow: 0 30px 70px rgba(0, 0, 0, .8); }
+.bot-tip { background: #1E1E1E; border-color: var(--tx-line-2); color: #FFFFFF; }
+
+/* ---------------- pie ---------------- */
+footer { background: #0B0B0C !important; border-top: 1px solid var(--tx-line); }
+.tricolore { background: linear-gradient(90deg, var(--tx-acc-2), var(--tx-acc), #FF9B6A) !important; box-shadow: 0 0 18px var(--tx-glow); }
+.pg-foot { background: #0B0B0C; }
+
+/* ---------------- páginas legales y seguimiento (misma paleta) ---------------- */
+.box { background: #1A1A1B; border-color: var(--tx-line-2); }
+.back { color: var(--tx-acc-txt); }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-rosso::after { transition: none; }
+}
+
+/* ---------------- imprimir: siempre en claro ---------------- */
+@media print {
+  html:root:not([data-theme="light"]) {
+    --ground: #FFFFFF; --surface: #FFFFFF; --surface-2: #F2EFEA; --line: #DCD8D1; --ink: #1B1B1A; --muted: #67635D;
+    --rosso: #D9481C; --rosso-text: #B83A12; --rosso-soft: #FBE4DA; --verde: #1F8B4C; --verde-soft: #E3F2E9;
+    color-scheme: light;
+  }
+  html:root:not([data-theme="light"]) body { background: #FFFFFF; color: #1B1B1A; }
+  html:root:not([data-theme="light"]) body::before { display: none; }
+}
