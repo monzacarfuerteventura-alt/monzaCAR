@@ -60,7 +60,7 @@ export type F1 = {
   vehiculo: { matricula: string; marcaModelo: string; vin: string; anioColor: string; km: string; kmFoto: string; itv: string; combustible: string; nivel: string; testigos: string };
   motivo: string; inventario: Record<string, { v: string; nota: string }>; llaves: string;
   danos: Marca[]; fotosDanos: string[]; sinDanos: boolean;
-  autorizoHasta: string; avisosWhatsApp: boolean;
+  autorizoHasta: string; avisosWhatsApp: boolean; avisosITV?: boolean;
   firmaCliente: string; firmadoCliente: string; firmaTaller: { uid: string; nombre: string; t: string } | null; cerrada: boolean;
 };
 export type F2 = {

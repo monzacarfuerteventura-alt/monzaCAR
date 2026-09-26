@@ -97,7 +97,7 @@ priv = HEAD.format(title="Política de privacidad", upd=ACTUALIZADO) + f"""
 <p>Los que escribes en los formularios de la web: nombre, teléfono, y según el caso los datos de tu coche (marca, modelo, año, kilómetros, matrícula), los servicios que necesitas, el día y la hora que prefieres y tu mensaje. También guardamos, junto a tu solicitud, de dónde llegaste a la web (por ejemplo, un anuncio de Google o un portal de coches) para saber qué publicidad funciona. No pedimos datos especialmente protegidos.</p>
 
 <h2>Para qué los usamos</h2>
-<p>Solo para responder a tu solicitud y gestionar tu servicio: darte presupuesto, confirmar tu cita o tu visita para ver un coche, y, si dejas tu coche en el taller, enseñarte cómo va la reparación y el presupuesto en un enlace privado que solo tienes tú. Guardamos un registro de las gestiones que hacemos contigo (llamadas, mensajes, presupuestos) para atenderte bien. No te enviaremos publicidad y no tomamos decisiones automatizadas sobre ti.</p>
+<p>Solo para responder a tu solicitud y gestionar tu servicio: darte presupuesto, confirmar tu cita o tu visita para ver un coche, y, si dejas tu coche en el taller, enseñarte cómo va la reparación y el presupuesto en un enlace privado que solo tienes tú. Guardamos un registro de las gestiones que hacemos contigo (llamadas, mensajes, presupuestos) para atenderte bien. No te enviaremos publicidad y no tomamos decisiones automatizadas sobre ti. La única excepción es el aviso de ITV, y solo si nos lo pides (ver más abajo).</p>
 
 <h2>Base legal</h2>
 <p>Tu consentimiento, que das al marcar la casilla del formulario (art. 6.1.a del RGPD), y la aplicación de medidas precontractuales que tú solicitas (art. 6.1.b del RGPD). Puedes retirar el consentimiento cuando quieras, sin que afecte a lo tratado antes.</p>
@@ -121,6 +121,9 @@ priv = HEAD.format(title="Política de privacidad", upd=ACTUALIZADO) + f"""
 
 <h2>Asistente de la web</h2>
 <p>El asistente que aparece abajo a la derecha funciona dentro de tu navegador: lo que escribes en él no se guarda ni se envía a ningún sitio. Solo si pulsas uno de sus botones de WhatsApp se abre WhatsApp con tu mensaje ya escrito, y eres tú quien decide enviarlo.</p>
+
+<h2>Aviso de ITV</h2>
+<p>Si al dejar tu coche en el taller nos pides que te avisemos de la ITV, guardamos tu nombre, tu teléfono, la matrícula, el modelo y la fecha en que caduca la ITV, y te escribimos por WhatsApp un mes antes y una semana antes. Base legal: tu consentimiento (art. 6.1.a del RGPD). Puedes retirarlo cuando quieras contestando «no» al mensaje o escribiéndonos, y no te volveremos a escribir por este motivo.</p>
 
 <h2>Solicitudes por WhatsApp y teléfono</h2>
 <p>Si nos escribes por WhatsApp o nos llamas, usamos tu número y lo que nos cuentes solo para atenderte. Borramos las conversaciones que ya no necesitamos. En el taller, los datos de la ficha de recepción (nombre, DNI y vehículo) se usan para gestionar la reparación, emitir la factura y cumplir la normativa de talleres.</p>

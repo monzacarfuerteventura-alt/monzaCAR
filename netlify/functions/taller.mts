@@ -17,6 +17,8 @@ import {
   POST /api/taller/fichas/:token/f3         → datos, fichaje (hora del servidor), justificación, visto bueno, corrección
   POST /api/taller/fichas/:token/reabrir    → solo gerente, queda en la auditoría
   GET  /api/taller/resumen?desde&hasta      → rendimiento, pausas, alertas y auditoría (solo gerente)
+  GET  /api/taller/itv                      → avisos de ITV: clientes que aceptaron el aviso y a los que les caduca pronto
+  POST /api/taller/itv  {clave, accion}     → accion: "enviado" (marca la etapa 30 o 7 días) o "no-avisar" (no volver a avisar)
   Los fichajes se guardan con la hora del servidor: nadie puede escribir una hora a mano.
   Solo el gerente puede corregir una hora, con motivo, y la hora original queda guardada.
 */
@@ -81,7 +83,7 @@ function limpiarF1(x: any, prev: F1 | null): F1 {
     motivo: str(x?.motivo, 1500), inventario: inv, llaves: str(x?.llaves, 3).replace(/[^\d]/g, ""),
     danos: (Array.isArray(x?.danos) ? x.danos : []).map((d: any) => ({ v: uno(d?.v, ["frontal", "izq", "techo", "dcho", "trasera"]), x: Math.min(100, Math.max(0, Math.round(Number(d?.x) || 0))), y: Math.min(100, Math.max(0, Math.round(Number(d?.y) || 0))), t: uno(d?.t, ["R", "A", "P", "G", "S", "O"]) })).filter((d: any) => d.v && d.t).slice(0, 60),
     fotosDanos: (Array.isArray(x?.fotosDanos) ? x.fotosDanos : []).filter(esFoto).slice(0, 30), sinDanos: !!x?.sinDanos,
-    autorizoHasta: str(x?.autorizoHasta, 10).replace(/[^\d.,]/g, ""), avisosWhatsApp: !!x?.avisosWhatsApp,
+    autorizoHasta: str(x?.autorizoHasta, 10).replace(/[^\d.,]/g, ""), avisosWhatsApp: !!x?.avisosWhatsApp, avisosITV: !!x?.avisosITV,
     firmaCliente: firmaPng(x?.firmaCliente) || prev?.firmaCliente || "", firmadoCliente: prev?.firmadoCliente || "",
     firmaTaller: prev?.firmaTaller || null, cerrada: prev?.cerrada || false,
   };
@@ -241,6 +243,47 @@ export default async (req: Request, context: Context) => {
     const hoy = hoyCanarias();
     const desde = fechaISO(url.searchParams.get("desde")) || hoy.slice(0, 8) + "01", hasta = fechaISO(url.searchParams.get("hasta")) || hoy;
     return json(await resumen(desde, hasta));
+  }
+
+  // ---------- avisos de ITV (solo clientes que lo aceptaron en FORM-01) ----------
+  if (recurso === "itv") {
+    if (!(q.admin || q.rol === "recepcion")) return json({ error: "Solo el gerente o recepción." }, 403);
+    const MARCAS = "itv/marcas";
+    const marcas = ((await tstore().get(MARCAS, { type: "json" }).catch(() => null)) as Record<string, { d30?: string; d7?: string; no?: string }> | null) || {};
+    if (req.method === "POST") {
+      const clave = str(body.clave, 40), accion = uno(body.accion, ["enviado", "no-avisar"]);
+      if (!/^[A-Z0-9]{1,12}\|\d{4}-\d{2}-\d{2}$/.test(clave) || !accion) return json({ error: "Datos no válidos." }, 400);
+      const m = (marcas[clave] ||= {}), t = new Date().toISOString();
+      if (accion === "no-avisar") m.no = t;
+      else { const etapa = uno(body.etapa, ["30", "7"]); if (!etapa) return json({ error: "Falta la etapa." }, 400); m[etapa === "30" ? "d30" : "d7"] = t; }
+      await tstore().setJSON(MARCAS, marcas);
+      return json({ ok: true });
+    }
+    if (req.method !== "GET") return json({ error: "Método no permitido" }, 405);
+    const hoy = hoyCanarias(), dia = (d: string) => Math.round((Date.parse(d + "T12:00:00Z") - Date.parse(hoy + "T12:00:00Z")) / 864e5);
+    const lf = await tstore().list({ prefix: "f/" });
+    const fichas = (await Promise.all(lf.blobs.map((b) => tstore().get(b.key, { type: "json" }) as Promise<Fichas | null>))).filter(Boolean) as Fichas[];
+    // Por matrícula nos quedamos con la ficha más reciente: su fecha de ITV y su permiso son los que valen
+    const ult = new Map<string, Fichas>();
+    for (const f of fichas) {
+      const x = f.f1; if (!x?.vehiculo?.matricula) continue;
+      const m = x.vehiculo.matricula.replace(/[^A-Z0-9]/g, ""), prev = ult.get(m)?.f1;
+      if (!prev || (x.fecha + x.hora) > (prev.fecha + prev.hora)) ult.set(m, f);
+    }
+    const lista: any[] = [];
+    for (const [mat, f] of ult) {
+      const x = f.f1!; const itv = x.vehiculo.itv;
+      if (!x.avisosITV || !itv || x.cliente.telefono.replace(/[^\d]/g, "").length < 9) continue;
+      const dias = dia(itv); if (dias > 35 || dias < -30) continue;
+      const clave = mat + "|" + itv, m = marcas[clave] || {};
+      if (m.no) continue;
+      const etapa = dias <= 7 ? "7" : "30";
+      const enviado = etapa === "7" ? m.d7 || "" : m.d30 || "";
+      lista.push({ clave, etapa, dias, itv, enviado, anterior: etapa === "7" ? m.d30 || "" : "", token: f.token, num: f.num,
+        nombre: x.cliente.nombre, telefono: x.cliente.telefono, matricula: x.vehiculo.matricula, coche: x.vehiculo.marcaModelo });
+    }
+    lista.sort((a, b) => (a.enviado ? 1 : 0) - (b.enviado ? 1 : 0) || a.dias - b.dias);
+    return json({ hoy, pendientes: lista.filter((a) => !a.enviado).length, avisos: lista });
   }
 
   // ---------- nueva recepción (crea la orden) ----------
