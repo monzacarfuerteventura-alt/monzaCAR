@@ -22,16 +22,10 @@ import { store, canalDe, enviarAviso, waNum } from "./shared.mts";
   Un coche por hora en cada agenda, de lunes a viernes, de 8:00 a 15:00 (el taller cierra a las 16:00).
 */
 
-export const TIPOS = ["coche", "taller", "tasacion", "contacto", "financiacion", "alerta"] as const;
-// Alertas de coches nuevos por pueblo (módulo de captación bajo el catálogo)
-export const ZONAS_ALERTA = ["Morro Jable", "Tuineje", "Antigua", "Puerto del Rosario", "La Oliva", "Pájara", "Otro pueblo"];
-const PRESUPUESTOS_ALERTA = ["Hasta 3.000 €", "Hasta 5.000 €", "Hasta 8.000 €", "Hasta 12.000 €", "Más de 12.000 €", ""];
-const CARROCERIAS_ALERTA = ["Cualquiera", "Pequeño / ciudad", "Familiar / berlina", "SUV / 4x4", "Furgoneta / trabajo", ""];
-// Pase VIP del taller: etiqueta que llega en el email, Telegram, Google Sheets y el CRM
-export const ETIQUETA_VIP = "[SOLICITUD VIP - PRIORIDAD ALTA +10%]";
+export const TIPOS = ["coche", "taller", "tasacion", "contacto", "financiacion"] as const;
 export const ESTADOS = ["nueva", "contactado", "cita", "ganada", "perdida"] as const;
 const FRANJAS = ["8:00-10:00", "10:00-12:00", "12:00-14:00", "14:00-16:00", ""];
-export const CONSENTIMIENTO_VERSION = "2026-09-25";
+export const CONSENTIMIENTO_VERSION = "2026-09-22";
 export const RETENCION = 730 * 864e5; // 2 años
 const LIMITE_HORA = 6; // solicitudes por persona y hora (anti-spam)
 export const HORAS = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00"];
@@ -69,8 +63,6 @@ export type Solicitud = {
   fotos?: string[];   // presupuesto por foto (claves en el almacén «clientes-fotos»)
   reserva?: string;   // código de la reserva online (VC-XXXXXX)
   financiacion?: Fin | null;
-  prioridad?: boolean;  // «⚡ Prioridad Taller» +10 % sobre el presupuesto final (solo taller)
-  alerta?: { zona: string; presupuesto: string; carroceria: string; cambio: string; busqueda: string } | null;
 };
 // Pre-estudio de financiación pedido desde la ficha de un coche
 type Fin = { precio: number; entrada: number; importe: number; plazo: number; cuota: number; tin: number; tae: number; situacion: string; ingresos: string; entidad: string };
@@ -211,29 +203,6 @@ export function limpiar(input: any, manual = false): { s?: Solicitud; error?: st
   };
   const fotos = (Array.isArray(input.fotos) ? input.fotos : []).map((x: unknown) => str(x, 60)).filter(esFotoCliente).slice(0, 4);
   if (fotos.length) s.fotos = [...new Set(fotos)];
-  // Pase VIP: el cliente ha activado «⚡ Prioridad Taller» (+10 % sobre el presupuesto final, solo si lo acepta)
-  if (tipo === "taller" && input.prioridad === true) {
-    s.prioridad = true;
-    s.mensaje = str(`⚡ ${ETIQUETA_VIP} ${s.mensaje}`, 1600);
-    s.servicios = ["⚡ Prioridad Taller +10 %", ...s.servicios].slice(0, 15);
-  }
-  // Alerta de coches nuevos: pueblo obligatorio y consentimiento expreso para los avisos por WhatsApp
-  if (tipo === "alerta") {
-    const a = input.alerta && typeof input.alerta === "object" ? input.alerta : {};
-    const zona = ZONAS_ALERTA.includes(a.zona) ? a.zona : "";
-    if (!zona) return { error: "Elige tu pueblo." };
-    if (!manual && input.aceptaAvisos !== true) return { error: "Marca la casilla para recibir los avisos por WhatsApp." };
-    s.alerta = {
-      zona,
-      presupuesto: PRESUPUESTOS_ALERTA.includes(a.presupuesto) ? a.presupuesto : "",
-      carroceria: CARROCERIAS_ALERTA.includes(a.carroceria) ? a.carroceria : "",
-      cambio: ["Manual", "Automático", ""].includes(a.cambio) ? a.cambio : "",
-      busqueda: str(a.busqueda, 120),
-    };
-    s.servicios = [];
-    s.mensaje = str(`🔔 Alerta de coches nuevos · ${zona}${s.alerta.presupuesto ? " · " + s.alerta.presupuesto : ""}${s.alerta.carroceria && s.alerta.carroceria !== "Cualquiera" ? " · " + s.alerta.carroceria : ""}${s.alerta.busqueda ? " · busca: " + s.alerta.busqueda : ""}`, 600);
-    if (!manual) s.consentimiento.version = CONSENTIMIENTO_VERSION + "+avisos-whatsapp";
-  }
   if (tipo === "financiacion") {
     const f = input.financiacion && typeof input.financiacion === "object" ? input.financiacion : {};
     if (!s.coche) return { error: "Falta el coche." };
@@ -282,22 +251,19 @@ export async function dentroDelLimite(ip: string, ua: string): Promise<boolean> 
 
 
 // ---------- aviso por email de cada solicitud nueva ----------
-const TIPO_TXT: Record<string, string> = { coche: "Interesado en un coche", taller: "Cita de taller", tasacion: "Tasación", contacto: "Consulta", financiacion: "Pre-estudio de financiación", alerta: "Alerta de coches nuevos" };
+const TIPO_TXT: Record<string, string> = { coche: "Interesado en un coche", taller: "Cita de taller", tasacion: "Tasación", contacto: "Consulta", financiacion: "Pre-estudio de financiación" };
 export const eurTxt = (n: number) => { const v = Math.round(n * 100) / 100, e = Math.trunc(v), c = Math.round((v - e) * 100); return String(e).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + (c ? "," + String(c).padStart(2, "0") : "") + " €"; };
 export function fechaBonita(f: string) {
   return f ? new Date(f + "T12:00:00Z").toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }) : "";
 }
 export async function avisar(x: Solicitud, origin: string) {
   const cuando = x.cita ? `${fechaBonita(x.cita.fecha)} a las ${x.cita.hora}` : x.dia ? `${fechaBonita(x.dia)} ${x.franja}` : "";
-  const asunto = (x.prioridad ? ETIQUETA_VIP + " " : "") + (x.cita
+  const asunto = x.cita
     ? `Nueva cita${x.tipo === "taller" ? " de taller" : " para ver coche"}: ${x.nombre} · ${cuando}`
-    : x.alerta ? `Nueva alerta de coches (${x.alerta.zona}): ${x.nombre}`
-    : `Nueva solicitud (${TIPO_TXT[x.tipo] || x.tipo}): ${x.nombre}`);
-  const saludo = x.prioridad ? mensajeVIP(x) : x.alerta ? mensajeAlerta(x)
-    : x.idioma === "en" ? `Hi ${x.nombre.split(" ")[0]}, this is Volcano Cars. ` : `Hola ${x.nombre.split(" ")[0]}, te escribimos de Volcano Cars. `;
+    : `Nueva solicitud (${TIPO_TXT[x.tipo] || x.tipo}): ${x.nombre}`;
+  const saludo = x.idioma === "en" ? `Hi ${x.nombre.split(" ")[0]}, this is Volcano Cars. ` : `Hola ${x.nombre.split(" ")[0]}, te escribimos de Volcano Cars. `;
   const v = x.vehiculo || {};
   await enviarAviso(asunto, [
-    ["Prioridad", x.prioridad ? "⚡ VIP · el cliente acepta +10 % sobre el presupuesto final para entrar a box el primero. Contesta antes que a nadie." : ""],
     ["Tipo", TIPO_TXT[x.tipo] || x.tipo],
     ["Nombre", x.nombre],
     ["Teléfono", x.telefono],
@@ -308,7 +274,6 @@ export async function avisar(x: Solicitud, origin: string) {
     ["Financiación", x.financiacion ? `${eurTxt(x.financiacion.importe)} a ${x.financiacion.plazo} meses · cuota ${eurTxt(x.financiacion.cuota)} · entrada ${eurTxt(x.financiacion.entrada)}` : ""],
     ["Situación", x.financiacion ? `${x.financiacion.situacion} · ingresos ${x.financiacion.ingresos}` : ""],
     ["Mensaje", x.mensaje],
-    ["Alerta", x.alerta ? [x.alerta.zona, x.alerta.presupuesto, x.alerta.carroceria !== "Cualquiera" ? x.alerta.carroceria : "", x.alerta.cambio, x.alerta.busqueda].filter(Boolean).join(" · ") : ""],
     ["Fotos", x.fotos?.length ? `${x.fotos.length} foto${x.fotos.length > 1 ? "s" : ""} del daño: míralas en el CRM` : ""],
     ["Idioma", x.idioma === "en" ? "Inglés" : ""],
     ["Viene de", x.origen?.canal || "Directo"],
@@ -317,20 +282,4 @@ export async function avisar(x: Solicitud, origin: string) {
     { txt: "Llamar", url: `tel:${x.telefono.replace(/[^\d+]/g, "")}`, color: "#1B1B1A" },
     { txt: "Abrir el CRM", url: `${origin}/admin#crm` },
   ], x.email);
-}
-
-// ---------- plantillas de WhatsApp para contestar (botón «WhatsApp al cliente» del email y de Telegram) ----------
-// Pase VIP: confirma la prioridad, recuerda las condiciones (sin sorpresas) y cierra con una pregunta orientada al «no».
-export function mensajeVIP(x: { nombre: string; idioma?: string; vehiculo?: Record<string, string> }) {
-  const n = x.nombre.split(" ")[0], coche = x.vehiculo?.coche ? (x.idioma === "en" ? ` for your ${x.vehiculo.coche}` : ` de tu ${x.vehiculo.coche}`) : "";
-  return x.idioma === "en"
-    ? `Hi ${n}, this is Volcano Cars ⚡ We've received your Express Quote${coche} with *Workshop Priority* switched on. Your car goes to the front of the queue: as soon as you accept the quote we book it into a bay at the first free slot, ahead of the waiting list. Priority adds 10% to the final quote and only applies if you go ahead with the repair. Here's your estimate: ___ €. Would it be a bad idea to bring it in today at ___:___?`
-    : `Hola ${n}, te escribimos de Volcano Cars ⚡ Hemos recibido tu Presupuesto Exprés${coche} con la *Prioridad Taller* activada. Tu coche pasa el primero de la lista: en cuanto aceptes el presupuesto entra a box en el primer hueco libre, por delante de la lista de espera. La prioridad suma un 10 % al presupuesto final y solo se aplica si haces la reparación. Tu presupuesto estimado: ___ €. ¿Sería una mala idea traerlo hoy a las ___:___?`;
-}
-// Alerta de coches nuevos: primer mensaje (confirma el alta y pide que guarden el número para recibir los avisos)
-export function mensajeAlerta(x: { nombre: string; idioma?: string; alerta?: { zona: string; presupuesto: string } | null }) {
-  const n = x.nombre.split(" ")[0], a = x.alerta;
-  return x.idioma === "en"
-    ? `Hi ${n}, this is Volcano Cars 🔔 You're on our new-car alert list${a ? ` (${a.zona}${a.presupuesto ? ", " + a.presupuesto : ""})` : ""}. When a car that fits comes in, you'll hear it here before we advertise it. Save this number so our messages reach you. Reply STOP any time and we'll remove you.`
-    : `Hola ${n}, te escribimos de Volcano Cars 🔔 Ya estás en la lista de avisos de coches nuevos${a ? ` (${a.zona}${a.presupuesto ? ", " + a.presupuesto.toLowerCase() : ""})` : ""}. Cuando entre uno que encaje, te lo contamos por aquí antes de anunciarlo. Guarda este número para que te lleguen los avisos. Si en algún momento no quieres más, responde BAJA y te quitamos.`;
 }

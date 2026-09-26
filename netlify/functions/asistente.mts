@@ -6,8 +6,6 @@ import { leerFin } from "./financiacion.mts";
 
 /*
   ASISTENTE CON IA (Groq, plan gratuito)  ·  POST /api/asistente
-  (El agente nocturno de WhatsApp, /api/whatsapp, usa estas mismas herramientas y datos reales:
-   por eso algunas funciones llevan «export». No cambia nada del chat de la web.)
   ---------------------------------------------------------------------------------------------
   El chat de la web manda aquí la conversación. La IA NO se inventa el stock ni las horas:
   para eso llama a «herramientas» que se ejecutan en este servidor con los datos reales
@@ -29,7 +27,7 @@ const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const PREFERIDOS = ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.8-27b", "moonshotai/kimi-k2-instruct", "meta-llama/llama-4-maverick-17b-128e-instruct", "llama-3.3-70b-versatile", "llama-3.1-8b-instant"];
 const principal = () => env("GROQ_MODEL") || "openai/gpt-oss-120b";
 const respaldo = () => env("GROQ_MODEL_RESPALDO") || "openai/gpt-oss-20b";
-export const retirados = new Set<string>();        // modelos que Groq ha dicho que no existen (se recuerda mientras la función esté viva)
+const retirados = new Set<string>();        // modelos que Groq ha dicho que no existen (se recuerda mientras la función esté viva)
 let catalogo: string[] | null = null;
 async function modelosDeGroq(): Promise<string[]> {
   if (catalogo) return catalogo;
@@ -40,7 +38,7 @@ async function modelosDeGroq(): Promise<string[]> {
   return catalogo!;
 }
 // Orden en que se prueban los modelos para una pregunta
-export async function candidatos(usarRespaldo: boolean, descubrir: boolean) {
+async function candidatos(usarRespaldo: boolean, descubrir: boolean) {
   const base = usarRespaldo ? [respaldo(), principal()] : [principal(), respaldo()];
   let lista = base;
   if (descubrir) {
@@ -50,7 +48,7 @@ export async function candidatos(usarRespaldo: boolean, descubrir: boolean) {
   return [...new Set(lista)].filter((m) => !retirados.has(m));
 }
 const MAX_MENSAJES = 14, MAX_CHARS = 600, MAX_RONDAS = 4, PRESUPUESTO_MS = 9000;
-export const SERVICIOS: Record<string, string> = {
+const SERVICIOS: Record<string, string> = {
   golpes: "Golpes y abolladuras", pintura: "Pintura", aranazos: "Arañazos y rozaduras", aceite: "Cambio de aceite y filtros",
   frenos: "Frenos", neumaticos: "Neumáticos", diagnosis: "Diagnosis electrónica", itv: "Pre-ITV", aire: "Aire acondicionado",
   distribucion: "Correa de distribución", bateria: "Batería y arranque", otro: "Otro servicio",
@@ -63,7 +61,7 @@ const sinAcentos = (s: string) => String(s || "").toLowerCase().normalize("NFD")
 // ---------------------------------------------------------------------------------------------
 // Datos reales
 // ---------------------------------------------------------------------------------------------
-export async function coches(): Promise<Car[]> {
+async function coches(): Promise<Car[]> {
   const l = (await store("monzacar").get("coches", { type: "json" }).catch(() => null)) as Car[] | null;
   return (l && l.length ? l : SEMILLA).filter((c) => c.estado === "disponible" || c.estado === "reservado");
 }
@@ -75,7 +73,7 @@ function oferta(c: Car) {
   const pct = Math.round((ahorro / m.media) * 100); if (pct < 3) return null;
   return { pct, media: m.media, n: m.n };
 }
-export function ficha(c: Car) {
+function ficha(c: Car) {
   const o = oferta(c);
   return {
     id: c.id, titulo: `${c.marca} ${c.modelo}${c.version ? " " + c.version : ""}`, anio: c.anio, km: c.km, kmTxt: kmT(c.km),
@@ -86,18 +84,18 @@ export function ficha(c: Car) {
     garantia: "12 meses", entrega: "gratis en toda Fuerteventura", url: `/coche/${slugDe(c)}`,
   };
 }
-export async function horasLibres(origin: string, agenda: "taller" | "visita") {
+async function horasLibres(origin: string, agenda: "taller" | "visita") {
   const r = await fetch(`${origin}/api/citas?agenda=${agenda}`, { headers: { "x-interno": "asistente" }, signal: AbortSignal.timeout(4000) });
   if (!r.ok) throw new Error("agenda");
   const j = (await r.json()) as { dias: { fecha: string; cerrado: boolean; horas: { hora: string; libre: boolean }[] }[] };
   return j.dias.filter((d) => !d.cerrado).map((d) => ({ fecha: d.fecha, horas: d.horas.filter((h) => h.libre).map((h) => h.hora) }));
 }
-export const diaTxt = (f: string) => new Date(f + "T12:00:00Z").toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" });
+const diaTxt = (f: string) => new Date(f + "T12:00:00Z").toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" });
 
 // ---------------------------------------------------------------------------------------------
 // Herramientas que puede usar la IA (definición para Groq + ejecución aquí)
 // ---------------------------------------------------------------------------------------------
-export const TOOLS = [
+const TOOLS = [
   { type: "function", function: {
     name: "buscar_coches",
     description: "Busca en el stock REAL de coches a la venta. Úsala siempre que pregunten por coches, precios, modelos, etiquetas, combustible, cambio o kilómetros. Sin filtros devuelve todo el stock.",
@@ -156,9 +154,9 @@ export const TOOLS = [
 ];
 
 type Accion = Record<string, unknown> & { tipo: string };
-export type Ctx = { origin: string; acciones: Accion[]; coches: ReturnType<typeof ficha>[] };
+type Ctx = { origin: string; acciones: Accion[]; coches: ReturnType<typeof ficha>[] };
 
-export async function ejecutar(nombre: string, a: any, ctx: Ctx): Promise<unknown> {
+async function ejecutar(nombre: string, a: any, ctx: Ctx): Promise<unknown> {
   if (nombre === "buscar_coches") {
     let l = await coches();
     const txt = sinAcentos(a.texto || "");
@@ -264,13 +262,13 @@ CÓMO TRABAJAS:
 // ---------------------------------------------------------------------------------------------
 // Llamada a Groq con herramientas
 // ---------------------------------------------------------------------------------------------
-export async function usoHoy(sumar = 0) {
+async function usoHoy(sumar = 0) {
   const s = store("analitica"), k = `ia/uso/${hoyCanarias()}`;
   const n = Number(await s.get(k).catch(() => 0)) || 0;
   if (sumar) await s.set(k, String(n + sumar)).catch(() => {});
   return n;
 }
-export function explicarGroq(status: number, d: any) {
+function explicarGroq(status: number, d: any) {
   const m = String(d?.error?.message || "").slice(0, 160);
   if (status === 401) return "401 · la clave de Groq no es válida (cópiala de nuevo en console.groq.com → API Keys)";
   if (status === 403) return "403 · Groq no permite esta petición: " + m;
@@ -279,14 +277,14 @@ export function explicarGroq(status: number, d: any) {
   if (status === 0) return "no se pudo conectar con Groq";
   return `${status} · ${m || "error de Groq"}`;
 }
-export async function groq(modelo: string, mensajes: unknown[], restante: number, conHerramientas: boolean, herramientas: unknown[] = TOOLS) {
+async function groq(modelo: string, mensajes: unknown[], restante: number, conHerramientas: boolean) {
   const r = await fetch(GROQ_URL, {
     method: "POST",
     headers: { authorization: `Bearer ${env("GROQ_API_KEY")}`, "content-type": "application/json" },
     body: JSON.stringify({ model: modelo, messages: mensajes, temperature: 0.3,
       // los modelos gpt-oss «piensan» antes de responder: poco razonamiento (más rápido) y margen de tokens para ello
       ...(/gpt-oss/.test(modelo) ? { reasoning_effort: "low", include_reasoning: false, max_completion_tokens: 1400 } : { max_tokens: 500 }),
-      ...(conHerramientas ? { tools: herramientas, tool_choice: "auto" } : {}) }),
+      ...(conHerramientas ? { tools: TOOLS, tool_choice: "auto" } : {}) }),
     signal: AbortSignal.timeout(Math.max(1500, Math.min(7000, restante))),
   });
   const d = (await r.json().catch(() => ({}))) as any;

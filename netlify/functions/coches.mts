@@ -107,11 +107,6 @@ export default async (req: Request) => {
     const fotos = store("monzacar-fotos");
     await Promise.all(gone.fotos.filter(esFotoSubida).map((f) => fotos.delete(f)));
     await borrarVideo(gone.video);
-    // su «Historial Sin Sorpresas» (PDF) también se va
-    const inf = store("monzacar-informes");
-    await inf.delete("pdf/" + gone.id).catch(() => {});
-    const idx = ((await inf.get("indice", { type: "json" }).catch(() => null)) as Record<string, unknown> | null) || {};
-    if (idx[gone.id]) { delete idx[gone.id]; await inf.setJSON("indice", idx).catch(() => {}); }
     return json({ ok: true });
   }
 

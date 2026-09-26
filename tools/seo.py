@@ -5,9 +5,9 @@
 import json, pathlib, html, datetime
 from urllib.parse import quote
 
-BASE = "https://volcanocars.com"
+BASE = "https://lestter7th.netlify.app"
 OUT = pathlib.Path(__file__).resolve().parent.parent / "public"
-TEL, TEL_LINK, WA = "677 96 03 48", "+34677960348", "34677960348"
+TEL, TEL_LINK, WA = "643 66 88 13", "+34643668813", "34643668813"
 CALLE, CP, LOC = "Calle Valle Largo, Nave 8, Polígono Industrial", "35610", "Antigua"
 DIRECCION = f"{CALLE}, {CP} {LOC}, Las Palmas"
 HORARIO = "Lunes a viernes, de 8:00 a 16:00"
@@ -18,7 +18,7 @@ e = html.escape
 wa = lambda t: f"https://wa.me/{WA}?text={quote(t)}"
 
 NEGOCIO = {"@type": ["AutoDealer", "AutoRepair", "AutoBodyShop"], "@id": BASE + "/#negocio", "name": "Volcano Cars", "url": BASE + "/",
-           "telephone": "+34677960348", "email": "volcanocars2026@gmail.com", "image": BASE + "/coches/opel-astra-2010/anuncio.jpg",
+           "telephone": "+34643668813", "email": "volcanocars2026@gmail.com", "image": BASE + "/coches/opel-astra-2010/anuncio.jpg",
            "logo": BASE + "/marca/logo-oscuro.svg", "priceRange": "€€",
            "address": {"@type": "PostalAddress", "streetAddress": CALLE, "postalCode": CP, "addressLocality": LOC, "addressRegion": "Las Palmas", "addressCountry": "ES"},
            "hasMap": "https://www.google.com/maps?cid=5551544135827693991", "geo": {"@type": "GeoCoordinates", "latitude": 28.420871, "longitude": -13.8621004},

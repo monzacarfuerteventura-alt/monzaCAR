@@ -21,12 +21,11 @@ La reserva tiene 3 pasos:
 
 **En un coche reservado** sale **«🔔 AVISARME SI SE CANCELA LA RESERVA»**. El cliente deja su nombre y su WhatsApp y queda en la lista de espera del coche, con su número de puesto.
 
-**En el taller**, antes de la cita, aparece una barra compacta y **plegada**: **«📸 Servicio Express por foto: recibe tu presupuesto en menos de 1h»**. Al tocarla se despliega:
+**En el taller**, antes de la cita, aparece el bloque **«¿Tienes un golpe, arañazo o quieres pintar tu coche?»**:
 
-- El cliente arrastra la foto o la hace con el móvil (hasta 4 fotos), pone su nombre, WhatsApp y el coche, y la envía.
-- Te llega como «Presupuesto por foto» al CRM (y a Telegram, con las fotos). Si quiere cita, la reserva abajo en «Reserva tu cita».
+- El cliente arrastra la foto o la hace con el móvil (hasta 4 fotos).
+- Elige **«Presupuesto por foto»** o **«Traerlo al taller»** (este segundo con día y hora).
 - Las fotos se reducen en el móvil antes de subirlas, así suben rápido.
-- Enlace directo que la abre desplegada: `https://lestter7th.netlify.app/taller#foto` (útil para Instagram o Google).
 
 ## 2. Qué haces tú (panel → pestaña «Coches»)
 

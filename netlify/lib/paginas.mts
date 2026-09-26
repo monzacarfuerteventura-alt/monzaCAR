@@ -3,9 +3,9 @@ import type { Car } from "./shared.mts";
 
 export const EMPRESA = {
   nombre: "Volcano Cars",
-  tel: "677 96 03 48",
-  telLink: "+34677960348",
-  wa: "34677960348",
+  tel: "643 66 88 13",
+  telLink: "+34643668813",
+  wa: "34643668813",
   email: "volcanocars2026@gmail.com",
   calle: "Calle Valle Largo, Nave 8, Polígono Industrial",
   cp: "35610",
