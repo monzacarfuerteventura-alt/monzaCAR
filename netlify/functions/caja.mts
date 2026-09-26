@@ -4,6 +4,7 @@ import { store, json, mismoOrigen } from "../lib/shared.mts";
 import { quien, leerEquipo, hoyCanarias, horaCanarias } from "../lib/taller.mts";
 import { herramientasPendientes } from "../lib/almacen.mts";
 import { s, str, cent, eur, esFoto, rid, ahora, leerDesglose, libro, alerta, listar, movsDe, teorico, turnoAbierto, leerMov, crearMovimiento, TXT_CAT, type Conteo, type Turno, type Mov } from "../lib/caja.mts";
+import { exigirJornada } from "../lib/jornada.mts";
 
 /*
   CONTROL DE CAJA Y PREVENCIÓN DE PÉRDIDAS
@@ -29,6 +30,7 @@ export default async (req: Request) => {
   if (req.method !== "GET" && !mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
   const q = await quien(req);
   if (!q) return json({ error: "No autorizado" }, 401);
+  const bloqueo = await exigirJornada(q); if (bloqueo) return bloqueo; // el equipo no trabaja sin haber fichado
   if (!q.caja) return json({ error: "No tienes permiso para usar la caja. Pídeselo al gerente." }, 403);
   const body = req.method === "POST" ? ((await req.json().catch(() => ({}))) as any) : {};
   const origin = url.origin;

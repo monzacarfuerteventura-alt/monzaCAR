@@ -2,9 +2,10 @@ import type { Config as NConfig, Context } from "@netlify/functions";
 import { store, json, mismoOrigen } from "../lib/shared.mts";
 import {
   quien, tstore, leerConfig, leerEquipo, hashPin, CONFIG_DEFECTO, ROLES, F2_IDS, F4_A, F4_B, F4_C, F4_D, MOTIVOS_PAUSA,
-  calculo, resumenF2, estadoTiempo, tramos, hoyCanarias, horaCanarias,
+  calculo, resumenF2, estadoTiempo, tramos, hoyCanarias, horaCanarias, guardarOrden,
   type Quien, type Persona, type Fichas, type F1, type F2, type F3, type F4, type Evento,
 } from "../lib/taller.mts";
+import { exigirJornada } from "../lib/jornada.mts";
 
 /*
   TALLER · SOP-01 (FORM-01 recepción, FORM-02 inspección 360°, FORM-03 tiempos, FORM-04 calidad)
@@ -51,23 +52,8 @@ function nuevoToken() {
 }
 const firma = (q: Quien) => ({ uid: q.uid, nombre: q.nombre, t: new Date().toISOString() });
 
-// Guarda las fichas y deja en la orden un resumen (para la tabla, el tablero y las alertas)
-async function guardar(f: Fichas, o: any, cambioEstado?: { estado: string; nota: string }) {
-  const cfg = await leerConfig();
-  const c = calculo(f.f3, cfg), r2 = resumenF2(f.f2);
-  const t = new Date().toISOString();
-  o.num = f.num;
-  o.fichas = {
-    f1: f.f1 ? { cerrada: f.f1.cerrada, danos: f.f1.danos.length, tipo: f.f1.tipoEntrada } : null,
-    f2: r2 ? { ...r2, rechazoFirmado: !!f.f2?.rechazoFirmado, mecanico: f.f2?.mecanico || "" } : null,
-    f3: f.f3 && c ? { mecanico: f.f3.mecanico, estado: c.estado, netoMin: c.netoMin, estMin: f.f3.estMin, desvPct: c.desvPct, desvMin: c.desvMin, exige: c.exigeJustificacion, justificada: c.justificada, aprobada: c.aprobada, desde: [...f.f3.eventos].sort((a, b) => a.t.localeCompare(b.t)).pop()?.t || "" } : null,
-    f4: f.f4 ? { resultado: f.f4.resultado, destino: f.f4.destino, firmada: !!f.f4.firma, cierre: !!f.f4.cierreGerente, intentos: f.f4.intentos } : null,
-  };
-  if (cambioEstado && cambioEstado.estado !== o.estado) { o.estado = cambioEstado.estado; o.pasos.push({ estado: cambioEstado.estado, t, nota: cambioEstado.nota }); }
-  o.actualizado = t;
-  await tstore().setJSON("f/" + f.token, f);
-  await ordenes().setJSON("o/" + o.token, o);
-}
+// Guarda las fichas y deja en la orden un resumen (ahora vive en lib/taller.mts: también lo usa el fichaje de jornada)
+const guardar = guardarOrden;
 
 // ---------- limpieza de cada ficha ----------
 const INVENTARIO = ["llaves", "repuesto", "gato", "baliza", "documentacion", "radio", "valor", "personales"];
@@ -204,6 +190,7 @@ export default async (req: Request, context: Context) => {
   if (req.method !== "GET" && !mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
   const q = await quien(req);
   if (!q) return json({ error: "No autorizado" }, 401);
+  const bloqueo = await exigirJornada(q); if (bloqueo) return bloqueo; // el equipo no trabaja sin haber fichado
   const body = req.method === "GET" || req.method === "DELETE" ? {} : ((await req.json().catch(() => ({}))) as any);
   const recurso = p[2] || "";
 

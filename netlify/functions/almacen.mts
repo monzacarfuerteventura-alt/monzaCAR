@@ -3,6 +3,7 @@ import { store, json, mismoOrigen, enviarAviso } from "../lib/shared.mts";
 import { quien, hoyCanarias, type Quien } from "../lib/taller.mts";
 import { anotar, leerLibro } from "../lib/libro.mts";
 import { a, listarA, herramientasPendientes, redondeo, CAT_PIEZA, CAT_HERR, UNIDADES, type Pieza, type MovPieza, type Herramienta } from "../lib/almacen.mts";
+import { exigirJornada } from "../lib/jornada.mts";
 
 /*
   INVENTARIO DE REPUESTOS Y CONTROL DE HERRAMIENTAS
@@ -58,6 +59,7 @@ export default async (req: Request) => {
   if (req.method !== "GET" && !mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
   const q = await quien(req);
   if (!q) return json({ error: "No autorizado" }, 401);
+  const bloqueo = await exigirJornada(q); if (bloqueo) return bloqueo; // el equipo no trabaja sin haber fichado
   const catalogo = q.admin || q.rol === "recepcion";
   const body = req.method === "POST" ? ((await req.json().catch(() => ({}))) as any) : {};
   const origin = url.origin;

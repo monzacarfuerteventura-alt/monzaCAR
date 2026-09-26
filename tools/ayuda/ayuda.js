@@ -27,7 +27,8 @@ const AY_MODS=[
    "Abre <b>volcanocars.com/admin</b> en la tablet del taller o en tu móvil.",
    "Pulsa el enlace <b>«Entrar como equipo del taller (usuario y PIN)»</b> que hay debajo del botón Entrar.",
    "Escribe tu <b>usuario</b> y tu <b>PIN</b> (6 a 8 números) que te ha dado el gerente y pulsa <b>Entrar</b>.",
-   "Arriba verás tu nombre y tu puesto. Solo aparecen las pestañas <b>Taller</b>, <b>Inventario</b>, <b>Ayuda</b> y, si tienes permiso, <b>Control de Caja</b>."],
+   "<b>La primera vez en cada móvil o tablet</b> te sale un QR: ábrelo con <b>Google Authenticator</b> (+ → Escanear código QR), escribe el código de 6 cifras y guarda tus <b>8 códigos de recuperación</b>. Deja marcado <b>«Confiar en este dispositivo 30 días»</b> y no te lo volverá a pedir ahí.",
+   "Arriba verás tu nombre y tu puesto. Si no has fichado, te sale el botón grande de <b>Registrar entrada</b>: un toque y entras."],
    tip:"Al pulsar <b>Salir</b>, el panel te pide devolver o localizar las herramientas que tengas a tu nombre. Es normal: así no se pierde nada."},
   {t:"Dar de alta a una persona del equipo",r:["ger"],p:[
    "Ve a <b>Taller</b> y pulsa <b>«Equipo y ajustes»</b> (arriba a la derecha).",
@@ -274,6 +275,24 @@ const AY_MODS=[
  estados:{t:"Qué significa cada aviso de caja",c:["Aviso","Qué significa"],f:[["Caja abierta","Hay un turno en marcha."],["Sin ticket","Salida registrada sin foto: súbela cuanto antes."],["Recuento que no cuadra","Apertura o cierre con diferencia: hay explicación y el gerente debe revisarla."],["Por revisar","Descuadre pendiente del visto bueno del gerente."],["Ajuste del gerente","Corrección añadida después, con motivo."],["Anulado","Movimiento anulado con motivo (sigue visible)."],["Lleva X h abierta","Nadie ha cerrado la caja: más de 14 horas abierta."]]}},
 
 /* ------------------------------------------------------------------ */
+{id:"jornada",ico:"⏱️",titulo:"Fichaje y jornada",tab:"jornada",roles:AY_TODOS,
+ objetivo:"Fichar la entrada, las pausas y la salida con un solo toque, y que el gerente tenga el registro legal de jornada sin papeles.",
+ cuando:["Al llegar, al parar para el café o la comida, al volver y al irte.","Si te olvidaste de fichar (avisa al gerente para que lo corrija).","A fin de mes, para firmar el registro (gerente)."],
+ flujo:["🟢 Entrada","☕ Pausa","▶️ Reanudar","🔴 Salida"],
+ mapa:{filas:[[[1,"Hola, nombre · reloj · estado",1]],[[2,"BOTÓN GRANDE (cambia solo)",1]],[[3,"Botón secundario",1]],[[4,"Trabajado hoy · pausas · tu jornada",1]],[[5,"Tus fichajes de hoy · Mis horas del mes",1]]],
+  zonas:[[1,"Cabecera","La hora es la del servidor: la que queda registrada."],[2,"Botón grande","Lo que toca ahora: Entrada si no has fichado, Pausa si estás trabajando (Salida al final del día), Reanudar si estás en pausa."],[3,"Secundario","La otra opción (Salida o Pausa)."],[4,"Tu día","Tiempo trabajado en vivo, pausas y tu jornada."],[5,"Historial","Tus fichajes de hoy y tus horas del mes (con PDF)."]]},
+ pasos:[
+  {t:"Fichar la entrada",r:["rec","mec","cal","caj"],p:["Entra con tu usuario y PIN.","Pulsa el botón verde <b>«Registrar entrada»</b>: te lleva directo al taller.","Si tenías un trabajo pausado por la salida de ayer, se reanuda solo."],tip:"Más rápido todavía: escanea con la cámara del móvil el <b>cartel QR</b> de la entrada del taller (o acerca el móvil a la pegatina NFC)."},
+  {t:"Hacer una pausa y volver",r:["rec","mec","cal","caj"],p:["Toca el chip de arriba (punto verde con tus horas).","Pulsa <b>«Iniciar pausa / comida»</b>. El trabajo del FORM-03 que tengas en marcha se pausa solo.","Al volver, pulsa <b>«Reanudar jornada»</b> (o escanea el QR): el trabajo se reanuda solo."],tip:"Mientras estás en pausa no puedes usar Taller, Inventario ni Caja: así las horas cuadran."},
+  {t:"Fichar la salida",r:["rec","mec","cal","caj"],p:["Toca el chip de arriba y pulsa <b>«Registrar salida»</b> (a partir de las 15:30 o cumplida tu jornada sale como botón grande).","Si tienes herramientas a tu nombre, devuélvelas o di dónde se quedan.","Verás un aviso con la hora y tus horas del día."],ojo:"¿Te has equivocado? Pulsa <b>«Deshacer»</b> en el aviso (hasta 2 minutos). Queda anotado como pulsación por error; no se borra nada."},
+  {t:"Ver quién está trabajando y las horas del mes",r:["ger"],p:["Abre la pestaña <b>Jornada</b>.","Arriba: 🟢 trabajando, 🟡 en pausa, 🔴 fuera (se actualiza cada 30 s).","En <b>Registro de jornada</b> elige mes y trabajador: días, horas trabajadas, ordinarias, extra, pausas e incidencias."]},
+  {t:"Corregir un fichaje olvidado o erróneo",r:["ger"],p:["En el registro, pulsa <b>«Ver / corregir»</b> en el día (o en la incidencia).","Elige <b>Añadir un fichaje olvidado</b> (tipo y hora) o <b>Anular</b> uno erróneo.","Escribe el <b>motivo</b>* y pulsa <b>«Guardar corrección»</b>."],tip:"El fichaje original nunca se borra: la corrección queda con tu nombre, la hora en que la hiciste y el motivo."},
+  {t:"Sacar el registro para firmar o para Inspección",r:["ger"],p:["Elige el mes (y el trabajador, o todo el equipo).","<b>«PDF para firmar»</b>: una hoja por trabajador con casillas de firma.","<b>«Excel (.xlsx)»</b>: resumen, días y todos los fichajes con vía, dispositivo y correcciones."],tip:"Guarda el registro 4 años. Cada trabajador puede ver y descargar el suyo en «Mis horas del mes»."},
+  {t:"Poner el cartel QR y la pegatina NFC",r:["ger"],p:["En <b>Jornada</b>, pulsa <b>«Ver e imprimir el cartel»</b> y pégalo en la entrada del taller.","Para NFC: con una app como NFC Tools, escribe en una pegatina NTAG el enlace del cartel (se copia solo al abrirlo).","Si el cartel se pierde o sale del taller, pulsa <b>«Cambiar el código»</b>: el anterior deja de valer."]},
+  {t:"Gestionar Google Authenticator y dispositivos",r:["ger"],p:["En <b>Jornada → Acceso y seguridad → Abrir</b>.","Activa o desactiva la verificación obligatoria del equipo.","Si alguien pierde el móvil: <b>«Restablecer»</b> (volverá a vincular al entrar). Olvida dispositivos de confianza que ya no se usen.","Revisa los <b>accesos raros</b>: fallos de PIN o código, horas poco habituales y QR falsos."]}],
+ estados:{t:"Estados de la jornada",c:["Estado","Qué significa","Qué puedes hacer"],f:[["🔴 Fuera de jornada","No has fichado o ya saliste.","Solo fichar la entrada."],["🟢 Trabajando","Jornada en marcha.","Todo el panel de tu puesto."],["🟡 En pausa","Café o comida.","Reanudar o fichar la salida."],["Sin salida registrada","Olvidaste fichar la salida.","El gerente la corrige con motivo."],["Horas extra","Lo que pasa de tu jornada diaria.","Se suman en el mes."]]}},
+
+/* ------------------------------------------------------------------ */
 {id:"fin",ico:"📈",titulo:"Finanzas",tab:"fin",roles:["ger"],
  objetivo:"Ver todos los ingresos y gastos del negocio (taller, venta de coches y caja) conectados, sin apuntar nada dos veces, y preparar los datos para la gestoría.",
  cuando:["Pagas una factura (alquiler, luz, proveedor…).","Cobras con tarjeta, transferencia o financiación.","Vendes un coche y quieres saber cuánto has ganado.","A fin de trimestre, para la gestoría."],
@@ -314,7 +333,7 @@ function ayPaso(p,i){
 function ayTabla(e){ return `<div class="ay-tw"><table class="ay-t"><thead><tr>${e.c.map(c=>`<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${e.f.map(r=>`<tr>${r.map((c,i)=>i?`<td>${esc(c)}</td>`:`<td><b>${esc(c)}</b></td>`).join("")}</tr>`).join("")}</tbody></table></div>`; }
 function ayModulo(m,todo){
   const ps=ayPasos(m); if(AY_BUSQ&&!ps.length) return "";
-  const puede=m.tab&&(!ME||!ME.equipo||["ordenes","alm"].includes(m.tab)||(m.tab==="caja"&&ME.caja));
+  const puede=m.tab&&(!ME||!ME.equipo||["ordenes","alm"].includes(m.tab)||(m.tab==="caja"&&ME.caja))&&!(ME&&ME.equipo&&m.tab==="jornada");
   return `<article class="ay-mod" id="ay-${m.id}">
     <header class="ay-mh"><span class="ay-ico" aria-hidden="true">${m.ico}</span><div><small>Módulo</small><h2>${esc(m.titulo)}</h2></div>${puede&&!todo?`<button type="button" class="btn b-ghost b-sm" data-ayir="${m.tab}">Abrir ${esc(m.titulo.split(" ")[0])} →</button>`:""}</header>
     ${AY_BUSQ?"":`<section class="ay-s"><h3><i>1</i>Para qué sirve</h3><p class="ay-obj"><b>Objetivo principal:</b> ${esc(m.objetivo)}</p>
@@ -353,7 +372,7 @@ document.addEventListener("click",e=>{ const t=e.target;
 });
 document.addEventListener("input",e=>{ if(e.target.id==="ay-busq"){ AY_BUSQ=ayNorm(e.target.value); clearTimeout(ayPintar.t); ayPintar.t=setTimeout(()=>{ const pos=e.target.selectionStart; ayPintar(); const b=$("#ay-busq"); if(b){ b.focus(); try{ b.setSelectionRange(pos,pos); }catch(_){} } },200); } });
 // Enlace «Cómo funciona» en la cabecera de cada pestaña
-(function(){ const sec={leads:"crm",ordenes:"taller",alm:"alm",caja:"caja",fin:"fin",agenda:"agenda",dash:"dash",list:"coches"};
+(function(){ const sec={leads:"crm",ordenes:"taller",alm:"alm",caja:"caja",fin:"fin",agenda:"agenda",dash:"dash",list:"coches",jornada:"jornada"};
   for(const [s,m] of Object.entries(sec)){ const p=document.querySelector(`#s-${s} .head p`)||document.querySelector(`#s-${s} .head h1`); if(!p||p.querySelector("[data-ayuda]")) continue;
     const b=document.createElement("button"); b.type="button"; b.className="g-link ay-link"; b.dataset.ayuda=m; b.textContent="¿Cómo funciona?"; p.append(" ",b); } })();
 

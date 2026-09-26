@@ -1,6 +1,7 @@
 import type { Config } from "@netlify/functions";
 import { store, json, isAdmin } from "../lib/shared.mts";
 import { quien } from "../lib/taller.mts";
+import { exigirJornada } from "../lib/jornada.mts";
 
 const TYPES: Record<string, string> = { "image/jpeg": "jpg", "image/webp": "webp", "image/png": "png", "application/pdf": "pdf" };
 const MIME: Record<string, string> = { jpg: "image/jpeg", webp: "image/webp", png: "image/png", pdf: "application/pdf" };
@@ -20,7 +21,8 @@ export default async (req: Request) => {
   }
 
   if (req.method === "POST" && !key) {
-    if (!(await quien(req))) return json({ error: "No autorizado" }, 401); // gerente o equipo del taller (fotos de daños y de la inspección)
+    const qf = await quien(req); if (!qf) return json({ error: "No autorizado" }, 401);
+    const bloqueo = await exigirJornada(qf); if (bloqueo) return bloqueo; // el equipo no trabaja sin haber fichado // gerente o equipo del taller (fotos de daños y de la inspección)
     const type = (req.headers.get("content-type") || "").split(";")[0];
     const ext = TYPES[type];
     if (!ext) return json({ error: "Formato no admitido. Usa una foto (JPG, PNG, WEBP) o un PDF." }, 415);

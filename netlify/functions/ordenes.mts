@@ -1,6 +1,7 @@
 import type { Config } from "@netlify/functions";
 import { store, json, isAdmin, enviarAviso, waNum, mismoOrigen } from "../lib/shared.mts";
 import { quien } from "../lib/taller.mts";
+import { exigirJornada } from "../lib/jornada.mts";
 
 /*
   ÓRDENES DE TRABAJO: SEGUIMIENTO EN VIVO + PRESUPUESTO ONLINE
@@ -128,6 +129,7 @@ export default async (req: Request) => {
   if (req.method === "GET" && !token && !(await isAdmin(req))) {
     const q = await quien(req);
     if (!q) return json({ error: "No autorizado" }, 401);
+    const bloqueo = await exigirJornada(q); if (bloqueo) return bloqueo; // el equipo no trabaja sin haber fichado
     const { blobs } = await s.list({ prefix: "o/" });
     const todas = (await Promise.all(blobs.map((b) => s.get(b.key, { type: "json" }) as Promise<Orden | null>))).filter(Boolean) as Orden[];
     return json(todas.filter((o) => o.estado !== "entregado" || Date.now() - Date.parse(o.actualizado) < 30 * 864e5).sort((a, b) => b.actualizado.localeCompare(a.actualizado))

@@ -1,4 +1,4 @@
-import { createHash, createHmac } from "node:crypto";
+import { createHash, createHmac, randomBytes } from "node:crypto";
 import { store, enviarAviso, igualSeguro } from "./shared.mts";
 
 /*
@@ -185,4 +185,100 @@ export async function desactivar2FA(codigo: string) {
   if (!(await verificarTotp(codigo))) return { error: "Código incorrecto." };
   await s().delete("config/totp");
   return { ok: true };
+}
+
+// ---------- verificación en dos pasos del EQUIPO (una clave por persona) ----------
+// Se da de alta la primera vez que la persona entra con su PIN (le sale el QR), y después solo se pide
+// en dispositivos que no sean «de confianza» (30 días). El gerente puede restablecerla si pierde el móvil.
+const kEq = (uid: string) => "totp-eq/" + uid.replace(/[^a-z0-9]/gi, "");
+export async function exige2FAEquipo() { return (await s().get("config/2fa-equipo").catch(() => null)) !== "0"; }
+export async function fijarExige2FAEquipo(si: boolean) { await s().set("config/2fa-equipo", si ? "1" : "0"); }
+export async function totpEquipo(uid: string) { return (await s().get(kEq(uid), { type: "json" }).catch(() => null)) as Totp | null; }
+export async function iniciar2FAEquipo(uid: string, host: string, nombre: string) {
+  const prev = (await s().get(kEq(uid) + "-pend", { type: "json" }).catch(() => null)) as { secreto: string; t: number } | null;
+  // Si ya le enseñamos un QR hace poco, se reutiliza: así el código que acaba de escanear sigue valiendo.
+  const secreto = prev && Date.now() - prev.t < 20 * 60e3 ? prev.secreto : secretoNuevo();
+  if (!prev || prev.secreto !== secreto) await s().setJSON(kEq(uid) + "-pend", { secreto, t: Date.now() });
+  const cuenta = String(nombre || "Equipo").slice(0, 30) + " · " + nombreEnApp(host);
+  const uri = `otpauth://totp/${encodeURIComponent("Volcano Cars:" + cuenta)}?secret=${secreto}&issuer=${encodeURIComponent("Volcano Cars")}&digits=6&period=30&algorithm=SHA1`;
+  return { secreto: secreto.replace(/(.{4})/g, "$1 ").trim(), uri, cuenta };
+}
+export async function confirmar2FAEquipo(uid: string, codigo: string) {
+  const pend = (await s().get(kEq(uid) + "-pend", { type: "json" }).catch(() => null)) as { secreto: string; t: number } | null;
+  if (!pend || Date.now() - pend.t > 20 * 60e3) return { error: "El QR ha caducado. Vuelve a entrar para ver uno nuevo." };
+  const p = comprobar(pend.secreto, String(codigo || "").replace(/\D/g, ""), 0);
+  if (!p) return { error: "El código no coincide. Comprueba que la hora del móvil es automática y escribe el código que se ve ahora." };
+  const codigos = Array.from({ length: 8 }, () => { const r = secretoNuevo().slice(0, 8); return r.slice(0, 4) + "-" + r.slice(4); });
+  await s().setJSON(kEq(uid), { secreto: pend.secreto, recuperacion: codigos.map(hashRec), desde: new Date().toISOString() });
+  await s().set(kEq(uid) + "-ult", String(p));
+  await s().delete(kEq(uid) + "-pend");
+  return { ok: true, codigos };
+}
+export async function verificarTotpEquipo(uid: string, codigo: string): Promise<"" | "ok" | "recuperacion"> {
+  const t = await totpEquipo(uid); if (!t) return "";
+  const txt = String(codigo || "").trim(), c = txt.replace(/\D/g, "");
+  if (c.length === 6 && /^[\d\s]+$/.test(txt)) {
+    const ultimo = Number(await s().get(kEq(uid) + "-ult").catch(() => 0)) || 0;
+    const p = comprobar(t.secreto, c, ultimo);
+    if (p) { await s().set(kEq(uid) + "-ult", String(p)); return "ok"; }
+    return "";
+  }
+  const h = hashRec(txt);
+  if (t.recuperacion.includes(h)) { t.recuperacion = t.recuperacion.filter((x) => x !== h); await s().setJSON(kEq(uid), t); return "recuperacion"; }
+  return "";
+}
+export async function quitar2FAEquipo(uid: string) { await Promise.all([s().delete(kEq(uid)), s().delete(kEq(uid) + "-pend"), s().delete(kEq(uid) + "-ult")]); }
+
+// ---------- dispositivos de confianza (30 días sin pedir el código de 6 cifras) ----------
+// Cookie HttpOnly + Secure + SameSite=Strict, solo para /api/login, firmada con HMAC. Cada dispositivo
+// queda apuntado (con quién, cuál y hasta cuándo) y el gerente puede olvidarlo cuando quiera.
+// Una tablet compartida guarda hasta 8 personas en la misma cookie.
+const DIAS_CONFIANZA = 30;
+const claveDisp = () => createHash("sha256").update("vc-disp|" + env("ADMIN_PASSWORD") + "|" + env("SESSION_SECRET")).digest();
+const firmaDisp = (cuerpo: string) => createHmac("sha256", claveDisp()).update(cuerpo).digest("base64url");
+type Confianza = { id: string; uid: string; nombre: string; disp: string; ip: string; t: string; exp: number };
+function leerCookie(req: Request, nombre: string) {
+  const c = req.headers.get("cookie") || "";
+  for (const p of c.split(/;\s*/)) { const i = p.indexOf("="); if (i > 0 && p.slice(0, i) === nombre) return decodeURIComponent(p.slice(i + 1)); }
+  return "";
+}
+function fichasCookie(req: Request) {
+  return leerCookie(req, "vc_dev").split("~").map((x) => {
+    const p = x.split("."); if (p.length !== 5 || p[0] !== "d1") return null;
+    if (!igualSeguro(firmaDisp(p.slice(0, 4).join(".")), p[4])) return null;
+    const exp = Number(p[2]); if (!(exp > Date.now())) return null;
+    return { raw: x, uid: p[1], exp, id: p[3] };
+  }).filter(Boolean) as { raw: string; uid: string; exp: number; id: string }[];
+}
+export async function dispositivoDeConfianza(req: Request, uid: string) {
+  const f = fichasCookie(req).find((x) => x.uid === uid); if (!f) return false;
+  const reg = (await s().get("confianza/" + f.id, { type: "json" }).catch(() => null)) as Confianza | null;
+  return !!reg && reg.uid === uid && reg.exp > Date.now();
+}
+// Devuelve la cabecera Set-Cookie con este dispositivo añadido para esta persona.
+export async function confiarDispositivo(req: Request, uid: string, nombre: string, ip: string) {
+  const id = randomBytes(9).toString("base64url").replace(/[^A-Za-z0-9]/g, "x"), exp = Date.now() + DIAS_CONFIANZA * 864e5;
+  const cuerpo = `d1.${uid.replace(/[^a-z0-9]/gi, "")}.${exp}.${id}`;
+  await s().setJSON("confianza/" + id, { id, uid, nombre, disp: dispositivo(req.headers.get("user-agent") || ""), ip: ipCorta(ip), t: new Date().toISOString(), exp } as Confianza);
+  const otras = fichasCookie(req).filter((x) => x.uid !== uid).slice(-7).map((x) => x.raw);
+  const valor = [...otras, cuerpo + "." + firmaDisp(cuerpo)].join("~");
+  return `vc_dev=${encodeURIComponent(valor)}; Path=/api/login; Max-Age=${DIAS_CONFIANZA * 86400}; HttpOnly; Secure; SameSite=Strict`;
+}
+export async function listaConfianza() {
+  const { blobs } = await s().list({ prefix: "confianza/" });
+  const todos = (await Promise.all(blobs.map((b) => s().get(b.key, { type: "json" }).catch(() => null)))) as (Confianza | null)[];
+  const caducados = todos.filter((x) => x && x.exp <= Date.now()) as Confianza[];
+  await Promise.all(caducados.map((x) => s().delete("confianza/" + x.id).catch(() => {})));
+  return (todos.filter((x) => x && x.exp > Date.now()) as Confianza[]).sort((a, b) => b.t.localeCompare(a.t));
+}
+export async function olvidarConfianza(filtro: { id?: string; uid?: string; todos?: boolean }) {
+  const l = await listaConfianza();
+  const fuera = l.filter((x) => filtro.todos || (filtro.id && x.id === filtro.id) || (filtro.uid && x.uid === filtro.uid));
+  await Promise.all(fuera.map((x) => s().delete("confianza/" + x.id)));
+  return fuera.length;
+}
+// Accesos a horas raras (antes de las 6:00 o después de las 22:00, hora de Canarias)
+export function horaInusual(d = new Date()) {
+  const h = +new Intl.DateTimeFormat("en-GB", { timeZone: "Atlantic/Canary", hour: "2-digit", hourCycle: "h23" }).format(d);
+  return h < 6 || h >= 22;
 }

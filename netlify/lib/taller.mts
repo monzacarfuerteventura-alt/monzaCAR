@@ -68,7 +68,7 @@ export type F2 = {
   mecanico: string; items: Record<string, { e: Estado4; nota: string; extra: string; fotos: string[] }>;
   horasEst: number; recomendacion: string; rechazoFirmado: boolean; firma: { uid: string; nombre: string; t: string } | null; cerrada: boolean; inicio: string;
 };
-export type Evento = { tipo: "inicio" | "pausa" | "reanudar" | "fin"; t: string; por: string; motivo: string; nota: string; corr?: { t0: string; por: string; motivo: string; en: string }[] };
+export type Evento = { tipo: "inicio" | "pausa" | "reanudar" | "fin"; t: string; por: string; motivo: string; nota: string; auto?: string; corr?: { t0: string; por: string; motivo: string; en: string }[] };
 export type F3 = {
   mecanico: string; tarifa: number; estMin: number; tipo: string; hoja: string; eventos: Evento[];
   justificacion: { codigos: string[]; explicacion: string; avisado: string; mejora: string; t: string; por: string } | null;
@@ -140,3 +140,22 @@ export const F4_D: [string, string][] = [["d1", "Documentación completa y verif
 
 export const hoyCanarias = (d = new Date()) => new Intl.DateTimeFormat("en-CA", { timeZone: "Atlantic/Canary", year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
 export const horaCanarias = (d = new Date()) => new Intl.DateTimeFormat("es-ES", { timeZone: "Atlantic/Canary", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(d);
+
+// Guarda las fichas y deja en la orden un resumen (para la tabla, el tablero y las alertas)
+export async function guardarOrden(f: Fichas, o: any, cambioEstado?: { estado: string; nota: string }) {
+  const cfg = await leerConfig();
+  const c = calculo(f.f3, cfg), r2 = resumenF2(f.f2);
+  const t = new Date().toISOString();
+  o.num = f.num;
+  o.fichas = {
+    f1: f.f1 ? { cerrada: f.f1.cerrada, danos: f.f1.danos.length, tipo: f.f1.tipoEntrada } : null,
+    f2: r2 ? { ...r2, rechazoFirmado: !!f.f2?.rechazoFirmado, mecanico: f.f2?.mecanico || "" } : null,
+    f3: f.f3 && c ? { mecanico: f.f3.mecanico, estado: c.estado, netoMin: c.netoMin, estMin: f.f3.estMin, desvPct: c.desvPct, desvMin: c.desvMin, exige: c.exigeJustificacion, justificada: c.justificada, aprobada: c.aprobada, desde: [...f.f3.eventos].sort((a, b) => a.t.localeCompare(b.t)).pop()?.t || "" } : null,
+    f4: f.f4 ? { resultado: f.f4.resultado, destino: f.f4.destino, firmada: !!f.f4.firma, cierre: !!f.f4.cierreGerente, intentos: f.f4.intentos } : null,
+  };
+  if (cambioEstado && cambioEstado.estado !== o.estado) { o.estado = cambioEstado.estado; o.pasos.push({ estado: cambioEstado.estado, t, nota: cambioEstado.nota }); }
+  o.actualizado = t;
+  await tstore().setJSON("f/" + f.token, f);
+  await store("ordenes").setJSON("o/" + o.token, o);
+}
+
