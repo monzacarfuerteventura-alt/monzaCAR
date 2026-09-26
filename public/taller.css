@@ -58,18 +58,18 @@
   background-size: 44px 44px;
   mask-image: linear-gradient(180deg, #000 0, transparent 520px);
 }
-#v-taller .block.tx { padding-block: clamp(40px, 6vw, 72px) 64px; background: none; }
+#v-taller .block.tx { padding-block: clamp(22px, 3.6vw, 44px) 44px; background: none; }
 
 /* ---------------- cabecera ---------------- */
 #v-taller .tx-hero {
-  display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 28px 48px; align-items: end; margin-bottom: 26px;
+  display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px 40px; align-items: end; margin-bottom: 18px;
 }
 #v-taller .tx-kicker {
   display: inline-flex; align-items: center; gap: 9px;
   font-family: var(--tx-tech); font-weight: 700; letter-spacing: .2em; color: var(--tx-acc-txt);
 }
 #v-taller .tx-kicker::before { display: none; }
-#v-taller .page-h { color: #FFFFFF; margin: 10px 0 12px; }
+#v-taller .page-h { color: #FFFFFF; margin: 8px 0 8px; }
 #v-taller .page-h .serif { color: var(--tx-acc-txt); }
 #v-taller .tx-hero p { margin: 0; color: var(--tx-muted); font-size: 17px; max-width: 54ch; }
 #v-taller .tx-led {
@@ -81,7 +81,7 @@
 
 #v-taller .tx-kpis { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 #v-taller .tx-kpis li {
-  display: flex; align-items: center; gap: 10px; min-height: 58px; padding: 10px 14px;
+  display: flex; align-items: center; gap: 10px; min-height: 50px; padding: 8px 12px;
   border: 1px solid var(--tx-line); border-radius: var(--tx-r-s);
   background: linear-gradient(180deg, rgba(255, 255, 255, .045), rgba(255, 255, 255, .015));
   backdrop-filter: blur(6px); font-size: 13px; color: var(--tx-muted); line-height: 1.3;
@@ -96,7 +96,7 @@
 /* ---------------- sello de garantía holográfico ---------------- */
 #v-taller .garantia.tx-holo {
   --holo: conic-gradient(from var(--holo-a, 0deg), #D94A26, #FF9B6A, #F4E3C1, #7FD8FF, #B08CFF, #FF8A5C, #D94A26);
-  position: relative; margin: 0 0 30px; padding: 22px 28px; border-radius: 20px;
+  position: relative; margin: 0 0 16px; padding: 16px 22px; border-radius: 18px;
   background: linear-gradient(135deg, #1B1B1D, #111112 60%);
   border: 1px solid transparent;
   background-clip: padding-box;
@@ -118,7 +118,7 @@
 }
 @property --holo-a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
 @keyframes txHolo { to { --holo-a: 360deg; } }
-#v-taller .sello { width: 124px; height: 124px; }
+#v-taller .sello { width: 104px; height: 104px; }
 #v-taller .sello::before {
   content: ""; position: absolute; inset: 6px; border-radius: 50%;
   background: var(--holo); filter: saturate(1.1); opacity: .9;
@@ -151,7 +151,7 @@
 
 /* ---------------- columnas ---------------- */
 #v-taller .split.shop { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 28px; }
-#v-taller .tx-col { min-width: 0; display: grid; gap: 14px; align-content: start; }
+#v-taller .tx-col { min-width: 0; display: grid; gap: 10px; align-content: start; }
 #v-taller .tx-col-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 #v-taller .tx-step-t { display: inline-flex; align-items: center; gap: 10px; font-family: var(--tx-tech); font-weight: 700; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; }
 #v-taller .tx-step-t i {
@@ -166,14 +166,14 @@
 #v-taller .tx-count.on { color: #FFFFFF; border-color: var(--tx-acc); background: rgba(217, 74, 38, .14); box-shadow: 0 0 18px -4px var(--tx-glow); }
 
 /* ---------------- tarjetas de servicio estilo app ---------------- */
-#v-taller .services { grid-template-columns: repeat(auto-fill, minmax(232px, 1fr)); gap: 10px; }
+#v-taller .services { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
 #v-taller .svc-group {
   margin-top: 6px; font-family: var(--tx-tech); letter-spacing: .22em; color: var(--tx-muted);
 }
 #v-taller .svc-group::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--tx-line-2), transparent); }
 #v-taller .svc, #v-taller .svc.mec { --c1: var(--tx-acc); --c2: #FF7A45; }
 #v-taller .svc label {
-  min-height: 78px; padding: 14px 46px 14px 14px; gap: 13px;
+  min-height: 64px; padding: 10px 44px 10px 11px; gap: 11px;
   border: 1px solid var(--tx-line); border-radius: var(--tx-r);
   background:
     radial-gradient(220px circle at var(--mx, -200px) var(--my, -200px), rgba(217, 74, 38, .16), transparent 60%),
@@ -188,12 +188,12 @@
   box-shadow: 0 0 0 1px rgba(217, 74, 38, .25), 0 16px 38px -16px var(--tx-glow), inset 0 1px 0 rgba(255, 255, 255, .06);
 }
 #v-taller .svc .ic {
-  width: 48px; height: 48px; border-radius: 13px; color: var(--tx-acc-txt);
+  width: 42px; height: 42px; border-radius: 12px; color: var(--tx-acc-txt);
   background: linear-gradient(145deg, #2B2B2E, #161617);
   border: 1px solid var(--tx-line-2);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 6px 14px -8px #000;
 }
-#v-taller .svc .ic svg { width: 26px; height: 26px; }
+#v-taller .svc .ic svg { width: 23px; height: 23px; }
 #v-taller .svc label:hover .ic { transform: none; color: #FFFFFF; border-color: rgba(217, 74, 38, .6); }
 #v-taller .svc b { color: #FFFFFF; font-size: 15px; font-weight: 700; }
 #v-taller .svc small { color: var(--tx-muted); font-size: 12.5px; }
@@ -369,27 +369,39 @@
   #v-taller .split.shop { grid-template-columns: 1fr; }
 }
 @media (max-width: 720px) {
-  #v-taller .garantia.tx-holo { grid-template-columns: auto 1fr; padding: 18px; gap: 16px; }
-  #v-taller .garantia.tx-holo .g-pts { grid-column: 1 / -1; border-left: 0; padding: 14px 0 0; border-top: 1px solid var(--tx-line); white-space: normal; }
-  #v-taller .sello { width: 92px; height: 92px; }
-  #v-taller .sello-in { inset: 18px; }
-  #v-taller .sello-in b { font-size: 24px; }
-  #v-taller .sello-in span { font-size: 9px; }
+  /* garantía compacta: sello pequeño a la izquierda y texto; los 3 puntos ya están arriba (fila de datos) */
+  #v-taller .garantia.tx-holo { grid-template-columns: auto 1fr; padding: 12px 14px; gap: 12px; align-items: center; }
+  #v-taller .garantia.tx-holo .g-pts { display: none; }
+  #v-taller .sello { width: 68px; height: 68px; }
+  #v-taller .sello-in { inset: 12px; }
+  #v-taller .sello-in b { font-size: 17px; }
+  #v-taller .sello-in span { font-size: 7px; }
+  #v-taller .g-txt > span:last-child { margin-top: 4px; }
+  #v-taller .g-eyebrow { font-size: 10px; gap: 6px; }
+  #v-taller .g-txt > b { font-size: 15px; line-height: 1.25; }
+  #v-taller .g-txt > span:last-child { font-size: 12.5px; line-height: 1.4; }
 }
 @media (max-width: 560px) {
   #v-taller .tx-kpis { grid-template-columns: 1fr 1fr; gap: 8px; }
   #v-taller .tx-kpis li { min-height: 0; padding: 10px 11px; font-size: 12px; }
   #v-taller .tx-kpis b { font-size: 13px; }
-  #v-taller .services { grid-template-columns: 1fr; gap: 8px; }
-  #v-taller .svc label { min-height: 68px; padding: 11px 44px 11px 11px; }
-  #v-taller .svc .ic { width: 42px; height: 42px; border-radius: 11px; }
-  #v-taller .panel.tx-panel { padding: 18px 16px; border-radius: 18px; }
-  #v-taller .tx-panel h3 { font-size: 22px; }
-  #v-taller .garantia.tx-holo { grid-template-columns: 1fr; justify-items: start; }
-  #v-taller .garantia.tx-holo .sello { justify-self: start; }
+  /* servicios en 2 columnas, tipo app: se ven todos casi sin hacer scroll */
+  #v-taller .services { grid-template-columns: 1fr 1fr; gap: 7px; }
+  #v-taller .svc label { min-height: 54px; padding: 8px 28px 8px 8px; gap: 8px; border-radius: 13px; }
+  #v-taller .svc .ic { width: 32px; height: 32px; border-radius: 9px; }
+  #v-taller .svc .ic svg { width: 18px; height: 18px; }
+  #v-taller .svc b { font-size: 13px; line-height: 1.2; }
+  #v-taller .svc small { display: none; }
+  #v-taller .svc .tick { top: 7px; right: 7px; margin-top: 0; width: 17px; height: 17px; border-radius: 6px; }
+  #v-taller .svc .tick svg { width: 11px; height: 11px; }
+  #v-taller .svc-group { margin-top: 2px; font-size: 11px; }
+  #v-taller .panel.tx-panel { padding: 16px 14px; border-radius: 18px; gap: 12px; }
+  #v-taller .tx-panel h3 { font-size: 21px; }
+  #v-taller .tx-hero p { font-size: 15px; }
 }
 @media (max-width: 380px) {
-  #v-taller .tx-kpis { grid-template-columns: 1fr; }
+  #v-taller .tx-kpis li { padding: 8px 9px; gap: 7px; }
+  #v-taller .tx-kpis li > svg { display: none; }
 }
 
 /* menos movimiento si el sistema lo pide */

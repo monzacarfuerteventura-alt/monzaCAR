@@ -5,9 +5,9 @@
 import json, pathlib, html, datetime
 from urllib.parse import quote
 
-BASE = "https://lestter7th.netlify.app"
+BASE = "https://volcanocars.com"
 OUT = pathlib.Path(__file__).resolve().parent.parent / "public"
-TEL, TEL_LINK, WA = "643 66 88 13", "+34643668813", "34643668813"
+TEL, TEL_LINK, WA = "677 96 03 48", "+34677960348", "34677960348"
 CALLE, CP, LOC = "Calle Valle Largo, Nave 8, Polígono Industrial", "35610", "Antigua"
 DIRECCION = f"{CALLE}, {CP} {LOC}, Las Palmas"
 HORARIO = "Lunes a viernes, de 8:00 a 16:00"
@@ -18,7 +18,7 @@ e = html.escape
 wa = lambda t: f"https://wa.me/{WA}?text={quote(t)}"
 
 NEGOCIO = {"@type": ["AutoDealer", "AutoRepair", "AutoBodyShop"], "@id": BASE + "/#negocio", "name": "Volcano Cars", "url": BASE + "/",
-           "telephone": "+34643668813", "email": "volcanocars2026@gmail.com", "image": BASE + "/coches/opel-astra-2010/anuncio.jpg",
+           "telephone": "+34677960348", "email": "volcanocars2026@gmail.com", "image": BASE + "/coches/opel-astra-2010/anuncio.jpg",
            "logo": BASE + "/marca/logo-oscuro.svg", "priceRange": "€€",
            "address": {"@type": "PostalAddress", "streetAddress": CALLE, "postalCode": CP, "addressLocality": LOC, "addressRegion": "Las Palmas", "addressCountry": "ES"},
            "hasMap": "https://www.google.com/maps?cid=5551544135827693991", "geo": {"@type": "GeoCoordinates", "latitude": 28.420871, "longitude": -13.8621004},
@@ -37,8 +37,11 @@ def cabecera(p):
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#121212">
 <link rel="canonical" href="{BASE}{p['url']}">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231B1B1A'/%3E%3Cpath d='M8 54 L22 10 L29 10 L32 16 L35 10 L42 10 L56 54 Z' fill='%23F2EFEA'/%3E%3Cpath d='M26.5 26 L37.5 26 L42.6 45 L21.4 45 Z' fill='%23D9481C'/%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Figtree:wght@400;500;600;700&family=Titillium+Web:wght@600;700&display=swap">

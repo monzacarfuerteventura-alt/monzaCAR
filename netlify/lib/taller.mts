@@ -61,6 +61,7 @@ export type F1 = {
   motivo: string; inventario: Record<string, { v: string; nota: string }>; llaves: string;
   danos: Marca[]; fotosDanos: string[]; sinDanos: boolean;
   autorizoHasta: string; avisosWhatsApp: boolean;
+  avisosITV?: boolean; avisosITVFecha?: string; // consentimiento APARTE para avisos de caducidad de ITV (comercial)
   firmaCliente: string; firmadoCliente: string; firmaTaller: { uid: string; nombre: string; t: string } | null; cerrada: boolean;
 };
 export type F2 = {

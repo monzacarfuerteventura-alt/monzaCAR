@@ -6,7 +6,7 @@ import { FOTOS_CLIENTE } from "../lib/solicitud.mts";
 // Cada hora: libera las reservas que han caducado (y avisa), recuerda las que llevan 48 h
 // y borra las fotos de «presupuesto por foto» que se subieron pero nunca se enviaron.
 export default async () => {
-  const origin = String((globalThis as any).Netlify?.env?.get("URL") || "https://lestter7th.netlify.app");
+  const origin = String((globalThis as any).Netlify?.env?.get("URL") || "https://volcanocars.com");
   await caducar(origin, true).catch(() => {});
   const s = store(FOTOS_CLIENTE);
   const { blobs } = await s.list({ prefix: "pf-" });

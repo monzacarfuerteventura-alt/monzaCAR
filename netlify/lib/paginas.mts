@@ -3,9 +3,9 @@ import type { Car } from "./shared.mts";
 
 export const EMPRESA = {
   nombre: "Volcano Cars",
-  tel: "643 66 88 13",
-  telLink: "+34643668813",
-  wa: "34643668813",
+  tel: "677 96 03 48",
+  telLink: "+34677960348",
+  wa: "34677960348",
   email: "volcanocars2026@gmail.com",
   calle: "Calle Valle Largo, Nave 8, Polígono Industrial",
   cp: "35610",
@@ -45,8 +45,11 @@ export function cabecera(origin: string, titulo: string, descripcion: string, ca
 <meta name="robots" content="${robots}">
 <meta name="theme-color" content="#121212">
 <link rel="canonical" href="${escH(canonical)}">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231B1B1A'/%3E%3Cpath d='M8 54 L22 10 L29 10 L32 16 L35 10 L42 10 L56 54 Z' fill='%23F2EFEA'/%3E%3Cpath d='M26.5 26 L37.5 26 L42.6 45 L21.4 45 Z' fill='%23D9481C'/%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Figtree:wght@400;500;600;700&family=Titillium+Web:wght@600;700&display=swap">

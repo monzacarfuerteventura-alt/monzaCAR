@@ -136,6 +136,7 @@ function tFiltrar(){
 function tBarra(){
   const n=k=>ORDENES.filter(o=>T_FASES[tFase(o.estado)][0]===k).length, al=tAlertasLocal();
   const vistas=[["mios",ES_EQ()?"Mis trabajos":"En marcha"],["tabla","Órdenes"],["tablero","Tablero"]];
+  if(T_ITV_OK()){ const p=tItvPendientes(); vistas.push(["itv",`Avisos de ITV${p?` <b class="num t-itv-n">${p}</b>`:""}`]); }
   return `<div class="t-bar">
     <div class="segv" role="group" aria-label="Vista">${vistas.map(([k,t])=>`<button type="button" data-tvista="${k}" aria-pressed="${TVISTA===k}">${t}</button>`).join("")}</div>
     <input class="in" id="t-busq" type="search" placeholder="Buscar matrícula, cliente o Nº de orden" value="${esc(TBUSQ)}" aria-label="Buscar orden">
@@ -185,6 +186,7 @@ renderOrdenes=function(){
   $("#t-barra").innerHTML=tBarra();
   if(enBusq){ const b=$("#t-busq"); b.focus(); try{ b.setSelectionRange(pos,pos); }catch(_){} }
   if(TVISTA==="tablero") return _kanbanOrdenes();
+  if(TVISTA==="itv"){ tItvPintar(); if(!TITV||Date.now()-TITV_T>60000) tItvCargar(); return; }
   if(!ORDENES.length){ $("#ordenes").innerHTML='<div class="empty"><b style="color:var(--ink)">No hay coches en el taller.</b><br>Pulsa «+ Nueva recepción» cuando entre un coche: se crea la orden con su Nº y la ficha de recepción (FORM-01).</div>'; return; }
   $("#ordenes").innerHTML=TVISTA==="mios"?tMios():tTabla();
 };
@@ -243,7 +245,7 @@ function tNuevaRecepcion(){
 function tVacias(){
   const o=TF.orden, f=TF.fichas;
   const f1=tClone(f.f1)||{fecha:"",hora:"",cliente:{nombre:o.cliente.nombre||"",doc:"",telefono:o.cliente.telefono||"",email:o.cliente.email||"",titular:"",contacto:"whatsapp"},recibidoPor:ME?ME.nombre:"",entregaPrometida:o.entrega||"",tipoEntrada:"",
-    vehiculo:{matricula:o.vehiculo.matricula||"",marcaModelo:o.vehiculo.coche||"",vin:"",anioColor:"",km:o.vehiculo.km||"",kmFoto:"",itv:"",combustible:"",nivel:"",testigos:""},motivo:"",inventario:{},llaves:"",danos:[],fotosDanos:[],sinDanos:false,autorizoHasta:"",avisosWhatsApp:true,firmaCliente:"",firmadoCliente:"",firmaTaller:null,cerrada:false};
+    vehiculo:{matricula:o.vehiculo.matricula||"",marcaModelo:o.vehiculo.coche||"",vin:"",anioColor:"",km:o.vehiculo.km||"",kmFoto:"",itv:"",combustible:"",nivel:"",testigos:""},motivo:"",inventario:{},llaves:"",danos:[],fotosDanos:[],sinDanos:false,autorizoHasta:"",avisosWhatsApp:true,avisosITV:false,firmaCliente:"",firmadoCliente:"",firmaTaller:null,cerrada:false};
   const f2=tClone(f.f2)||{mecanico:"",items:{},horasEst:0,recomendacion:"",rechazoFirmado:false,firma:null,cerrada:false,inicio:""};
   const f3=tClone(f.f3)||{mecanico:"",tarifa:TF.config.tarifa,estMin:0,tipo:"reparacion",hoja:"1 de 1",eventos:[],justificacion:null,vistoBueno:null,retrabajos:[]};
   let f4=tClone(f.f4)||{destino:f1.tipoEntrada==="compra"||f1.tipoEntrada==="retoma"?"venta":"cliente",items:{},notas:{},resultado:"",motivo:"",firma:null,cierreGerente:null,intentos:0};
@@ -403,8 +405,9 @@ function tF1(){
     ${x.danos.length?`<p class="hint">${x.danos.length} daño${x.danos.length>1?"s":""} marcado${x.danos.length>1?"s":""}.${lock?"":" Toca una marca para quitarla."}</p>`:""}
     <label class="t-chk"><input type="checkbox" data-f="sinDanos" ${x.sinDanos?"checked":""} ${x.danos.length?"disabled":""}><span>Sin daños previos (revisado con el cliente)</span></label>
     <div class="field"><label>Fotos de los daños ${x.danos.length?'<b class="t-req">* obligatoria al menos una</b>':""}</label>${tFotos(x.fotosDanos,"fotosDanos",{dis:lock})}</div>`)}
-  ${tSec(7,"Autorización y firma","",`<div class="t-g2"><div class="field"><label>Autoriza el diagnóstico hasta (€, IGIC incl.)</label><input class="in num" data-f="autorizoHasta" value="${tEsc(x.autorizoHasta)}" inputmode="decimal" maxlength="10" placeholder="Ej. 60"></div><label class="t-chk" style="align-self:end"><input type="checkbox" data-f="avisosWhatsApp" ${x.avisosWhatsApp?"checked":""}><span>Acepta recibir los avisos de la reparación por WhatsApp</span></label></div>
-    <p class="t-legal">El cliente confirma que los datos, el inventario y los daños anotados son correctos. Cualquier trabajo que supere el importe autorizado se presupuesta y se aprueba antes de hacerlo. Sus datos se usan solo para gestionar esta reparación (política de privacidad en volcanocars.es).</p>
+  ${tSec(7,"Autorización y firma","",`<div class="t-g2"><div class="field"><label>Autoriza el diagnóstico hasta (€, IGIC incl.)</label><input class="in num" data-f="autorizoHasta" value="${tEsc(x.autorizoHasta)}" inputmode="decimal" maxlength="10" placeholder="Ej. 60"></div><label class="t-chk" style="align-self:end"><input type="checkbox" data-f="avisosWhatsApp" ${x.avisosWhatsApp?"checked":""}><span>Acepta recibir los avisos de <b>esta reparación</b> por WhatsApp (presupuesto, coche listo)</span></label></div>
+    <label class="t-chk t-chk-itv"><input type="checkbox" data-f="avisosITV" ${x.avisosITV?"checked":""}><span><b>Avisos de ITV (opcional).</b> Acepta que Volcano Cars le escriba por WhatsApp 30 y 7 días antes de que caduque la ITV de este coche para ofrecerle la revisión Pre-ITV. Puede darse de baja cuando quiera contestando «BAJA».${x.avisosITV&&!x.vehiculo.itv?'<small class="t-aviso">Rellena «ITV caduca» en el apartado 3: sin fecha no se le puede avisar.</small>':""}</span></label>
+    <p class="t-legal">El cliente confirma que los datos, el inventario y los daños anotados son correctos. Cualquier trabajo que supere el importe autorizado se presupuesta y se aprueba antes de hacerlo. Sus datos se usan para gestionar esta reparación y, solo si ha marcado la casilla de ITV, para avisarle de la caducidad de la ITV (política de privacidad en volcanocars.com).</p>
     <div class="field"><label>Firma del cliente <b class="t-req">*</b></label>${x.firmaCliente?`<div class="t-firma-img"><img src="${x.firmaCliente}" alt="Firma del cliente">${lock?"":'<button type="button" class="btn b-ghost b-sm" data-tfirma-borrar>Repetir firma</button>'}</div>`:`<div class="t-firma"><canvas width="700" height="200" data-tfirma aria-label="Firma aquí con el dedo"></canvas><span class="t-firma-ph">Firma aquí con el dedo</span><button type="button" class="btn b-ghost b-sm" data-tfirma-limpiar>Borrar</button></div>`}</div>
     ${f&&f.firmaTaller?tFirmaBox(f.firmaTaller,"Recibido por el taller"):""}`)}
   </fieldset>
@@ -567,7 +570,7 @@ $("#tf").addEventListener("input",e=>{ const t=e.target;
   else if(t.matches("[data-tjf]")) TW.j[t.dataset.tjf]=t.value;
 });
 $("#tf").addEventListener("change",async e=>{ const t=e.target;
-  if(t.matches("select[data-f],input[type=checkbox][data-f],input[type=date][data-f]")){ tCampo(t); if(t.dataset.f==="sinDanos") return; }
+  if(t.matches("select[data-f],input[type=checkbox][data-f],input[type=date][data-f]")){ tCampo(t); if(t.dataset.f==="sinDanos") return; if(t.dataset.f==="avisosITV"||t.dataset.f==="vehiculo.itv"){ tRenderBody(true); return; } }
   if(t.matches("[data-tj]")){ const s=new Set(TW.j.codigos); t.checked?s.add(t.dataset.tj):s.delete(t.dataset.tj); TW.j.codigos=[...s].sort(); return; }
   if(t.matches("[data-tjf]")){ TW.j[t.dataset.tjf]=t.value; return; }
   if(t.matches("[data-tfoto]")){ const campo=t.dataset.tfoto, files=[...t.files]; t.value=""; if(!files.length) return; toast("Subiendo "+files.length+" foto"+(files.length>1?"s":"")+"…");
@@ -716,6 +719,52 @@ $("#dw-body").addEventListener("click",async e=>{ if(!DW||DW.tipo!=="equipo") re
     TEQ=await tApi("equipo"); tPintarEquipo(await tApi("config")); toast("Hecho"); }catch(err){ toast(err.message); } });
 
 /* =====================================================================
+   AVISOS DE ITV · clientes que dieron el permiso aparte en FORM-01
+   30 días antes, 7 días antes y (si se pasó) caducada. Gerente y recepción.
+   El botón abre WhatsApp con el mensaje escrito y lo marca como enviado.
+   ===================================================================== */
+let TITV=null, TITV_T=0;
+const T_ITV_OK=()=>ES_GER()||!!(ME&&ME.rol==="recepcion");
+const tItvTramo=x=>x.dias<0?"cad":x.dias<=7?"7":"30";
+const tItvHecho=x=>x[{cad:"cad","7":"a7","30":"a30"}[tItvTramo(x)]];
+const tItvPendientes=()=>TITV&&TITV.items?TITV.items.filter(x=>!tItvHecho(x)).length:0;
+async function tItvCargar(){ try{ TITV=await tApi("itv"); TITV_T=Date.now(); }catch(err){ TITV={error:err.message,items:[]}; }
+  if(TVISTA==="itv"){ $("#t-barra").innerHTML=tBarra(); tItvPintar(); } }
+function tItvTexto(x){ const n=(x.nombre||"").trim().split(/\s+/)[0]||"", coche=(x.coche||"coche")+(x.matricula?` (${x.matricula.toUpperCase()})`:""), f=tF(x.itv), t=tItvTramo(x);
+  const baja="\n\nSi no quieres recibir más avisos de ITV, contesta BAJA.";
+  if(t==="cad") return `Hola ${n}, somos Volcano Cars, tu taller en Antigua. Te escribimos porque la ITV de tu ${coche} caducó el ${f}. Si quieres, te revisamos el coche antes de pasarla (Pre-ITV: luces, frenos, neumáticos, emisiones y testigos) para que la pases a la primera. ¿Te damos cita esta semana?${baja}`;
+  if(t==="7") return `Hola ${n}, somos Volcano Cars (Antigua). La ITV de tu ${coche} caduca el ${f}: quedan ${x.dias===0?"horas":x.dias===1?"1 día":x.dias+" días"}. ¿Quieres que le echemos un vistazo antes de que vayas? Contesta a este mensaje y te damos hora.${baja}`;
+  return `Hola ${n}, somos Volcano Cars, tu taller en Antigua. Te recordamos que la ITV de tu ${coche} caduca el ${f} (dentro de ${x.dias} días). Si quieres, te hacemos una revisión Pre-ITV antes para que la pases a la primera: https://volcanocars.com/pre-itv-fuerteventura ¿Te reservamos un hueco?${baja}`;
+}
+function tItvCard(x){ const t=tItvTramo(x), hecho=tItvHecho(x), coche=esc(x.coche||"Coche");
+  const cuando=x.dias<0?`Caducó hace ${-x.dias} día${x.dias===-1?"":"s"}`:x.dias===0?"Caduca hoy":`Caduca en ${x.dias} día${x.dias===1?"":"s"}`;
+  const prev=t==="7"&&x.a30?`<small>Aviso de 30 días enviado el ${esc(tFH(x.a30))}</small>`:"";
+  return `<div class="t-card-o t-itv ${hecho?"hecho":""} t-itv-${t}"><span class="mat">${esc((x.matricula||"—").toUpperCase())}</span><b>${coche}</b>
+    <small>${esc(x.nombre)} · ${esc(x.telefono)}</small>
+    <span class="t-itv-f"><b>ITV ${esc(tF(x.itv))}</b> · ${cuando}</span>${prev}
+    ${hecho?`<span class="t-itv-ok">✓ Avisado el ${esc(tFH(hecho))}</span><div class="t-itv-acts"><button type="button" class="btn b-ghost b-sm" data-titv-des="${esc(x.clave)}">Deshacer</button></div>`
+      :`<div class="t-itv-acts"><a class="btn b-wa b-sm" target="_blank" rel="noopener" href="https://wa.me/${waNum(x.telefono)}?text=${encodeURIComponent(tItvTexto(x))}" data-titv-wa="${esc(x.clave)}" data-titv-t="${t}">${IC.wa}WhatsApp</a><button type="button" class="btn b-ghost b-sm" data-titv-hecho="${esc(x.clave)}" data-titv-t="${t}" title="Si le has avisado por otro medio">Ya avisado</button></div>`}
+    <div class="t-itv-acts"><button type="button" class="chipb" data-tabrir="${esc(x.token)}" data-ttab="f1">Ficha ${esc(x.num||"")}</button><button type="button" class="chipb" data-titv-baja="${esc(x.clave)}" data-titv-tel="${esc(x.telefono)}">No quiere avisos</button></div></div>`;
+}
+function tItvPintar(){ const box=$("#ordenes"); if(!box) return;
+  if(!TITV){ box.innerHTML='<div class="empty">Cargando avisos de ITV…</div>'; return; }
+  if(TITV.error){ box.innerHTML=`<div class="empty">${esc(TITV.error)}</div>`; return; }
+  const xs=TITV.items, g=k=>xs.filter(x=>tItvTramo(x)===k).sort((a,b)=>(!!tItvHecho(a))-(!!tItvHecho(b))||a.dias-b.dias);
+  const bloque=(t,sub,l,vacio)=>`<section class="t-mbloque"><h3>${t} <span class="num">${l.filter(x=>!tItvHecho(x)).length}</span></h3><p class="hint">${sub}</p>${l.length?`<div class="t-mgrid">${l.map(tItvCard).join("")}</div>`:`<p class="t-vacio">${vacio}</p>`}</section>`;
+  box.innerHTML=`<p class="hint t-itv-intro">Solo salen los clientes que marcaron la casilla <b>«Avisos de ITV»</b> al firmar la ficha de recepción y dejaron la fecha de caducidad. Pulsa <b>WhatsApp</b>: se abre con el mensaje escrito y el aviso queda marcado como enviado. Si alguien contesta «BAJA», pulsa <b>No quiere avisos</b>.</p>
+    ${bloque("Caduca en 7 días o menos","Segundo aviso: el más urgente.",g("7"),"Nadie en los próximos 7 días.")}
+    ${bloque("Caduca en 30 días","Primer aviso: con tiempo para darle cita de Pre-ITV.",g("30"),"Nadie entre 8 y 30 días.")}
+    ${g("cad").length?bloque("Ya caducada","Caducó en los últimos 30 días y no se le avisó a tiempo.",g("cad"),""):""}`;
+}
+async function tItvMarcar(clave,accion,extra={}){ try{ await tApi("itv","POST",{clave,accion,...extra}); }catch(err){ toast(err.message); } await tItvCargar(); }
+document.addEventListener("click",e=>{ const t=e.target;
+  const wa=t.closest("[data-titv-wa]"); if(wa){ tItvMarcar(wa.dataset.titvWa,wa.dataset.titvT); toast("Aviso marcado como enviado"); return; } // el enlace abre WhatsApp solo
+  const hc=t.closest("[data-titv-hecho]"); if(hc){ tItvMarcar(hc.dataset.titvHecho,hc.dataset.titvT); return; }
+  const ds=t.closest("[data-titv-des]"); if(ds){ tItvMarcar(ds.dataset.titvDes,"deshacer"); return; }
+  const bj=t.closest("[data-titv-baja]"); if(bj){ if(!confirm("¿Dar de baja a este cliente de los avisos de ITV? No volverá a salir en esta lista salvo que vuelva a dar el permiso en otra ficha de recepción.")) return; tItvMarcar(bj.dataset.titvBaja,"baja",{telefono:bj.dataset.titvTel}); toast("Dado de baja de los avisos de ITV"); }
+});
+
+/* =====================================================================
    IMPRIMIR / PDF · réplica de las fichas en papel (A4)
    ===================================================================== */
 async function tPdfOrden(token){ try{ const [r]=await Promise.all([tApi("fichas/"+token),TEQ.length?null:tCargarEquipo(),typeof alCargarOrden==="function"?alCargarOrden(token):null]); const prev=TF; TF=r; tImprimir(["f1","f2","f3","f4"]); TF=prev; }catch(err){ toast(err.message); } }
@@ -742,7 +791,7 @@ function tP1(){ const x=TF.fichas.f1; if(!x) return '<p class="tp-vacio">Sin rel
   <h4>Inventario de objetos</h4><div class="tp-2"><table class="tp-t"><tbody>${T_INV.slice(0,4).map(fi).join("")}</tbody></table><table class="tp-t"><tbody>${T_INV.slice(4).map(fi).join("")}<tr><td class="tp-inv">Nº de llaves</td><td class="c">${esc(x.llaves)}</td><td></td></tr></tbody></table></div>
   <h4>Daños previos ${x.sinDanos?"· sin daños previos (revisado con el cliente)":`· ${x.danos.length} marcado${x.danos.length===1?"":"s"}`}</h4>${tCroquisImg(x.danos)}${tLeyenda()}
   ${x.fotosDanos.length?`<div class="tp-fotos">${x.fotosDanos.slice(0,8).map(k=>`<img src="${FOTO(k)}" alt="">`).join("")}</div>`:""}
-  <p class="tp-legal">Autoriza el diagnóstico hasta <b>${esc(x.autorizoHasta||"—")} €</b>. Avisos por WhatsApp: ${x.avisosWhatsApp?"sí":"no"}. El cliente confirma que los datos, el inventario y los daños anotados son correctos; cualquier trabajo que supere el importe autorizado se presupuesta y se aprueba antes.</p>
+  <p class="tp-legal">Autoriza el diagnóstico hasta <b>${esc(x.autorizoHasta||"—")} €</b>. Avisos de la reparación por WhatsApp: ${x.avisosWhatsApp?"sí":"no"}. Avisos de caducidad de la ITV por WhatsApp: ${x.avisosITV?"sí":"no"}. El cliente confirma que los datos, el inventario y los daños anotados son correctos; cualquier trabajo que supere el importe autorizado se presupuesta y se aprueba antes.</p>
   <div class="tp-2">${tpFirma("Firma del cliente",x.firmadoCliente?{nombre:x.cliente.nombre,t:x.firmadoCliente}:null,x.firmaCliente)}${tpFirma("Recibido por el taller",x.firmaTaller)}</div>`; }
 function tP2(){ const x=TF.fichas.f2; if(!x) return '<p class="tp-vacio">Sin rellenar.</p>'; const r=tResF2(x), L={ok:"OK",a:"Á",r:"R",na:"NA"};
   return `${tpKV([[["Mecánico",esc(tNombre(x.mecanico))],["Inicio",esc(tFH(x.inicio))],["Rojos",`<b class="tp-r">${r.rojos}</b>`],["Ámbar",`<b class="tp-a">${r.ambar}</b>`],["Horas est.",esc(String(x.horasEst).replace(".",","))]]])}

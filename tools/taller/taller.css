@@ -334,7 +334,7 @@ em b.s-r,em b.s-a{background:none;color:var(--t-r)}em b.s-a{color:var(--t-a)}
   .tp-t td small{display:block;color:#67635D;font-size:7pt}
   .tp-t td.c{text-align:center;width:28px}
   .tp-t td:first-child{width:24px;color:#67635D;font-size:7pt}
-  .tp-sem tr.e-ok td.c,.tp-sem tr.v-si td.c{background:#E3F2E9;color:#1F8B4C}
+  .tp-sem tr.e-ok td.c,.tp-sem tr.v-si td.c{background:#E3F2E9;color:var(--t-ok)}
   .tp-sem tr.e-a td.c{background:#FDF0D8;color:#B26A00}
   .tp-sem tr.e-r td.c,.tp-sem tr.v-no td.c{background:#FBE4E1;color:#C62D1F}
   .tp-sem tr.e-na td.c,.tp-sem tr.v-na td.c{background:#ECE9E4}
@@ -363,3 +363,18 @@ em b.s-r,em b.s-a{background:none;color:var(--t-r)}em b.s-a{color:var(--t-a)}
 .dw-body::after{content:"";display:block;height:80px}
 main.wrap{padding-bottom:110px}
 .t-sec>*{min-width:0}
+
+/* Avisos de ITV */
+.t-chk-itv{margin-top:10px;padding:10px 12px;border:1.5px dashed var(--line);border-radius:12px}
+.t-chk-itv small{display:block;margin-top:4px}
+.t-itv-intro{margin:0 0 14px}
+.t-itv{cursor:default}
+.t-itv:hover{border-color:var(--line)}
+.t-itv-7{border-left:4px solid var(--t-a)}
+.t-itv-cad{border-left:4px solid var(--t-r)}
+.t-itv-30{border-left:4px solid var(--accent)}
+.t-itv.hecho{opacity:.7}
+.t-itv-f{font-size:14px}
+.t-itv-ok{font-size:13.5px;font-weight:700;color:var(--t-ok)}
+.t-itv-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.t-itv-n{margin-left:4px;background:var(--accent);color:#fff;border-radius:999px;padding:0 7px;font-size:12px}

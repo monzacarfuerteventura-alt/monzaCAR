@@ -11,14 +11,17 @@
 <meta property="og:image" content="https://volcanocars.com/coches/opel-astra-2010/anuncio.jpg">
 <meta property="og:url" content="https://volcanocars.com/comprar">
 <meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231B1B1A'/%3E%3Cpath d='M8 54 L22 10 L29 10 L32 16 L35 10 L42 10 L56 54 Z' fill='%23F2EFEA'/%3E%3Cpath d='M26.5 26 L37.5 26 L42.6 45 L21.4 45 Z' fill='%23D9481C'/%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Figtree:wght@400;500;600;700&family=Titillium+Web:wght@600;700&display=swap">
 <link rel="canonical" href="https://volcanocars.com/comprar">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":["AutoRepair","AutoDealer","AutoBodyShop"],"@id":"https://volcanocars.com/#negocio","name":"Volcano Cars","logo":"https://volcanocars.com/marca/logo-oscuro.svg","hasMap":"https://www.google.com/maps?cid=5551544135827693991","geo":{"@type":"GeoCoordinates","latitude":28.420871,"longitude":-13.8621004},"description":"Chapa y pintura, mecánica rápida y venta de coches de ocasión revisados con 12 meses de garantía y entrega a domicilio gratis en toda Fuerteventura.","telephone":"+34643668813","email":"volcanocars2026@gmail.com","url":"https://volcanocars.com/","image":"https://volcanocars.com/coches/opel-astra-2010/anuncio.jpg","priceRange":"€€",
+{"@context":"https://schema.org","@type":["AutoRepair","AutoDealer","AutoBodyShop"],"@id":"https://volcanocars.com/#negocio","name":"Volcano Cars","logo":"https://volcanocars.com/marca/logo-oscuro.svg","hasMap":"https://www.google.com/maps?cid=5551544135827693991","geo":{"@type":"GeoCoordinates","latitude":28.420871,"longitude":-13.8621004},"description":"Chapa y pintura, mecánica rápida y venta de coches de ocasión revisados con 12 meses de garantía y entrega a domicilio gratis en toda Fuerteventura.","telephone":"+34677960348","email":"volcanocars2026@gmail.com","url":"https://volcanocars.com/","image":"https://volcanocars.com/coches/opel-astra-2010/anuncio.jpg","priceRange":"€€",
  "address":{"@type":"PostalAddress","streetAddress":"Calle Valle Largo, Nave 8, Polígono Industrial","postalCode":"35610","addressLocality":"Antigua","addressRegion":"Las Palmas","addressCountry":"ES"},
  "areaServed":[{"@type":"Island","name":"Fuerteventura"},"Antigua","Caleta de Fuste","Puerto del Rosario","La Oliva","Corralejo","Tuineje","Gran Tarajal","Pájara","Costa Calma","Morro Jable"],
  "availableLanguage":["es","en"],
@@ -183,25 +186,45 @@ html[data-vista="comprar"] #v-comprar,html[data-vista="taller"] #v-taller,html[d
 }
 
 /* ---------- Marquee ---------- */
-.marquee{overflow:hidden;background:var(--surface);border-bottom:1px solid var(--line);padding-block:22px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
-.mq-track{display:flex;width:max-content;animation:mq 38s linear infinite}
-.mq-track span{font-family:var(--display);font-stretch:82%;font-weight:800;font-size:clamp(22px,3vw,34px);letter-spacing:-.01em;white-space:nowrap;padding-inline:26px;display:flex;align-items:center;gap:52px}
-.mq-track span:nth-child(even){color:transparent;-webkit-text-stroke:1.2px var(--ink)}
-.mq-track span::after{content:"";width:12px;height:12px;border-radius:3px;transform:rotate(45deg);background:var(--rosso);flex-shrink:0}
-.mq-track span:nth-child(3n)::after{background:var(--ink)}
+/* ---------- Cinta de lava (ticker) ----------
+   Fondo de roca volcánica, dos grietas de lava incandescente que fluyen arriba y abajo,
+   textos alternos en blanco con halo y en degradado de lava, iconos y «brasas» que laten. */
+.marquee{position:relative;overflow:hidden;isolation:isolate;padding-block:15px;
+  background:radial-gradient(90% 160% at 50% 130%,rgba(217,74,38,.30),transparent 62%),radial-gradient(40% 120% at 12% -30%,rgba(255,122,61,.12),transparent 70%),linear-gradient(180deg,#0B0706,#150906 55%,#0B0706);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.marquee::before,.marquee::after{content:"";position:absolute;left:0;right:0;height:2px;z-index:1;pointer-events:none;
+  background:linear-gradient(90deg,#3A0E04,#C83E1A 18%,#FFB36B 30%,#D94A26 44%,#5A1606 58%,#FF7A3D 76%,#FFD08A 84%,#3A0E04);background-size:200% 100%;
+  box-shadow:0 0 12px 1px rgba(255,106,43,.55),0 0 30px 4px rgba(217,74,38,.22);animation:lavaFluye 7s linear infinite}
+.marquee::before{top:0}
+.marquee::after{bottom:0;animation-direction:reverse}
+.mq-track{position:relative;z-index:2;display:flex;width:max-content;animation:mq 42s linear infinite}
+.mq-track span{display:flex;align-items:center;gap:12px;padding-inline:20px;white-space:nowrap;font-family:var(--display);font-stretch:82%;font-weight:800;
+  font-size:clamp(19px,2.5vw,29px);letter-spacing:.015em;text-transform:uppercase;color:#FFF1E6;text-shadow:0 0 16px rgba(255,106,43,.38)}
+.mq-track span:nth-child(even){color:transparent;text-shadow:none;background:linear-gradient(90deg,#FFC98A,#FF6A2B 35%,#D94A26 55%,#FF9A52 80%,#FFC98A);background-size:200% 100%;
+  -webkit-background-clip:text;background-clip:text;animation:lavaFluye 5s linear infinite;filter:drop-shadow(0 0 9px rgba(255,90,31,.35))}
+.mq-track svg{width:.9em;height:.9em;flex-shrink:0;color:#FF7A3D;filter:drop-shadow(0 0 6px rgba(255,106,43,.75))}
+/* brasa entre texto y texto */
+.mq-track span::after{content:"";width:9px;height:9px;margin-left:28px;flex-shrink:0;border-radius:2px;transform:rotate(45deg);
+  background:radial-gradient(circle at 35% 35%,#FFE6B8,#FF7A3D 45%,#C83E1A);box-shadow:0 0 10px 2px rgba(255,106,43,.7),0 0 22px 6px rgba(217,74,38,.22);animation:brasa 2.4s ease-in-out infinite}
+.mq-track span:nth-child(3n)::after{animation-delay:-1.2s}
 @keyframes mq{to{transform:translateX(-50%)}}
+@keyframes lavaFluye{to{background-position:-200% 0}}
+@keyframes brasa{50%{opacity:.55;box-shadow:0 0 5px 1px rgba(255,106,43,.5),0 0 10px 2px rgba(217,74,38,.12)}}
 .marquee:hover .mq-track{animation-play-state:paused}
+@media (max-width:700px){.marquee{padding-block:11px}.mq-track span{padding-inline:14px;gap:9px}.mq-track span::after{margin-left:18px;width:7px;height:7px}}
+@media (prefers-reduced-motion:reduce){.mq-track,.marquee::before,.marquee::after,.mq-track span,.mq-track span::after{animation:none}}
 
 /* ---------- Sections ---------- */
-section.block{padding-block:88px}
-@media (max-width:700px){section.block{padding-block:60px}}
-.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:34px}
+section.block{padding-block:64px}
+@media (max-width:700px){section.block{padding-block:40px}}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:26px}
+@media (max-width:700px){.sec-head{margin-bottom:18px}.sec-head h2{margin-top:10px}.sec-head p{font-size:16px;margin-top:8px}}
 .sec-head h2{font-size:clamp(32px,4.4vw,56px);margin-top:14px}
 .sec-head p{margin:12px 0 0;color:var(--muted);max-width:58ch;font-size:17.5px}
 
 /* ---------- Car cards ---------- */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(290px,100%),1fr));gap:24px}
-@media (min-width:980px){#home-grid,#cat-grid{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:980px){#cat-grid{grid-template-columns:repeat(3,1fr)}}
 .car{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;cursor:pointer;text-align:left;padding:0;transition:transform .45s var(--ease),box-shadow .45s var(--ease),border-color .3s}
 .car:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:transparent}
 .car-img{aspect-ratio:16/10;max-width:100%;background:linear-gradient(160deg,var(--surface-2),var(--ground));position:relative;display:grid;place-items:center;overflow:hidden}
@@ -285,10 +308,10 @@ section.block{padding-block:88px}
 textarea.input{min-height:120px;resize:vertical}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media (max-width:460px){.row2{grid-template-columns:1fr}}
-.split{display:grid;grid-template-columns:1fr 1.1fr;gap:48px;align-items:start}
+.split{display:grid;grid-template-columns:1fr 1.1fr;gap:40px;align-items:start}
 .split.shop{grid-template-columns:1.3fr 1fr}
-@media (max-width:900px){.split,.split.shop{grid-template-columns:1fr;gap:32px}}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:26px;padding:32px;box-shadow:var(--shadow);display:grid;gap:18px}
+@media (max-width:900px){.split,.split.shop{grid-template-columns:1fr;gap:22px}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:var(--shadow);display:grid;gap:16px}
 @media (max-width:520px){.panel{padding:22px;border-radius:22px}}
 .panel h3{font-size:28px}
 .note{font-size:13.5px;color:var(--muted);margin:0}
@@ -298,7 +321,8 @@ textarea.input{min-height:120px;resize:vertical}
 .ok-msg{background:var(--verde-soft);color:var(--verde);font-weight:600;padding:14px 16px;border-radius:14px;border-left:4px solid var(--verde);display:flex;align-items:center;gap:10px;animation:popIn .4s cubic-bezier(.34,1.56,.64,1)}.ok-msg::before{content:"✓";font-size:20px;flex-shrink:0}
 @keyframes popIn{from{opacity:0;transform:scale(.92) translateY(-8px)}to{opacity:1;transform:none}}
 .page-h{font-size:clamp(38px,5.4vw,68px);margin-top:14px}
-.page-lead{color:var(--muted);font-size:18.5px;max-width:48ch;margin:18px 0 0}
+.page-lead{color:var(--muted);font-size:18px;max-width:48ch;margin:14px 0 0}
+@media (max-width:700px){.page-lead{font-size:16px;margin-top:10px}}
 
 /* ---------- Services ---------- */
 .services{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
@@ -366,9 +390,6 @@ dialog::backdrop{background:rgba(8,9,10,.66);backdrop-filter:blur(6px)}
 .spec-table b{font-size:16px}
 .x{position:absolute;top:14px;right:14px;width:42px;height:42px;border-radius:50%;border:0;background:rgba(255,255,255,.94);color:#1B1B1A;font-size:24px;line-height:1;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.2);z-index:3;transition:transform .25s var(--ease)}
 .x:hover{transform:rotate(90deg)}
-.m-actions{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:10px}
-@media (max-width:620px){.m-actions{grid-template-columns:1fr 1fr}.m-actions #m-wa{grid-column:1/-1}}
-.m-actions .btn{padding-inline:14px}
 .gal{position:relative}
 .gal .m-img{background:#0b0c0d}
 .gal .m-img img{object-fit:contain;animation:fade .45s var(--ease)}
@@ -391,7 +412,7 @@ dialog::backdrop{background:rgba(8,9,10,.66);backdrop-filter:blur(6px)}
 footer{background:var(--night);color:#F2EFEA;margin-top:40px}
 footer .logo{color:#F2EFEA}
 footer .logo-tag{color:rgba(242,239,234,.55)}
-.foot{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.2fr;gap:36px;padding-block:64px 44px;font-size:15px}
+.foot{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.2fr;gap:32px;padding-block:52px 36px;font-size:15px}
 .foot h4{margin:0 0 14px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:rgba(242,239,234,.5)}
 .foot a{display:block;text-decoration:none;padding:4px 0;color:rgba(242,239,234,.85);transition:color .2s}
 .foot a:hover{color:#fff}
@@ -402,7 +423,7 @@ footer .logo-tag{color:rgba(242,239,234,.55)}
 .zonas-foot a{color:rgba(242,239,234,.72);text-decoration:none;margin-right:12px;white-space:nowrap}
 .zonas-foot a:hover{color:#fff;text-decoration:underline}
 .legal{border-top:1px solid var(--night-line);padding-block:20px;font-size:13px;color:rgba(242,239,234,.5);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-@media (max-width:860px){.foot{grid-template-columns:1fr 1fr;padding-block:48px 32px}}
+@media (max-width:860px){.foot{grid-template-columns:1fr 1fr;padding-block:36px 24px}}
 /* móvil: el logo va a lo ancho y las columnas no se salen de la pantalla (antes se cortaban a 360–390 px) */
 @media (max-width:560px){.foot{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 18px}.foot>div:first-child{grid-column:1/-1}.foot a{overflow-wrap:anywhere}footer .logo svg.vc-logo{max-width:100%}}
 @media (max-width:900px){footer{padding-bottom:96px}}
@@ -690,8 +711,6 @@ footer .logo-tag{color:rgba(242,239,234,.55)}
 .m-book{border-top:1px solid var(--line);padding-top:22px;display:grid;gap:14px}
 .m-book h4{margin:0;font-family:var(--display);font-stretch:112%;font-weight:800;font-size:20px}
 .m-book>p{margin:-6px 0 0;color:var(--muted);font-size:14.5px}
-.guarantee{display:flex;gap:12px;align-items:center;background:var(--verde-soft);color:var(--verde);border-radius:14px;padding:12px 14px;font-weight:600;font-size:14.5px}
-.guarantee svg{flex-shrink:0}
 .ck{position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:80;max-width:560px;margin-inline:auto;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow-lg);padding:18px 20px;display:grid;gap:12px;font-size:14.5px}
 .ck p{margin:0;color:var(--muted)}
 .ck p b{color:var(--ink)}
@@ -729,10 +748,6 @@ footer .logo-tag{color:rgba(242,239,234,.55)}
 .m-added{color:var(--muted);background:var(--surface-2)}
 .m-added svg{flex-shrink:0}
 /* ficha: entrega */
-.m-perk{display:flex;gap:12px;align-items:center;border-radius:14px;padding:12px 14px;font-weight:600;font-size:14.5px;color:#B83A12;background:#FBE4DA}
-.m-perk svg{flex-shrink:0}
-@media all{:root:not([data-theme="light"]) .m-perk{color:#FF9A6E;background:#3A1D12}}
-:root[data-theme="dark"] .m-perk{color:#FF9A6E;background:#3A1D12}
 
 /* sello 360° en la foto */
 .v360b{position:absolute;z-index:1;left:12px;bottom:12px;display:inline-flex;align-items:center;gap:7px;padding:6px 11px 6px 8px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.06em;color:#fff;
@@ -805,12 +820,6 @@ footer .logo-tag{color:rgba(242,239,234,.55)}
 @keyframes ruta{0%{top:4px}45%,55%{top:calc(100% - 32px)}100%{top:4px}}
 @media (max-width:900px){.entrega{grid-template-columns:1fr;padding:34px 22px;gap:28px;border-radius:24px}}
 /* comprar: aviso de entrega */
-.entrega-mini{display:flex;align-items:center;gap:14px;margin:0 0 22px;padding:14px 18px;border-radius:18px;background:linear-gradient(135deg,#FBE4DA,color-mix(in srgb,#FBE4DA 40%,var(--surface)));border:1px solid color-mix(in srgb,#B83A12 18%,var(--line))}
-.entrega-mini .em-ic{flex-shrink:0;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#B83A12,#F2994A);box-shadow:0 10px 22px -10px #B83A12}
-.entrega-mini b{display:block;font-size:15.5px}
-.entrega-mini small{color:var(--muted);font-size:14px}
-@media all{:root:not([data-theme="light"]) .entrega-mini{background:linear-gradient(135deg,#3A1D12,var(--surface))}}
-:root[data-theme="dark"] .entrega-mini{background:linear-gradient(135deg,#3A1D12,var(--surface))}
 .trust li:nth-child(4){animation-delay:.36s}
 @media (prefers-reduced-motion:reduce){.ruta li{opacity:1;transform:none}.ruta .camion{top:4px}}
 
@@ -1219,10 +1228,57 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
 .badge.b-ofe{top:46px;left:12px;right:auto;background:linear-gradient(100deg,#D9481C,#F2994A);color:#fff;display:inline-flex;align-items:center;gap:5px}
 .badge.b-ofe.verde{background:#1F8B4C}
 @media (prefers-reduced-motion:reduce){.ofe-head b svg{animation:none}.ofe-row i::after{transition:none}}
+
+/* Ficha: la oferta de mercado lleva directa a la reserva de 50 € (sin botones repetidos entre medias) */
+#m-ofe:not([hidden]) + #m-rsv:not([hidden]){margin-top:-10px}
+#m-ofe:has(+ #m-rsv:not([hidden])) .ofe-cta{display:none}
+#m-ofe:has(+ #m-rsv:not([hidden])) .ofe-urg{margin-bottom:0}
+/* =====================================================================
+   INTERFAZ COMPACTA (menos espacios muertos, más información sin scroll)
+   Solo reduce márgenes y rellenos: no cambia ningún contenido ni función.
+   ===================================================================== */
+.hero-in{padding-block:64px 72px;min-height:min(70vh,680px)}
+.hero-ctas,.hero-meta{margin-top:26px}
+.feature{padding:32px;min-height:320px}
+.stat{padding:26px 22px}
+.step{padding:24px}
+.step .n{font-size:52px}
+.step h3{margin:14px 0 6px}
+.steps{gap:18px}
+.duo{gap:18px}
+.visit{padding:44px;gap:32px}
+.visit dl{gap:14px}
+.visit .acts{margin-top:22px}
+.rev{padding:24px 22px 22px;gap:14px}
+@media (max-width:900px){.hero-in{padding-block:28px 36px;gap:24px}}
+@media (max-width:700px){
+  .duo{gap:12px}
+  .feature{padding:22px;padding-top:80px;min-height:0;gap:10px;border-radius:20px}
+  .feature .big-ic{width:60px;height:60px;top:18px;right:18px}
+  .feature h3{font-size:28px}
+  .feature ul{margin:2px 0 6px;gap:6px}
+  .feature li{padding:5px 10px;font-size:12.5px}
+  .stat{padding:16px 12px}
+  .stat .st-ic{width:36px;height:36px;border-radius:11px;margin-bottom:10px}
+  .stat span{margin-top:6px;font-size:13.5px}
+  .steps{gap:10px}
+  .step{padding:16px 18px;display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:center}
+  .step .n{font-size:40px;grid-row:span 2}
+  .step h3{margin:0 0 2px;font-size:20px}
+  .step p{font-size:14.5px}
+  .visit{padding:26px 20px;gap:20px;border-radius:22px}
+  .visit dl{gap:10px}
+  .visit dd{font-size:16px}
+  .visit .acts{margin-top:16px}
+  .rev{padding:20px 18px 18px;gap:12px}
+  .rev blockquote{font-size:16px}
+  .panel{padding:20px}
+}
 </style>
 <script>document.documentElement.classList.add("js")</script>
 <link rel="stylesheet" href="/taller.css">
 <link rel="stylesheet" href="/conversion.css">
+<link rel="stylesheet" href="/mejoras.css">
 <link rel="stylesheet" href="/tema.css">
 </head>
 <body>
@@ -1304,8 +1360,8 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
       <a href="/taller" data-go="taller">Taller</a>
       <a href="/contacto" data-go="contacto">Contacto</a>
     </nav>
-    <a class="head-cta" id="head-call" href="tel:+34643668813"><svg width="17" height="17"><use href="#i-phone"/></svg>Llámanos</a>
-    <a class="phone-top" id="phone-top" href="tel:+34643668813" aria-label="Llamar a Volcano Cars"><svg width="17" height="17"><use href="#i-phone"/></svg><span class="pt-txt">Llamar</span></a>
+    <a class="head-cta" id="head-call" href="tel:+34677960348"><svg width="17" height="17"><use href="#i-phone"/></svg>Llámanos</a>
+    <a class="phone-top" id="phone-top" href="tel:+34677960348" aria-label="Llamar a Volcano Cars"><svg width="17" height="17"><use href="#i-phone"/></svg><span class="pt-txt">Llamar</span></a>
     <a class="lang" href="/en/" hreflang="en" lang="en" aria-label="English version">EN</a>
   </div>
 </header>
@@ -1361,52 +1417,25 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
     <div class="tricolore"></div>
   </section>
 
-  <div class="marquee" aria-hidden="true"><div class="mq-track">
-    <span>Chapa y pintura</span><span>Mecánica rápida</span><span>Coches revisados</span><span>Diagnosis</span><span>Pre-ITV</span><span>Neumáticos</span>
-    <span>Chapa y pintura</span><span>Mecánica rápida</span><span>Coches revisados</span><span>Diagnosis</span><span>Pre-ITV</span><span>Neumáticos</span>
+  <!-- Cinta de lava (ticker): textos e iconos en movimiento con resplandor volcánico -->
+  <div class="marquee lava" aria-hidden="true"><div class="mq-track">
+    <span><svg aria-hidden="true"><use href="#tx-dent"/></svg>Chapa y pintura</span><span><svg aria-hidden="true"><use href="#tx-oil"/></svg>Mecánica rápida</span><span><svg aria-hidden="true"><use href="#tx-car"/></svg>Coches revisados</span><span><svg aria-hidden="true"><use href="#tx-scan"/></svg>Diagnosis</span><span><svg aria-hidden="true"><use href="#tx-itv"/></svg>Pre-ITV</span><span><svg aria-hidden="true"><use href="#tx-tyre"/></svg>Neumáticos</span>
+    <span><svg aria-hidden="true"><use href="#tx-dent"/></svg>Chapa y pintura</span><span><svg aria-hidden="true"><use href="#tx-oil"/></svg>Mecánica rápida</span><span><svg aria-hidden="true"><use href="#tx-car"/></svg>Coches revisados</span><span><svg aria-hidden="true"><use href="#tx-scan"/></svg>Diagnosis</span><span><svg aria-hidden="true"><use href="#tx-itv"/></svg>Pre-ITV</span><span><svg aria-hidden="true"><use href="#tx-tyre"/></svg>Neumáticos</span>
   </div></div>
 
-  <section class="block reviews-sec" id="resenas">
+  <!-- Cómo comprar: justo debajo de la cinta de lava -->
+  <section class="block" id="como-comprar">
     <div class="wrap">
-      <div class="sec-head rv">
-        <div><div class="eyebrow">Reseñas en Google Maps</div><h2>Palabra de <span class="serif">cliente.</span></h2><p>Una selección de opiniones publicadas por clientes en nuestra ficha de Google Maps.</p></div>
+      <div class="sec-head rv"><div><div class="eyebrow">Así de fácil</div><h2>Comprar en <span class="serif">Volcano Cars</span></h2></div></div>
+      <div class="steps" id="buy-steps">
+        <div class="step lux rv"><div class="n">01</div><h3>Elige tu coche</h3><p>Mira fotos, kilómetros y equipamiento. Todos los precios son finales, con impuestos incluidos.</p></div>
+        <div class="step lux rv d1"><div class="n">02</div><h3>Pruébalo</h3><p>Ven a vernos a Antigua y pruébalo con calma, cuando te venga bien.</p></div>
+        <div class="step lux rv d2"><div class="n">03</div><h3>Te lo llevamos</h3><p>Pagas al contado, hacemos el cambio de nombre y te lo llevamos gratis a casa, en cualquier punto de Fuerteventura.</p></div>
       </div>
-      <div class="reviews" id="reviews">
-        <article class="rev rv">
-          <span class="q" aria-hidden="true">“</span>
-          <div class="stars" aria-label="5 de 5 estrellas"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div>
-          <blockquote>Fantástico trabajo de pintura de nuestra camper… Grandes profesionales, muy atentos y amables. Muy recomendable.</blockquote>
-          <div class="reply"><b>Volcano Cars respondió:</b> Gracias, siempre a su disposición, es un placer trabajar con clientes como usted.</div>
-          <div class="who"><span class="ava" style="background:#E8710A">O</span><span><b>Orlinda del Mazo</b><small>Local Guide · Chapa y pintura</small></span></div>
-        </article>
-        <article class="rev rv d1">
-          <span class="q" aria-hidden="true">“</span>
-          <div class="stars" aria-label="5 de 5 estrellas"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div>
-          <blockquote>Súper recomendable, serios y precio justo. Y en un tiempo inmejorable, desde luego los mejores.</blockquote>
-          <div class="who"><span class="ava" style="background:#C2185B">H</span><span><b>Herbert Jakobs</b><small>Local Guide · Chapa y pintura</small></span></div>
-        </article>
-        <article class="rev rv d2">
-          <span class="q" aria-hidden="true">“</span>
-          <div class="stars" aria-label="5 de 5 estrellas"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div>
-          <blockquote>Darle las gracias de verdad: muy amables, serviciales, eficaces y con buen precio. Salir de la ITV con fallo y estar ustedes a dos pasos ha sido genial. ¡Gracias de nuevo, nos veremos! 😉</blockquote>
-          <div class="who"><span class="ava" style="background:#8D6E63">Y</span><span><b>Ylenia Suárez García</b><small>Local Guide · Mecánica</small></span></div>
-        </article>
-      </div>
-      <div class="dots" id="rev-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
-      <div class="src rv"><span>Opiniones publicadas en nuestra ficha de Google Maps, copiadas sin cambios (algunas recortadas). Las publica Google y nosotros no las filtramos: puedes leerlas todas, también las negativas.</span><a class="btn btn-glass" id="rev-link" target="_blank" rel="noopener">Ver todas en Google Maps <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a></div>
     </div>
   </section>
 
-  <section class="block" id="home-sec">
-    <div class="wrap">
-      <div class="sec-head rv">
-        <div><div class="eyebrow">Coches disponibles</div><h2>Recién <span class="serif">llegados</span></h2></div>
-        <a class="btn btn-ghost" href="/comprar" data-go="comprar">Ver todos <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
-      </div>
-      <div class="grid rv d1" id="home-grid"></div>
-    </div>
-  </section>
-
+  <!-- Te lo llevamos a casa: justo debajo de «Cómo comprar» -->
   <section class="block" id="entrega" style="padding-top:0">
     <div class="wrap">
       <div class="entrega rv">
@@ -1480,17 +1509,6 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
     </div>
   </section>
 
-  <section class="block">
-    <div class="wrap">
-      <div class="sec-head rv"><div><div class="eyebrow">Así de fácil</div><h2>Comprar en <span class="serif">Volcano Cars</span></h2></div></div>
-      <div class="steps" id="buy-steps">
-        <div class="step lux rv"><div class="n">01</div><h3>Elige tu coche</h3><p>Mira fotos, kilómetros y equipamiento. Todos los precios son finales, con impuestos incluidos.</p></div>
-        <div class="step lux rv d1"><div class="n">02</div><h3>Pruébalo</h3><p>Ven a vernos a Antigua y pruébalo con calma, cuando te venga bien.</p></div>
-        <div class="step lux rv d2"><div class="n">03</div><h3>Te lo llevamos</h3><p>Pagas al contado, hacemos el cambio de nombre y te lo llevamos gratis a casa, en cualquier punto de Fuerteventura.</p></div>
-      </div>
-    </div>
-  </section>
-
   <section class="block" style="padding-top:0">
     <div class="wrap">
       <div class="visit rv">
@@ -1510,6 +1528,38 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
       </div>
     </div>
   </section>
+
+  <!-- Prueba social al cierre: reseñas de Google Maps justo antes del pie -->
+  <section class="block reviews-sec" id="resenas">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div><div class="eyebrow">Reseñas en Google Maps</div><h2>Palabra de <span class="serif">cliente.</span></h2><p>Una selección de opiniones publicadas por clientes en nuestra ficha de Google Maps.</p></div>
+      </div>
+      <div class="reviews" id="reviews">
+        <article class="rev rv">
+          <span class="q" aria-hidden="true">“</span>
+          <div class="stars" aria-label="5 de 5 estrellas"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div>
+          <blockquote>Fantástico trabajo de pintura de nuestra camper… Grandes profesionales, muy atentos y amables. Muy recomendable.</blockquote>
+          <div class="reply"><b>Volcano Cars respondió:</b> Gracias, siempre a su disposición, es un placer trabajar con clientes como usted.</div>
+          <div class="who"><span class="ava" style="background:#E8710A">O</span><span><b>Orlinda del Mazo</b><small>Local Guide · Chapa y pintura</small></span></div>
+        </article>
+        <article class="rev rv d1">
+          <span class="q" aria-hidden="true">“</span>
+          <div class="stars" aria-label="5 de 5 estrellas"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div>
+          <blockquote>Súper recomendable, serios y precio justo. Y en un tiempo inmejorable, desde luego los mejores.</blockquote>
+          <div class="who"><span class="ava" style="background:#C2185B">H</span><span><b>Herbert Jakobs</b><small>Local Guide · Chapa y pintura</small></span></div>
+        </article>
+        <article class="rev rv d2">
+          <span class="q" aria-hidden="true">“</span>
+          <div class="stars" aria-label="5 de 5 estrellas"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div>
+          <blockquote>Darle las gracias de verdad: muy amables, serviciales, eficaces y con buen precio. Salir de la ITV con fallo y estar ustedes a dos pasos ha sido genial. ¡Gracias de nuevo, nos veremos! 😉</blockquote>
+          <div class="who"><span class="ava" style="background:#8D6E63">Y</span><span><b>Ylenia Suárez García</b><small>Local Guide · Mecánica</small></span></div>
+        </article>
+      </div>
+      <div class="dots" id="rev-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+      <div class="src rv"><span>Opiniones publicadas en nuestra ficha de Google Maps, copiadas sin cambios (algunas recortadas). Las publica Google y nosotros no las filtramos: puedes leerlas todas, también las negativas.</span><a class="btn btn-glass" id="rev-link" target="_blank" rel="noopener">Ver todas en Google Maps <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a></div>
+    </div>
+  </section>
 </div>
 
 <!-- ================= COMPRAR ================= -->
@@ -1517,7 +1567,6 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
   <section class="block">
     <div class="wrap">
       <div class="sec-head"><div><div class="eyebrow">Comprar coche</div><h2 class="page-h">Coches <span class="serif">disponibles</span></h2><p>Todos revisados en nuestro taller y con 12 meses de garantía.</p></div></div>
-      <div class="entrega-mini"><span class="em-ic"><svg width="22" height="22"><use href="#i-truck"/></svg></span><div><b>Entrega a domicilio gratis en toda Fuerteventura</b><small>De Corralejo a Morro Jable, sin coste y el día que tú elijas.</small></div></div>
       <div class="fx" id="fx" hidden></div>
       <p class="count num" id="count" style="font-weight:600;margin:0 0 18px"></p>
       <div class="grid" id="cat-grid"></div>
@@ -1586,10 +1635,6 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
           </ol>
           <div class="resumen" id="t-resumen" aria-live="polite"></div>
           <div class="tx-estim" id="t-estimado" aria-live="polite" hidden></div>
-          <div class="modo" role="radiogroup" aria-label="Tipo de solicitud">
-            <label><input type="radio" name="t-modo" value="cita" checked><span>Reservar día y hora</span></label>
-            <label><input type="radio" name="t-modo" value="presu"><span>Solo pedir presupuesto</span></label>
-          </div>
           <div class="row2">
             <div class="field"><label for="t-car">Coche</label><input class="input" id="t-car" required placeholder="Ej. Golf 2016"></div>
             <div class="field"><label for="t-plate">Matrícula (opcional)</label><input class="input" id="t-plate" placeholder="1234 ABC"></div>
@@ -1635,7 +1680,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
         <p style="margin:0;color:var(--muted)">La forma más rápida es WhatsApp. Te contestamos en horario de apertura.</p>
         <div class="metodos">
           <a class="metodo lux m-wa" id="c-wa" target="_blank" rel="noopener"><span class="m-ic"><svg width="22" height="22"><use href="#i-wa"/></svg></span><span><b>WhatsApp</b><small>La forma más rápida</small></span><svg class="m-arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
-          <a class="metodo lux m-tel" id="c-call"><span class="m-ic"><svg width="22" height="22"><use href="#i-phone"/></svg></span><span><b>Llamar ahora</b><small data-tel-txt>643 66 88 13</small></span><svg class="m-arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
+          <a class="metodo lux m-tel" id="c-call"><span class="m-ic"><svg width="22" height="22"><use href="#i-phone"/></svg></span><span><b>Llamar ahora</b><small data-tel-txt>677 96 03 48</small></span><svg class="m-arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
           <a class="metodo lux m-mail" id="c-email"><span class="m-ic"><svg width="22" height="22"><use href="#i-mail"/></svg></span><span><b>Enviar un email</b><small>Te contestamos en horario de apertura</small></span><svg class="m-arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
           <a class="metodo lux m-map" data-map target="_blank" rel="noopener"><span class="m-ic"><svg width="22" height="22"><use href="#i-pin"/></svg></span><span><b>Abrir en Google Maps</b><small>Polígono Industrial de Antigua</small></span><svg class="m-arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
         </div>
@@ -1690,21 +1735,14 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
         <div class="vivo" id="m-vivo" role="status" aria-live="polite" hidden></div>
         <div class="m-added" id="m-added" hidden></div>
       </div>
-      <!-- Reserva flash 50 € / lista de espera (lo pinta /conversion.js) -->
-      <section class="rsv" id="m-rsv" hidden aria-label="Reserva online"></section>
+      <!-- 1º la oferta frente al precio de mercado, 2º justo debajo la reserva de 50 € (la pinta /conversion.js) -->
       <section class="ofe" id="m-ofe" hidden aria-label="Comparativa con el precio de mercado"></section>
+      <section class="rsv" id="m-rsv" hidden aria-label="Reserva online"></section>
       <div class="spec-table num" id="m-specs"></div>
       <p id="m-desc" style="margin:0;color:var(--muted);white-space:pre-line"></p>
       <div id="m-eq" hidden><h4 class="eq-h">Equipamiento</h4><ul class="eq"></ul></div>
       <div class="demand m-demand" id="m-demand" hidden></div>
       <section class="fin" id="m-fin" hidden></section>
-      <div class="guarantee"><svg width="22" height="22"><use href="#i-itv"/></svg><span>12 meses de garantía · revisado en nuestro taller · cambio de nombre incluido · <a href="/condiciones" style="color:inherit">condiciones</a></span></div>
-      <div class="m-perk"><svg width="22" height="22"><use href="#i-truck"/></svg><span>Entrega a domicilio gratis en cualquier punto de Fuerteventura, o recógelo en Antigua</span></div>
-      <div class="m-actions">
-        <a class="btn btn-wa" id="m-wa" target="_blank" rel="noopener"><svg width="18" height="18"><use href="#i-wa"/></svg>Preguntar por WhatsApp</a>
-        <a class="btn btn-ghost" id="m-call"><svg width="18" height="18"><use href="#i-phone"/></svg>Llamar</a>
-        <a class="btn btn-ghost" id="m-share" href="#"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="M8.2 10.8l7.6-4.1M8.2 13.2l7.6 4.1"/></svg>Compartir</a>
-      </div>
       <form class="m-book" id="book-form" novalidate>
         <h4>Ven a verlo y pruébalo</h4>
         <p>Elige día y hora y te lo tenemos preparado. Sin compromiso.</p>
@@ -1732,9 +1770,9 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
    DATOS DE LA EMPRESA
    ===================================================================== */
 const EMPRESA = {
-  telefono: "643 66 88 13",          // se muestra así
-  telefonoLlamar: "+34643668813",    // para el botón de llamar
-  whatsapp: "34643668813",           // solo números, con prefijo 34
+  telefono: "677 96 03 48",          // se muestra así
+  telefonoLlamar: "+34677960348",    // para el botón de llamar
+  whatsapp: "34677960348",           // solo números, con prefijo 34
   email: "volcanocars2026@gmail.com",
   direccion: "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua, Las Palmas",
   horario: "Lunes a viernes, de 8:00 a 16:00, en horario continuado. Sábados y domingos, cerrado.",
@@ -1892,10 +1930,7 @@ function pintarStockHero(){
 /* catálogo */
 function render(){
   pintarCatalogo();
-  const d = COCHES.find(c=>c.destacado && c.estado!=="reservado");
-  const inicio = (d ? [d, ...COCHES.filter(c=>c!==d)] : COCHES).slice(0,3);
-  $("#home-grid").innerHTML = inicio.length ? inicio.map(card).join("") : vacio;
-  $("#home-sec").hidden = false;
+  // (la portada ya no enseña coches: el botón «Ver catálogo disponible» lleva al catálogo completo)
   pintarStockHero();
   const vs = VENDIDOS.slice(0,6).map(soldCard).join("");
   $("#sold-grid").innerHTML = $("#cat-sold").innerHTML = vs;
@@ -1958,7 +1993,7 @@ addEventListener("pageshow",e=>{ if(e.persisted) refrescar(); });
 
 async function cargar(){
   cargarInteres(); cargarViendo();
-  $("#cat-grid").innerHTML = $("#home-grid").innerHTML = cargando;
+  $("#cat-grid").innerHTML = cargando;
   try{
     const r = await fetch(API, {cache:"no-store"});
     if(!r.ok) throw new Error(r.status);
@@ -1971,7 +2006,7 @@ async function cargar(){
     if(COCHES_FIJOS.length){ COCHES = ordenar(COCHES_FIJOS); render(); return; }
     if(DEMO && window.DEMO_COCHES){ COCHES = window.DEMO_COCHES; render(); return; }
     const msg = `<div class="empty" style="grid-column:1/-1"><b style="color:var(--ink)">No hemos podido cargar los coches.</b><br>Recarga la página o llámanos al ${EMPRESA.telefono}.</div>`;
-    $("#cat-grid").innerHTML = $("#home-grid").innerHTML = msg;
+    $("#cat-grid").innerHTML = msg;
   }
 }
 
@@ -2197,8 +2232,6 @@ document.addEventListener("click",e=>{
   const eq=c.equipamiento||[];
   $("#m-eq").hidden=!eq.length; $("#m-eq ul").innerHTML=eq.map(x=>`<li>${esc(x)}</li>`).join("");
   const dm=demanda(c,"m-demand"); $("#m-demand").hidden=!dm; if(dm) $("#m-demand").innerHTML=dm.replace(/^<div[^>]*>|<\/div>$/g,"");
-  $("#m-wa").href=wa(`Hola, me interesa el ${c.marca} ${c.modelo} ${c.version||""} (${c.anio}, ${km(c.km)}) de ${eur(c.precio)}. ¿Sigue disponible?`);
-  $("#m-call").href=tel;
   $("#book-form").reset(); $("#book-ok").hidden=true; fallo("b",""); $("#b-conf").hidden=true; $("#book-form").classList.remove("done"); AG_B.st.hora=""; modoVisita();
   const res=c.estado==="reservado"; $("#book-form").hidden=res;
   finAbrir(c); pintarOferta(c);
@@ -2210,7 +2243,6 @@ document.addEventListener("click",e=>{
 });
 modal.addEventListener("close",()=>{ pararVisor(); dejarDeVer(); if(renderPendiente){ renderPendiente=false; render(); } });
 $("#m-360").onclick=()=>showFoto(0,true);
-$("#m-wa").addEventListener("click",()=>apuntarInteres(gal.c));
 $("#m-prev").onclick=()=>showFoto(gal.i-1);
 $("#m-next").onclick=()=>showFoto(gal.i+1);
 $("#m-thumbs").addEventListener("click",e=>{ const b=e.target.closest("[data-j]"); if(b) showFoto(+b.dataset.j, true); });
@@ -2271,7 +2303,7 @@ async function guardar(pref, datos, btn, conWhatsApp=true, msgError=""){
 
 /* ---------- calendario de citas en tiempo real ---------- */
 function Agenda(el, agenda, alCambiar){
-  const st={dias:[], fecha:"", hora:"", error:false, cargado:false};
+  const st={dias:[], fecha:"", hora:"", error:false, cargado:false, lleno:false};
   const libres=d=>d.horas.filter(h=>h.libre).length;
   function pintar(){
     if(st.error){ el.innerHTML=`<p class="ag-empty">${L("No hemos podido cargar el calendario. Envía la solicitud y te llamamos para darte hora.","We couldn't load the calendar. Send your request and we'll call you with a time.")}</p>`; return; }
@@ -2283,14 +2315,14 @@ function Agenda(el, agenda, alCambiar){
     const d=st.dias.find(x=>x.fecha===st.fecha);
     const horas=d? d.horas.map(h=>`<button type="button" class="ag-h" data-h="${h.hora}" aria-pressed="${h.hora===st.hora}" ${h.libre?"":"disabled"} aria-label="${h.hora}${h.libre?"":" "+L("ocupada","taken")}">${h.hora}</button>`).join("") : "";
     el.innerHTML=`<div class="ag-head"><b>${L("Elige día y hora","Pick a day and time")}</b><span class="ag-live"><i></i>${L("Horas libres en tiempo real","Live availability")}</span></div>
-      ${st.dias.some(libres)?`<div class="ag-days">${dias}</div><div class="ag-hours">${horas}</div>`:`<p class="ag-empty">${L("No quedan horas libres en los próximos días. Elige «Solo pedir presupuesto» y te llamamos.","No free times in the coming days. Choose the other option and we'll call you.")}</p>`}
+      ${st.dias.some(libres)?`<div class="ag-days">${dias}</div><div class="ag-hours">${horas}</div>`:`<p class="ag-empty">${L("No quedan horas libres en los próximos días. Envía la solicitud y te llamamos para darte hora.","No free times in the coming days. Send your request and we'll call you with a time.")}</p>`}
       <p class="ag-sel ${st.hora?"ok":""}">${st.hora?"✓ "+fechaBonita(st.fecha)+", "+st.hora+" h":L("Toca un día y después una hora.","Tap a day, then a time.")}</p>`;
     const nd=el.querySelector(".ag-days"); if(nd) nd.scrollLeft=sl;
   }
   async function cargar(){
     try{
       const r=await fetch("/api/citas?agenda="+agenda,{cache:"no-store"}); if(!r.ok) throw 0;
-      const j=await r.json(); st.dias=(j.dias||[]).filter(d=>!d.cerrado); st.cargado=true; st.error=false;
+      const j=await r.json(); st.dias=(j.dias||[]).filter(d=>!d.cerrado); st.cargado=true; st.error=false; st.lleno=!st.dias.some(libres);
       if(st.hora){ const d=st.dias.find(x=>x.fecha===st.fecha), h=d&&d.horas.find(x=>x.hora===st.hora);
         if(!h||!h.libre){ st.hora=""; alCambiar(L("La hora que elegiste se acaba de ocupar. Elige otra.","The time you picked has just been taken. Please choose another one.")); } }
       const d=st.dias.find(x=>x.fecha===st.fecha);
@@ -2341,7 +2373,8 @@ $("#shop-form").addEventListener("submit",async e=>{
   e.preventDefault();
   if(!comprobar("t",[["#t-car",L("Dinos qué coche es.","Tell us which car it is.")],["#t-name",L("Escribe tu nombre.","Please enter your name.")],["#t-phone",L("Escribe tu teléfono.","Please enter your phone number.")]])) return;
   if(!telValido($("#t-phone").value)){ fallo("t",L("Revisa el teléfono.","Please check the phone number.")); return; }
-  const p=picked(), conCita=modoDe("t-modo")==="cita" && !AG_T.st.error;
+  // Sin calendario (error o sin horas libres) la solicitud se envía igual y te llamamos para darte hora
+  const p=picked(), conCita=modoDe("t-modo")==="cita" && !AG_T.st.error && !AG_T.st.lleno;
   if(conCita && !AG_T.st.hora){ fallo("t",L("Elige el día y la hora de tu cita.","Choose the day and time of your appointment.")); $("#t-agenda").scrollIntoView({block:"center",behavior:"smooth"}); return; }
   const coche=$("#t-car").value+($("#t-plate").value?" ("+$("#t-plate").value+")":"");
   const t=L(`Hola Volcano Cars, quiero pedir presupuesto en el taller.\n\nCoche: ${coche}\nServicios: ${p.length?p.join(", "):"sin especificar"}\n${$("#t-msg").value?"Detalles: "+$("#t-msg").value+"\n":""}\nNombre: ${$("#t-name").value}\nTeléfono: ${$("#t-phone").value}`,
@@ -2385,7 +2418,7 @@ function actualizarPasos(){
   const p1=picked().length>0 || !!$("#t-msg").value.trim();
   const p2=!!$("#t-car").value.trim() && !!$("#t-name").value.trim() && telValido($("#t-phone").value);
   const cita=modoDe("t-modo")==="cita";
-  const p3=cita ? !!AG_T.st.hora : true;
+  const p3=cita && !AG_T.st.error && !AG_T.st.lleno ? !!AG_T.st.hora : true;
   const hechos=[p1,p2,p3]; const actual=hechos.indexOf(false);
   document.querySelectorAll("#t-pasos li").forEach((li,i)=>{ li.classList.toggle("hecho",hechos[i]); li.classList.toggle("actual",i===actual); });
   document.querySelector('#t-pasos li[data-paso="3"] span').textContent = cita ? L("Día y hora","Day & time") : L("Presupuesto","Quote");
@@ -3097,13 +3130,6 @@ function slugDe(c){
   return (b?b+"-":"")+c.id.slice(0,8).toLowerCase();
 }
 const fichaURL=c=>location.origin+"/coche/"+slugDe(c);
-$("#m-share").addEventListener("click",async e=>{
-  e.preventDefault(); const c=gal.c; if(!c) return;
-  const url=fichaURL(c), t=`${c.marca} ${c.modelo} ${c.anio} · ${eur(c.precio)} · Volcano Cars`;
-  TRK("clk","compartir",c.id.slice(0,20));
-  if(navigator.share){ try{ await navigator.share({title:t,url}); return; }catch(_){ return; } }
-  window.open(wa(t+"\n"+url),"_blank","noopener");
-});
 let abiertoDesdeEnlace=false;
 function abrirDesdeEnlace(){
   if(abiertoDesdeEnlace) return; const id=new URLSearchParams(location.search).get("coche"); if(!id) return;
@@ -3125,5 +3151,7 @@ cargar();
 <script src="/taller-ui.js" defer></script>
 <!-- Reserva flash 50 €, lista de espera, comprobante PDF y presupuesto por foto -->
 <script src="/conversion.js" defer></script>
+<!-- Alertas de coches por pueblo e «Historial Sin Sorpresas» (PDF) -->
+<script src="/mejoras.js" defer></script>
 </body>
 </html>

@@ -138,7 +138,7 @@ body{background:radial-gradient(900px 500px at 100% -10%,color-mix(in srgb,var(-
 /* solicitudes */
 #leads .lead,#agenda .lead{border-left:5px solid var(--c1)}
 .lead{--c1:#3B6FD8;transition:transform .3s,box-shadow .3s}
-.lead.t-taller{--c1:#1F9D6B}.lead.t-tasacion{--c1:#E08A2E}.lead.t-contacto{--c1:#67635D}.lead.t-financiacion{--c1:#7A3FC4}
+.lead.t-alerta{--c1:#0E8C9A}.lr.t-alerta{--c1:#0E8C9A}.kb-card.t-alerta{--c1:#0E8C9A}.tipo.alerta{background:#DDF3F5;color:#0B6A74}.chip.vip{background:#F2B350;color:#1B1B1A;font-weight:800}.lead.t-taller{--c1:#1F9D6B}.lead.t-tasacion{--c1:#E08A2E}.lead.t-contacto{--c1:#67635D}.lead.t-financiacion{--c1:#7A3FC4}
 .lead:hover{transform:translateY(-2px);box-shadow:0 16px 32px -20px var(--c1)}
 #leads .lead.nueva{border-left-color:var(--c1)}
 .lead.nueva{box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 35%,transparent)}
@@ -819,7 +819,7 @@ em b.s-r,em b.s-a{background:none;color:var(--t-r)}em b.s-a{color:var(--t-a)}
   .tp-t td small{display:block;color:#67635D;font-size:7pt}
   .tp-t td.c{text-align:center;width:28px}
   .tp-t td:first-child{width:24px;color:#67635D;font-size:7pt}
-  .tp-sem tr.e-ok td.c,.tp-sem tr.v-si td.c{background:#E3F2E9;color:#1F8B4C}
+  .tp-sem tr.e-ok td.c,.tp-sem tr.v-si td.c{background:#E3F2E9;color:var(--t-ok)}
   .tp-sem tr.e-a td.c{background:#FDF0D8;color:#B26A00}
   .tp-sem tr.e-r td.c,.tp-sem tr.v-no td.c{background:#FBE4E1;color:#C62D1F}
   .tp-sem tr.e-na td.c,.tp-sem tr.v-na td.c{background:#ECE9E4}
@@ -848,6 +848,21 @@ em b.s-r,em b.s-a{background:none;color:var(--t-r)}em b.s-a{color:var(--t-a)}
 .dw-body::after{content:"";display:block;height:80px}
 main.wrap{padding-bottom:110px}
 .t-sec>*{min-width:0}
+
+/* Avisos de ITV */
+.t-chk-itv{margin-top:10px;padding:10px 12px;border:1.5px dashed var(--line);border-radius:12px}
+.t-chk-itv small{display:block;margin-top:4px}
+.t-itv-intro{margin:0 0 14px}
+.t-itv{cursor:default}
+.t-itv:hover{border-color:var(--line)}
+.t-itv-7{border-left:4px solid var(--t-a)}
+.t-itv-cad{border-left:4px solid var(--t-r)}
+.t-itv-30{border-left:4px solid var(--accent)}
+.t-itv.hecho{opacity:.7}
+.t-itv-f{font-size:14px}
+.t-itv-ok{font-size:13.5px;font-weight:700;color:var(--t-ok)}
+.t-itv-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.t-itv-n{margin-left:4px;background:var(--accent);color:#fff;border-radius:999px;padding:0 7px;font-size:12px}
 /*TALLER-CSS-FIN*/
 /*CAJA-CSS-INICIO*//* ===================== CONTROL DE CAJA ===================== */
 .cj-op{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;display:grid;gap:14px;margin-bottom:18px}
@@ -1487,7 +1502,7 @@ b.fn-c-ing,b.fn-c-egr{background:none;color:var(--ink)}
     <div class="tareas" id="tareas"></div>
     <div class="tools">
       <input class="in" id="busq" type="search" placeholder="Buscar nombre, teléfono, matrícula, coche…" aria-label="Buscar">
-      <select class="in" id="tipoF" aria-label="Tipo"><option value="">Todos</option><option value="taller">Taller</option><option value="coche">Coches</option><option value="financiacion">Financiación</option><option value="contacto">Consultas</option><option value="tasacion">Tasaciones (antiguas)</option></select>
+      <select class="in" id="tipoF" aria-label="Tipo"><option value="">Todos</option><option value="taller">Taller</option><option value="coche">Coches</option><option value="financiacion">Financiación</option><option value="contacto">Consultas</option><option value="alerta">Alertas de coches</option><option value="tasacion">Tasaciones (antiguas)</option></select>
       <div class="segv" id="vistas" role="group" aria-label="Vista"><button type="button" data-vista="lista">Lista</button><button type="button" data-vista="embudo">Embudo</button><button type="button" data-vista="clientes">Clientes</button></div>
     </div>
     <div class="filters" id="filters"></div>
@@ -1634,6 +1649,10 @@ b.fn-c-ing,b.fn-c-egr{background:none;color:var(--ink)}
         </div>
         <div class="msg bad" id="v-err" role="alert" hidden></div>
       </fieldset>
+
+      <!-- Historial Sin Sorpresas (PDF del FORM-02 + FORM-04) y alertas de clientes que encajan · /panel-mejoras.js -->
+      <fieldset class="card" id="hist-card"></fieldset>
+      <fieldset class="card" id="al-match"></fieldset>
 
       <fieldset class="card">
         <legend><span class="lg-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16h14M6.5 16l1.3-4.3A2 2 0 0 1 9.7 10h4.6a2 2 0 0 1 1.9 1.7L17.5 16M4 16v2.5h2.5V16M17.5 16v2.5H20V16"/></svg></span>El coche</legend>
@@ -1859,6 +1878,7 @@ function openForm(c){
   $("#del").hidden = !c; $("#form-err").hidden = true;
   video = c && c.video ? {...c.video} : null; vNuevo = null; vSubiendo = false;
   pintarVideo(); renderPhotos(); show("s-form");
+  if(window.VC_PANEL) VC_PANEL.coche(c);
 }
 function renderPhotos(){
   const done = fotos.map((k,i)=>`
@@ -2071,7 +2091,7 @@ $("#del").onclick = async ()=>{
 const hoyC=()=>{ try{ return new Intl.DateTimeFormat("en-CA",{timeZone:"Atlantic/Canary"}).format(new Date()); }catch(_){ return new Date().toISOString().slice(0,10); } };
 const fechaLarga=d=>{ const t=new Date(d+"T12:00:00Z").toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long",timeZone:"UTC"}); return t[0].toUpperCase()+t.slice(1); };
 const EST={nueva:"Nueva",contactado:"Contactado",cita:"Cita",ganada:"Ganada",perdida:"Perdida"};
-const TIPO={coche:"Coche",taller:"Taller",tasacion:"Tasación",contacto:"Consulta",financiacion:"Financiación"};
+const TIPO={coche:"Coche",taller:"Taller",tasacion:"Tasación",contacto:"Consulta",financiacion:"Financiación",alerta:"Alerta"};
 const REVIEW="https://g.page/r/Caeh6Wr6CwtNECE/review";
 const MOTIVOS=["Precio","No contesta","Compró en otro sitio","Ya no lo necesita","Sin financiación","Coche vendido","Otro"];
 const CANALES_MANUAL=["Teléfono","En persona","WhatsApp","Recomendación","Redes sociales","Otro"];
@@ -2091,6 +2111,7 @@ const sumaDias=(f,n)=>new Date(Date.parse(f+"T12:00:00Z")+n*864e5).toISOString()
 const abiertas=x=>["nueva","contactado","cita"].includes(x.estado);
 const cierre=x=>{ const h=(x.historial||[]).filter(e=>e.estado==="ganada").pop(); return h?h.t:(x.estado==="ganada"?x.creado:null); };
 function queEs(x){
+  if(x.alerta) return "🔔 "+[x.alerta.zona,x.alerta.presupuesto,x.alerta.carroceria!=="Cualquiera"?x.alerta.carroceria:"",x.alerta.cambio,x.alerta.busqueda].filter(Boolean).join(" · ");
   if(x.coche) return (x.tipo==="financiacion"?"Financiación del ":"")+x.coche.titulo;
   const v=x.vehiculo||{}, s=(x.servicios||[]).join(", "), c=v.coche||[v.marca,v.modelo,v.anio].filter(Boolean).join(" ");
   return [s,c+(v.matricula?" ("+v.matricula+")":"")].filter(t=>t&&t.trim()).join(" · ")||(x.mensaje||"").slice(0,80)||TIPO[x.tipo]||x.tipo;
@@ -2176,6 +2197,7 @@ function filtrados(){
 }
 function chipsLead(x){
   const c=[];
+  if(x.prioridad) c.push(`<span class="chip vip" title="[SOLICITUD VIP - PRIORIDAD ALTA +10%]">⚡ VIP +10 %</span>`);
   if(x.cita && x.estado!=="perdida") c.push(`<span class="chip">${IC.cal}${esc(fecha(x.cita.fecha))} · ${esc(x.cita.hora)}</span>`);
   if(x.seguimiento && abiertas(x)) c.push(`<span class="chip ${vencido(x)?"rojo":""}">${IC.flag}${x.seguimiento===hoyC()?"Hoy":esc(fecha(x.seguimiento))}</span>`);
   if(x.importe) c.push(`<span class="chip eur">${eur(x.importe)}</span>`);
@@ -2281,6 +2303,12 @@ function refrescarDrawer(){ if(!DW||$("#drawer").hidden||DW.tipo==="seguridad"||
 function plantillas(x){
   const n=x.nombre.split(" ")[0], en=x.idioma==="en", o=x.orden?ORDENES.find(z=>z.token===x.orden):null, link=o?location.origin+"/s/"+o.token:"";
   const L=[["Primer contacto",en?`Hi ${n}, this is Volcano Cars. Thanks for your request: ${queEs(x)}. When is a good time to call you?`:`Hola ${n}, te escribimos de Volcano Cars por tu solicitud: ${queEs(x)}. ¿Cuándo te viene bien que te llamemos?`]];
+  // ⚡ Prioridad Taller (+10 %): confirmación con el presupuesto y cierre con pregunta orientada al «no» (Chris Voss)
+  if(x.prioridad) L.unshift(["⚡ Presupuesto VIP (+10 %)",en?`Hi ${n}, this is Volcano Cars ⚡ We've got your Express Quote with *Workshop Priority* on. Your estimate is ___ € (+10% priority = ___ €, only if you go ahead). As soon as you say yes, your car goes into a bay ahead of the waiting list. Would it be a bad idea to bring it in today at ___:___?`:`Hola ${n}, te escribimos de Volcano Cars ⚡ Tenemos tu Presupuesto Exprés con la *Prioridad Taller* activada. Tu presupuesto estimado es ___ € (+10 % de prioridad = ___ €, solo si haces la reparación). En cuanto nos digas que sí, tu coche entra a box por delante de la lista de espera. ¿Sería una mala idea traerlo hoy a las ___:___?`]);
+  // 🔔 Alertas de coches: alta y aviso de coche nuevo (antes de anunciarlo)
+  if(x.alerta){ const a=x.alerta;
+    L.unshift(["🔔 Confirmar alta en avisos",en?`Hi ${n}, this is Volcano Cars 🔔 You're on our new-car alert list (${a.zona}${a.presupuesto?", "+a.presupuesto:""}). When a car that fits comes in, you'll hear it here before we advertise it. Save this number so our messages reach you. Reply STOP any time and we'll remove you.`:`Hola ${n}, te escribimos de Volcano Cars 🔔 Ya estás en la lista de avisos de coches nuevos (${a.zona}${a.presupuesto?", "+a.presupuesto.toLowerCase():""}). Cuando entre uno que encaje, te lo contamos por aquí antes de anunciarlo. Guarda este número para que te lleguen los avisos. Si en algún momento no quieres más, responde BAJA y te quitamos.`]);
+    L.push(["🚗 Aviso: coche nuevo",en?`Hi ${n}, Volcano Cars here 🔔 As promised, you're hearing it first: a ___ (year ___, ___ km) for ___ € has just come in, checked in our workshop with a 1-year warranty${a.zona!=="Otro pueblo"?" and free delivery to "+a.zona:""}. It goes online tomorrow. Would it be a bad idea to hold it for you until you see it?`:`Hola ${n}, te escribimos de Volcano Cars 🔔 Como te prometimos, te enteras antes que nadie: acaba de entrar un ___ (año ___, ___ km) por ___ €, revisado en nuestro taller y con 1 año de garantía${a.zona!=="Otro pueblo"?", y te lo llevamos gratis a "+a.zona:""}. Mañana lo publicamos. ¿Sería una mala idea guardártelo hasta que lo veas?`]); }
   if(x.cita) L.push(["Recordar la cita",en?`Hi ${n}, a quick reminder of your appointment at Volcano Cars on ${fechaLarga(x.cita.fecha)} at ${x.cita.hora}. Calle Valle Largo, Unit 8, Antigua. See you soon!`:`Hola ${n}, te recordamos tu cita en Volcano Cars el ${fechaLarga(x.cita.fecha).toLowerCase()} a las ${x.cita.hora}. Calle Valle Largo, Nave 8, Antigua. ¡Te esperamos!`]);
   if(x.coche) L.push(["Seguimiento del coche",en?`Hi ${n}, did you get a chance to think about the ${x.coche.titulo}? We can reserve it for you or send you more photos and the 360° video.`:`Hola ${n}, ¿pudiste pensar lo del ${x.coche.titulo}? Si quieres te lo reservamos o te mandamos más fotos y el vídeo 360°.`]);
   if(x.financiacion){ const f=x.financiacion; L.push(["Documentos para financiar",en?`Hi ${n}, thanks for your finance request for the ${x.coche?x.coche.titulo:"car"} (${eurA(f.importe)} over ${f.plazo} months). To send it to the lender we need: ID card/NIE (both sides), your last 2 payslips (or last tax return if self-employed) and a bank certificate with your IBAN. You can bring them to the workshop or we can call you to explain.`:`Hola ${n}, gracias por tu solicitud de financiación del ${x.coche?x.coche.titulo:"coche"} (${eurA(f.importe)} a ${f.plazo} meses). Para enviarla a la financiera necesitamos: DNI o NIE por las dos caras, las 2 últimas nóminas (o la última declaración de la renta si eres autónomo) y un certificado de titularidad de tu cuenta. Puedes traerlos al taller o te llamamos y te lo explicamos.`]);
@@ -3121,6 +3149,7 @@ function tFiltrar(){
 function tBarra(){
   const n=k=>ORDENES.filter(o=>T_FASES[tFase(o.estado)][0]===k).length, al=tAlertasLocal();
   const vistas=[["mios",ES_EQ()?"Mis trabajos":"En marcha"],["tabla","Órdenes"],["tablero","Tablero"]];
+  if(T_ITV_OK()){ const p=tItvPendientes(); vistas.push(["itv",`Avisos de ITV${p?` <b class="num t-itv-n">${p}</b>`:""}`]); }
   return `<div class="t-bar">
     <div class="segv" role="group" aria-label="Vista">${vistas.map(([k,t])=>`<button type="button" data-tvista="${k}" aria-pressed="${TVISTA===k}">${t}</button>`).join("")}</div>
     <input class="in" id="t-busq" type="search" placeholder="Buscar matrícula, cliente o Nº de orden" value="${esc(TBUSQ)}" aria-label="Buscar orden">
@@ -3170,6 +3199,7 @@ renderOrdenes=function(){
   $("#t-barra").innerHTML=tBarra();
   if(enBusq){ const b=$("#t-busq"); b.focus(); try{ b.setSelectionRange(pos,pos); }catch(_){} }
   if(TVISTA==="tablero") return _kanbanOrdenes();
+  if(TVISTA==="itv"){ tItvPintar(); if(!TITV||Date.now()-TITV_T>60000) tItvCargar(); return; }
   if(!ORDENES.length){ $("#ordenes").innerHTML='<div class="empty"><b style="color:var(--ink)">No hay coches en el taller.</b><br>Pulsa «+ Nueva recepción» cuando entre un coche: se crea la orden con su Nº y la ficha de recepción (FORM-01).</div>'; return; }
   $("#ordenes").innerHTML=TVISTA==="mios"?tMios():tTabla();
 };
@@ -3228,7 +3258,7 @@ function tNuevaRecepcion(){
 function tVacias(){
   const o=TF.orden, f=TF.fichas;
   const f1=tClone(f.f1)||{fecha:"",hora:"",cliente:{nombre:o.cliente.nombre||"",doc:"",telefono:o.cliente.telefono||"",email:o.cliente.email||"",titular:"",contacto:"whatsapp"},recibidoPor:ME?ME.nombre:"",entregaPrometida:o.entrega||"",tipoEntrada:"",
-    vehiculo:{matricula:o.vehiculo.matricula||"",marcaModelo:o.vehiculo.coche||"",vin:"",anioColor:"",km:o.vehiculo.km||"",kmFoto:"",itv:"",combustible:"",nivel:"",testigos:""},motivo:"",inventario:{},llaves:"",danos:[],fotosDanos:[],sinDanos:false,autorizoHasta:"",avisosWhatsApp:true,firmaCliente:"",firmadoCliente:"",firmaTaller:null,cerrada:false};
+    vehiculo:{matricula:o.vehiculo.matricula||"",marcaModelo:o.vehiculo.coche||"",vin:"",anioColor:"",km:o.vehiculo.km||"",kmFoto:"",itv:"",combustible:"",nivel:"",testigos:""},motivo:"",inventario:{},llaves:"",danos:[],fotosDanos:[],sinDanos:false,autorizoHasta:"",avisosWhatsApp:true,avisosITV:false,firmaCliente:"",firmadoCliente:"",firmaTaller:null,cerrada:false};
   const f2=tClone(f.f2)||{mecanico:"",items:{},horasEst:0,recomendacion:"",rechazoFirmado:false,firma:null,cerrada:false,inicio:""};
   const f3=tClone(f.f3)||{mecanico:"",tarifa:TF.config.tarifa,estMin:0,tipo:"reparacion",hoja:"1 de 1",eventos:[],justificacion:null,vistoBueno:null,retrabajos:[]};
   let f4=tClone(f.f4)||{destino:f1.tipoEntrada==="compra"||f1.tipoEntrada==="retoma"?"venta":"cliente",items:{},notas:{},resultado:"",motivo:"",firma:null,cierreGerente:null,intentos:0};
@@ -3388,8 +3418,9 @@ function tF1(){
     ${x.danos.length?`<p class="hint">${x.danos.length} daño${x.danos.length>1?"s":""} marcado${x.danos.length>1?"s":""}.${lock?"":" Toca una marca para quitarla."}</p>`:""}
     <label class="t-chk"><input type="checkbox" data-f="sinDanos" ${x.sinDanos?"checked":""} ${x.danos.length?"disabled":""}><span>Sin daños previos (revisado con el cliente)</span></label>
     <div class="field"><label>Fotos de los daños ${x.danos.length?'<b class="t-req">* obligatoria al menos una</b>':""}</label>${tFotos(x.fotosDanos,"fotosDanos",{dis:lock})}</div>`)}
-  ${tSec(7,"Autorización y firma","",`<div class="t-g2"><div class="field"><label>Autoriza el diagnóstico hasta (€, IGIC incl.)</label><input class="in num" data-f="autorizoHasta" value="${tEsc(x.autorizoHasta)}" inputmode="decimal" maxlength="10" placeholder="Ej. 60"></div><label class="t-chk" style="align-self:end"><input type="checkbox" data-f="avisosWhatsApp" ${x.avisosWhatsApp?"checked":""}><span>Acepta recibir los avisos de la reparación por WhatsApp</span></label></div>
-    <p class="t-legal">El cliente confirma que los datos, el inventario y los daños anotados son correctos. Cualquier trabajo que supere el importe autorizado se presupuesta y se aprueba antes de hacerlo. Sus datos se usan solo para gestionar esta reparación (política de privacidad en volcanocars.es).</p>
+  ${tSec(7,"Autorización y firma","",`<div class="t-g2"><div class="field"><label>Autoriza el diagnóstico hasta (€, IGIC incl.)</label><input class="in num" data-f="autorizoHasta" value="${tEsc(x.autorizoHasta)}" inputmode="decimal" maxlength="10" placeholder="Ej. 60"></div><label class="t-chk" style="align-self:end"><input type="checkbox" data-f="avisosWhatsApp" ${x.avisosWhatsApp?"checked":""}><span>Acepta recibir los avisos de <b>esta reparación</b> por WhatsApp (presupuesto, coche listo)</span></label></div>
+    <label class="t-chk t-chk-itv"><input type="checkbox" data-f="avisosITV" ${x.avisosITV?"checked":""}><span><b>Avisos de ITV (opcional).</b> Acepta que Volcano Cars le escriba por WhatsApp 30 y 7 días antes de que caduque la ITV de este coche para ofrecerle la revisión Pre-ITV. Puede darse de baja cuando quiera contestando «BAJA».${x.avisosITV&&!x.vehiculo.itv?'<small class="t-aviso">Rellena «ITV caduca» en el apartado 3: sin fecha no se le puede avisar.</small>':""}</span></label>
+    <p class="t-legal">El cliente confirma que los datos, el inventario y los daños anotados son correctos. Cualquier trabajo que supere el importe autorizado se presupuesta y se aprueba antes de hacerlo. Sus datos se usan para gestionar esta reparación y, solo si ha marcado la casilla de ITV, para avisarle de la caducidad de la ITV (política de privacidad en volcanocars.com).</p>
     <div class="field"><label>Firma del cliente <b class="t-req">*</b></label>${x.firmaCliente?`<div class="t-firma-img"><img src="${x.firmaCliente}" alt="Firma del cliente">${lock?"":'<button type="button" class="btn b-ghost b-sm" data-tfirma-borrar>Repetir firma</button>'}</div>`:`<div class="t-firma"><canvas width="700" height="200" data-tfirma aria-label="Firma aquí con el dedo"></canvas><span class="t-firma-ph">Firma aquí con el dedo</span><button type="button" class="btn b-ghost b-sm" data-tfirma-limpiar>Borrar</button></div>`}</div>
     ${f&&f.firmaTaller?tFirmaBox(f.firmaTaller,"Recibido por el taller"):""}`)}
   </fieldset>
@@ -3552,7 +3583,7 @@ $("#tf").addEventListener("input",e=>{ const t=e.target;
   else if(t.matches("[data-tjf]")) TW.j[t.dataset.tjf]=t.value;
 });
 $("#tf").addEventListener("change",async e=>{ const t=e.target;
-  if(t.matches("select[data-f],input[type=checkbox][data-f],input[type=date][data-f]")){ tCampo(t); if(t.dataset.f==="sinDanos") return; }
+  if(t.matches("select[data-f],input[type=checkbox][data-f],input[type=date][data-f]")){ tCampo(t); if(t.dataset.f==="sinDanos") return; if(t.dataset.f==="avisosITV"||t.dataset.f==="vehiculo.itv"){ tRenderBody(true); return; } }
   if(t.matches("[data-tj]")){ const s=new Set(TW.j.codigos); t.checked?s.add(t.dataset.tj):s.delete(t.dataset.tj); TW.j.codigos=[...s].sort(); return; }
   if(t.matches("[data-tjf]")){ TW.j[t.dataset.tjf]=t.value; return; }
   if(t.matches("[data-tfoto]")){ const campo=t.dataset.tfoto, files=[...t.files]; t.value=""; if(!files.length) return; toast("Subiendo "+files.length+" foto"+(files.length>1?"s":"")+"…");
@@ -3701,6 +3732,52 @@ $("#dw-body").addEventListener("click",async e=>{ if(!DW||DW.tipo!=="equipo") re
     TEQ=await tApi("equipo"); tPintarEquipo(await tApi("config")); toast("Hecho"); }catch(err){ toast(err.message); } });
 
 /* =====================================================================
+   AVISOS DE ITV · clientes que dieron el permiso aparte en FORM-01
+   30 días antes, 7 días antes y (si se pasó) caducada. Gerente y recepción.
+   El botón abre WhatsApp con el mensaje escrito y lo marca como enviado.
+   ===================================================================== */
+let TITV=null, TITV_T=0;
+const T_ITV_OK=()=>ES_GER()||!!(ME&&ME.rol==="recepcion");
+const tItvTramo=x=>x.dias<0?"cad":x.dias<=7?"7":"30";
+const tItvHecho=x=>x[{cad:"cad","7":"a7","30":"a30"}[tItvTramo(x)]];
+const tItvPendientes=()=>TITV&&TITV.items?TITV.items.filter(x=>!tItvHecho(x)).length:0;
+async function tItvCargar(){ try{ TITV=await tApi("itv"); TITV_T=Date.now(); }catch(err){ TITV={error:err.message,items:[]}; }
+  if(TVISTA==="itv"){ $("#t-barra").innerHTML=tBarra(); tItvPintar(); } }
+function tItvTexto(x){ const n=(x.nombre||"").trim().split(/\s+/)[0]||"", coche=(x.coche||"coche")+(x.matricula?` (${x.matricula.toUpperCase()})`:""), f=tF(x.itv), t=tItvTramo(x);
+  const baja="\n\nSi no quieres recibir más avisos de ITV, contesta BAJA.";
+  if(t==="cad") return `Hola ${n}, somos Volcano Cars, tu taller en Antigua. Te escribimos porque la ITV de tu ${coche} caducó el ${f}. Si quieres, te revisamos el coche antes de pasarla (Pre-ITV: luces, frenos, neumáticos, emisiones y testigos) para que la pases a la primera. ¿Te damos cita esta semana?${baja}`;
+  if(t==="7") return `Hola ${n}, somos Volcano Cars (Antigua). La ITV de tu ${coche} caduca el ${f}: quedan ${x.dias===0?"horas":x.dias===1?"1 día":x.dias+" días"}. ¿Quieres que le echemos un vistazo antes de que vayas? Contesta a este mensaje y te damos hora.${baja}`;
+  return `Hola ${n}, somos Volcano Cars, tu taller en Antigua. Te recordamos que la ITV de tu ${coche} caduca el ${f} (dentro de ${x.dias} días). Si quieres, te hacemos una revisión Pre-ITV antes para que la pases a la primera: https://volcanocars.com/pre-itv-fuerteventura ¿Te reservamos un hueco?${baja}`;
+}
+function tItvCard(x){ const t=tItvTramo(x), hecho=tItvHecho(x), coche=esc(x.coche||"Coche");
+  const cuando=x.dias<0?`Caducó hace ${-x.dias} día${x.dias===-1?"":"s"}`:x.dias===0?"Caduca hoy":`Caduca en ${x.dias} día${x.dias===1?"":"s"}`;
+  const prev=t==="7"&&x.a30?`<small>Aviso de 30 días enviado el ${esc(tFH(x.a30))}</small>`:"";
+  return `<div class="t-card-o t-itv ${hecho?"hecho":""} t-itv-${t}"><span class="mat">${esc((x.matricula||"—").toUpperCase())}</span><b>${coche}</b>
+    <small>${esc(x.nombre)} · ${esc(x.telefono)}</small>
+    <span class="t-itv-f"><b>ITV ${esc(tF(x.itv))}</b> · ${cuando}</span>${prev}
+    ${hecho?`<span class="t-itv-ok">✓ Avisado el ${esc(tFH(hecho))}</span><div class="t-itv-acts"><button type="button" class="btn b-ghost b-sm" data-titv-des="${esc(x.clave)}">Deshacer</button></div>`
+      :`<div class="t-itv-acts"><a class="btn b-wa b-sm" target="_blank" rel="noopener" href="https://wa.me/${waNum(x.telefono)}?text=${encodeURIComponent(tItvTexto(x))}" data-titv-wa="${esc(x.clave)}" data-titv-t="${t}">${IC.wa}WhatsApp</a><button type="button" class="btn b-ghost b-sm" data-titv-hecho="${esc(x.clave)}" data-titv-t="${t}" title="Si le has avisado por otro medio">Ya avisado</button></div>`}
+    <div class="t-itv-acts"><button type="button" class="chipb" data-tabrir="${esc(x.token)}" data-ttab="f1">Ficha ${esc(x.num||"")}</button><button type="button" class="chipb" data-titv-baja="${esc(x.clave)}" data-titv-tel="${esc(x.telefono)}">No quiere avisos</button></div></div>`;
+}
+function tItvPintar(){ const box=$("#ordenes"); if(!box) return;
+  if(!TITV){ box.innerHTML='<div class="empty">Cargando avisos de ITV…</div>'; return; }
+  if(TITV.error){ box.innerHTML=`<div class="empty">${esc(TITV.error)}</div>`; return; }
+  const xs=TITV.items, g=k=>xs.filter(x=>tItvTramo(x)===k).sort((a,b)=>(!!tItvHecho(a))-(!!tItvHecho(b))||a.dias-b.dias);
+  const bloque=(t,sub,l,vacio)=>`<section class="t-mbloque"><h3>${t} <span class="num">${l.filter(x=>!tItvHecho(x)).length}</span></h3><p class="hint">${sub}</p>${l.length?`<div class="t-mgrid">${l.map(tItvCard).join("")}</div>`:`<p class="t-vacio">${vacio}</p>`}</section>`;
+  box.innerHTML=`<p class="hint t-itv-intro">Solo salen los clientes que marcaron la casilla <b>«Avisos de ITV»</b> al firmar la ficha de recepción y dejaron la fecha de caducidad. Pulsa <b>WhatsApp</b>: se abre con el mensaje escrito y el aviso queda marcado como enviado. Si alguien contesta «BAJA», pulsa <b>No quiere avisos</b>.</p>
+    ${bloque("Caduca en 7 días o menos","Segundo aviso: el más urgente.",g("7"),"Nadie en los próximos 7 días.")}
+    ${bloque("Caduca en 30 días","Primer aviso: con tiempo para darle cita de Pre-ITV.",g("30"),"Nadie entre 8 y 30 días.")}
+    ${g("cad").length?bloque("Ya caducada","Caducó en los últimos 30 días y no se le avisó a tiempo.",g("cad"),""):""}`;
+}
+async function tItvMarcar(clave,accion,extra={}){ try{ await tApi("itv","POST",{clave,accion,...extra}); }catch(err){ toast(err.message); } await tItvCargar(); }
+document.addEventListener("click",e=>{ const t=e.target;
+  const wa=t.closest("[data-titv-wa]"); if(wa){ tItvMarcar(wa.dataset.titvWa,wa.dataset.titvT); toast("Aviso marcado como enviado"); return; } // el enlace abre WhatsApp solo
+  const hc=t.closest("[data-titv-hecho]"); if(hc){ tItvMarcar(hc.dataset.titvHecho,hc.dataset.titvT); return; }
+  const ds=t.closest("[data-titv-des]"); if(ds){ tItvMarcar(ds.dataset.titvDes,"deshacer"); return; }
+  const bj=t.closest("[data-titv-baja]"); if(bj){ if(!confirm("¿Dar de baja a este cliente de los avisos de ITV? No volverá a salir en esta lista salvo que vuelva a dar el permiso en otra ficha de recepción.")) return; tItvMarcar(bj.dataset.titvBaja,"baja",{telefono:bj.dataset.titvTel}); toast("Dado de baja de los avisos de ITV"); }
+});
+
+/* =====================================================================
    IMPRIMIR / PDF · réplica de las fichas en papel (A4)
    ===================================================================== */
 async function tPdfOrden(token){ try{ const [r]=await Promise.all([tApi("fichas/"+token),TEQ.length?null:tCargarEquipo(),typeof alCargarOrden==="function"?alCargarOrden(token):null]); const prev=TF; TF=r; tImprimir(["f1","f2","f3","f4"]); TF=prev; }catch(err){ toast(err.message); } }
@@ -3727,7 +3804,7 @@ function tP1(){ const x=TF.fichas.f1; if(!x) return '<p class="tp-vacio">Sin rel
   <h4>Inventario de objetos</h4><div class="tp-2"><table class="tp-t"><tbody>${T_INV.slice(0,4).map(fi).join("")}</tbody></table><table class="tp-t"><tbody>${T_INV.slice(4).map(fi).join("")}<tr><td class="tp-inv">Nº de llaves</td><td class="c">${esc(x.llaves)}</td><td></td></tr></tbody></table></div>
   <h4>Daños previos ${x.sinDanos?"· sin daños previos (revisado con el cliente)":`· ${x.danos.length} marcado${x.danos.length===1?"":"s"}`}</h4>${tCroquisImg(x.danos)}${tLeyenda()}
   ${x.fotosDanos.length?`<div class="tp-fotos">${x.fotosDanos.slice(0,8).map(k=>`<img src="${FOTO(k)}" alt="">`).join("")}</div>`:""}
-  <p class="tp-legal">Autoriza el diagnóstico hasta <b>${esc(x.autorizoHasta||"—")} €</b>. Avisos por WhatsApp: ${x.avisosWhatsApp?"sí":"no"}. El cliente confirma que los datos, el inventario y los daños anotados son correctos; cualquier trabajo que supere el importe autorizado se presupuesta y se aprueba antes.</p>
+  <p class="tp-legal">Autoriza el diagnóstico hasta <b>${esc(x.autorizoHasta||"—")} €</b>. Avisos de la reparación por WhatsApp: ${x.avisosWhatsApp?"sí":"no"}. Avisos de caducidad de la ITV por WhatsApp: ${x.avisosITV?"sí":"no"}. El cliente confirma que los datos, el inventario y los daños anotados son correctos; cualquier trabajo que supere el importe autorizado se presupuesta y se aprueba antes.</p>
   <div class="tp-2">${tpFirma("Firma del cliente",x.firmadoCliente?{nombre:x.cliente.nombre,t:x.firmadoCliente}:null,x.firmaCliente)}${tpFirma("Recibido por el taller",x.firmaTaller)}</div>`; }
 function tP2(){ const x=TF.fichas.f2; if(!x) return '<p class="tp-vacio">Sin rellenar.</p>'; const r=tResF2(x), L={ok:"OK",a:"Á",r:"R",na:"NA"};
   return `${tpKV([[["Mecánico",esc(tNombre(x.mecanico))],["Inicio",esc(tFH(x.inicio))],["Rojos",`<b class="tp-r">${r.rojos}</b>`],["Ámbar",`<b class="tp-a">${r.ambar}</b>`],["Horas est.",esc(String(x.horasEst).replace(".",","))]]])}
@@ -4712,7 +4789,8 @@ const rvEnlaceCoche = (id) => `${location.origin}/comprar?coche=${encodeURICompo
 // Mismos textos que la web (netlify/lib/reservas.mts)
 function rvMsgConfirmacion(r) {
   const n = r.nombre.split(" ")[0];
-  const cuando = r.cita ? ` Nos vemos el ${rvFecha(r.cita.fecha)} a las ${r.cita.hora} en nuestra exposición de Antigua para probarlo.` : " Ven a probarlo a nuestra exposición de Antigua cuando te venga bien.";
+  const cuando = r.entrega ? ` Te lo llevamos gratis a ${r.entrega.municipio} el ${rvFecha(r.entrega.fecha)} por la ${r.entrega.franja.toLowerCase()}; te llamamos para confirmar la hora.`
+    : r.cita ? ` Nos vemos el ${rvFecha(r.cita.fecha)} a las ${r.cita.hora} en nuestra exposición de Antigua para probarlo.` : " Ven a probarlo a nuestra exposición de Antigua cuando te venga bien.";
   return r.idioma === "en"
     ? `Congratulations, ${n}! Your ${r.coche.titulo} has been successfully reserved at Volcano Cars. You have 48 hours of exclusive reservation.${r.cita ? ` See you on ${r.cita.fecha} at ${r.cita.hora} at our showroom in Antigua to test drive it.` : ""} Your receipt: ${location.origin}/r/${r.token}`
     : `¡Enhorabuena, ${n}! Tu ${r.coche.titulo} ha sido bloqueado con éxito en Volcano Cars. Tienes 48 horas de reserva exclusiva.${cuando} Tu comprobante: ${location.origin}/r/${r.token}`;
@@ -4750,7 +4828,8 @@ function rvTarjeta(r) {
     <dl class="rv-dl">
       <div><dt>Cliente</dt><dd>${esc(r.nombre)} · <a href="tel:${esc(r.telefono.replace(/[^\d+]/g, ""))}">${esc(r.telefono)}</a>${r.email ? ` · ${esc(r.email)}` : ""}</dd></div>
       <div><dt>Pago</dt><dd>${eurA(r.importe)} · ${esc(rvMetodo[r.metodo] || r.metodo)}${r.pagado ? ` · pagado ${esc(rvCuando(r.pagado))}` : ""}${r.reembolso === "pendiente" ? ' · <b class="rv-warn">devolución pendiente</b>' : r.reembolso === "hecho" ? " · devuelto" : ""}</dd></div>
-      <div><dt>Visita</dt><dd>${r.cita ? esc(rvFecha(r.cita.fecha) + " · " + r.cita.hora + " h") : "Sin fecha: llámale para quedar"}</dd></div>
+      ${r.entrega ? `<div><dt>🚚 Entrega</dt><dd><b>${esc(r.entrega.direccion)}, ${esc(r.entrega.municipio)}</b> · ${esc(rvFecha(r.entrega.fecha))} · ${esc(r.entrega.franja.toLowerCase())} · <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.entrega.direccion + ", " + r.entrega.municipio + ", Fuerteventura")}" target="_blank" rel="noopener">Ver en el mapa</a></dd></div>`
+        : `<div><dt>Visita</dt><dd>${r.cita ? esc(rvFecha(r.cita.fecha) + " · " + r.cita.hora + " h") : "Sin fecha: llámale para quedar"}</dd></div>`}
       ${plazo ? `<div><dt>Plazo</dt><dd>${plazo}</dd></div>` : ""}
     </dl>
     ${r.justificante ? `<div class="rv-doc">${doc ? (doc.pdf ? `<a class="btn b-ghost b-sm" href="${doc.url}" download="justificante-${esc(r.codigo)}.pdf">Descargar el justificante (PDF)</a>` : `<img src="${doc.url}" alt="Justificante de ${esc(r.nombre)}">`) : `<button type="button" class="btn b-ghost b-sm" data-rv-doc>Ver el justificante</button>`}</div>` : ""}
@@ -4964,7 +5043,7 @@ inicio:()=>`
   ${gHero("02",{num:"02",titulo:"Publicar el anuncio",intro:"El título dice qué es. La primera línea, para quién es. El resto quita miedos. Todos los datos coinciden con FORM-02 y FORM-04.",chips:[["Objetivo","Mensajes y llamadas"],["Tiempo","< 48 h"],["Quién","Vendedor"]]})}
   ${gHazlo(["Fija con el gerente los <b>3 precios</b>: anuncio, objetivo y mínimo. Solo el de anuncio se publica.","Rellena la ficha en el panel: marca, modelo, versión, año, km, <b>precio final con IGIC</b>, combustible, cambio y etiqueta.","Escribe la descripción con la plantilla: <b>para quién · por qué este · lo que debes saber</b>. Equipamiento, una línea por cosa.","Haz la <b>comparativa de mercado</b> con al menos 3 anuncios reales del mismo coche y pégala en el panel.","Publica y copia el mismo texto en portales, redes y estado de WhatsApp. Usa <b>Compartir</b> para mandar el enlace del coche."])}
   <div class="g-sec">${gH("Anatomía de un anuncio de alto impacto")}<dl class="g-anat">
-    ${[["Título","Qué es","c-magma","Seat Ibiza 1.0 TSI Style · 2019 · 68.000 km · Gasolina · Manual","En el panel: marca + modelo + versión (la web lo monta sola)"],["Para quién","Conecta","c-magma","Ideal para moverte a diario por la isla: consume poco y cabe en cualquier aparcamiento.","Primera línea de la descripción"],["Por qué este","Da confianza","c-gris","Revisado en nuestro taller (FORM-02): aceite, filtros y pastillas nuevos · ITV hasta 06/2027 · 2 llaves y libro.","Descripción"],["Equipamiento","Lo que se usa","c-gris","Aire acondicionado · pantalla con CarPlay y Android Auto · sensores traseros · control de crucero.","Equipamiento: una línea por elemento"],["Transparencia","Quita miedos","c-ambar","Lo que debes saber: pequeño rayón en el paragolpes trasero (foto 24).","Descripción + foto 24"],["Garantía","Seguridad","c-gris","12 meses de garantía · cambio de nombre incluido · entrega gratis en toda Fuerteventura · financiación disponible.","La web lo añade sola en cada ficha"],["Precio","Claro","c-gris","10.990 € · precio final, IGIC incluido.","Precio (con céntimos si hace falta)"],["Llamada","Acción","c-verde","Ven a probarlo sin compromiso a Antigua. Escríbenos por WhatsApp al 643 66 88 13.","Portales y redes (en la web ya hay botones)"]].map(([t,s,c,v,p])=>`<div><dt class="${c}">${t}<small>${s}</small></dt><dd>${v}<em>${p}</em></dd></div>`).join("")}</dl></div>
+    ${[["Título","Qué es","c-magma","Seat Ibiza 1.0 TSI Style · 2019 · 68.000 km · Gasolina · Manual","En el panel: marca + modelo + versión (la web lo monta sola)"],["Para quién","Conecta","c-magma","Ideal para moverte a diario por la isla: consume poco y cabe en cualquier aparcamiento.","Primera línea de la descripción"],["Por qué este","Da confianza","c-gris","Revisado en nuestro taller (FORM-02): aceite, filtros y pastillas nuevos · ITV hasta 06/2027 · 2 llaves y libro.","Descripción"],["Equipamiento","Lo que se usa","c-gris","Aire acondicionado · pantalla con CarPlay y Android Auto · sensores traseros · control de crucero.","Equipamiento: una línea por elemento"],["Transparencia","Quita miedos","c-ambar","Lo que debes saber: pequeño rayón en el paragolpes trasero (foto 24).","Descripción + foto 24"],["Garantía","Seguridad","c-gris","12 meses de garantía · cambio de nombre incluido · entrega gratis en toda Fuerteventura · financiación disponible.","La web lo añade sola en cada ficha"],["Precio","Claro","c-gris","10.990 € · precio final, IGIC incluido.","Precio (con céntimos si hace falta)"],["Llamada","Acción","c-verde","Ven a probarlo sin compromiso a Antigua. Escríbenos por WhatsApp al 677 96 03 48.","Portales y redes (en la web ya hay botones)"]].map(([t,s,c,v,p])=>`<div><dt class="${c}">${t}<small>${s}</small></dt><dd>${v}<em>${p}</em></dd></div>`).join("")}</dl></div>
   <div class="g-2"><div class="g-sino si"><b class="t c-verde">SÍ</b><ul><li>Frases cortas y datos concretos (km, año, fecha de ITV).</li><li>Decir para quién es el coche.</li><li>Contar el defecto con foto.</li><li>El mismo texto en todos los canales.</li><li>Renovar la foto de portada a los 15 días sin contactos.</li></ul></div>
     <div class="g-sino no"><b class="t c-magma">NO</b><ul><li>«Precio negociable»: invita al regateo.</li><li>«Urge vender»: suena a problema.</li><li>Mayúsculas continuas y exclamaciones.</li><li>«Impecable» sin un dato que lo pruebe.</li><li>Datos que no coinciden con FORM-02 y FORM-04.</li></ul></div></div>
   <div class="g-2">${gCall("oscuro","3 precios por coche","<b>Anuncio</b> (el que se publica) · <b>Objetivo</b> (al que queremos cerrar) · <b>Mínimo</b> (nunca por debajo y nunca se revela). Los fija el gerente antes de publicar.")}${gCall("piedra","Publicación","Mismo anuncio en la web, portales (coches.net, Wallapop, Milanuncios), redes y estado de WhatsApp, el mismo día. Coche con 45 días sin pruebas → revisión de fotos, precio y texto con el gerente.")}</div>
@@ -5043,7 +5122,7 @@ chuleta:()=>`
   ${gCall("oscuro","Tono","Voz tranquila y grave · silencio después de cada técnica · nunca «pero» después de una etiqueta · nada gratis: cada rebaja, a cambio de algo.")}`,
 
 anexo:()=>`
-  ${gHero("anexo",{eyebrow:"ANEXO A · UNA HOJA POR PRUEBA",titulo:"Condiciones de la prueba en carretera",intro:`Volcano Cars · ${typeof EMPRESA_DIR!=="undefined"?EMPRESA_DIR:"Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua"} · 643 66 88 13. Rellenar y firmar antes de salir.`})}
+  ${gHero("anexo",{eyebrow:"ANEXO A · UNA HOJA POR PRUEBA",titulo:"Condiciones de la prueba en carretera",intro:`Volcano Cars · ${typeof EMPRESA_DIR!=="undefined"?EMPRESA_DIR:"Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua"} · 677 96 03 48. Rellenar y firmar antes de salir.`})}
   <div class="no-pdf" style="display:flex;justify-content:flex-end"><button type="button" class="btn b-brand b-sm" data-gimprimir="anexo">Imprimir solo el Anexo A</button></div>
   <div class="g-form">${["Vehículo","Matrícula","Km salida","Combustible salida","Conductor","DNI / NIE","Nº de carnet","Caducidad del carnet","Hora de salida","Hora de vuelta","Km vuelta","Acompañante Volcano Cars"].map(t=>`<div><b>${t}</b><span></span></div>`).join("")}</div>
   <div class="g-sec">${gH("El conductor declara que:")}<ol class="g-decl">
@@ -5120,5 +5199,7 @@ async function guiaPDF(solo){
 }
 /*GUIA-JS-FIN*/
 </script>
+<!-- Historial Sin Sorpresas (subir PDF) y «Alertas que encajan» al dar de alta un coche -->
+<script src="/panel-mejoras.js" defer></script>
 </body>
 </html>

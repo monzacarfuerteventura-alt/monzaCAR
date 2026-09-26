@@ -12,14 +12,16 @@
   Nunca bloquean al cliente: si Telegram o Google fallan, la solicitud se guarda igual en el panel.
 */
 import { store } from "./shared.mts";
+import { ETIQUETA_VIP, mensajeVIP, mensajeAlerta } from "./solicitud.mts";
 type Lead = {
   id: string; creado: string; tipo: string; estado?: string; nombre: string; telefono: string; email?: string; mensaje?: string;
   coche?: { titulo: string; precio: number | null } | null; servicios?: string[]; vehiculo?: Record<string, string>;
   cita?: { fecha: string; hora: string } | null; idioma?: string; fotos?: string[]; origen?: { canal?: string; utm_campaign?: string; landing?: string };
+  prioridad?: boolean; alerta?: { zona: string; presupuesto: string; carroceria: string; cambio: string; busqueda: string } | null;
 };
 
 const env = (k: string) => String((globalThis as any).Netlify?.env?.get(k) || "").trim();
-const TIPO: Record<string, string> = { coche: "Interesado en un coche", taller: "Cita de taller", tasacion: "Tasación", contacto: "Consulta", financiacion: "Financiación" };
+const TIPO: Record<string, string> = { coche: "Interesado en un coche", taller: "Cita de taller", tasacion: "Tasación", contacto: "Consulta", financiacion: "Financiación", alerta: "Alerta de coches nuevos" };
 const escT = (s: unknown) => String(s ?? "").replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]!);
 const telNum = (t: string) => { let d = String(t || "").replace(/[^\d]/g, ""); if (d.startsWith("00")) d = d.slice(2); if (d.length === 9) d = "34" + d; return d; };
 const fecha = (f: string) => (f ? new Date(f + "T12:00:00Z").toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }) : "");
@@ -28,7 +30,8 @@ const precio = (n: number | null | undefined) => (n ? n.toLocaleString("es-ES", 
 export function resumenLead(x: Lead) {
   const v = x.vehiculo || {};
   return {
-    tipo: TIPO[x.tipo] || x.tipo,
+    tipo: (x.prioridad ? ETIQUETA_VIP + " " : "") + (TIPO[x.tipo] || x.tipo),
+    alerta: x.alerta ? [x.alerta.zona, x.alerta.presupuesto, x.alerta.carroceria !== "Cualquiera" ? x.alerta.carroceria : "", x.alerta.cambio, x.alerta.busqueda].filter(Boolean).join(" · ") : "",
     cita: x.cita ? `${fecha(x.cita.fecha)} a las ${x.cita.hora}` : "",
     coche: x.coche ? `${x.coche.titulo}${x.coche.precio ? " · " + precio(x.coche.precio) : ""}` : [v.coche, v.matricula && `(${v.matricula})`].filter(Boolean).join(" "),
     servicios: (x.servicios || []).join(", "),
@@ -41,7 +44,9 @@ async function telegram(x: Lead, origin: string) {
   if (!token || !chat) return;
   const r = resumenLead(x);
   const lineas = [
-    `🔥 <b>${escT(x.cita ? "Nueva cita" : "Nuevo cliente")}</b> · ${escT(r.tipo)}`,
+    x.prioridad && `⚡🔴 <b>${escT(ETIQUETA_VIP)}</b>\nContesta antes que a nadie: acepta +10 % para entrar a box el primero.`,
+    `🔥 <b>${escT(x.cita ? "Nueva cita" : x.alerta ? "Nueva alerta de coches" : "Nuevo cliente")}</b> · ${escT(r.tipo.replace(ETIQUETA_VIP + " ", ""))}`,
+    r.alerta && `🔔 ${escT(r.alerta)}`,
     `👤 <b>${escT(x.nombre)}</b> · ${escT(x.telefono)}`,
     r.cita && `📅 ${escT(r.cita)}`,
     r.coche && `🚗 ${escT(r.coche)}`,
@@ -50,7 +55,8 @@ async function telegram(x: Lead, origin: string) {
     x.fotos?.length && `📷 ${x.fotos.length} foto${x.fotos.length > 1 ? "s" : ""} del daño (van debajo)`,
     `📍 Viene de: ${escT(r.canal)}${x.idioma === "en" ? " · 🇬🇧 inglés" : ""}`,
   ].filter(Boolean).join("\n");
-  const saludo = x.idioma === "en" ? `Hi ${x.nombre.split(" ")[0]}, this is Volcano Cars. ` : `Hola ${x.nombre.split(" ")[0]}, te escribimos de Volcano Cars. `;
+  const saludo = x.prioridad ? mensajeVIP(x) : x.alerta ? mensajeAlerta(x)
+    : x.idioma === "en" ? `Hi ${x.nombre.split(" ")[0]}, this is Volcano Cars. ` : `Hola ${x.nombre.split(" ")[0]}, te escribimos de Volcano Cars. `;
   await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -86,7 +92,7 @@ async function sheets(x: Lead) {
     headers: { "content-type": "text/plain;charset=utf-8" },
     body: JSON.stringify({
       clave: env("SHEETS_SECRET"), id: x.id, fecha: x.creado, tipo: r.tipo, nombre: x.nombre, telefono: x.telefono, email: x.email || "",
-      cita: r.cita, coche: r.coche, servicios: r.servicios, mensaje: (x.mensaje || "").slice(0, 1500), canal: r.canal,
+      cita: r.cita, coche: r.coche, servicios: r.servicios, prioridad: x.prioridad ? ETIQUETA_VIP : "", alerta: r.alerta, mensaje: (x.mensaje || "").slice(0, 1500), canal: r.canal,
       campana: x.origen?.utm_campaign || "", pagina: x.origen?.landing || "", idioma: x.idioma || "es",
       whatsapp: `https://wa.me/${telNum(x.telefono)}`,
     }),

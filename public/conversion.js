@@ -7,7 +7,11 @@
      2. LISTA DE ESPERA en los coches RESERVADOS.
      3. CONFIRMACIÓN + COMPROBANTE PDF (generado aquí mismo, sin jsPDF:
         la web no carga código de otras webs) y reenvío por WhatsApp.
-     4. PRESUPUESTO POR FOTO en el taller (arrastrar o hacer la foto).
+     4. PRESUPUESTO POR FOTO en el taller (arrastrar o hacer la foto),
+        con el interruptor «⚡ Prioridad Taller» (+10 % sobre el presupuesto
+        final, solo si lo acepta): la solicitud llega marcada con
+        [SOLICITUD VIP - PRIORIDAD ALTA +10%] en el email, Telegram, Sheets y CRM.
+        Enlace directo que lo abre ya activado: /taller#prioridad
    Se usa en la web (index.html, /comprar, /taller, inglés) y en el
    enlace privado de cada reserva (/r/…, reserva.html).
    No toca nada de lo que ya funcionaba: si falta este archivo, la web
@@ -21,7 +25,7 @@
   const L = (es, en) => (EN ? en : es);
   const LOC = EN ? "en-GB" : "es-ES";
   const EMP = typeof EMPRESA !== "undefined" ? EMPRESA : {
-    telefono: "643 66 88 13", telefonoLlamar: "+34643668813", whatsapp: "34643668813", email: "volcanocars2026@gmail.com",
+    telefono: "677 96 03 48", telefonoLlamar: "+34677960348", whatsapp: "34677960348", email: "volcanocars2026@gmail.com",
     direccion: "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua, Las Palmas", mapaEnlace: "https://maps.app.goo.gl/dz8icDhkUkB4oznd8",
   };
   const $ = (s, r = document) => r.querySelector(s);
@@ -68,12 +72,25 @@
     if (btn) { const antes = btn.innerHTML; btn.classList.add("ok"); btn.innerHTML = ok ? L("✓ Copiado", "✓ Copied") : L("Mantén pulsado para copiar", "Long-press to copy"); setTimeout(() => { btn.classList.remove("ok"); btn.innerHTML = antes; }, 1600); }
   }
 
+  /* ---------------- entrega a domicilio (mismos datos que el servidor) ---------------- */
+  const MUNI_ENTREGA = ["Morro Jable / Pájara", "Tuineje / Gran Tarajal", "Antigua", "Puerto del Rosario", "La Oliva / Corralejo", "Betancuria"];
+  const hoyC = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Atlantic/Canary" }).format(new Date());
+  // los próximos 10 días laborables (de lunes a viernes), a partir de mañana
+  function diasEntrega(n = 10) {
+    const out = []; let t = Date.parse(hoyC() + "T12:00:00Z");
+    while (out.length < n) { t += 864e5; const d = new Date(t); if (d.getUTCDay() % 6) out.push(d.toISOString().slice(0, 10)); }
+    return out;
+  }
+  const fechaCorta = (f) => { const s = new Date(f + "T12:00:00Z").toLocaleDateString(LOC, { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" }); return s.charAt(0).toUpperCase() + s.slice(1); };
+  const etiquetaEntrega = (e) => `[ENTREGA A DOMICILIO SOLICITADA - DIRECCIÓN: ${e.direccion}, ${e.municipio} · ${new Date(e.fecha + "T12:00:00Z").toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" })} · ${e.franja.toLowerCase()}]`;
+
   /* ---------------- mensajes de WhatsApp (mismos textos que el servidor) ---------------- */
   const MSG = {
     // confirmación tras reservar
     confirmacion(r, enlace) {
       const n = r.nombre.split(" ")[0];
-      const cuando = r.cita ? L(` Nos vemos el ${fechaLarga(r.cita.fecha)} a las ${r.cita.hora} en nuestra exposición de Antigua para probarlo.`, ` See you on ${fechaLarga(r.cita.fecha)} at ${r.cita.hora} at our showroom in Antigua to test drive it.`)
+      const cuando = r.entrega ? L(` Te lo llevamos gratis a ${r.entrega.municipio} el ${fechaLarga(r.entrega.fecha)} por la ${r.entrega.franja.toLowerCase()}; te llamamos para confirmar la hora.`, ` We'll bring it to you in ${r.entrega.municipio} on ${fechaLarga(r.entrega.fecha)} (${r.entrega.franja === "Mañana" ? "morning" : "afternoon"}), free of charge; we'll call you to confirm the time.`)
+        : r.cita ? L(` Nos vemos el ${fechaLarga(r.cita.fecha)} a las ${r.cita.hora} en nuestra exposición de Antigua para probarlo.`, ` See you on ${fechaLarga(r.cita.fecha)} at ${r.cita.hora} at our showroom in Antigua to test drive it.`)
         : L(" Ven a probarlo a nuestra exposición de Antigua cuando te venga bien.", " Come and test drive it at our showroom in Antigua whenever suits you.");
       return L(`¡Enhorabuena, ${n}! Tu ${r.coche.titulo} ha sido bloqueado con éxito en Volcano Cars. Tienes 48 horas de reserva exclusiva.${cuando} Tu comprobante: ${enlace}`,
         `Congratulations, ${n}! Your ${r.coche.titulo} has been successfully reserved at Volcano Cars. You have 48 hours of exclusive reservation.${cuando} Your receipt: ${enlace}`);
@@ -83,7 +100,7 @@
       return L(`¡Buenas noticias, ${nombre.split(" ")[0]}! El ${titulo} vuelve a estar disponible en Volcano Cars. Sé el primero en reservarlo: ${enlace}`,
         `Good news, ${nombre.split(" ")[0]}! The ${titulo} is available again at Volcano Cars. Be the first to reserve it: ${enlace}`);
     },
-    justificante(r) { return L(`Hola, he hecho el pago de la reserva ${r.codigo} del ${r.coche.titulo} (50 €). Os mando el justificante.`, `Hi, I've paid the reservation ${r.codigo} for the ${r.coche.titulo} (€50). Here's the receipt.`); },
+    justificante(r) { return (r.entrega ? etiquetaEntrega(r.entrega) + " " : "") + L(`Hola, he hecho el pago de la reserva ${r.codigo} del ${r.coche.titulo} (50 €). Os mando el justificante.`, `Hi, I've paid the reservation ${r.codigo} for the ${r.coche.titulo} (€50). Here's the receipt.`); },
   };
 
   /* =====================================================================
@@ -220,7 +237,8 @@
       [L("Forma de pago", "Payment method"), METODO_TXT[r.metodo] || r.metodo],
       [r.pagado ? L("Pagado el", "Paid on") : L("Pago", "Payment"), r.pagado ? fechaHora(r.pagado) : r.estado === "pendiente" ? L("Justificante recibido: estamos comprobando el pago", "Receipt received: we're checking the payment") : ""],
       [L("Reservado hasta", "Reserved until"), r.hasta ? fechaHora(r.hasta) : r.estado === "pendiente" ? L("48 horas desde que confirmemos el pago", "48 hours from payment confirmation") : ""],
-      [L("Visita y prueba", "Visit & test drive"), r.cita ? `${fechaLarga(r.cita.fecha)}, ${r.cita.hora} h` : L("Cuando te venga bien (llámanos para quedar)", "Whenever suits you (call us to arrange)")],
+      r.entrega ? [L("Entrega a domicilio (gratis)", "Home delivery (free)"), `${r.entrega.direccion}, ${r.entrega.municipio} · ${fechaLarga(r.entrega.fecha)}, ${L(r.entrega.franja.toLowerCase(), r.entrega.franja === "Mañana" ? "morning" : "afternoon")}`]
+        : [L("Visita y prueba", "Visit & test drive"), r.cita ? `${fechaLarga(r.cita.fecha)}, ${r.cita.hora} h` : L("Cuando te venga bien (llámanos para quedar)", "Whenever suits you (call us to arrange)")],
     ]);
     // cláusula
     y += 4;
@@ -300,12 +318,13 @@
         <div><dt>${pend ? L("Importe", "Amount") : L("Pagado", "Paid")}</dt><dd>${eur2(r.importe)} · ${esc(METODO_TXT[r.metodo] || r.metodo)}</dd></div>
         <div><dt>${L("Reservado hasta", "Reserved until")}</dt><dd>${r.hasta ? esc(fechaHora(r.hasta)) : L("48 h desde que confirmemos el pago", "48 h from payment confirmation")}</dd></div>
         ${r.cita ? `<div><dt>${L("Visita y prueba", "Visit & test drive")}</dt><dd>${esc(fechaLarga(r.cita.fecha))} · ${esc(r.cita.hora)} h</dd></div>` : ""}
+        ${r.entrega ? `<div><dt>${L("🚚 Entrega a domicilio", "🚚 Home delivery")}</dt><dd>${esc(r.entrega.direccion)}, ${esc(r.entrega.municipio)} · ${esc(fechaLarga(r.entrega.fecha))}, ${esc(L(r.entrega.franja.toLowerCase(), r.entrega.franja === "Mañana" ? "morning" : "afternoon"))}</dd></div>` : ""}
       </dl>
       <div class="rsv-acts">
         <button type="button" class="btn btn-rosso" data-pdf>${L("📄 Descargar comprobante PDF", "📄 Download PDF receipt")}</button>
         <a class="btn btn-wa" target="_blank" rel="noopener" data-reenviar href="${waCompartir(mensaje || MSG.confirmacion(r, enlace))}">${IC.wa}${L("Reenviar por WhatsApp", "Share on WhatsApp")}</a>
         ${r.cita && typeof ics === "function" ? `<a class="btn btn-ghost" download="visita-volcano-cars.ics" href="${ics(r.cita.fecha, r.cita.hora, "Volcano Cars · " + L("Prueba del ", "Test drive: ") + r.coche.titulo, L("Reserva ", "Reservation ") + r.codigo)}">${IC.cal}${L("Añadir la visita al calendario", "Add visit to calendar")}</a>` : ""}
-        <a class="btn btn-ghost" href="${esc(EMP.mapaEnlace || "https://maps.google.com")}" target="_blank" rel="noopener">${L("Cómo llegar", "Directions")}</a>
+        ${r.entrega ? "" : `<a class="btn btn-ghost" href="${esc(EMP.mapaEnlace || "https://maps.google.com")}" target="_blank" rel="noopener">${L("Cómo llegar", "Directions")}</a>`}
       </div>
       <p class="rsv-fine">${L("Guarda este enlace: ahí verás tu reserva y podrás volver a descargar el comprobante.", "Keep this link: it shows your reservation and lets you download the receipt again.")} <a href="${esc(enlace)}">${esc(enlace.replace(/^https?:\/\//, ""))}</a></p>
     </div>`;
@@ -387,7 +406,7 @@
     if (!CFG) config().then(pinta);
   }
   document.addEventListener("click", (e) => {
-    if (e.target.closest("#m-rsv [data-reservar]")) { const c = typeof gal !== "undefined" && gal.c; if (c) abrirReserva(c); }
+    if (e.target.closest("#m-rsv [data-reservar]")) { const c = typeof gal !== "undefined" && gal.c; if (c) { try { if (typeof apuntarInteres === "function") apuntarInteres(c); } catch (_) {} abrirReserva(c); } }
     if (e.target.closest("#m-rsv [data-espera]")) { const c = typeof gal !== "undefined" && gal.c; if (c) abrirEspera(c); }
   });
 
@@ -422,8 +441,21 @@
         <div class="field"><label for="rsv-t">WhatsApp</label><input class="input" id="rsv-t" type="tel" autocomplete="tel" inputmode="tel" required placeholder="6XX XX XX XX"></div></div>
       <div class="field"><label for="rsv-e">${L("Email (opcional, para el comprobante)", "Email (optional, for the receipt)")}</label><input class="input" id="rsv-e" type="email" autocomplete="email"></div>
       <fieldset class="rsv-fs"><legend>${L("¿Cuándo vienes a verlo y probarlo?", "When will you come to see and test drive it?")}</legend>
-        <div class="modo" role="radiogroup"><label><input type="radio" name="rsv-cuando" value="cita" checked><span>${L("Elegir día y hora", "Pick a day and time")}</span></label><label><input type="radio" name="rsv-cuando" value="luego"><span>${L("Aún no lo sé", "Not sure yet")}</span></label></div>
-        <div class="agenda" id="rsv-ag" aria-live="polite"></div></fieldset>
+        <div class="modo" role="radiogroup"><label><input type="radio" name="rsv-cuando" value="cita" checked><span>${L("Elegir día y hora", "Pick a day and time")}</span></label><label><input type="radio" name="rsv-cuando" value="domicilio"><span class="rsv-dom-op">${L("🚚 Te lo llevamos a domicilio", "🚚 We bring it to your door")}<small>${L("(Gratis en Fuerteventura)", "(Free anywhere in Fuerteventura)")}</small></span></label></div>
+        <div class="agenda" id="rsv-ag" aria-live="polite"></div>
+        <div class="rsv-dom" id="rsv-dom" hidden>
+          <p class="rsv-dom-intro">${L("Te lo llevamos <b>gratis</b> a cualquier punto de la isla para que lo veas y lo pruebes en tu puerta. Te llamamos para confirmar la hora exacta.", "We bring it <b>free</b> anywhere on the island so you can see and test drive it at your door. We'll call you to confirm the exact time.")}</p>
+          <div class="field"><label for="rsv-mun">${L("Municipio / localidad", "Town / area")}</label>
+            <select class="input" id="rsv-mun"><option value="">${L("Elige tu municipio", "Choose your area")}</option>${MUNI_ENTREGA.map((m) => `<option>${esc(m)}</option>`).join("")}</select></div>
+          <div class="field"><label for="rsv-dir">${L("Dirección exacta de entrega", "Exact delivery address")}</label>
+            <input class="input" id="rsv-dir" autocomplete="street-address" maxlength="200" placeholder="${L("Calle, número, piso, puerta, referencia o C.P.", "Street, number, floor, door, landmark or postcode")}"></div>
+          <div class="row2">
+            <div class="field"><label for="rsv-fe">${L("Día de entrega", "Delivery day")}</label>
+              <select class="input" id="rsv-fe"><option value="">${L("Elige el día", "Choose the day")}</option>${diasEntrega().map((f) => `<option value="${f}">${esc(fechaCorta(f))}</option>`).join("")}</select></div>
+            <div class="field"><span class="rsv-lbl" id="rsv-fr-l">${L("Tramo horario preferido", "Preferred time")}</span>
+              <div class="modo" role="radiogroup" aria-labelledby="rsv-fr-l"><label><input type="radio" name="rsv-franja" value="Mañana"><span>${L("Mañana", "Morning")}</span></label><label><input type="radio" name="rsv-franja" value="Tarde"><span>${L("Tarde", "Afternoon")}</span></label></div></div>
+          </div>
+        </div></fieldset>
       <fieldset class="rsv-fs"><legend>${L("¿Cómo quieres pagar los 50 €?", "How do you want to pay the €50?")}</legend>
         <div class="rsv-met">${metodos.map(([k, ic, t, s], i) => `<label><input type="radio" name="rsv-m" value="${k}" ${i === 0 ? "checked" : ""}><span class="rsv-met-in"><span class="rsv-met-ic">${ic}</span><span><b>${t}</b><small>${s}</small></span></span></label>`).join("")}</div></fieldset>
       <input class="hp" type="text" id="rsv-web" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -438,21 +470,36 @@
     const agEl = $("#rsv-ag", d);
     AG = typeof Agenda === "function" ? Agenda(agEl, "visita", (m) => fallo(m || "")) : null;
     if (AG) AG.cargar(); else agEl.hidden = true;
-    d.querySelectorAll("input[name=rsv-cuando]").forEach((x) => x.addEventListener("change", () => { agEl.hidden = !AG || x.value !== "cita" || !x.checked; }));
+    const domEl = $("#rsv-dom", d);
+    ["input", "change"].forEach((t) => domEl.addEventListener(t, () => { if (!$("#rsv-err", d).hidden) fallo(""); }));
+    d.querySelectorAll("input[name=rsv-cuando]").forEach((x) => x.addEventListener("change", () => {
+      if (!x.checked) return;
+      agEl.hidden = !AG || x.value !== "cita";
+      domEl.hidden = x.value !== "domicilio";
+      if (x.value === "domicilio") { fallo(""); trk("clk", "reserva-domicilio", c.id); setTimeout(() => domEl.scrollIntoView({ block: "nearest", behavior: "smooth" }), 60); }
+    }));
     $(".rsv-form", d).addEventListener("submit", async (e) => {
       e.preventDefault(); fallo("");
       const nombre = $("#rsv-n", d).value.trim(), telefono = $("#rsv-t", d).value.trim(), email = $("#rsv-e", d).value.trim();
-      const conCita = AG && (d.querySelector("input[name=rsv-cuando]:checked") || {}).value === "cita";
+      const cuando = (d.querySelector("input[name=rsv-cuando]:checked") || {}).value;
+      const conCita = AG && cuando === "cita", aDomicilio = cuando === "domicilio";
+      const entrega = aDomicilio ? { municipio: $("#rsv-mun", d).value, direccion: $("#rsv-dir", d).value.trim(), fecha: $("#rsv-fe", d).value, franja: (d.querySelector("input[name=rsv-franja]:checked") || {}).value || "" } : null;
       const metodo = (d.querySelector("input[name=rsv-m]:checked") || {}).value;
       if (nombre.length < 2) { fallo(L("Escribe tu nombre.", "Please write your name.")); $("#rsv-n", d).focus(); return; }
       if (!telOk(telefono)) { fallo(L("Revisa el número de WhatsApp.", "Please check your WhatsApp number.")); $("#rsv-t", d).focus(); return; }
       if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { fallo(L("Revisa el email.", "Please check your email.")); $("#rsv-e", d).focus(); return; }
-      if (conCita && !AG.st.hora) { fallo(L("Elige el día y la hora de la visita (o marca «Aún no lo sé»).", "Pick the visit day and time (or choose «Not sure yet»).")); agEl.scrollIntoView({ block: "center", behavior: "smooth" }); return; }
+      if (conCita && !AG.st.hora) { fallo(L("Elige el día y la hora de la visita (o marca «Te lo llevamos a domicilio»).", "Pick the visit day and time (or choose «We bring it to your door»).")); agEl.scrollIntoView({ block: "center", behavior: "smooth" }); return; }
+      if (entrega) {
+        if (!entrega.municipio) { fallo(L("Elige el municipio de la entrega.", "Choose the delivery area.")); $("#rsv-mun", d).focus(); return; }
+        if (entrega.direccion.length < 8) { fallo(L("Escribe la dirección exacta: calle, número y piso o puerta.", "Please write the full address: street, number and floor or door.")); $("#rsv-dir", d).focus(); return; }
+        if (!entrega.fecha) { fallo(L("Elige el día de la entrega.", "Choose the delivery day.")); $("#rsv-fe", d).focus(); return; }
+        if (!entrega.franja) { fallo(L("Elige mañana o tarde para la entrega.", "Choose morning or afternoon.")); d.querySelector("input[name=rsv-franja]").focus(); return; }
+      }
       if (!$("#rsv-ok", d).checked) { fallo(L("Marca la casilla de las condiciones para continuar.", "Please tick the terms box to continue.")); return; }
       const btn = $(".rsv-go", d); btn.disabled = true; btn.classList.add("busy");
       try {
         const j = await api("/api/reservas", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({
-          cocheId: c.id, nombre, telefono, email, metodo, cita: conCita ? { fecha: AG.st.fecha, hora: AG.st.hora } : null,
+          cocheId: c.id, nombre, telefono, email, metodo, cita: conCita ? { fecha: AG.st.fecha, hora: AG.st.hora } : null, entrega,
           acepta: true, web: $("#rsv-web", d).value, idioma: EN ? "en" : "es", origen: ORIG }) });
         if (!j.token) return;
         guardado.poner(MIS, c.id, { token: j.token, codigo: j.codigo, t: Date.now() });
@@ -586,53 +633,62 @@
     const MAX_F = 4;
     const rapido = abiertoAhora();
     const tactil = matchMedia("(pointer: coarse)").matches; // en el móvil, botón para abrir la cámara directamente
-    box.innerHTML = `<div class="pf-txt">
-        <span class="pf-kicker"><span class="tx-led" aria-hidden="true"></span>${L("Presupuesto exprés por foto", "Express quote from a photo")}</span>
-        <h3 id="pf-h">${L("¿Tienes un golpe, arañazo o quieres pintar tu coche?", "Got a dent or scratch, or want your car painted?")}</h3>
-        <p>${rapido ? L("Sube una foto del daño y te enviamos un presupuesto estimado por WhatsApp en menos de 1 hora.", "Upload a photo of the damage and we'll send you an estimated quote on WhatsApp in under 1 hour.")
-          : L("Sube una foto del daño y te enviamos un presupuesto estimado por WhatsApp en menos de 1 hora desde que abrimos (L–V, 8:00).", "Upload a photo of the damage and we'll send you an estimated quote on WhatsApp within 1 hour of opening (Mon–Fri, 8:00).")}</p>
-        <ul class="pf-pts"><li>${L("Gratis y sin compromiso", "Free, no obligation")}</li><li>${L("Respuesta por WhatsApp", "Reply on WhatsApp")}</li><li>${L("Precio final por escrito al ver el coche", "Final written price once we see the car")}</li></ul>
-        <ol class="pf-steps" aria-label="${L("Cómo funciona", "How it works")}">
-          <li><i>1</i><span><b>${L("Haz la foto", "Take the photo")}</b>${L("De cerca y de lejos, con buena luz", "Close-up and from further away, in good light")}</span></li>
-          <li><i>2</i><span><b>${L("Te respondemos por WhatsApp", "We reply on WhatsApp")}</b>${L("Con un presupuesto estimado", "With an estimated quote")}</span></li>
-          <li><i>3</i><span><b>${L("Lo traes el día que elijas", "Bring it in on the day you choose")}</b>${L("Precio cerrado por escrito antes de empezar", "Fixed written price before we start")}</span></li>
-        </ol>
-      </div>
+    // Plegado por defecto: una barra compacta que se despliega al tocarla (no quita sitio al resto del taller)
+    box.innerHTML = `<button type="button" class="pf-bar" aria-expanded="false" aria-controls="pf-panel">
+        <span class="pf-bar-ic" aria-hidden="true">📸</span>
+        <span class="pf-bar-txt"><span class="pf-bar-h" id="pf-h"><b>${L("Servicio Express por foto:", "Express photo service:")}</b> ${L("recibe tu presupuesto en menos de 1h", "get your quote in under 1h")}</span>
+          <small>${rapido ? L("Gratis y sin compromiso · te contestamos por WhatsApp", "Free, no obligation · we reply on WhatsApp") : L("Gratis y sin compromiso · te contestamos al abrir (L–V, 8:00)", "Free, no obligation · we reply when we open (Mon–Fri, 8:00)")}</small></span>
+        <span class="pf-bar-go"><span class="pf-bar-go-t" data-abrir>${L("Enviar foto", "Send photo")}</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></span>
+      </button>
+      <div class="pf-panel" id="pf-panel" role="region" aria-labelledby="pf-h" inert><div class="pf-panel-in">
       <form class="pf-box" novalidate>
         <div class="pf-drop" tabindex="0" role="button" aria-describedby="pf-hint">
           <span class="pf-drop-ic">${IC.cam}</span>
-          <b>${L("Arrastra aquí las fotos", "Drag your photos here")}</b>
-          <span class="pf-or">${L("o", "or")}</span>
-          <span class="pf-btns">${tactil ? `<label class="btn btn-rosso"><input type="file" accept="image/*" capture="environment" hidden data-cam>${L("Hacer foto", "Take a photo")}</label>` : ""}
-          <label class="btn ${tactil ? "btn-ghost" : "btn-rosso"}"><input type="file" accept="image/*" multiple hidden data-gal>${tactil ? L("Elegir de la galería", "Choose from gallery") : L("Elegir fotos", "Choose photos")}</label></span>
-          <small id="pf-hint">${L("Hasta 4 fotos: una de cerca y otra de lejos ayuda mucho.", "Up to 4 photos: one close-up and one from further away helps a lot.")}</small>
+          <span class="pf-drop-txt"><b>${L("¿Golpe, arañazo o pintura? Sube la foto", "Dent, scratch or paint? Upload the photo")}</b>
+          <small id="pf-hint">${L("Hasta 4 fotos · de cerca y de lejos", "Up to 4 photos · close-up and from further away")}</small></span>
+          <span class="pf-btns">${tactil ? `<label class="btn btn-rosso"><input type="file" accept="image/*" capture="environment" hidden data-cam>${L("Hacer foto", "Take photo")}</label>` : ""}
+          <label class="btn ${tactil ? "btn-ghost" : "btn-rosso"}"><input type="file" accept="image/*" multiple hidden data-gal>${tactil ? L("Galería", "Gallery") : L("Elegir fotos", "Choose photos")}</label></span>
         </div>
         <div class="pf-thumbs" aria-live="polite"></div>
-        <div class="modo" role="radiogroup" aria-label="${L("Qué prefieres", "What would you like")}">
-          <label><input type="radio" name="pf-modo" value="foto" checked><span>${L("Presupuesto por foto", "Quote from photo")}</span></label>
-          <label><input type="radio" name="pf-modo" value="cita"><span>${L("Traerlo al taller", "Bring it in")}</span></label>
+        <div class="pf-grid">
+          <div class="field"><label for="pf-n">${L("Nombre", "Name")}</label><input class="input" id="pf-n" autocomplete="name"></div>
+          <div class="field"><label for="pf-t">WhatsApp</label><input class="input" id="pf-t" type="tel" inputmode="tel" autocomplete="tel" placeholder="6XX XX XX XX"></div>
+          <div class="field"><label for="pf-c">${L("Coche", "Car")}</label><input class="input" id="pf-c" placeholder="${L("Ej. Ibiza 2015", "E.g. Ibiza 2015")}"></div>
+          <div class="field"><label for="pf-m">${L("¿Qué le pasó?", "What happened?")}</label><input class="input" id="pf-m" placeholder="${L("Opcional", "Optional")}"></div>
         </div>
-        <div class="row2"><div class="field"><label for="pf-n">${L("Tu nombre", "Your name")}</label><input class="input" id="pf-n" autocomplete="name"></div>
-          <div class="field"><label for="pf-t">WhatsApp</label><input class="input" id="pf-t" type="tel" inputmode="tel" autocomplete="tel" placeholder="6XX XX XX XX"></div></div>
-        <div class="row2"><div class="field"><label for="pf-c">${L("Coche", "Car")}</label><input class="input" id="pf-c" placeholder="${L("Ej. Seat Ibiza 2015", "E.g. Seat Ibiza 2015")}"></div>
-          <div class="field"><label for="pf-m">${L("¿Qué le pasó? (opcional)", "What happened? (optional)")}</label><input class="input" id="pf-m" placeholder="${L("Ej. Roce en la puerta trasera", "E.g. Scrape on the rear door")}"></div></div>
-        <div class="agenda" id="pf-ag" aria-live="polite" hidden></div>
+        <label class="pf-vip" for="pf-vip">
+          <input type="checkbox" id="pf-vip" role="switch" aria-describedby="pf-vip-d">
+          <span class="pf-vip-sw" aria-hidden="true"><i></i></span>
+          <span class="pf-vip-tx">
+            <span class="pf-vip-tag">⚡ ${L("Prioridad Taller", "Workshop Priority")}</span>
+            <b>${L("Servicio Exprés Prioritario ⚡ (+10 %)", "Priority Express Service ⚡ (+10%)")}</b>
+            <span id="pf-vip-d">${L("¿Tienes prisa o no puedes quedarte sin coche? Activando esta opción, reorganizamos la agenda del taller para que tu vehículo entre a box en cuanto lo traigas, por delante de la lista de espera, por solo un 10 % adicional sobre el presupuesto final.", "In a hurry, or can't be without your car? Switch this on and we rearrange the workshop schedule so your car goes into a bay as soon as you bring it in, ahead of the waiting list, for just 10% on top of the final quote.")}</span>
+            <em>${L("¿Sería una mala idea pagar un 10 % extra para saltarte la cola de espera y tener tu coche listo cuanto antes?", "Would it be a bad idea to pay 10% extra to skip the queue and get your car back sooner?")}</em>
+            <small class="pf-vip-fine">${L("Ejemplo: presupuesto de 300 € → 330 € con prioridad. Solo se cobra si aceptas el presupuesto y haces la reparación. Adelanta la mano de obra; si hace falta una pieza, depende de lo que tarde en llegar.", "Example: a €300 quote becomes €330 with priority. Only charged if you accept the quote and go ahead. It brings the labour forward; if a part is needed, it depends on delivery time.")}</small>
+          </span>
+        </label>
         <input class="hp" type="text" id="pf-web" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <label class="consent"><input type="checkbox" id="pf-ok"><span>${L("Acepto que Volcano Cars use estos datos y fotos solo para darme el presupuesto. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Política de privacidad</a>.", "I agree Volcano Cars may use these details and photos only to quote me. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacy policy</a>.")}</span></label>
+        <label class="consent"><input type="checkbox" id="pf-ok"><span>${L("Acepto que Volcano Cars use estos datos y fotos solo para darme el presupuesto. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacidad</a>.", "I agree Volcano Cars may use these details and photos only to quote me. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacy</a>.")}</span></label>
         <div class="form-err" id="pf-err" role="alert" hidden></div>
         <button class="btn btn-rosso pf-go" type="submit"><span>${L("Enviar fotos y pedir presupuesto", "Send photos and get a quote")}</span></button>
         <div class="pf-ok" hidden></div>
-      </form>`;
-    const form = $(".pf-box", box), drop = $(".pf-drop", box), th = $(".pf-thumbs", box), agEl = $("#pf-ag", box);
+      </form></div></div>`;
+    const bar = $(".pf-bar", box), panel = $("#pf-panel", box);
+    const abrir = (si) => {
+      box.classList.toggle("open", si); bar.setAttribute("aria-expanded", String(si));
+      if (si) panel.removeAttribute("inert"); else panel.setAttribute("inert", "");
+      $("[data-abrir]", bar).textContent = si ? L("Cerrar", "Close") : L("Enviar foto", "Send photo");
+      if (si) trk("clk", "foto-abrir", "");
+    };
+    bar.addEventListener("click", () => abrir(!box.classList.contains("open")));
+    if (/^#(foto|presupuesto-foto)$/.test(location.hash)) abrir(true);
+    if (/^#(prioridad|vip)$/.test(location.hash)) { abrir(true); $("#pf-vip", box).checked = true; }
+    const vip = $("#pf-vip", box), txtBoton = () => (vip.checked ? L("Enviar con Prioridad Taller ⚡", "Send with Workshop Priority ⚡") : L("Enviar fotos y pedir presupuesto", "Send photos and get a quote"));
+    const pintarVip = () => { box.classList.toggle("vip-on", vip.checked); $(".pf-go span", box).textContent = txtBoton(); };
+    vip.addEventListener("change", () => { pintarVip(); trk("clk", vip.checked ? "vip-on" : "vip-off", "taller"); });
+    pintarVip();
+    const form = $(".pf-box", box), drop = $(".pf-drop", box), th = $(".pf-thumbs", box);
     const fallo = (m) => { const el = $("#pf-err", box); el.textContent = m || ""; el.hidden = !m; if (m) el.scrollIntoView({ block: "nearest", behavior: "smooth" }); };
-    let AGF = null;
-    const modo = () => (form.querySelector("input[name=pf-modo]:checked") || {}).value || "foto";
-    form.querySelectorAll("input[name=pf-modo]").forEach((x) => x.addEventListener("change", () => {
-      const cita = modo() === "cita";
-      agEl.hidden = !cita;
-      if (cita && !AGF && typeof Agenda === "function") { AGF = Agenda(agEl, "taller", (m) => fallo(m || "")); AGF.cargar(); }
-      $(".pf-go span", box).textContent = cita ? L("Enviar fotos y reservar cita", "Send photos and book") : L("Enviar fotos y pedir presupuesto", "Send photos and get a quote");
-    }));
     const pintar = () => {
       th.innerHTML = fotos.map((f, i) => `<figure><img src="${f.url}" alt="${L("Foto", "Photo")} ${i + 1}"><button type="button" data-q="${i}" aria-label="${L("Quitar foto", "Remove photo")} ${i + 1}">×</button></figure>`).join("");
       drop.classList.toggle("has", fotos.length > 0);
@@ -653,16 +709,18 @@
     ["dragleave", "drop"].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove("over"); }));
     drop.addEventListener("drop", (e) => añadir(e.dataTransfer.files || []));
     drop.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("[data-gal]", box).click(); } });
+    // la barra también acepta que suelten la foto encima: se despliega sola
+    ["dragenter", "dragover"].forEach((t) => bar.addEventListener(t, (e) => { e.preventDefault(); if (!box.classList.contains("open")) abrir(true); }));
     form.addEventListener("submit", async (e) => {
       e.preventDefault(); fallo("");
       const nombre = $("#pf-n", box).value.trim(), telefono = $("#pf-t", box).value.trim(), coche = $("#pf-c", box).value.trim(), nota = $("#pf-m", box).value.trim();
-      const cita = modo() === "cita";
+      const prioridad = $("#pf-vip", box).checked, TAG = "[SOLICITUD VIP - PRIORIDAD ALTA +10%]";
       if (!fotos.length) { fallo(L("Añade al menos una foto del daño.", "Add at least one photo of the damage.")); drop.focus(); return; }
       if (nombre.length < 2) { fallo(L("Escribe tu nombre.", "Please write your name.")); $("#pf-n", box).focus(); return; }
       if (!telOk(telefono)) { fallo(L("Revisa el número de WhatsApp.", "Please check your WhatsApp number.")); $("#pf-t", box).focus(); return; }
-      if (cita && !(AGF && AGF.st.hora)) { fallo(L("Elige día y hora para traerlo.", "Pick a day and time to bring it in.")); return; }
       if (!$("#pf-ok", box).checked) { fallo(L("Marca la casilla de privacidad para poder enviarlo.", "Please tick the privacy box so we can send it.")); return; }
       const btn = $(".pf-go", box); btn.disabled = true; btn.classList.add("busy");
+      let hecho = false;
       try {
         const claves = [];
         for (let i = 0; i < fotos.length; i++) {
@@ -673,18 +731,23 @@
         $("span", btn).textContent = L("Enviando…", "Sending…");
         await api("/api/solicitudes", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({
           tipo: "taller", nombre, telefono, servicios: [L("Presupuesto por foto", "Quote from photo")], vehiculo: coche ? { coche } : {},
-          mensaje: `📷 ${L("Presupuesto por foto", "Quote from photo")}${nota ? ": " + nota : ""}`, fotos: claves,
-          cita: cita ? { fecha: AGF.st.fecha, hora: AGF.st.hora } : null, acepta: true, web: $("#pf-web", box).value, idioma: EN ? "en" : "es", origen: ORIG }) });
-        medirC("solicitud"); trk("clk", "foto-enviada", cita ? "cita" : "foto");
+          mensaje: `📷 ${L("Presupuesto por foto", "Quote from photo")}${nota ? ": " + nota : ""}`, fotos: claves, prioridad,
+          acepta: true, web: $("#pf-web", box).value, idioma: EN ? "en" : "es", origen: ORIG }) });
+        medirC("solicitud"); trk("clk", "foto-enviada", prioridad ? "vip" : "foto"); hecho = true;
         const ok = $(".pf-ok", box);
-        ok.innerHTML = `<div class="rsv-done-ic">${IC.ok}</div><h4>${L("¡Fotos recibidas!", "Photos received!")}</h4>
-          <p>${cita ? L(`Cita confirmada: ${fechaLarga(AGF.st.fecha)} a las ${AGF.st.hora}. Antes de que vengas te mandamos el presupuesto estimado por WhatsApp.`, `Appointment confirmed: ${fechaLarga(AGF.st.fecha)} at ${AGF.st.hora}. Before you come we'll send the estimated quote on WhatsApp.`)
-            : rapido ? L("Te escribimos por WhatsApp con el presupuesto estimado en menos de 1 hora.", "We'll message you on WhatsApp with the estimated quote in under 1 hour.") : L("Te escribimos por WhatsApp con el presupuesto estimado en cuanto abramos (L–V, 8:00).", "We'll message you on WhatsApp with the estimated quote as soon as we open (Mon–Fri, 8:00).")}</p>
-          <a class="btn btn-wa" target="_blank" rel="noopener" href="${waEmpresa(L(`Hola, soy ${nombre}. Acabo de mandaros ${fotos.length} foto${fotos.length > 1 ? "s" : ""} por la web para un presupuesto${coche ? " del " + coche : ""}.`, `Hi, I'm ${nombre}. I've just sent ${fotos.length} photo${fotos.length > 1 ? "s" : ""} on the website for a quote${coche ? " for my " + coche : ""}.`))}">${IC.wa}${L("¿Prisa? Escríbenos ya", "In a hurry? Message us now")}</a>`;
+        const waTxt = L(`Hola, soy ${nombre}. Acabo de mandaros ${fotos.length} foto${fotos.length > 1 ? "s" : ""} por la web para un presupuesto${coche ? " del " + coche : ""}.`, `Hi, I'm ${nombre}. I've just sent ${fotos.length} photo${fotos.length > 1 ? "s" : ""} on the website for a quote${coche ? " for my " + coche : ""}.`);
+        ok.innerHTML = prioridad
+          ? `<div class="rsv-done-ic">${IC.ok}</div><div><h4>⚡ ${L("¡Prioridad Taller activada!", "Workshop Priority is on!")}</h4>
+          <p>${rapido ? L("Tu presupuesto pasa el primero de la cola: te lo mandamos por WhatsApp enseguida. En cuanto lo aceptes, tu coche entra a box por delante de la lista de espera.", "Your quote jumps the queue: we'll send it on WhatsApp right away. As soon as you accept it, your car goes into a bay ahead of the waiting list.") : L("Tu presupuesto será el primero que contestemos al abrir (L–V, 8:00). En cuanto lo aceptes, tu coche entra a box por delante de la lista de espera.", "Yours will be the first quote we answer when we open (Mon–Fri, 8:00). As soon as you accept it, your car goes into a bay ahead of the waiting list.")}</p>
+          <p class="pf-vip-note">${L("El +10 % solo se aplica si aceptas el presupuesto y haces la reparación.", "The +10% only applies if you accept the quote and go ahead with the repair.")}</p>
+          <a class="btn btn-wa" target="_blank" rel="noopener" href="${waEmpresa(TAG + " " + waTxt + L(" He activado la Prioridad Taller (+10 %).", " I've switched on Workshop Priority (+10%)."))}">${IC.wa}${L("Confirmar la prioridad por WhatsApp", "Confirm priority on WhatsApp")}</a></div>`
+          : `<div class="rsv-done-ic">${IC.ok}</div><div><h4>${L("¡Fotos recibidas!", "Photos received!")}</h4>
+          <p>${rapido ? L("Te escribimos por WhatsApp con el presupuesto estimado en menos de 1 hora.", "We'll message you on WhatsApp with the estimated quote in under 1 hour.") : L("Te escribimos por WhatsApp con el presupuesto estimado en cuanto abramos (L–V, 8:00).", "We'll message you on WhatsApp with the estimated quote as soon as we open (Mon–Fri, 8:00).")}</p>
+          <a class="btn btn-wa" target="_blank" rel="noopener" href="${waEmpresa(waTxt)}">${IC.wa}${L("¿Prisa? Escríbenos ya", "In a hurry? Message us now")}</a></div>`;
         form.querySelectorAll(":scope > :not(.pf-ok)").forEach((x) => (x.hidden = true));
         ok.hidden = false; ok.scrollIntoView({ block: "nearest", behavior: "smooth" });
-      } catch (err) { fallo(err.message); if (err.ocupada && AGF) AGF.cargar(); }
-      finally { btn.disabled = false; btn.classList.remove("busy"); if (!$(".pf-ok", box).hidden) return; $("span", btn).textContent = modo() === "cita" ? L("Enviar fotos y reservar cita", "Send photos and book") : L("Enviar fotos y pedir presupuesto", "Send photos and get a quote"); }
+      } catch (err) { fallo(err.message); }
+      finally { btn.disabled = false; btn.classList.remove("busy"); if (!hecho) $("span", btn).textContent = txtBoton(); }
     });
   }
 

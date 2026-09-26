@@ -17,6 +17,8 @@ import {
   POST /api/taller/fichas/:token/f3         → datos, fichaje (hora del servidor), justificación, visto bueno, corrección
   POST /api/taller/fichas/:token/reabrir    → solo gerente, queda en la auditoría
   GET  /api/taller/resumen?desde&hasta      → rendimiento, pausas, alertas y auditoría (solo gerente)
+  GET  /api/taller/itv                      → clientes con consentimiento de avisos de ITV y caducidad en ≤30 días (gerente y recepción)
+  POST /api/taller/itv                      → marcar aviso enviado (30 / 7 / cad), deshacer, o dar de baja al cliente
   Los fichajes se guardan con la hora del servidor: nadie puede escribir una hora a mano.
   Solo el gerente puede corregir una hora, con motivo, y la hora original queda guardada.
 */
@@ -82,6 +84,8 @@ function limpiarF1(x: any, prev: F1 | null): F1 {
     danos: (Array.isArray(x?.danos) ? x.danos : []).map((d: any) => ({ v: uno(d?.v, ["frontal", "izq", "techo", "dcho", "trasera"]), x: Math.min(100, Math.max(0, Math.round(Number(d?.x) || 0))), y: Math.min(100, Math.max(0, Math.round(Number(d?.y) || 0))), t: uno(d?.t, ["R", "A", "P", "G", "S", "O"]) })).filter((d: any) => d.v && d.t).slice(0, 60),
     fotosDanos: (Array.isArray(x?.fotosDanos) ? x.fotosDanos : []).filter(esFoto).slice(0, 30), sinDanos: !!x?.sinDanos,
     autorizoHasta: str(x?.autorizoHasta, 10).replace(/[^\d.,]/g, ""), avisosWhatsApp: !!x?.avisosWhatsApp,
+    // Avisos de ITV: casilla aparte y desmarcada por defecto. Guardamos cuándo se dio el permiso (prueba del consentimiento).
+    avisosITV: !!x?.avisosITV, avisosITVFecha: x?.avisosITV ? (prev?.avisosITV && prev?.avisosITVFecha ? prev.avisosITVFecha : new Date().toISOString()) : "",
     firmaCliente: firmaPng(x?.firmaCliente) || prev?.firmaCliente || "", firmadoCliente: prev?.firmadoCliente || "",
     firmaTaller: prev?.firmaTaller || null, cerrada: prev?.cerrada || false,
   };
@@ -241,6 +245,49 @@ export default async (req: Request, context: Context) => {
     const hoy = hoyCanarias();
     const desde = fechaISO(url.searchParams.get("desde")) || hoy.slice(0, 8) + "01", hasta = fechaISO(url.searchParams.get("hasta")) || hoy;
     return json(await resumen(desde, hasta));
+  }
+
+  // ---------- avisos de ITV (30 y 7 días antes, solo con el consentimiento aparte de FORM-01) ----------
+  if (recurso === "itv") {
+    if (!(q.admin || q.rol === "recepcion")) return json({ error: "Solo el gerente o recepción." }, 403);
+    type Reg = { avisos: Record<string, { a30?: string; a7?: string; cad?: string }>; bajas: Record<string, string> };
+    const reg = (((await tstore().get("itv-avisos", { type: "json" }).catch(() => null)) as Reg | null) || { avisos: {}, bajas: {} }) as Reg;
+    reg.avisos ||= {}; reg.bajas ||= {};
+    if (req.method === "POST") {
+      const clave = str(body.clave, 40), accion = uno(body.accion, ["30", "7", "cad", "deshacer", "baja"]);
+      if (!/^[A-Z0-9]{2,12}\|\d{4}-\d{2}-\d{2}$/.test(clave) || !accion) return json({ error: "Datos no válidos." }, 400);
+      const t = new Date().toISOString(), r = (reg.avisos[clave] ||= {});
+      if (accion === "30") r.a30 = t;
+      else if (accion === "7") r.a7 = t;
+      else if (accion === "cad") r.cad = t;
+      else if (accion === "deshacer") delete reg.avisos[clave];
+      else { const tel = str(body.telefono, 30).replace(/\D/g, ""); if (tel.length < 9) return json({ error: "Falta el teléfono." }, 400); reg.bajas[tel] = t; }
+      await tstore().setJSON("itv-avisos", reg);
+      return json({ ok: true });
+    }
+    if (req.method !== "GET") return json({ error: "Método no permitido" }, 405);
+    const hoy = hoyCanarias(), dias = (d: string) => Math.round((Date.parse(d + "T12:00:00Z") - Date.parse(hoy + "T12:00:00Z")) / 864e5);
+    const lf = await tstore().list({ prefix: "f/" });
+    const todas = (await Promise.all(lf.blobs.map((b) => tstore().get(b.key, { type: "json" }) as Promise<Fichas | null>))).filter(Boolean) as Fichas[];
+    // Por cada matrícula manda la recepción firmada más reciente: si en la última el cliente no marcó la casilla, ya no se le avisa.
+    const ultima = new Map<string, Fichas>();
+    for (const f of todas) {
+      const x = f.f1; if (!x || !x.cerrada) continue;
+      const mat = x.vehiculo.matricula.replace(/[^A-Z0-9]/g, ""); if (!mat) continue;
+      const prev = ultima.get(mat)?.f1;
+      if (!prev || (x.firmadoCliente || x.fecha) > (prev.firmadoCliente || prev.fecha)) ultima.set(mat, f);
+    }
+    const items: any[] = [];
+    for (const [mat, f] of ultima) {
+      const x = f.f1!; if (!x.avisosITV || !x.vehiculo.itv) continue;
+      const tel = x.cliente.telefono.replace(/\D/g, ""); if (tel.length < 9) continue;
+      const baja = reg.bajas[tel]; if (baja && baja > (x.avisosITVFecha || x.firmadoCliente || "")) continue; // pidió la baja después de dar el permiso
+      const d = dias(x.vehiculo.itv); if (d > 30 || d < -30) continue;
+      const clave = mat + "|" + x.vehiculo.itv, r = reg.avisos[clave] || {};
+      items.push({ token: f.token, num: f.num, clave, matricula: x.vehiculo.matricula, coche: x.vehiculo.marcaModelo, nombre: x.cliente.nombre, telefono: x.cliente.telefono, itv: x.vehiculo.itv, dias: d, permiso: x.avisosITVFecha || x.firmadoCliente || "", a30: r.a30 || "", a7: r.a7 || "", cad: r.cad || "" });
+    }
+    items.sort((a, b) => a.dias - b.dias);
+    return json({ hoy, items });
   }
 
   // ---------- nueva recepción (crea la orden) ----------
