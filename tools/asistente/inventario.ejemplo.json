@@ -22,8 +22,8 @@
    "entrega_gratis_fuerteventura": true,
    "equipamiento": ["Aire acondicionado", "Cierre centralizado", "Elevalunas eléctricos", "Kit de distribución nuevo con bomba de agua"],
    "descripcion": "Opel Astra 1.6 de 115 CV, gasolina y cambio manual, con el mantenimiento importante recién hecho.",
-   "fotos": ["https://lestter7th.netlify.app/coches/opel-astra-2010/1.jpg", "https://lestter7th.netlify.app/coches/opel-astra-2010/2.jpg"],
-   "url": "https://lestter7th.netlify.app/coche/opel-astra-2010",
+   "fotos": ["https://volcanocars.com/coches/opel-astra-2010/1.jpg", "https://volcanocars.com/coches/opel-astra-2010/2.jpg"],
+   "url": "https://volcanocars.com/coche/opel-astra-2010",
    "mercado": { "precio_medio_eur": 3361, "anuncios_comparados": 5, "fuente": "Wallapop", "consultado": "2026-09-24" },
    "publicado": "2026-09-22T12:00:00.000Z",
    "actualizado": "2026-09-24T21:31:54.057Z"
@@ -48,7 +48,7 @@
    "equipamiento": ["Aire acondicionado", "Bluetooth"],
    "descripcion": "Coche de EJEMPLO para ver el formato: no existe en el stock.",
    "fotos": [],
-   "url": "https://lestter7th.netlify.app/coche/ejemplo-toyota-yaris-2012",
+   "url": "https://volcanocars.com/coche/ejemplo-toyota-yaris-2012",
    "mercado": null,
    "publicado": "2026-09-20T10:00:00.000Z",
    "actualizado": "2026-09-23T10:00:00.000Z"
