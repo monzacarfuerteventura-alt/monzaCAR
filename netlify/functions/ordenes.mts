@@ -23,6 +23,7 @@ type Presupuesto = {
   lineas: Linea[]; igic: number; nota: string; validez: string;
   estado: "borrador" | "enviado" | "aceptado" | "rechazado"; enviado: string;
   respuesta: { t: string; nombre: string; comentario: string } | null;
+  pago?: { estado: "pendiente" | "pagado"; importe?: number; sesion: string; t: string; nombre?: string; comentario?: string; pi?: string } | null;
 };
 type Orden = {
   token: string; creado: string; actualizado: string; lead: string;
@@ -58,7 +59,7 @@ function limpiarPresupuesto(input: any, prev: Presupuesto | null): Presupuesto {
     lineas, igic,
     nota: input?.nota !== undefined ? str(input.nota, 1500) : prev?.nota || "",
     validez: input?.validez !== undefined ? fechaISO(input.validez) : prev?.validez || "",
-    estado: prev?.estado || "borrador", enviado: prev?.enviado || "", respuesta: prev?.respuesta || null,
+    estado: prev?.estado || "borrador", enviado: prev?.enviado || "", respuesta: prev?.respuesta || null, pago: prev?.pago || null,
   };
 }
 function publica(o: Orden) {
@@ -67,7 +68,7 @@ function publica(o: Orden) {
     token: o.token, nombre: o.cliente.nombre.split(" ")[0], idioma: o.cliente.idioma,
     vehiculo: o.vehiculo, estado: o.estado, pasos: o.pasos.map(({ estado, t, nota }) => ({ estado, t, nota })),
     entrega: o.entrega, fotos: o.fotos, mensaje: o.mensaje, actualizado: o.actualizado,
-    presupuesto: p ? { lineas: p.lineas, igic: p.igic, nota: p.nota, validez: p.validez, estado: p.estado, respuesta: p.respuesta ? { t: p.respuesta.t, nombre: p.respuesta.nombre } : null, base: totales(p).base, igicImporte: totales(p).igic, total: totales(p).total } : null,
+    presupuesto: p ? { lineas: p.lineas, igic: p.igic, nota: p.nota, validez: p.validez, estado: p.estado, respuesta: p.respuesta ? { t: p.respuesta.t, nombre: p.respuesta.nombre } : null, base: totales(p).base, igicImporte: totales(p).igic, total: totales(p).total, pagado: p.pago?.estado === "pagado" ? { importe: p.pago.importe, t: p.pago.t } : null, pagoPendiente: p.pago?.estado === "pendiente" } : null,
   };
 }
 async function anotarEnLead(leadId: string, cambios: Record<string, unknown>, actividad?: { tipo: string; txt: string }) {

@@ -79,6 +79,8 @@ tfoot td{border:0;padding:6px 0}
 tfoot tr.total td{font-family:var(--display);font-stretch:82%;font-weight:800;font-size:26px;padding-top:12px}
 .p-estado{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:13px;padding:6px 12px;border-radius:999px;background:var(--magma-soft);color:var(--magma-text)}
 .p-estado.ok{background:var(--ok-soft);color:var(--ok)}
+.aviso-pago{border:2px solid var(--magma)}.aviso-pago.ok{border-color:var(--ok)}.aviso-pago b{display:block;font-size:17px}.aviso-pago p{margin:4px 0 0;color:var(--muted)}
+.pago-seguro{display:flex;align-items:center;gap:6px;margin:10px 0 0;font-size:13.5px;color:var(--muted)}
 .p-estado.no{background:var(--surface-2);color:var(--muted)}
 .p-nota{margin:14px 0 0;color:var(--muted);font-size:14.5px;white-space:pre-line}
 .resp{display:grid;gap:12px;margin-top:18px;padding-top:18px;border-top:1px dashed var(--line)}
@@ -148,6 +150,24 @@ const IC={
   entregado:'<path d="M4 11l8-6.5 8 6.5V20h-5v-5H9v5H4z"/>'
 };
 const svg=k=>`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[k]||IC.recibido}</svg>`;
+const QP=new URLSearchParams(location.search); let AVISO="", CHEQ=false;
+async function volverDePago(){
+  const est=QP.get("pago"); if(!est||!TOKEN) return;
+  history.replaceState(null,"",location.pathname+(/\/s\//.test(location.pathname)?"":"?t="+TOKEN));
+  if(est==="cancelado"){ AVISO="cancelado"; return; }
+  for(let i=0;i<6;i++){
+    try{ const r=await fetch("/api/seguimiento/"+TOKEN+"/pago?sid="+encodeURIComponent(QP.get("sid")||""),{cache:"no-store"}); const j=await r.json(); if(j.pagado){ AVISO="ok"; return; } }catch(_){}
+    await new Promise(r=>setTimeout(r,2000));
+  }
+  AVISO="pendiente";
+}
+function avisoPago(){
+  if(!AVISO) return "";
+  const m={ok:[L("Pago recibido \u2714","Payment received \u2714"),L("Presupuesto aprobado y pagado. Ya nos ponemos con tu coche. Stripe te enviará el recibo por email.","Quote approved and paid. We're starting on your car. Stripe will email you the receipt."),"ok"],
+    pendiente:[L("Estamos comprobando el pago","We're checking the payment"),L("Si has pagado, esta página se actualizará sola en unos minutos. Si no, puedes volver a intentarlo.","If you paid, this page will update by itself in a few minutes. If not, you can try again."),""],
+    cancelado:[L("Pago no completado","Payment not completed"),L("No se ha cobrado nada. Puedes volver a intentarlo cuando quieras.","Nothing has been charged. You can try again whenever you like."),""]}[AVISO];
+  return m?`<section class="card aviso-pago ${m[2]}" role="status"><b>${esc(m[0])}</b><p>${esc(m[1])}</p></section>`:"";
+}
 const PASOS=["recibido","diagnostico","presupuesto","reparacion","calidad","listo","entregado"];
 const TXT=()=>({
   recibido:[L("Coche recibido","Car received"),L("Tu coche ya está en nuestro taller.","Your car is at our workshop.")],
@@ -167,6 +187,7 @@ async function cargar(silencioso){
     const d=await r.json();
     const cambio=JSON.stringify(d)!==JSON.stringify(D);
     D=d; EN=d.idioma==="en"; document.documentElement.lang=EN?"en":"es";
+    if(d.presupuesto&&d.presupuesto.pagoPendiente&&!CHEQ){ CHEQ=true; fetch("/api/seguimiento/"+TOKEN+"/pago",{cache:"no-store"}).then(x=>x.json()).then(j=>{ if(j.pagado){ AVISO="ok"; D=null; cargar(); } }).catch(()=>{}); }
     if(cambio){ const foco=document.activeElement; if(!(silencioso && foco && foco.closest && foco.closest(".resp"))) pintar(); }
   }catch(_){ if(!D) pintarError(); }
 }
@@ -191,11 +212,12 @@ function pintar(){
     <div class="estado-now ${d.estado==="listo"||d.estado==="entregado"?"listo":""}"><span class="ic">${svg(d.estado)}</span><div><b>${esc(est[0])}</b><span>${esc(estTxt)}</span></div></div>
     ${d.entrega&&idx<5?`<div class="entrega"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5.5" width="16" height="14" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/></svg><span>${L("Entrega prevista:","Expected ready:")} <b>${esc(fechaL(d.entrega))}</b></span></div>`:""}
   </section>`;
+  h+=avisoPago();
   if(d.estado==="entregado") h+=`<section class="card" style="text-align:center"><h2 class="sec-t" style="margin:0 0 6px">${L("¿Qué tal te hemos tratado?","How did we do?")}</h2><p style="margin:0 0 14px;opacity:.8">${L("Tu opinión ayuda a otros conductores de Fuerteventura a elegir taller. Es menos de un minuto.","Your review helps other drivers in Fuerteventura choose a garage. It takes less than a minute.")}</p><a class="btn" style="display:inline-flex;gap:8px;align-items:center;justify-content:center;background:#D94A26;color:#fff;border-radius:999px;padding:13px 22px;font-weight:700;text-decoration:none" href="https://g.page/r/Caeh6Wr6CwtNEBM/review" target="_blank" rel="noopener">★★★★★ ${L("Dejar mi reseña en Google","Leave a Google review")}</a></section>`;
   // presupuesto
   const p=d.presupuesto;
   if(p){
-    const est2=p.estado==="aceptado"?`<span class="p-estado ok">✓ ${L("Aprobado","Approved")}${p.respuesta?" · "+esc(cuando(p.respuesta.t)):""}</span>`:p.estado==="rechazado"?`<span class="p-estado no">${L("No aprobado","Declined")}</span>`:`<span class="p-estado">${L("Pendiente de tu aprobación","Waiting for your approval")}</span>`;
+    const est2=p.estado==="aceptado"?`<span class="p-estado ok">✓ ${p.pagado?L("Aprobado y pagado","Approved and paid"):L("Aprobado","Approved")}${p.respuesta?" · "+esc(cuando(p.respuesta.t)):""}</span>`:p.estado==="rechazado"?`<span class="p-estado no">${L("No aprobado","Declined")}</span>`:`<span class="p-estado">${L("Pendiente de tu aprobación","Waiting for your approval")}</span>`;
     h+=`<section class="card" id="presu"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px"><h2 class="sec-t" style="margin:0">${L("Presupuesto","Quote")}</h2>${est2}</div>
       <table><thead><tr><th>${L("Concepto","Item")}</th><th class="n">${L("Cant.","Qty")}</th><th class="n">${L("Importe","Amount")}</th></tr></thead><tbody>
       ${p.lineas.map(l=>`<tr><td>${esc(l.c)}</td><td class="n">${String(l.n).replace(".",EN?".":",")}</td><td class="n">${eur(l.n*l.p)}</td></tr>`).join("")}
@@ -208,7 +230,8 @@ function pintar(){
         <textarea class="in" id="r-com" rows="2" placeholder="${L("Comentario (opcional)","Comment (optional)")}"></textarea>
         <label class="chk"><input type="checkbox" id="r-ok"><span>${L("He leído el presupuesto y autorizo a Volcano Cars a hacer estos trabajos por el importe indicado.","I have read the quote and authorise Volcano Cars to carry out this work for the amount shown.")}</span></label>
         <div class="err" id="r-err" role="alert" hidden></div>
-        <div class="btns"><button class="btn b-magma" type="submit" data-acc="aceptar">${L("Aceptar presupuesto","Accept quote")}</button><button class="btn b-ghost" type="button" data-acc="rechazar">${L("No, gracias","No, thanks")}</button></div>
+        <div class="btns"><button class="btn b-magma" type="submit" data-acc="pagar">${L("Aprobar presupuesto y pagar","Approve quote and pay")} · ${eur(p.total)}</button><button class="btn b-ghost" type="button" data-acc="rechazar">${L("No, gracias","No, thanks")}</button></div>
+        <p class="pago-seguro"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>${L("Pago seguro con tarjeta, Apple Pay o Google Pay","Secure payment by card, Apple Pay or Google Pay")}</p>
       </form>`:""}
     </section>`;
   }
@@ -231,20 +254,25 @@ document.addEventListener("click",async e=>{
   e.preventDefault();
   const acc=b.dataset.acc, err=$("#r-err"); err.hidden=true;
   const nombre=$("#r-nombre").value.trim();
-  if(acc==="aceptar" && (nombre.length<2 || !$("#r-ok").checked)){ err.textContent=L("Escribe tu nombre y marca la casilla para aceptar.","Please enter your name and tick the box to accept."); err.hidden=false; return; }
+  if((acc==="aceptar"||acc==="pagar") && (nombre.length<2 || !$("#r-ok").checked)){ err.textContent=L("Escribe tu nombre y marca la casilla para aceptar.","Please enter your name and tick the box to accept."); err.hidden=false; return; }
   if(acc==="rechazar" && !confirm(L("¿Seguro que no quieres hacer la reparación? Te llamaremos para comentarlo.","Are you sure you don't want the repair? We'll call you to talk it through."))) return;
   document.querySelectorAll("[data-acc]").forEach(x=>x.disabled=true);
   try{
-    const r=await fetch("/api/seguimiento/"+TOKEN+"/respuesta",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({accion:acc,nombre,comentario:$("#r-com").value,acepta:$("#r-ok").checked})});
+    if(acc==="pagar"){
+      const r0=await fetch("/api/seguimiento/"+TOKEN+"/pagar",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({nombre,comentario:$("#r-com").value,acepta:$("#r-ok").checked})});
+      const j0=await r0.json(); if(!r0.ok) throw new Error(j0.error||"Error");
+      if(j0.url){ b.textContent=L("Abriendo el pago seguro\u2026","Opening secure payment\u2026"); location.href=j0.url; return; }
+    }
+    const r=await fetch("/api/seguimiento/"+TOKEN+"/respuesta",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({accion:acc==="pagar"?"aceptar":acc,nombre,comentario:$("#r-com").value,acepta:$("#r-ok").checked})});
     const j=await r.json(); if(!r.ok) throw new Error(j.error||"Error");
     D=j; pintar(); document.getElementById("presu").scrollIntoView({behavior:"smooth",block:"start"});
   }catch(x){ err.textContent=x.message||L("No se ha podido enviar. Inténtalo otra vez o escríbenos.","Couldn't send it. Try again or message us."); err.hidden=false; document.querySelectorAll("[data-acc]").forEach(y=>y.disabled=false); }
 });
 $("#resp")?.addEventListener("submit",e=>e.preventDefault());
-document.addEventListener("submit",e=>{ if(e.target.id==="resp"){ e.preventDefault(); e.target.querySelector('[data-acc="aceptar"]').click(); } });
+document.addEventListener("submit",e=>{ if(e.target.id==="resp"){ e.preventDefault(); e.target.querySelector('[data-acc="pagar"]').click(); } });
 $("#lb-x").onclick=()=>$("#lb").close();
 $("#lb").addEventListener("click",e=>{ if(e.target.id==="lb") $("#lb").close(); });
-cargar();
+volverDePago().finally(()=>cargar());
 setInterval(()=>{ if(!document.hidden) cargar(true); },30000);
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden) cargar(true); });
 </script>
