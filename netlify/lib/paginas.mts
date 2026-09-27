@@ -86,6 +86,7 @@ export function pie(waTxt = "Hola Volcano Cars, tengo una consulta: ") {
   <div class="pg-legal"><span>© ${new Date().getFullYear()} Volcano Cars</span><a href="/aviso-legal">Aviso legal</a><a href="/condiciones">Condiciones y garantía</a><a href="/privacidad">Privacidad</a><a href="/cookies">Cookies</a><a href="/cookies" data-ck-open>Configurar cookies</a><a href="https://www.instagram.com/volcanocars_antigua/" target="_blank" rel="noopener me">Instagram</a><a href="https://www.facebook.com/share/1KYczmU7be/" target="_blank" rel="noopener me">Facebook</a><a href="/en/">English</a></div>
 </div></footer>
 <nav class="pg-barra" aria-label="Contacto rápido"><a class="btn b-wa" href="${escH(wa(waTxt))}" target="_blank" rel="noopener">WhatsApp</a><a class="btn b-ink" href="tel:${EMPRESA.telLink}">Llamar</a></nav>
+  <script src="/precios-taller.js" defer></script>
 </body>
 </html>`;
 }

@@ -56,6 +56,7 @@ def cabecera(p):
 <meta property="og:image" content="{BASE}/og-volcano-cars.jpg">
 <script type="application/ld+json">{ldj}</script>
 <script src="/medicion.js" defer></script>
+<script src="/precios-taller.js" defer></script>
 </head>
 <body>
 <header class="pg-top"><div class="wrap">

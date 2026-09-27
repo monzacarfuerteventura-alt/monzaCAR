@@ -201,10 +201,3 @@ footer { background: #0B0B0C !important; border-top: 1px solid var(--tx-line); }
 
 /* Contraste AA (texto blanco sobre naranja): botón de llamar de las páginas de servicios */
 .pg-call { background: #C63F1B; }
-
-/* Auditoría 27/09/2026 · accesibilidad y móvil
-   - «Saltar al contenido» para quien navega con teclado o lector de pantalla
-   - En iPhone, un desplegable con letra de menos de 16 px hace zoom al tocarlo: se fuerza 16 px en móvil */
-.skip{position:absolute;left:-9999px;top:8px;z-index:10000;background:#1B1B1A;color:#fff;padding:10px 14px;border-radius:8px;font-weight:700;text-decoration:none}
-.skip:focus{left:8px}
-@media (max-width:900px){select{font-size:16px!important}}

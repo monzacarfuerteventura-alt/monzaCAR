@@ -1,0 +1,162 @@
+/* =====================================================================
+   VOLCANO CARS · ETIQUETAS DE PRECIO «DESDE»  (precios-taller.css)
+   ---------------------------------------------------------------------
+   Lo carga solo /precios-taller.js. Etiqueta con forma de etiqueta de
+   tienda (punta + agujero), brillo que la recorre, cifras que suben,
+   entrada con rebote y balanceo al pasar por la tarjeta.
+   Colores oficiales: naranja volcánico #D94A26 / #C83E1A.
+   ===================================================================== */
+
+:root {
+  --pt-a: #D94A26;
+  --pt-b: #FF7A45;
+  --pt-glow: rgba(217, 74, 38, .55);
+  --pt-font: "Titillium Web", "Archivo", system-ui, sans-serif;
+  --pt-spring: cubic-bezier(.34, 1.56, .64, 1);
+}
+
+/* ---------------- la etiqueta ---------------- */
+.pt-tagw {
+  display: inline-flex; vertical-align: middle;
+  transform-origin: 6px 50%;
+  filter: drop-shadow(0 6px 12px var(--pt-glow)) drop-shadow(0 1px 0 rgba(0, 0, 0, .35));
+  opacity: 0; transform: translateY(8px) rotate(-10deg) scale(.7);
+  transition: opacity .45s ease var(--pt-d, 0ms), transform .7s var(--pt-spring) var(--pt-d, 0ms), filter .3s;
+}
+.pt-tagw.pt-on { opacity: 1; transform: none; }
+.pt-tag {
+  position: relative; overflow: hidden;
+  display: inline-flex; align-items: baseline; gap: 5px;
+  padding: 4px 11px 4px 18px;
+  color: #FFFFFF; font-family: var(--pt-font); line-height: 1; white-space: nowrap;
+  background: linear-gradient(135deg, var(--pt-a) 0%, var(--pt-b) 100%);
+  clip-path: polygon(9px 0, 100% 0, 100% 100%, 9px 100%, 0 50%);
+  border-radius: 0 7px 7px 0;
+}
+/* agujero de la etiqueta */
+.pt-tag::before {
+  content: ""; position: absolute; left: 7px; top: 50%; width: 5px; height: 5px; margin-top: -2.5px;
+  border-radius: 50%; background: #121212; box-shadow: inset 0 1px 1px rgba(0, 0, 0, .6), 0 0 0 1px rgba(255, 255, 255, .25);
+}
+/* brillo que recorre la etiqueta cada pocos segundos */
+.pt-tag::after {
+  content: ""; position: absolute; top: -20%; bottom: -20%; left: -60%; width: 45%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .65), transparent);
+  transform: skewX(-18deg); pointer-events: none;
+  animation: pt-brillo 5.5s ease-in-out infinite; animation-delay: calc(var(--pt-d, 0ms) + 1.4s);
+}
+.pt-desde { font-size: 9.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; opacity: .92; }
+.pt-num { display: inline-flex; align-items: baseline; gap: 2px; font-weight: 800; font-size: 16px; letter-spacing: .01em; font-variant-numeric: tabular-nums; }
+.pt-num b { font-weight: 800; }
+.pt-num i { font-style: normal; font-size: .82em; font-weight: 700; }
+.pt-suf { font-size: 10.5px; font-weight: 700; opacity: .9; }
+
+@keyframes pt-brillo { 0%, 62% { left: -60%; } 82%, 100% { left: 130%; } }
+@keyframes pt-balanceo {
+  0% { transform: rotate(0); } 20% { transform: rotate(-9deg); } 42% { transform: rotate(6deg); }
+  62% { transform: rotate(-3.5deg); } 80% { transform: rotate(1.5deg); } 100% { transform: rotate(0); }
+}
+.pt-tagw.pt-swing { animation: pt-balanceo .9s ease-out; }
+
+/* ---------------- dentro de las tarjetas de servicio del taller ---------------- */
+.svc label.pt-con > span:not(.ic):not(.tick) { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; min-width: 0; }
+.svc label .pt-fila { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 7px; }
+/* la web pone «b» en blanco y en bloque dentro de las tarjetas: aquí la cifra manda la etiqueta */
+.svc label .pt-tag .pt-num b, #v-taller .svc label .pt-tag .pt-num b { display: inline; color: inherit; font-size: inherit; line-height: inherit; font-weight: 800; }
+/* en la tarjeta del taller la cinta va junto al precio (no tapa el nombre) */
+.svc label .pt-badge { position: static; border-radius: 999px; padding: 3px 8px; transform-origin: 50% 50%; animation-name: pt-latido-x; }
+@keyframes pt-latido-x { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+.svc label:hover .pt-tagw.pt-on { filter: drop-shadow(0 8px 16px var(--pt-glow)) drop-shadow(0 1px 0 rgba(0, 0, 0, .35)); }
+/* servicio marcado: la etiqueta se vuelve blanca con el precio en naranja */
+.svc input:checked + label .pt-tag { background: linear-gradient(135deg, #FFFFFF, #FFE9DF); color: #B83A12; }
+.svc input:checked + label .pt-tag::before { background: var(--pt-a); box-shadow: none; }
+.svc input:checked + label .pt-tagw.pt-on { animation: pt-marcado .5s var(--pt-spring); }
+@keyframes pt-marcado { 0% { transform: scale(1); } 40% { transform: scale(1.14) rotate(-4deg); } 100% { transform: scale(1); } }
+
+/* cinta «Oferta», «Más pedido»… colgando del borde de la tarjeta */
+.pt-badge {
+  position: absolute; top: 0; right: 46px; z-index: 2;
+  padding: 3px 8px 4px; border-radius: 0 0 8px 8px;
+  font: 800 9.5px/1.1 var(--pt-font); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap;
+  color: #1B1B1A; background: linear-gradient(180deg, #FFD36B, #F2A33A);
+  box-shadow: 0 6px 14px -6px rgba(242, 163, 58, .8);
+  animation: pt-latido 2.4s ease-in-out infinite;
+  transform-origin: 50% 0;
+}
+.pt-badge.pt-b-popular { color: #FFFFFF; background: linear-gradient(180deg, #FF7A45, #D94A26); box-shadow: 0 6px 14px -6px var(--pt-glow); }
+.pt-badge.pt-b-nuevo { color: #0E2A1B; background: linear-gradient(180deg, #6BF0A6, #3DDC84); box-shadow: 0 6px 14px -6px rgba(61, 220, 132, .7); }
+.pt-badge.pt-b-rapido { color: #FFFFFF; background: linear-gradient(180deg, #3A3A3E, #1E1E1E); box-shadow: 0 0 0 1px rgba(255, 138, 92, .7), 0 6px 14px -6px var(--pt-glow); }
+.pt-badge.pt-b-rapido::before { content: "⚡"; margin-right: 3px; }
+@keyframes pt-latido { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.12); } }
+
+/* ---------------- portada: «desde» en las píldoras y en la tarjeta ---------------- */
+.pt-mini { font-style: normal; font-weight: 800; color: #FF8A5C; margin-left: 3px; font-variant-numeric: tabular-nums; }
+.pt-from { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 2px 0 4px; }
+.pt-from > span:last-child { font-size: 12px; font-weight: 600; opacity: .7; }
+.pt-m .pt-tag { padding: 6px 14px 6px 20px; }
+.pt-m .pt-desde { font-size: 10.5px; }
+.pt-m .pt-num { font-size: 22px; }
+
+/* ---------------- páginas de servicio: bloque «Precios desde» ---------------- */
+.pt-land-head h2 { margin: 6px 0 0; }
+.pt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; margin-top: 22px; }
+.pt-card {
+  position: relative; overflow: hidden; isolation: isolate;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+  padding: 26px 20px 20px; border-radius: 20px;
+  background: linear-gradient(180deg, #202022, #19191A);
+  border: 1px solid rgba(255, 255, 255, .09);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05);
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1), border-color .3s, box-shadow .35s;
+}
+.pt-card::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0; transition: opacity .35s;
+  background: radial-gradient(260px circle at 85% 0%, rgba(217, 74, 38, .22), transparent 65%);
+}
+.pt-card:hover { transform: translateY(-4px); border-color: rgba(217, 74, 38, .55); box-shadow: 0 0 0 1px rgba(217, 74, 38, .25), 0 20px 40px -18px var(--pt-glow); }
+.pt-card:hover::before, .pt-card-dest::before { opacity: 1; }
+.pt-card-dest { border-color: rgba(242, 163, 58, .45); }
+.pt-card h3 { margin: 0; font-size: 19px; line-height: 1.2; color: #FFFFFF; }
+.pt-card p { margin: 0; font-size: 14px; color: rgba(255, 255, 255, .64); }
+.pt-card .pt-badge { right: 18px; }
+.pt-l { margin: 8px 0 4px; }
+.pt-l .pt-tag { padding: 8px 18px 8px 24px; border-radius: 0 10px 10px 0; clip-path: polygon(12px 0, 100% 0, 100% 100%, 12px 100%, 0 50%); }
+.pt-l .pt-tag::before { left: 9px; width: 6px; height: 6px; margin-top: -3px; }
+.pt-l .pt-desde { font-size: 11px; }
+.pt-l .pt-num { font-size: 30px; }
+.pt-l .pt-suf { font-size: 12.5px; }
+.pt-cta {
+  margin-top: auto; display: inline-flex; align-items: center; gap: 7px;
+  font-weight: 800; font-size: 14.5px; color: #FF8A5C; text-decoration: none;
+  padding: 8px 0 0;
+}
+.pt-cta svg { transition: transform .3s cubic-bezier(.2, .8, .2, 1); }
+.pt-cta:hover svg, .pt-card:hover .pt-cta svg { transform: translateX(5px); }
+.pt-nota { margin: 14px 0 0; font-size: 13px; color: rgba(255, 255, 255, .6); max-width: 72ch; }
+
+/* ---------------- móvil ---------------- */
+@media (max-width: 560px) {
+  .svc label .pt-fila { margin-top: 5px; gap: 5px; }
+  .svc label .pt-badge { padding: 2px 6px; }
+  /* en el móvil «DESDE» va encima de la cifra: la etiqueta cabe siempre en la tarjeta */
+  .svc .pt-tag { display: grid; grid-template-columns: auto auto; align-items: baseline; column-gap: 3px; row-gap: 1px; padding: 3px 8px 3px 15px; clip-path: polygon(8px 0, 100% 0, 100% 100%, 8px 100%, 0 50%); }
+  .svc .pt-tag::before { left: 6px; width: 4px; height: 4px; margin-top: -2px; }
+  .svc .pt-desde { grid-column: 1 / -1; font-size: 7.5px; letter-spacing: .12em; }
+  .svc .pt-num { font-size: 13.5px; }
+  .svc .pt-suf { font-size: 9px; }
+  .pt-badge { font-size: 8px; padding: 2px 6px 3px; letter-spacing: .08em; }
+  .pt-grid { grid-template-columns: minmax(0, 1fr); }
+  .pt-l .pt-num { font-size: 26px; }
+}
+
+/* ---------------- menos movimiento si el sistema lo pide ---------------- */
+@media (prefers-reduced-motion: reduce) {
+  .pt-tagw { opacity: 1; transform: none; transition: none; }
+  .pt-tag::after, .pt-badge, .pt-tagw.pt-swing, .svc input:checked + label .pt-tagw.pt-on { animation: none; }
+  .pt-card, .pt-cta svg { transition: none; }
+}
+
+/* ---------------- bloque «Tu presupuesto» de la cita ---------------- */
+#v-taller .tx-estim-top b small { font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--tx-acc-txt, #FF8A5C); text-shadow: none; margin-right: 2px; }
+#v-taller .tx-estim-top b em { font-style: normal; font-variant-numeric: tabular-nums; display: inline-block; }
+#v-taller .tx-estim-top b em.tx-bump { animation: pt-marcado .55s var(--pt-spring); }

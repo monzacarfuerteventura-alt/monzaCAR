@@ -148,3 +148,16 @@ en el mensaje de confirmación, en el comprobante PDF y en Panel → Coches → 
 - **Copia de seguridad automática diaria** (`copia-programada.mts`, 03:05 UTC, guarda 30 días) → Panel → Seguridad → «Ver copias automáticas».
 - **Lanzamiento**: redirecciones 301 de www/http a https://volcanocars.com, caché de fuentes/fotos y página de gracias virtual
   (`/gracias` en Google Analytics) al enviar un formulario.
+
+## Precios «desde» del taller
+En el panel: **Taller → «Precios en la web»**. Pon el precio más bajo con IGIC de cada servicio (Pre-ITV, frenos,
+pintura, aceite…), su unidad (/ pieza, / rueda, / eje, / hora) y, si quieres, una etiqueta (Oferta, Más pedido,
+Nuevo, En el día). Al pulsar **Guardar y publicar** sale al momento en la web con una etiqueta de precio animada:
+- en las tarjetas del taller (/taller) y en el bloque «Tu presupuesto» de la cita;
+- en las tarjetas «Chapa y pintura» y «Mecánica rápida» de la portada;
+- en las páginas de servicio (Pre-ITV, taller mecánico, chapa y pintura, guía de la ITV y taller de cada pueblo),
+  con botón «Reservar cita» que abre /taller con ese servicio ya marcado;
+- y en los datos para Google (precio mínimo con IGIC).
+Vacío = «a presupuestar» (no sale precio). Solo el gerente puede cambiarlos; el equipo no ve la tarjeta.
+Archivos: `netlify/functions/precios-taller.mts` (guarda en Netlify Blobs), `public/precios-taller.js` y `.css`
+(las etiquetas), `public/panel-precios.js` (el editor del panel) y `public/taller-ui.js` (el presupuesto de la cita).
