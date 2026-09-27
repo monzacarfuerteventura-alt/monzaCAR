@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>Escenas VFX del taller</title>
+<style>html,body{margin:0;background:#000}canvas{display:block}</style></head>
+<body><canvas id="c"></canvas>
+<script>
+/* =====================================================================
+   VOLCANO CARS · ESCENAS VFX DEL TALLER (clips provisionales)
+   Estilo render CAD / X-Ray. Cada escena es una función del tiempo t∈[0,1)
+   y todo es periódico: el fotograma t=1 es igual al t=0 → bucle perfecto.
+   Lo renderiza tools/taller-vfx/renderizar.py fotograma a fotograma.
+   ===================================================================== */
+const C = document.getElementById("c"), X = C.getContext("2d");
+const TAU = Math.PI * 2;
+const COL = { bg: "#06080B", cy: "92,225,255", or: "255,106,43", am: "255,179,71", gr: "61,220,132", wh: "235,245,255", rd: "255,59,48", vi: "178,120,255", ic: "170,230,255" };
+const rgba = (c, a) => `rgba(${COL[c]},${a})`;
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const ease = (x) => x * x * (3 - 2 * x);
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+const lerp = (a, b, k) => a + (b - a) * k;
+function rng(seed) { let s = seed >>> 0; return () => { s += 0x6D2B79F5; let r = Math.imul(s ^ (s >>> 15), 1 | s); r ^= r + Math.imul(r ^ (r >>> 7), 61 | r); return ((r ^ (r >>> 14)) >>> 0) / 4294967296; }; }
+
+let W, H, S, CX, CY;
+/* ---------------- 3D ---------------- */
+const rotX = (p, a) => ({ x: p.x, y: p.y * Math.cos(a) - p.z * Math.sin(a), z: p.y * Math.sin(a) + p.z * Math.cos(a) });
+const rotY = (p, a) => ({ x: p.x * Math.cos(a) + p.z * Math.sin(a), y: p.y, z: -p.x * Math.sin(a) + p.z * Math.cos(a) });
+const rotZ = (p, a) => ({ x: p.x * Math.cos(a) - p.y * Math.sin(a), y: p.x * Math.sin(a) + p.y * Math.cos(a), z: p.z });
+let CAM = { ax: 0, ay: 0, d: 3.2, s: 1, ox: 0, oy: 0 };
+function P(p) { let q = rotY(p, CAM.ay); q = rotX(q, CAM.ax); const f = CAM.d / (CAM.d + q.z); return { x: CX + CAM.ox * S + q.x * f * S * 0.42 * CAM.s, y: CY + CAM.oy * S - q.y * f * S * 0.42 * CAM.s, f, z: q.z }; }
+function line3(a, b, c, al, w = 1.2) { const A = P(a), B = P(b); X.strokeStyle = rgba(c, al); X.lineWidth = w * (S / 720); X.beginPath(); X.moveTo(A.x, A.y); X.lineTo(B.x, B.y); X.stroke(); }
+function poly3(pts, c, al, w = 1.2, close = false, fill = null) {
+  X.beginPath(); pts.forEach((p, i) => { const q = P(p); i ? X.lineTo(q.x, q.y) : X.moveTo(q.x, q.y); }); if (close) X.closePath();
+  if (fill) { X.fillStyle = fill; X.fill(); }
+  X.strokeStyle = rgba(c, al); X.lineWidth = w * (S / 720); X.stroke();
+}
+function circle3(cx, cy, cz, r, axis, n = 64) { const pts = []; for (let i = 0; i <= n; i++) { const a = (i / n) * TAU, u = Math.cos(a) * r, v = Math.sin(a) * r; pts.push(axis === "z" ? { x: cx + u, y: cy + v, z: cz } : axis === "x" ? { x: cx, y: cy + u, z: cz + v } : { x: cx + u, y: cy, z: cz + v }); } return pts; }
+const glow = (c, b) => { X.shadowColor = rgba(c, 0.9); X.shadowBlur = b * (S / 720); };
+const noGlow = () => { X.shadowBlur = 0; };
+function dot(x, y, r, c, a) { X.fillStyle = rgba(c, a); X.beginPath(); X.arc(x, y, r, 0, TAU); X.fill(); }
+
+/* ---------------- fondo y HUD comunes ---------------- */
+function fondo(t, tint = "cy") {
+  X.globalCompositeOperation = "source-over"; noGlow();
+  X.fillStyle = COL.bg; X.fillRect(0, 0, W, H);
+  const g = X.createRadialGradient(CX, CY, 0, CX, CY, Math.max(W, H) * 0.75);
+  g.addColorStop(0, rgba(tint, 0.10)); g.addColorStop(0.5, rgba(tint, 0.03)); g.addColorStop(1, "rgba(0,0,0,0)");
+  X.fillStyle = g; X.fillRect(0, 0, W, H);
+  // retícula de plano técnico
+  const m = S / 18, off = (t * m * 2) % m;
+  X.lineWidth = 1;
+  for (let x = (CX % m) - m; x < W + m; x += m) { X.strokeStyle = rgba("cy", Math.round((x - CX) / m) % 5 === 0 ? 0.075 : 0.035); X.beginPath(); X.moveTo(x, 0); X.lineTo(x, H); X.stroke(); }
+  for (let y = (CY % m) - m + off; y < H + m; y += m) { X.strokeStyle = rgba("cy", 0.035); X.beginPath(); X.moveTo(0, y); X.lineTo(W, y); X.stroke(); }
+}
+function hud(t, titulo, datos, tint = "cy") {
+  noGlow(); X.globalCompositeOperation = "source-over";
+  const u = S / 720, m = 26 * u, L = 34 * u;
+  X.strokeStyle = rgba(tint, 0.55); X.lineWidth = 1.5 * u;
+  [[m, m, 1, 1], [W - m, m, -1, 1], [m, H - m, 1, -1], [W - m, H - m, -1, -1]].forEach(([x, y, sx, sy]) => { X.beginPath(); X.moveTo(x, y + sy * L); X.lineTo(x, y); X.lineTo(x + sx * L, y); X.stroke(); });
+  X.font = `600 ${13 * u}px "DejaVu Sans Mono", monospace`; X.textBaseline = "top";
+  X.fillStyle = rgba(tint, 0.75); X.fillText("VC-XR // " + titulo, m + 10 * u, m + 12 * u);
+  X.fillStyle = rgba("wh", 0.35); X.fillText("FRAME " + String(Math.floor(t * 192)).padStart(3, "0") + " · 24FPS · CAD/X-RAY", m + 10 * u, m + 32 * u);
+  X.textAlign = "right";
+  datos.forEach((d, i) => { X.fillStyle = i === 0 ? rgba(tint, 0.8) : rgba("wh", 0.4); X.fillText(d, W - m - 10 * u, H - m - 30 * u - i * 20 * u); });
+  X.textAlign = "left";
+  // barra de progreso del escaneo
+  X.fillStyle = rgba("wh", 0.08); X.fillRect(m + 10 * u, H - m - 16 * u, 160 * u, 3 * u);
+  X.fillStyle = rgba(tint, 0.7); X.fillRect(m + 10 * u, H - m - 16 * u, 160 * u * t, 3 * u);
+  // líneas de exploración de pantalla
+  // (las líneas de pantalla las pone el CSS de la web: en el vídeo gastarían mucho peso)
+  const vg = X.createRadialGradient(CX, CY, S * 0.35, CX, CY, Math.max(W, H) * 0.8);
+  vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(0,0,0,0.6)"); X.fillStyle = vg; X.fillRect(0, 0, W, H);
+}
+
+/* =====================================================================
+   ESCENAS
+   ===================================================================== */
+const E = {};
+
+/* 1. GOLPES Y ABOLLADURAS: la chapa se hunde y un láser térmico la devuelve a su sitio */
+E.golpes = (t) => {
+  fondo(t, "or");
+  CAM = { ax: -0.95, ay: 0.45 * Math.sin(TAU * t) - 0.2, d: 3, s: 1.25, ox: 0, oy: 0.05 };
+  const dIn = ease(seg(t, 0.05, 0.3)), lx = lerp(-1.25, 1.25, ease(seg(t, 0.45, 0.8)));
+  const NX = 34, NZ = 20, pts = [];
+  const hund = (x, z) => { let d = dIn; if (t > 0.45) d = x < lx - 0.05 ? 0 : x < lx + 0.05 ? dIn * (x - lx + 0.05) / 0.1 : dIn; if (t > 0.8) d = 0; return d * Math.exp(-((x - 0.1) ** 2 / 0.09 + (z + 0.05) ** 2 / 0.06)); };
+  for (let i = 0; i <= NX; i++) { pts[i] = []; for (let j = 0; j <= NZ; j++) { const x = -1 + (2 * i) / NX, z = -0.65 + (1.3 * j) / NZ, h = hund(x, z); pts[i][j] = { p: { x, y: 0.1 * Math.cos(x * 1.4) - 0.34 * h, z }, h }; } }
+  X.globalCompositeOperation = "lighter";
+  const col = (h) => (h > 0.35 ? "rd" : h > 0.12 ? "or" : "cy");
+  for (let i = 0; i <= NX; i++) for (let j = 0; j <= NZ; j++) {
+    const a = pts[i][j];
+    if (i < NX) { const b = pts[i + 1][j], h = Math.max(a.h, b.h); line3(a.p, b.p, col(h), 0.28 + h * 0.7, 1 + h * 1.6); }
+    if (j < NZ) { const b = pts[i][j + 1], h = Math.max(a.h, b.h); line3(a.p, b.p, col(h), 0.22 + h * 0.7, 1 + h * 1.6); }
+  }
+  // contorno del panel
+  glow("cy", 10); poly3([{ x: -1, y: 0.1 * Math.cos(1.4), z: -0.65 }, { x: 1, y: 0.1 * Math.cos(1.4), z: -0.65 }, { x: 1, y: 0.1 * Math.cos(1.4), z: 0.65 }, { x: -1, y: 0.1 * Math.cos(1.4), z: 0.65 }], "cy", 0.8, 2, true); noGlow();
+  // láser de reparación
+  if (t > 0.43 && t < 0.82) {
+    glow("am", 26);
+    const a = P({ x: lx, y: 0.1 * Math.cos(lx * 1.4) + 0.02, z: -0.72 }), b = P({ x: lx, y: 0.1 * Math.cos(lx * 1.4) + 0.02, z: 0.72 }), top = P({ x: lx - 0.2, y: 1.2, z: 0 });
+    X.strokeStyle = rgba("am", 0.95); X.lineWidth = 3 * S / 720; X.beginPath(); X.moveTo(a.x, a.y); X.lineTo(b.x, b.y); X.stroke();
+    const gr = X.createLinearGradient(top.x, top.y, (a.x + b.x) / 2, (a.y + b.y) / 2); gr.addColorStop(0, rgba("am", 0)); gr.addColorStop(1, rgba("am", 0.35));
+    X.fillStyle = gr; X.beginPath(); X.moveTo(top.x, top.y); X.lineTo(a.x, a.y); X.lineTo(b.x, b.y); X.closePath(); X.fill();
+    noGlow();
+    const R = rng(Math.floor(t * 192));
+    for (let k = 0; k < 40; k++) { const z = -0.65 + R() * 1.3, q = P({ x: lx + (R() - 0.5) * 0.06, y: 0.1 * Math.cos(lx * 1.4) + R() * 0.25, z }); dot(q.x, q.y, (0.8 + R() * 2) * S / 720, R() > 0.5 ? "am" : "wh", 0.8); }
+  }
+  // brillo de chapa reparada
+  if (t > 0.8) { const k = seg(t, 0.8, 1), gx = lerp(-1.2, 1.2, k); for (let j = 0; j <= NZ; j += 2) line3({ x: gx - 0.08, y: 0.1 * Math.cos(gx * 1.4), z: -0.65 + (1.3 * j) / NZ }, { x: gx + 0.08, y: 0.1 * Math.cos(gx * 1.4), z: -0.65 + (1.3 * j) / NZ }, "wh", 0.5 * Math.sin(Math.PI * k), 2); }
+  X.globalCompositeOperation = "source-over";
+  hud(t, "BODY PANEL · DENT REPAIR", ["DEFORM " + (dIn * (t > 0.45 ? 1 - ease(seg(t, 0.45, 0.8)) : 1) * 14.2).toFixed(1) + " mm", "LASER " + (t > 0.43 && t < 0.82 ? "ON  780°C" : "STBY"), "MESH 34×20"], "or");
+};
+
+/* 2. PINTURA: pistola pulverizando color y después barniz transparente */
+E.pintura = (t) => {
+  fondo(t, "or");
+  CAM = { ax: -0.35, ay: -0.55 + 0.12 * Math.sin(TAU * t), d: 3.4, s: 0.98, ox: 0.05, oy: -0.03 };
+  const pinta = ease(seg(t, 0.05, 0.5)), barniz = ease(seg(t, 0.5, 0.85)), borrar = ease(seg(t, 0.9, 1));
+  const xs = t < 0.5 ? lerp(-1, 1, pinta) : lerp(1, -1, barniz);
+  const NX = 28, NY = 16, panelY = (y) => y;
+  X.globalCompositeOperation = "source-over";
+  // panel relleno por celdas
+  for (let i = 0; i < NX; i++) for (let j = 0; j < NY; j++) {
+    const x0 = -1 + (2 * i) / NX, x1 = x0 + 2 / NX, y0 = -0.62 + (1.24 * j) / NY, y1 = y0 + 1.24 / NY;
+    const zc = (x) => 0.12 * Math.cos(x * 1.6);
+    const pintado = (x0 + x1) / 2 < lerp(-1, 1, pinta) ? 1 - borrar : 0;
+    const quad = [{ x: x0, y: y0, z: zc(x0) }, { x: x1, y: y0, z: zc(x1) }, { x: x1, y: y1, z: zc(x1) }, { x: x0, y: y1, z: zc(x0) }];
+    const brillo = t > 0.5 && (x0 + x1) / 2 > xs ? 1 - borrar : 0;
+    const f = pintado ? `rgba(${Math.round(200 + 30 * Math.sin(i * 0.4 + j * 0.3))},${Math.round(60 + 20 * Math.sin(j * 0.5))},25,${0.55 * pintado})` : "rgba(120,130,140,0.08)";
+    poly3(quad, brillo ? "wh" : "cy", brillo ? 0.22 : 0.12, 0.8, true, f);
+  }
+  // reflejo del barniz
+  if (t > 0.5) { X.globalCompositeOperation = "lighter"; for (let j = 0; j <= NY; j++) { const y = -0.62 + (1.24 * j) / NY; line3({ x: xs, y, z: 0.12 * Math.cos(xs * 1.6) - 0.01 }, { x: Math.min(1, xs + 0.5), y, z: 0.12 * Math.cos(Math.min(1, xs + 0.5) * 1.6) - 0.01 }, "wh", 0.18 * (1 - borrar), 1.2); } }
+  // pistola
+  X.globalCompositeOperation = "lighter";
+  const noz = { x: xs * 0.9, y: 0.05 * Math.sin(TAU * t * 2), z: -1.05 };
+  glow("cy", 8);
+  poly3([{ x: noz.x - 0.06, y: noz.y + 0.05, z: noz.z - 0.35 }, { x: noz.x + 0.06, y: noz.y + 0.05, z: noz.z - 0.35 }, { x: noz.x + 0.03, y: noz.y + 0.03, z: noz.z }, { x: noz.x - 0.03, y: noz.y + 0.03, z: noz.z }], "cy", 0.9, 1.5, true);
+  poly3([{ x: noz.x, y: noz.y + 0.05, z: noz.z - 0.25 }, { x: noz.x, y: noz.y + 0.35, z: noz.z - 0.3 }], "cy", 0.8, 1.5);
+  noGlow();
+  // partículas del chorro
+  const R = rng(7), paint = t < 0.5, c = paint ? "or" : "wh";
+  for (let k = 0; k < 520; k++) {
+    const s0 = R(), sp = 1 + Math.floor(R() * 3), ang = R() * TAU, rad = Math.sqrt(R()) * 0.32, ph = (s0 + t * sp) % 1;
+    if ((t < 0.05) || (t > 0.85 && t < 1) || (t > 0.47 && t < 0.52)) continue;
+    const tgt = { x: noz.x + Math.cos(ang) * rad, y: noz.y + Math.sin(ang) * rad, z: 0.12 * Math.cos(noz.x * 1.6) };
+    const q = P({ x: lerp(noz.x, tgt.x, ph), y: lerp(noz.y, tgt.y, ph), z: lerp(noz.z, tgt.z, ph) });
+    dot(q.x, q.y, (0.6 + ph * 1.8) * S / 720 * q.f, c, 0.55 * (1 - ph * 0.6));
+  }
+  X.globalCompositeOperation = "source-over";
+  hud(t, "PAINT BOOTH · SPRAY", [t < 0.5 ? "BASE COAT " + Math.round(pinta * 100) + "%" : t < 0.9 ? "CLEAR COAT " + Math.round(barniz * 100) + "%" : "CURING", "HVLP 1.3 mm · 2.1 bar", "FILM 118 µm"], "or");
+};
+
+/* 3. ARAÑAZOS: escáner infrarrojo que pule el barniz y hace desaparecer los arañazos */
+E.aranazos = (t) => {
+  fondo(t, "vi");
+  CAM = { ax: -1.05, ay: 0.25 + 0.1 * Math.sin(TAU * t), d: 3, s: 1.3, ox: 0, oy: 0.03 };
+  const sx = lerp(-1.3, 1.3, ease(seg(t, 0.1, 0.75))), vuelve = ease(seg(t, 0.85, 1));
+  // superficie de pintura
+  const NX = 30, NZ = 18;
+  for (let i = 0; i < NX; i++) for (let j = 0; j < NZ; j++) {
+    const x0 = -1 + (2 * i) / NX, x1 = x0 + 2 / NX, z0 = -0.65 + (1.3 * j) / NZ, z1 = z0 + 1.3 / NZ;
+    const ir = Math.abs((x0 + x1) / 2 - sx) < 0.18 ? 1 - Math.abs((x0 + x1) / 2 - sx) / 0.18 : 0;
+    const f = ir ? `rgba(${Math.round(120 + 135 * ir)},${Math.round(40 + 60 * ir)},${Math.round(160 - 60 * ir)},${0.35 + 0.35 * ir})` : "rgba(150,20,30,0.22)";
+    poly3([{ x: x0, y: 0, z: z0 }, { x: x1, y: 0, z: z0 }, { x: x1, y: 0, z: z1 }, { x: x0, y: 0, z: z1 }], "vi", 0.1, 0.6, true, f);
+  }
+  // arañazos
+  X.globalCompositeOperation = "lighter";
+  const R = rng(42);
+  for (let k = 0; k < 16; k++) {
+    let x = -0.85 + R() * 1.7, z = -0.55 + R() * 1.1; const a = R() * TAU, n = 6 + Math.floor(R() * 8), pts = [];
+    for (let s = 0; s < n; s++) { pts.push({ x, y: 0.005, z }); x += Math.cos(a) * 0.05 + (R() - 0.5) * 0.02; z += Math.sin(a) * 0.05 + (R() - 0.5) * 0.02; }
+    const cx0 = pts[0].x, al = t < 0.1 ? 1 : cx0 < sx ? vuelve : 1;
+    if (al > 0.02) poly3(pts, "wh", 0.75 * al, 1.3);
+  }
+  // haz del escáner
+  if (t > 0.08 && t < 0.78) {
+    glow("vi", 30);
+    const a = P({ x: sx, y: 0.01, z: -0.75 }), b = P({ x: sx, y: 0.01, z: 0.75 });
+    X.strokeStyle = rgba("vi", 1); X.lineWidth = 3 * S / 720; X.beginPath(); X.moveTo(a.x, a.y); X.lineTo(b.x, b.y); X.stroke();
+    X.strokeStyle = rgba("wh", 0.9); X.lineWidth = 1 * S / 720; X.stroke(); noGlow();
+    // pulido: brillo detrás del haz
+    for (let j = 0; j <= NZ; j += 3) { const z = -0.65 + (1.3 * j) / NZ; line3({ x: sx - 0.35, y: 0.004, z }, { x: sx - 0.05, y: 0.004, z }, "wh", 0.16, 1.4); }
+  }
+  X.globalCompositeOperation = "source-over";
+  hud(t, "CLEAR COAT · IR SCAN", ["DEFECTS " + (t < 0.1 ? 16 : Math.round(16 * (1 - ease(seg(t, 0.1, 0.75))) + 16 * vuelve)), "IR 850 nm · POLISH 1800 rpm", "CLEAR 42 µm"], "vi");
+};
+
+/* 4. ACEITE: fluido dorado recorriendo los conductos del motor y el filtro */
+E.aceite = (t) => {
+  fondo(t, "am");
+  CAM = { ax: -0.42, ay: -0.6 + 0.18 * Math.sin(TAU * t), d: 3.4, s: 1.05, ox: 0, oy: 0 };
+  X.globalCompositeOperation = "lighter";
+  // bloque motor en alambre
+  const box = (x0, y0, z0, x1, y1, z1, c, a) => { const v = [[x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0], [x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]].map(([x, y, z]) => ({ x, y, z })); [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6], [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7]].forEach(([i, j]) => line3(v[i], v[j], c, a, 1.3)); };
+  box(-0.9, -0.3, -0.45, 0.9, 0.55, 0.45, "cy", 0.4);
+  box(-0.95, -0.55, -0.5, 0.95, -0.3, 0.5, "cy", 0.28); // cárter
+  for (let i = 0; i < 4; i++) { const x = -0.6 + i * 0.4; poly3(circle3(x, 0.55, 0, 0.16, "y", 40), "cy", 0.5, 1.2); poly3(circle3(x, 0.2, 0, 0.16, "y", 40), "cy", 0.18, 1); line3({ x: x - 0.16, y: 0.2, z: 0 }, { x: x - 0.16, y: 0.55, z: 0 }, "cy", 0.2); line3({ x: x + 0.16, y: 0.2, z: 0 }, { x: x + 0.16, y: 0.55, z: 0 }, "cy", 0.2); }
+  // filtro (cilindro con pliegues que gira)
+  const fx = 1.25, fy = -0.15;
+  poly3(circle3(fx, fy + 0.3, 0, 0.2, "y", 48), "am", 0.8, 1.6); poly3(circle3(fx, fy - 0.3, 0, 0.2, "y", 48), "am", 0.8, 1.6);
+  for (let i = 0; i < 24; i++) { const a = (i / 24) * TAU + t * TAU * 0.5; const x = fx + Math.cos(a) * 0.2, z = Math.sin(a) * 0.2; line3({ x, y: fy - 0.3, z }, { x, y: fy + 0.3, z }, "am", 0.3, 1); }
+  // circuito de conductos
+  const ruta = [[1.25, 0.15, 0], [1.25, 0.45, 0], [0.9, 0.62, 0.1], [0.6, 0.62, 0.3], [-0.6, 0.62, 0.3], [-0.95, 0.4, 0.3], [-0.95, -0.4, 0.3], [-0.5, -0.5, 0.2], [0.5, -0.5, 0.2], [1.0, -0.5, 0], [1.25, -0.45, 0]].map(([x, y, z]) => ({ x, y, z }));
+  const lens = []; let tot = 0; for (let i = 0; i < ruta.length - 1; i++) { const d = Math.hypot(ruta[i + 1].x - ruta[i].x, ruta[i + 1].y - ruta[i].y, ruta[i + 1].z - ruta[i].z); lens.push(d); tot += d; }
+  const en = (s) => { let d = s * tot; for (let i = 0; i < lens.length; i++) { if (d <= lens[i]) { const k = d / lens[i]; return { x: lerp(ruta[i].x, ruta[i + 1].x, k), y: lerp(ruta[i].y, ruta[i + 1].y, k), z: lerp(ruta[i].z, ruta[i + 1].z, k) }; } d -= lens[i]; } return ruta[ruta.length - 1]; };
+  glow("cy", 6); poly3(ruta, "cy", 0.35, 6); poly3(ruta, "ic", 0.25, 1.2); noGlow();
+  glow("am", 18);
+  for (let k = 0; k < 90; k++) { const s = (k / 90 + t * 2) % 1, q = P(en(s)); const r = (2.2 + 1.4 * Math.sin(k * 1.7 + t * TAU * 4)) * S / 720 * q.f; dot(q.x, q.y, r, "am", 0.85); }
+  noGlow();
+  X.globalCompositeOperation = "source-over";
+  hud(t, "LUBRICATION · 5W-30", ["PRESS " + (3.1 + 0.2 * Math.sin(TAU * t * 2)).toFixed(1) + " bar", "OIL 92°C · FILTER 99.4%", "FLOW 42 l/min"], "am");
+};
+
+/* 5. FRENOS: pinza apretando un disco al rojo vivo, con chispas */
+E.frenos = (t) => {
+  fondo(t, "rd");
+  const z = 1 + 0.1 * Math.sin(TAU * t);
+  CAM = { ax: -0.28, ay: -0.5 + 0.12 * Math.sin(TAU * t), d: 3.4, s: 0.95 * z, ox: -0.04, oy: 0.02 };
+  const apriete = 0.5 + 0.5 * Math.sin(TAU * t * 2 - Math.PI / 2), calor = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(TAU * t - Math.PI / 2));
+  const giro = TAU * t * 3;
+  // disco con calor
+  const ctr = P({ x: 0, y: 0, z: 0 });
+  X.globalCompositeOperation = "lighter";
+  const discPts = circle3(0, 0, 0, 1, "z", 90);
+  X.beginPath(); discPts.forEach((p, i) => { const q = P(p); i ? X.lineTo(q.x, q.y) : X.moveTo(q.x, q.y); }); X.closePath();
+  const hg = X.createRadialGradient(ctr.x, ctr.y, S * 0.1, ctr.x, ctr.y, S * 0.48);
+  hg.addColorStop(0, "rgba(0,0,0,0)"); hg.addColorStop(0.55, `rgba(255,60,20,${0.18 * calor})`); hg.addColorStop(0.85, `rgba(255,140,40,${0.45 * calor})`); hg.addColorStop(1, `rgba(255,230,120,${0.25 * calor})`);
+  X.fillStyle = hg; X.fill();
+  glow("cy", 8);
+  poly3(discPts, "cy", 0.8, 2); poly3(circle3(0, 0, 0, 0.42, "z", 60), "cy", 0.7, 1.6); poly3(circle3(0, 0, 0, 0.22, "z", 40), "cy", 0.6, 1.4);
+  for (let i = 0; i < 5; i++) { const a = giro + (i / 5) * TAU; poly3(circle3(Math.cos(a) * 0.32, Math.sin(a) * 0.32, 0, 0.04, "z", 16), "cy", 0.6, 1.2); }
+  noGlow();
+  for (let i = 0; i < 36; i++) { const a = giro + (i / 36) * TAU; line3({ x: Math.cos(a) * 0.5, y: Math.sin(a) * 0.5, z: 0 }, { x: Math.cos(a + 0.18) * 0.95, y: Math.sin(a + 0.18) * 0.95, z: 0 }, i % 2 ? "or" : "cy", 0.25 + 0.3 * calor, 1.2); }
+  for (let i = 0; i < 48; i++) { const a = giro * 1 + (i / 48) * TAU; const q = P({ x: Math.cos(a) * 0.72, y: Math.sin(a) * 0.72, z: -0.02 }); dot(q.x, q.y, 2.2 * S / 720, "am", 0.25 + 0.5 * calor); }
+  // pinza
+  const cA = 0.9, gap = 0.1 - 0.06 * apriete;
+  const pinza = (zc, al) => { const pts = []; for (let i = 0; i <= 24; i++) { const a = cA - 0.55 + (i / 24) * 1.1; pts.push({ x: Math.cos(a) * 1.08, y: Math.sin(a) * 1.08, z: zc }); } for (let i = 24; i >= 0; i--) { const a = cA - 0.55 + (i / 24) * 1.1; pts.push({ x: Math.cos(a) * 0.62, y: Math.sin(a) * 0.62, z: zc }); } return pts; };
+  glow("or", 16);
+  poly3(pinza(-gap - 0.06), "or", 0.95, 2, true, "rgba(255,106,43,0.10)"); poly3(pinza(gap + 0.06), "or", 0.6, 1.6, true, "rgba(255,106,43,0.06)");
+  for (let i = 0; i < 3; i++) { const a = cA - 0.3 + i * 0.3; poly3(circle3(Math.cos(a) * 0.85, Math.sin(a) * 0.85, -gap - 0.06, 0.09, "z", 20), "wh", 0.7, 1.4); }
+  noGlow();
+  // chispas
+  const R = rng(9); const cp = { x: Math.cos(cA + 0.55) * 0.97, y: Math.sin(cA + 0.55) * 0.97 };
+  for (let k = 0; k < 140; k++) {
+    const s0 = R(), sp = 2 + Math.floor(R() * 3), ph = (s0 + t * sp) % 1, v = 0.6 + R() * 1.4, ang = cA + 0.55 + Math.PI / 2 + (R() - 0.5) * 0.9;
+    const x = cp.x + Math.cos(ang) * v * ph, y = cp.y + Math.sin(ang) * v * ph - 1.4 * ph * ph, zz = (R() - 0.5) * 0.3;
+    const a1 = P({ x, y, z: zz }), a0 = P({ x: x - Math.cos(ang) * 0.06, y: y - Math.sin(ang) * 0.06 + 0.05 * ph, z: zz });
+    X.strokeStyle = `rgba(255,${Math.round(200 - 120 * ph)},${Math.round(90 - 80 * ph)},${(1 - ph) * apriete})`; X.lineWidth = 1.6 * S / 720; X.beginPath(); X.moveTo(a0.x, a0.y); X.lineTo(a1.x, a1.y); X.stroke();
+  }
+  X.globalCompositeOperation = "source-over";
+  hud(t, "BRAKE SYSTEM · X-RAY", ["DISC " + Math.round(380 + 260 * calor) + "°C", "CLAMP " + (4 + 38 * apriete).toFixed(0) + " kN · PAD 9.8 mm", "Ø 312 × 28 mm"], "or");
+};
+
+/* 6. NEUMÁTICOS: rueda girando en X-Ray con su estructura interna */
+E.neumaticos = (t) => {
+  fondo(t, "cy");
+  CAM = { ax: -0.18, ay: -0.62 + 0.1 * Math.sin(TAU * t), d: 3.8, s: 0.84, ox: 0, oy: 0.04 };
+  const giro = -TAU * t * 2, Wd = 0.34;
+  X.globalCompositeOperation = "lighter";
+  const capas = [[1.0, "cy", 0.9, 2.2], [0.93, "am", 0.45, 1.3], [0.88, "wh", 0.35, 1.1], [0.8, "cy", 0.35, 1], [0.62, "cy", 0.7, 1.8], [0.55, "cy", 0.35, 1]];
+  glow("cy", 8);
+  capas.forEach(([r, c, a, w]) => { poly3(circle3(0, 0, -Wd, r, "z", 96), c, a, w); poly3(circle3(0, 0, Wd, r, "z", 96), c, a * 0.55, w); });
+  noGlow();
+  // tacos de la banda de rodadura
+  for (let i = 0; i < 44; i++) {
+    const a = giro + (i / 44) * TAU, a2 = a + 0.08;
+    const p = (r, z, aa) => ({ x: Math.cos(aa) * r, y: Math.sin(aa) * r, z });
+    poly3([p(1.0, -Wd, a), p(1.06, -Wd, a), p(1.06, -Wd, a2), p(1.0, -Wd, a2)], "cy", 0.7, 1.2, true);
+    line3(p(1.06, -Wd, a), p(1.06, Wd, a + 0.05), "cy", 0.35, 1);
+    line3(p(1.06, -Wd * 0.2, a2), p(1.06, Wd * 0.4, a2 + 0.12), "cy", 0.2, 1);
+  }
+  // cordones radiales de la carcasa y radios de la llanta
+  for (let i = 0; i < 64; i++) { const a = giro + (i / 64) * TAU; line3({ x: Math.cos(a) * 0.63, y: Math.sin(a) * 0.63, z: -Wd }, { x: Math.cos(a) * 0.92, y: Math.sin(a) * 0.92, z: -Wd }, "vi", 0.22, 0.9); }
+  for (let i = 0; i < 5; i++) { const a = giro + (i / 5) * TAU; line3({ x: Math.cos(a) * 0.14, y: Math.sin(a) * 0.14, z: -Wd * 0.4 }, { x: Math.cos(a + 0.25) * 0.55, y: Math.sin(a + 0.25) * 0.55, z: -Wd * 0.4 }, "cy", 0.55, 2.4); line3({ x: Math.cos(a) * 0.14, y: Math.sin(a) * 0.14, z: -Wd * 0.4 }, { x: Math.cos(a - 0.25) * 0.55, y: Math.sin(a - 0.25) * 0.55, z: -Wd * 0.4 }, "cy", 0.55, 2.4); }
+  poly3(circle3(0, 0, -Wd * 0.4, 0.14, "z", 30), "cy", 0.7, 1.5);
+  // suelo y partículas de fricción
+  line3({ x: -2.2, y: -1.07, z: 0 }, { x: 2.2, y: -1.07, z: 0 }, "cy", 0.35, 1.4);
+  for (let i = 0; i < 22; i++) { const x = -2.2 + ((i / 22 + t * 4) % 1) * 4.4; line3({ x, y: -1.07, z: -0.5 }, { x: x - 0.12, y: -1.07, z: -0.5 }, "cy", 0.5, 1); }
+  const R = rng(3);
+  for (let k = 0; k < 120; k++) { const ph = (R() + t * (2 + Math.floor(R() * 3))) % 1, zz = (R() - 0.5) * 0.7; const q = P({ x: 0.05 + ph * (1.6 + R()), y: -1.05 + Math.sin(ph * Math.PI) * 0.35 * R(), z: zz }); dot(q.x, q.y, (1 + 1.5 * (1 - ph)) * S / 720, R() > 0.7 ? "am" : "ic", 0.7 * (1 - ph)); }
+  X.globalCompositeOperation = "source-over";
+  // etiquetas de capas
+  const u = S / 720; X.font = `600 ${12 * u}px "DejaVu Sans Mono", monospace`;
+  [["TREAD", 1.03, 0.35], ["STEEL BELT", 0.93, 0.9], ["CARCASS", 0.8, 1.45], ["RIM 17\"", 0.62, 2.1]].forEach(([txt, r, a]) => { const p = P({ x: Math.cos(a) * r, y: Math.sin(a) * r, z: -Wd }), q = { x: p.x + 70 * u, y: p.y - 40 * u }; X.strokeStyle = rgba("cy", 0.5); X.lineWidth = u; X.beginPath(); X.moveTo(p.x, p.y); X.lineTo(q.x, q.y); X.lineTo(q.x + 60 * u, q.y); X.stroke(); X.fillStyle = rgba("wh", 0.6); X.fillText(txt, q.x + 4 * u, q.y - 16 * u); dot(p.x, p.y, 3 * u, "cy", 0.9); });
+  hud(t, "TYRE 225/45 R17 · X-RAY", ["GRIP 1.02 µ", "TREAD 6.4 mm · 2.3 bar", "SPEED 88 km/h"], "cy");
+};
+
+/* 7. DIAGNOSIS: pulso cibernético escaneando la centralita y el esquema eléctrico */
+E.diagnosis = (t) => {
+  fondo(t, "cy");
+  CAM = { ax: -0.95, ay: 0.3 * Math.sin(TAU * t), d: 3.2, s: 1.15, ox: 0, oy: 0.04 };
+  X.globalCompositeOperation = "lighter";
+  const R = rng(11), trazas = [];
+  // pistas del circuito que salen de la ECU
+  for (let k = 0; k < 34; k++) {
+    const lado = k % 4, pos = -0.28 + R() * 0.56; let x = lado === 0 ? -0.35 : lado === 1 ? 0.35 : pos, z = lado === 2 ? -0.25 : lado === 3 ? 0.25 : pos * 0.7;
+    const pts = [{ x, y: 0, z }]; let dx = lado === 0 ? -1 : lado === 1 ? 1 : 0, dz = lado === 2 ? -1 : lado === 3 ? 1 : 0;
+    for (let s = 0; s < 4; s++) { const L = 0.1 + R() * 0.35; x += dx * L; z += dz * L; pts.push({ x, y: 0, z }); if (R() > 0.5) { [dx, dz] = dx ? [0, R() > 0.5 ? 1 : -1] : [R() > 0.5 ? 1 : -1, 0]; } }
+    trazas.push(pts);
+  }
+  trazas.forEach((pts, k) => {
+    poly3(pts, "cy", 0.28, 1.1);
+    const e = pts[pts.length - 1], q = P(e); dot(q.x, q.y, 2.5 * S / 720, "cy", 0.6);
+    // impulso que viaja por la pista
+    const ph = (k * 0.137 + t * 2) % 1, i = Math.floor(ph * (pts.length - 1)), f = ph * (pts.length - 1) - i;
+    const a = pts[i], b = pts[Math.min(i + 1, pts.length - 1)], pp = P({ x: lerp(a.x, b.x, f), y: 0, z: lerp(a.z, b.z, f) });
+    glow("cy", 14); dot(pp.x, pp.y, 3 * S / 720, k % 5 ? "cy" : "gr", 0.95); noGlow();
+  });
+  // centralita
+  glow("cy", 16);
+  const chip = [{ x: -0.35, y: 0.02, z: -0.25 }, { x: 0.35, y: 0.02, z: -0.25 }, { x: 0.35, y: 0.02, z: 0.25 }, { x: -0.35, y: 0.02, z: 0.25 }];
+  poly3(chip, "cy", 1, 2, true, "rgba(92,225,255,0.07)");
+  poly3(chip.map((p) => ({ x: p.x * 0.7, y: 0.12, z: p.z * 0.6 })), "cy", 0.8, 1.4, true);
+  chip.forEach((p) => line3(p, { x: p.x * 0.7, y: 0.12, z: p.z * 0.6 }, "cy", 0.5));
+  noGlow();
+  for (let i = 0; i < 14; i++) { const x = -0.3 + i * (0.6 / 13); line3({ x, y: 0.02, z: -0.25 }, { x, y: 0.02, z: -0.31 }, "wh", 0.6, 1.4); line3({ x, y: 0.02, z: 0.25 }, { x, y: 0.02, z: 0.31 }, "wh", 0.6, 1.4); }
+  // onda de pulso
+  for (let r = 0; r < 3; r++) { const ph = (t * 2 + r / 3) % 1, rad = 0.2 + ph * 1.8; glow("cy", 10); poly3(circle3(0, 0.01, 0, rad, "y", 90), ph > 0.8 ? "cy" : "gr", 0.7 * (1 - ph), 2); noGlow(); }
+  X.globalCompositeOperation = "source-over";
+  // osciloscopio
+  const u = S / 720, ox = CX - 150 * u, oy = H - 120 * u;
+  X.strokeStyle = rgba("gr", 0.7); X.lineWidth = 1.5 * u; X.beginPath();
+  for (let i = 0; i <= 120; i++) { const x = ox + i * 2.5 * u, v = Math.sin(i * 0.35 + TAU * t * 6) * 12 * u * (i % 30 < 4 ? 2.2 : 1); i ? X.lineTo(x, oy + v) : X.moveTo(x, oy + v); }
+  X.stroke();
+  hud(t, "ECU · OBD-II SCAN", ["DTC " + (t < 0.5 ? "P0301 → SCAN" : "0 FAULTS · OK"), "CAN 500 kbps · 13.9 V", "MODULES 24/24"], "cy");
+};
+
+/* 8. PRE-ITV: escáner holográfico recorriendo el chasis con puntos de verificación */
+const PERFIL = [[-1.35, -0.22], [-1.35, 0.05], [-1.2, 0.12], [-0.7, 0.18], [-0.42, 0.46], [0.25, 0.47], [0.62, 0.2], [1.18, 0.12], [1.35, 0.0], [1.35, -0.22]];
+E.itv = (t) => {
+  fondo(t, "gr");
+  CAM = { ax: -0.3, ay: -0.72 + 0.16 * Math.sin(TAU * t), d: 4.2, s: 0.92, ox: 0, oy: 0.02 };
+  const Z = 0.52, sx = lerp(1.6, -1.6, ease(seg(t, 0.06, 0.8))), reset = ease(seg(t, 0.86, 1));
+  X.globalCompositeOperation = "lighter";
+  const cA = PERFIL.map(([x, y]) => ({ x, y, z: -Z })), cB = PERFIL.map(([x, y]) => ({ x, y, z: Z }));
+  const colX = (x) => (x > sx && t > 0.05 && reset < 0.5 ? "gr" : "cy");
+  for (let i = 0; i < PERFIL.length - 1; i++) { const c = colX((cA[i].x + cA[i + 1].x) / 2); line3(cA[i], cA[i + 1], c, 0.75, 1.8); line3(cB[i], cB[i + 1], c, 0.4, 1.4); }
+  PERFIL.forEach(([x, y], i) => line3(cA[i], cB[i], colX(x), 0.28, 1));
+  // chasis (largueros y travesaños)
+  line3({ x: -1.2, y: -0.2, z: -0.3 }, { x: 1.2, y: -0.2, z: -0.3 }, "cy", 0.35, 1.4); line3({ x: -1.2, y: -0.2, z: 0.3 }, { x: 1.2, y: -0.2, z: 0.3 }, "cy", 0.35, 1.4);
+  for (let i = 0; i < 7; i++) { const x = -1.1 + i * 0.37; line3({ x, y: -0.2, z: -0.3 }, { x, y: -0.2, z: 0.3 }, colX(x), 0.3, 1); }
+  // ruedas
+  [[-0.85, -Z], [-0.85, Z], [0.85, -Z], [0.85, Z]].forEach(([x, z]) => { poly3(circle3(x, -0.22, z, 0.24, "z", 40), colX(x), 0.8, 1.6); poly3(circle3(x, -0.22, z, 0.13, "z", 30), colX(x), 0.4, 1); });
+  // plano del escáner
+  if (t > 0.05 && t < 0.82) {
+    const pl = [{ x: sx, y: -0.5, z: -0.8 }, { x: sx, y: -0.5, z: 0.8 }, { x: sx, y: 0.75, z: 0.8 }, { x: sx, y: 0.75, z: -0.8 }];
+    glow("gr", 22); poly3(pl, "gr", 0.9, 2, true, "rgba(61,220,132,0.08)"); noGlow();
+    for (let k = 0; k < 10; k++) { const y = -0.5 + ((k / 10 + t * 3) % 1) * 1.25; line3({ x: sx, y, z: -0.8 }, { x: sx, y, z: 0.8 }, "gr", 0.25, 1); }
+  }
+  // puntos de verificación
+  const CK = [[1.3, -0.1, -Z, "LUCES"], [1.1, -0.22, 0, "DIRECCIÓN"], [0.85, -0.22, -Z, "FRENO DEL."], [0.7, -0.05, Z, "SUSPENSIÓN"], [0.3, 0.47, 0, "PARABRISAS"], [0, -0.2, 0, "EMISIONES"], [-0.3, -0.2, -0.3, "BAJOS"], [-0.85, -0.22, Z, "FRENO TRAS."], [-1.3, -0.05, 0, "PILOTOS"], [-1.2, 0.12, -Z, "CINTURONES"]];
+  const u = S / 720; X.font = `600 ${11 * u}px "DejaVu Sans Mono", monospace`;
+  let ok = 0;
+  CK.forEach(([x, y, z, n]) => {
+    const pasado = x > sx && t > 0.05 && reset < 0.6, q = P({ x, y, z });
+    if (pasado) ok++;
+    glow(pasado ? "gr" : "cy", pasado ? 16 : 6);
+    X.strokeStyle = rgba(pasado ? "gr" : "cy", 0.95); X.lineWidth = 1.6 * u; X.beginPath(); X.arc(q.x, q.y, (pasado ? 9 : 6) * u, 0, TAU); X.stroke();
+    if (pasado) { X.beginPath(); X.moveTo(q.x - 4 * u, q.y); X.lineTo(q.x - 1 * u, q.y + 3.5 * u); X.lineTo(q.x + 4.5 * u, q.y - 3.5 * u); X.stroke(); }
+    noGlow();
+    if (pasado) { X.fillStyle = rgba("gr", 0.8); X.fillText(n, q.x + 13 * u, q.y - 5 * u); }
+  });
+  X.globalCompositeOperation = "source-over";
+  hud(t, "PRE-ITV · HOLO SCAN", ["CHECK " + ok + "/10 " + (ok === 10 ? "APTO" : "…"), "FRONT → REAR · 0.4 mm", "VIN ****7K2L"], "gr");
+};
+
+/* 9. AIRE ACONDICIONADO: aire helado y gas refrigerante circulando por los conductos */
+E.aire = (t) => {
+  fondo(t, "ic");
+  CAM = { ax: -0.3, ay: -0.4 + 0.15 * Math.sin(TAU * t), d: 3.4, s: 1.1, ox: 0, oy: 0 };
+  X.globalCompositeOperation = "lighter";
+  const tubos = [
+    [[-1.6, 0.5, -0.3], [-0.6, 0.55, -0.1], [0.2, 0.2, 0.1], [1.0, 0.35, 0.2], [1.7, 0.6, 0.1]],
+    [[-1.6, -0.1, 0.2], [-0.8, -0.2, 0.3], [0, 0, 0.1], [0.9, -0.3, -0.1], [1.7, -0.15, -0.2]],
+    [[-1.6, -0.65, -0.2], [-0.5, -0.5, -0.3], [0.3, -0.7, 0], [1.1, -0.55, 0.2], [1.7, -0.75, 0.1]],
+  ].map((r) => r.map(([x, y, z]) => ({ x, y, z })));
+  const curva = (pts, s) => { const n = pts.length - 1, f = s * n, i = Math.min(n - 1, Math.floor(f)), k = f - i; const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(n, i + 2)]; const cr = (a, b, c, d) => 0.5 * (2 * b + (-a + c) * k + (2 * a - 5 * b + 4 * c - d) * k * k + (-a + 3 * b - 3 * c + d) * k * k * k); return { x: cr(p0.x, p1.x, p2.x, p3.x), y: cr(p0.y, p1.y, p2.y, p3.y), z: cr(p0.z, p1.z, p2.z, p3.z) }; };
+  tubos.forEach((tb, ti) => {
+    const pts = []; for (let i = 0; i <= 80; i++) pts.push(curva(tb, i / 80));
+    glow("ic", 10); poly3(pts, "ic", 0.3, 16); noGlow(); poly3(pts, "ic", 0.55, 1.2);
+    poly3(pts.map((p) => ({ ...p, y: p.y + 0.07 })), "cy", 0.25, 1); poly3(pts.map((p) => ({ ...p, y: p.y - 0.07 })), "cy", 0.25, 1);
+    for (let k = 0; k < 70; k++) { const s = (k / 70 + t * (2 + ti)) % 1, q = P(curva(tb, s)); const R = rng(k * 13 + ti); const off = (R() - 0.5) * 16 * S / 720; glow("ic", 10); dot(q.x, q.y + off * q.f, (1.2 + R() * 2) * S / 720 * q.f, R() > 0.6 ? "wh" : "ic", 0.85); noGlow(); }
+  });
+  // evaporador (aletas)
+  for (let i = 0; i < 26; i++) { const x = -0.35 + i * 0.028; line3({ x, y: -0.85, z: 0.45 }, { x, y: 0.75, z: 0.45 }, "cy", 0.3, 1); }
+  poly3([{ x: -0.36, y: -0.85, z: 0.45 }, { x: 0.36, y: -0.85, z: 0.45 }, { x: 0.36, y: 0.75, z: 0.45 }, { x: -0.36, y: 0.75, z: 0.45 }], "cy", 0.7, 1.8, true);
+  // copos de nieve
+  const R = rng(5), u = S / 720;
+  for (let k = 0; k < 26; k++) {
+    const x0 = R() * W, sp = 1 + Math.floor(R() * 2), ph = (R() + t * sp) % 1, y = ph * (H + 60 * u) - 30 * u, x = x0 + Math.sin(TAU * (ph * 2 + R())) * 20 * u, r = (5 + R() * 9) * u, rot = TAU * ph;
+    X.strokeStyle = rgba("wh", 0.4 + 0.3 * Math.sin(Math.PI * ph)); X.lineWidth = 1.1 * u;
+    for (let b = 0; b < 6; b++) { const a = rot + (b / 6) * TAU; X.beginPath(); X.moveTo(x, y); X.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r); X.stroke(); }
+  }
+  X.globalCompositeOperation = "source-over";
+  hud(t, "A/C · R-1234yf", ["OUTLET " + (4.5 + 0.8 * Math.sin(TAU * t)).toFixed(1) + "°C", "LOW 2.1 bar · HIGH 14.8 bar", "CHARGE 480 g"], "ic");
+};
+
+/* 10. DISTRIBUCIÓN: vista explosiva de engranajes, árboles de levas y correa dentada */
+function engranaje(cx, cy, z, r, dientes, ang, c, al) {
+  const pts = []; for (let i = 0; i < dientes; i++) { const a = ang + (i / dientes) * TAU, d = TAU / dientes; [[a, r], [a + d * 0.15, r + 0.045], [a + d * 0.45, r + 0.045], [a + d * 0.6, r], [a + d, r]].forEach(([aa, rr]) => pts.push({ x: cx + Math.cos(aa) * rr, y: cy + Math.sin(aa) * rr, z })); }
+  poly3(pts, c, al, 1.6, true); poly3(circle3(cx, cy, z, r * 0.35, "z", 30), c, al * 0.8, 1.2);
+  for (let i = 0; i < 4; i++) { const a = ang + (i / 4) * TAU; line3({ x: cx + Math.cos(a) * r * 0.35, y: cy + Math.sin(a) * r * 0.35, z }, { x: cx + Math.cos(a) * r * 0.85, y: cy + Math.sin(a) * r * 0.85, z }, c, al * 0.6, 1.2); }
+}
+E.distribucion = (t) => {
+  fondo(t, "or");
+  CAM = { ax: -0.3, ay: -0.55 + 0.14 * Math.sin(TAU * t), d: 3.6, s: 1.05, ox: 0, oy: 0 };
+  const exp = 0.5 + 0.5 * Math.cos(TAU * t), dz = 0.35 * exp, levas = TAU * t, cig = TAU * t * 2; // relación 2:1 real
+  X.globalCompositeOperation = "lighter";
+  const G = [{ x: -0.5, y: 0.6, r: 0.3, a: levas }, { x: 0.5, y: 0.6, r: 0.3, a: levas }, { x: 0, y: -0.75, r: 0.15, a: cig }, { x: 0.62, y: -0.1, r: 0.09, a: -cig * 1.6 }];
+  // ejes explosionados
+  G.forEach((g) => { X.setLineDash([6, 6]); line3({ x: g.x, y: g.y, z: -0.9 }, { x: g.x, y: g.y, z: 0.9 }, "cy", 0.3, 1); X.setLineDash([]); });
+  // árboles de levas con sus levas
+  [-0.5, 0.5].forEach((x) => { line3({ x, y: 0.6, z: dz }, { x, y: 0.6, z: 1.3 + dz }, "cy", 0.6, 2); for (let i = 0; i < 4; i++) { const zz = 0.35 + dz + i * 0.25, a = levas + i * Math.PI / 2; const pts = []; for (let k = 0; k <= 30; k++) { const b = (k / 30) * TAU, rr = 0.07 + 0.05 * Math.max(0, Math.cos(b - a)) ** 3; pts.push({ x: x + Math.cos(b) * rr, y: 0.6 + Math.sin(b) * rr, z: zz }); } poly3(pts, "cy", 0.55, 1.2); } });
+  glow("or", 12);
+  G.slice(0, 3).forEach((g, i) => engranaje(g.x, g.y, i < 2 ? dz : -dz * 0.5, g.r, i < 2 ? 30 : 16, g.a, "or", 0.9));
+  noGlow();
+  poly3(circle3(G[3].x, G[3].y, 0, G[3].r, "z", 30), "wh", 0.7, 1.6); poly3(circle3(G[3].x, G[3].y, 0, G[3].r * 0.4, "z", 20), "wh", 0.4, 1);
+  // correa dentada: envolvente convexa de las cuatro poleas (así va tangente a cada una)
+  const muestras = []; G.forEach((g, i) => { const r = g.r + (i < 3 ? 0.05 : 0.02); for (let k = 0; k < 48; k++) { const a = (k / 48) * TAU; muestras.push({ x: g.x + Math.cos(a) * r, y: g.y + Math.sin(a) * r }); } });
+  muestras.sort((a, b) => a.x - b.x || a.y - b.y);
+  const cruz = (o, a, b) => (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+  const inf = [], sup = [];
+  for (const p of muestras) { while (inf.length >= 2 && cruz(inf[inf.length - 2], inf[inf.length - 1], p) <= 0) inf.pop(); inf.push(p); }
+  for (let i = muestras.length - 1; i >= 0; i--) { const p = muestras[i]; while (sup.length >= 2 && cruz(sup[sup.length - 2], sup[sup.length - 1], p) <= 0) sup.pop(); sup.push(p); }
+  const casco = inf.slice(0, -1).concat(sup.slice(0, -1));
+  const zb = dz * 0.25, pts = casco.map((p) => ({ x: p.x, y: p.y, z: zb }));
+  glow("am", 10); poly3(pts, "am", 0.8, 3, true); noGlow();
+  // dientes de la correa que avanzan
+  let per = 0; const L = []; for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i + 1) % pts.length]; const d = Math.hypot(b.x - a.x, b.y - a.y); L.push(d); per += d; }
+  for (let k = 0; k < 60; k++) { let s = ((k / 60 + t * 2) % 1) * per; for (let i = 0; i < L.length; i++) { if (s <= L[i]) { const a = pts[i], b = pts[(i + 1) % pts.length], f = s / L[i]; const q = P({ x: lerp(a.x, b.x, f), y: lerp(a.y, b.y, f), z: zb }); dot(q.x, q.y, 2.2 * S / 720, "wh", 0.8); break; } s -= L[i]; } }
+  // marcas de calado
+  G.slice(0, 3).forEach((g) => { const q = P({ x: g.x + Math.cos(g.a) * g.r, y: g.y + Math.sin(g.a) * g.r, z: 0 }); glow("gr", 12); dot(q.x, q.y, 4 * S / 720, "gr", 1); noGlow(); });
+  X.globalCompositeOperation = "source-over";
+  hud(t, "TIMING BELT · EXPLODED", ["SYNC 2:1 · OK", "CAM " + Math.round(t * 360) + "° · CRANK " + Math.round((t * 720) % 360) + "°", "BELT 137 T · 25.4 mm"], "or");
+};
+
+/* 11. BATERÍA Y ARRANQUE: arco de alta tensión de los bornes al motor de arranque */
+function rayo(a, b, seed, desv) { const R = rng(seed); let pts = [a, b]; for (let n = 0; n < 6; n++) { const np = []; for (let i = 0; i < pts.length - 1; i++) { const p = pts[i], q = pts[i + 1], m = { x: (p.x + q.x) / 2 + (R() - 0.5) * desv, y: (p.y + q.y) / 2 + (R() - 0.5) * desv }; np.push(p, m); } np.push(pts[pts.length - 1]); pts = np; desv *= 0.55; } return pts; }
+E.bateria = (t) => {
+  fondo(t, "cy");
+  CAM = { ax: -0.35, ay: -0.5 + 0.12 * Math.sin(TAU * t), d: 3.4, s: 1.1, ox: 0, oy: 0 };
+  X.globalCompositeOperation = "lighter";
+  const box = (x0, y0, z0, x1, y1, z1, c, a, w) => { const v = [[x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0], [x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]].map(([x, y, z]) => ({ x, y, z })); [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6], [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7]].forEach(([i, j]) => line3(v[i], v[j], c, a, w)); };
+  glow("cy", 10); box(-1.35, -0.5, -0.35, -0.35, 0.3, 0.35, "cy", 0.8, 1.6); noGlow();
+  for (let i = 1; i < 6; i++) { const x = -1.35 + i * (1 / 6); line3({ x, y: -0.5, z: 0.35 }, { x, y: 0.3, z: 0.35 }, "cy", 0.2, 1); }
+  // bornes
+  const bp = { x: -0.6, y: 0.42, z: 0 }, bn = { x: -1.1, y: 0.42, z: 0 };
+  [[bp, "rd"], [bn, "cy"]].forEach(([b, c]) => { poly3(circle3(b.x, 0.3, b.z, 0.07, "y", 20), c, 0.9, 1.6); poly3(circle3(b.x, b.y, b.z, 0.07, "y", 20), c, 0.9, 1.6); line3({ x: b.x - 0.07, y: 0.3, z: 0 }, { x: b.x - 0.07, y: b.y, z: 0 }, c, 0.7); line3({ x: b.x + 0.07, y: 0.3, z: 0 }, { x: b.x + 0.07, y: b.y, z: 0 }, c, 0.7); });
+  // motor de arranque (cilindro) con rotor girando
+  const mx = 1.0, ry = TAU * t * 6;
+  for (let i = 0; i <= 1; i++) poly3(circle3(mx + i * 0.6 - 0.3, 0, 0, 0.3, "x", 48), "cy", 0.8, 1.6);
+  for (let i = 0; i < 10; i++) { const a = ry + (i / 10) * TAU; line3({ x: mx - 0.3, y: Math.cos(a) * 0.3, z: Math.sin(a) * 0.3 }, { x: mx + 0.3, y: Math.cos(a) * 0.3, z: Math.sin(a) * 0.3 }, "cy", 0.25, 1); }
+  engranajeX(mx + 0.45, ry);
+  // cable
+  const cab = [bp, { x: -0.2, y: 0.7, z: 0.1 }, { x: 0.5, y: 0.55, z: 0.1 }, { x: mx - 0.1, y: 0.3, z: 0 }];
+  poly3(cab, "rd", 0.35, 5); poly3(cab, "am", 0.5, 1.2);
+  // arcos eléctricos
+  const pulso = 0.5 + 0.5 * Math.sin(TAU * t * 4), seed = Math.floor(t * 192) % 192;
+  const A = P(bp), B = P({ x: mx - 0.3, y: 0.15, z: 0 });
+  for (let r = 0; r < 3; r++) {
+    const pts = rayo(A, B, seed * 7 + r, S * 0.18);
+    glow("ic", 24); X.strokeStyle = rgba(r ? "ic" : "wh", r ? 0.6 * pulso : 0.95); X.lineWidth = (r ? 1.4 : 2.4) * S / 720; X.beginPath(); pts.forEach((p, i) => (i ? X.lineTo(p.x, p.y) : X.moveTo(p.x, p.y))); X.stroke(); noGlow();
+  }
+  glow("ic", 30); dot(A.x, A.y, 7 * S / 720 * (0.6 + pulso), "wh", 0.9); dot(B.x, B.y, 6 * S / 720 * (0.6 + pulso), "wh", 0.9); noGlow();
+  // electrones por el cable
+  for (let k = 0; k < 24; k++) { const s = (k / 24 + t * 3) % 1, i = Math.min(2, Math.floor(s * 3)), f = s * 3 - i; const q = P({ x: lerp(cab[i].x, cab[i + 1].x, f), y: lerp(cab[i].y, cab[i + 1].y, f), z: lerp(cab[i].z, cab[i + 1].z, f) }); glow("am", 10); dot(q.x, q.y, 2.4 * S / 720, "am", 0.9); noGlow(); }
+  X.globalCompositeOperation = "source-over";
+  hud(t, "BATTERY · STARTER", [(12.4 + 0.3 * pulso).toFixed(1) + " V · " + Math.round(150 + 60 * pulso) + " A", "CCA 680 A · SOH 94%", "STARTER 1.4 kW"], "cy");
+};
+function engranajeX(x, a) { const pts = []; for (let i = 0; i < 12; i++) { const b = a + (i / 12) * TAU, d = TAU / 12; [[b, 0.12], [b + d * 0.2, 0.16], [b + d * 0.5, 0.16], [b + d * 0.7, 0.12], [b + d, 0.12]].forEach(([aa, rr]) => pts.push({ x, y: Math.cos(aa) * rr, z: Math.sin(aa) * rr })); } poly3(pts, "or", 0.9, 1.6, true); }
+
+/* 12. OTRO SERVICIO: despiece (exploded view) de componentes que se montan y desmontan */
+E.otro = (t) => {
+  fondo(t, "or");
+  CAM = { ax: -0.35, ay: -0.6 + TAU * t * 0 + 0.2 * Math.sin(TAU * t), d: 3.6, s: 1.05, ox: 0, oy: 0 };
+  const e = 0.5 - 0.5 * Math.cos(TAU * t), gir = TAU * t;
+  X.globalCompositeOperation = "lighter";
+  const eje = (k) => ({ x: -1.2 + k * 0.6 * (0.55 + 0.9 * e), y: 0.5 - k * 0.25 * (0.55 + 0.9 * e), z: 0 });
+  X.setLineDash([5, 7]); line3(eje(-0.3), eje(4.4), "cy", 0.35, 1); X.setLineDash([]);
+  const u = S / 720; X.font = `600 ${11 * u}px "DejaVu Sans Mono", monospace`;
+  const etq = (p, txt) => { const q = P(p); X.strokeStyle = rgba("cy", 0.5); X.lineWidth = u; X.beginPath(); X.moveTo(q.x, q.y); X.lineTo(q.x + 40 * u, q.y - 46 * u); X.lineTo(q.x + 110 * u, q.y - 46 * u); X.stroke(); X.fillStyle = rgba("wh", 0.6 * (0.3 + 0.7 * e)); X.fillText(txt, q.x + 44 * u, q.y - 62 * u); dot(q.x, q.y, 3 * u, "cy", 0.9); };
+  // 0 · pistón
+  let c = eje(0); glow("or", 10);
+  for (let i = 0; i <= 1; i++) poly3(circle3(c.x, c.y + (i ? 0.18 : -0.18), c.z, 0.2, "y", 40).map((p) => rotZ({ x: p.x - c.x, y: p.y - c.y, z: p.z }, 0.3)).map((p) => ({ x: p.x + c.x, y: p.y + c.y, z: p.z })), "or", 0.85, 1.6);
+  noGlow(); for (let i = 0; i < 3; i++) poly3(circle3(c.x, c.y + 0.1 - i * 0.05, c.z, 0.205, "y", 40), "am", 0.5, 1); etq(c, "PISTON Ø81");
+  // 1 · biela
+  c = eje(1); { const a = { x: c.x, y: c.y + 0.25, z: 0 }, b = { x: c.x + 0.05, y: c.y - 0.25, z: 0 }; line3(a, b, "cy", 0.8, 3); poly3(circle3(a.x, a.y, 0, 0.06, "z", 20), "cy", 0.8, 1.4); poly3(circle3(b.x, b.y, 0, 0.12, "z", 30), "cy", 0.8, 1.4); } etq(c, "CON-ROD");
+  // 2 · engranaje
+  c = eje(2); glow("or", 12); engranaje(c.x, c.y, 0, 0.2, 22, gir, "or", 0.9); noGlow(); etq({ x: c.x + 0.2, y: c.y, z: 0 }, "GEAR Z22");
+  // 3 · muelle (hélice)
+  c = eje(3); { const pts = []; for (let i = 0; i <= 160; i++) { const a = (i / 160) * TAU * 7 + gir, h = (i / 160 - 0.5) * (0.4 + 0.2 * e); pts.push({ x: c.x + Math.cos(a) * 0.1, y: c.y + h, z: Math.sin(a) * 0.1 }); } poly3(pts, "cy", 0.75, 1.3); } etq({ x: c.x + 0.1, y: c.y, z: 0 }, "SPRING 42 N/mm");
+  // 4 · tornillo
+  c = eje(4); { const hex = []; for (let i = 0; i <= 6; i++) { const a = gir + (i / 6) * TAU; hex.push({ x: c.x + Math.cos(a) * 0.1, y: c.y + 0.2, z: Math.sin(a) * 0.1 }); } glow("wh", 8); poly3(hex, "wh", 0.8, 1.6); noGlow(); line3({ x: c.x, y: c.y + 0.2, z: 0 }, { x: c.x, y: c.y - 0.3, z: 0 }, "wh", 0.6, 2); for (let i = 0; i < 10; i++) { const y = c.y + 0.15 - i * 0.045; line3({ x: c.x - 0.04, y, z: 0 }, { x: c.x + 0.04, y: y - 0.02, z: 0 }, "wh", 0.5, 1); } } etq({ x: c.x + 0.1, y: c.y + 0.2, z: 0 }, "M10 × 1.25");
+  X.globalCompositeOperation = "source-over";
+  hud(t, "ASSEMBLY · EXPLODED VIEW", [e > 0.5 ? "EXPLODED " + Math.round(e * 100) + "%" : "ASSEMBLING " + Math.round((1 - e) * 100) + "%", "PARTS 5 · TOL ±0.01 mm", "ISO 2768-m"], "or");
+};
+
+/* ---------------- API para el renderizador ---------------- */
+window.preparar = (w, h) => { C.width = w; C.height = h; W = w; H = h; S = w > h ? h : w * 0.82; CX = w / 2; CY = h * (w > h ? 0.5 : 0.47); };
+window.fotograma = (k, t, calidad = 0.9) => { E[k](t); return C.toDataURL("image/jpeg", calidad); };
+window.ESCENAS = Object.keys(E);
+</script></body></html>

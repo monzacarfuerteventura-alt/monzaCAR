@@ -183,3 +183,11 @@
   for = "/coches/*"
   [headers.values]
     Cache-Control = "public, max-age=2592000, stale-while-revalidate=86400"
+
+
+# Vídeos de fondo del taller (public/vfx): llevan ?v= en la dirección, así que se pueden guardar 30 días
+[[headers]]
+  for = "/vfx/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+    Cache-Control = "public, max-age=2592000"

@@ -6,5 +6,6 @@ Disallow: /seguimiento.html
 Disallow: /r/
 Disallow: /reserva.html
 Allow: /api/fotos/
+Disallow: /api/fotos/*.pdf$
 
 Sitemap: https://volcanocars.com/sitemap.xml

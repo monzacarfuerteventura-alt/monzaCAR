@@ -161,3 +161,10 @@ Nuevo, En el día). Al pulsar **Guardar y publicar** sale al momento en la web c
 Vacío = «a presupuestar» (no sale precio). Solo el gerente puede cambiarlos; el equipo no ve la tarjeta.
 Archivos: `netlify/functions/precios-taller.mts` (guarda en Netlify Blobs), `public/precios-taller.js` y `.css`
 (las etiquetas), `public/panel-precios.js` (el editor del panel) y `public/taller-ui.js` (el presupuesto de la cita).
+
+## Fondo VFX del taller (vídeo por servicio)
+Al marcar un servicio en /taller, el fondo pasa a un vídeo en bucle de ese servicio (render CAD / X-Ray) con fundido
+cruzado y capa oscura para que se lea todo. Código: `public/taller-vfx.js` y `.css` (los carga `public/taller-ui.js`).
+Vídeos: `public/vfx/taller/<servicio>-<v|h>.mp4` + póster `.jpg` (v = móvil vertical, h = ordenador).
+Los que hay ahora son provisionales (generados con `tools/taller-vfx/renderizar.py`). Para poner los definitivos,
+sustituye los archivos con el mismo nombre y sube `ver` en `taller-vfx.js`. Todo en `tools/taller-vfx/GUIA-VIDEOS.md`.

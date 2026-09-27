@@ -21,6 +21,12 @@
     s.src = "/precios-taller.js"; s.defer = true;
     document.head.appendChild(s);
   }
+  // fondo en vídeo (render CAD / X-Ray) del servicio que se marca: /taller-vfx.js
+  if (document.getElementById("v-taller") && !document.querySelector('script[src^="/taller-vfx.js"]')) {
+    const s = document.createElement("script");
+    s.src = "/taller-vfx.js"; s.defer = true;
+    document.head.appendChild(s);
+  }
 
   const servicios = document.getElementById("services");
   const caja = document.getElementById("t-estimado");
