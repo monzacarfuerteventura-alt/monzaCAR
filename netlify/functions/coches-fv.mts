@@ -39,7 +39,7 @@ export default async (req: Request) => {
     if (lista.length) {
       const n = lista.filter((c) => c.estado === "disponible").length;
       const bloque = `<section class="sec" id="coches"><h2>Coches disponibles ahora</h2>
-    <p>${n === 1 ? "1 coche disponible" : `${n} coches disponibles`}, revisados en nuestro taller de Antigua. Toca uno para ver fotos, vídeo, financiación y reservar la prueba.</p>
+    <p>${n === 1 ? "1 coche disponible, revisado" : `${n} coches disponibles, revisados`} en nuestro taller de Antigua. Toca uno para ver fotos, vídeo, financiación y reservar la prueba.</p>
     <div class="lc-cars">${lista.map(tarjeta).join("")}</div>
     <p style="margin-top:18px"><a class="btn b-rosso" href="/comprar">Buscar con filtros</a></p>
   </section>`;
