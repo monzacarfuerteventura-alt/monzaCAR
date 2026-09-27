@@ -8,7 +8,7 @@
    La portada (index.html) usa estos mismos datos y su propio aviso de cookies.
    ===================================================================== */
 window.VC_MED = {
-  ga4: "",
+  ga4: "G-2ZWYPY3TT4",
   ads: "",
   conv: { solicitud: "", whatsapp: "", llamada: "" }
 };
