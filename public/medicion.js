@@ -58,4 +58,24 @@ window.VC_MED = {
   document.addEventListener("click", function (e) { var a = e.target.closest && e.target.closest("[data-ck-open]"); if (!a) return; e.preventDefault(); if (!document.querySelector(".vc-ck")) aviso(); });
   var dec = leer();
   if (dec === "si") cargar(); else if (!dec) (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", aviso) : aviso());
+})();/* Botón "Pagar mi reparación" (Stripe) */
+(function () {
+  var URL_PAGO = "https://buy.stripe.com/8x2bJ26ABao37kg3IK0x200";
+  function poner() {
+    var f = document.querySelector("footer");
+    if (!f || document.getElementById("vc-pagar")) return;
+    var d = document.createElement("div");
+    d.style.textAlign = "center";
+    var a = document.createElement("a");
+    a.id = "vc-pagar";
+    a.href = URL_PAGO;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.textContent = "💳 Pagar mi reparación online";
+    a.style.cssText = "display:inline-block;margin:16px auto;padding:12px 20px;background:#e8501f;color:#fff;border-radius:8px;font-weight:700;text-decoration:none";
+    d.appendChild(a);
+    f.insertBefore(d, f.firstChild);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", poner);
+  else poner();
 })();
