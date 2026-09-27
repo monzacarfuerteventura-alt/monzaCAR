@@ -1,0 +1,3 @@
+/* Respaldo: si la descarga de fuentes falla al publicar, se usan las de Google.
+   Al publicar en Netlify, tools/fuentes-locales.mjs sustituye este archivo por uno con las fuentes alojadas aquí. */
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Figtree:wght@400;500;600;700&family=Titillium+Web:wght@600;700&display=swap");

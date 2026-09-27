@@ -6,13 +6,13 @@
 <title>Política de cookies · Volcano Cars</title>
 <meta name="robots" content="noindex, follow">
 <style>
-:root{--ground:#F2EFEA;--surface:#FFFFFF;--line:#DCD8D1;--ink:#1B1B1A;--muted:#6B655E;--rosso:#D9481C;color-scheme:light}
-@media all{:root:not([data-theme="light"]){--ground:#0D0E10;--surface:#16181B;--line:#2A2E33;--ink:#F3EFE9;--muted:#A49E97;--rosso:#E0413F;color-scheme:dark}}
-:root[data-theme="dark"]{--ground:#0D0E10;--surface:#16181B;--line:#2A2E33;--ink:#F3EFE9;--muted:#A49E97;--rosso:#E0413F;color-scheme:dark}
+:root{--ground:#F2EFEA;--surface:#FFFFFF;--line:#DCD8D1;--ink:#1B1B1A;--muted:#6B655E;--rosso:#D9481C;--enlace:#B83A12;color-scheme:light}
+@media all{:root:not([data-theme="light"]){--ground:#0D0E10;--surface:#16181B;--line:#2A2E33;--ink:#F3EFE9;--muted:#A49E97;--rosso:#E0413F;--enlace:#FF8A5C;color-scheme:dark}}
+:root[data-theme="dark"]{--ground:#0D0E10;--surface:#16181B;--line:#2A2E33;--ink:#F3EFE9;--muted:#A49E97;--rosso:#E0413F;--enlace:#FF8A5C;color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--ground);color:var(--ink);font:16.5px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
 .wrap{max-width:760px;margin:0 auto;padding:32px 16px 80px}
-a{color:var(--rosso)}
+a{color:var(--enlace)}
 .back{display:inline-block;margin-bottom:28px;font-weight:600;text-decoration:none}
 h1{font-size:clamp(28px,6vw,40px);line-height:1.1;margin:0 0 6px}
 .upd{color:var(--muted);margin:0 0 32px;font-size:14px}
@@ -29,9 +29,9 @@ th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);verti
 <main class="wrap">
 <a class="back" href="/">← Volver a Volcano Cars</a>
 <h1>Política de cookies</h1>
-<p class="upd">Última actualización: 25 de septiembre de 2026</p>
+<p class="upd">Última actualización: 26 de septiembre de 2026</p>
 
-<p class="en" id="en" lang="en"><b>In English:</b> the website works without cookies. We only use Google Ads measurement cookies if you click “Accept”. You can change your choice at any time with “Cookie settings” at the bottom of the page.</p>
+<p class="en" id="en" lang="en"><b>In English:</b> the website works without cookies. We only use Google Analytics and Google Ads measurement cookies if you click “Accept”. You can change your choice at any time with “Cookie settings” at the bottom of the page.</p>
 
 <p>Una cookie es un pequeño archivo que la web guarda en tu navegador. Esta web funciona perfectamente sin cookies de publicidad: solo se usan si pulsas «Aceptar» en el aviso.</p>
 
@@ -43,10 +43,11 @@ th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);verti
 <tr><td>mz_vis</td><td>Número aleatorio de la pestaña para contar cuántas personas están viendo un coche a la vez. Mientras la ficha está abierta, el servidor lo guarda junto a un resumen cifrado (hash) de la conexión durante menos de un minuto; no permite saber quién eres.</td><td>Se borra al cerrar la pestaña</td></tr>
 </table></div>
 
-<h2>Solo si pulsas «Aceptar»: medición de Google Ads</h2>
-<p>Las usamos para saber si una solicitud, una llamada o un WhatsApp vino de un anuncio nuestro en Google, y así no gastar en anuncios que no funcionan. No se usan para mostrarte publicidad personalizada.</p>
+<h2>Solo si pulsas «Aceptar»: medición de Google (Analytics y Ads)</h2>
+<p>Las usamos para saber cuántas personas visitan cada página y si una solicitud, una llamada o un WhatsApp vino de un anuncio nuestro en Google, y así no gastar en anuncios que no funcionan. No se usan para mostrarte publicidad personalizada.</p>
 <div class="tw"><table>
 <tr><th>Nombre</th><th>Titular</th><th>Para qué</th><th>Duración</th></tr>
+<tr><td>_ga, _ga_…</td><td>Google Ireland Ltd.</td><td>Google Analytics: contar visitas y ver qué páginas funcionan, de forma agregada.</td><td>2 años</td></tr>
 <tr><td>_gcl_au, _gcl_aw</td><td>Google Ireland Ltd.</td><td>Relacionar la visita con el anuncio en el que hiciste clic.</td><td>90 días</td></tr>
 </table></div>
 <p>Más información en la <a href="https://policies.google.com/technologies/ads?hl=es" rel="noopener">política de Google</a>.</p>
@@ -57,6 +58,8 @@ th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);verti
 <h2>Cómo cambiar tu decisión</h2>
 <p>Pulsa «Configurar cookies» al final de cualquier página de la web. También puedes borrar las cookies desde los ajustes de tu navegador.</p>
 
+<p style="margin-top:48px;font-size:14px;color:var(--muted)"><a href="/aviso-legal">Aviso legal</a> · <a href="/privacidad">Privacidad</a> · <a href="/cookies">Cookies</a> · <a href="/condiciones">Condiciones</a> · <a href="/cookies" data-ck-open>Configurar cookies</a></p>
 </main>
+<script src="/medicion.js" defer></script>
 </body>
 </html>

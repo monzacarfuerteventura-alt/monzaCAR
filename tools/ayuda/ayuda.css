@@ -92,3 +92,30 @@
   #ay-print .ay-mz{font-size:9pt}
 }
 html body.modo-equipo #tabs #tab-ayuda{display:inline-flex!important}
+/* vídeo-ayuda */
+.ay-vid{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(220px,1fr);gap:18px;align-items:start}
+.ay-vid.vert{grid-template-columns:minmax(0,340px) minmax(220px,1fr)}
+.ay-vbox{border-radius:14px;overflow:hidden;background:#000;border:1px solid var(--line);box-shadow:0 12px 30px rgba(0,0,0,.25)}
+.ay-vbox video{display:block;width:100%;height:auto;aspect-ratio:16/10;background:#000}
+.ay-vid.vert .ay-vbox video{aspect-ratio:390/844}
+.ay-vside{display:grid;gap:10px}
+.ay-vh{margin:0;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;font-size:17px}
+.ay-vh span{color:var(--muted);font-size:13px;font-weight:600}
+.ay-cap{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.ay-cap button{width:100%;display:grid;grid-template-columns:26px 1fr auto;gap:10px;align-items:center;text-align:left;font:inherit;font-weight:650;font-size:14.5px;line-height:1.3;color:var(--ink);background:var(--surface-2);border:1.5px solid transparent;border-radius:12px;padding:9px 11px;cursor:pointer;transition:border-color .2s,background .2s}
+.ay-cap button:hover{border-color:var(--line)}
+.ay-cap button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.ay-cap i{font-style:normal;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--surface);display:grid;place-items:center;font-size:13px;font-weight:800}
+.ay-cap small{color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
+.ay-cap button.on{border-color:var(--accent);background:var(--surface)}
+.ay-cap button.on i{background:var(--accent);color:#fff}
+.ay-vtip{margin:0;color:var(--muted);font-size:13px}
+.ay-mas{border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.ay-mas>summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;padding:14px 16px;font-weight:800}
+.ay-mas>summary::-webkit-details-marker{display:none}
+.ay-mas>summary::after{content:"＋";margin-left:auto;color:var(--muted)}
+.ay-mas[open]>summary::after{content:"－"}
+.ay-mas>summary small{color:var(--muted);font-weight:600;font-size:13px}
+.ay-mas-in{display:grid;gap:22px;padding:4px 16px 18px}
+@media (max-width:860px){.ay-vid,.ay-vid.vert{grid-template-columns:1fr}.ay-vid.vert .ay-vbox{max-width:min(340px,calc(72vh * .462));margin:0 auto;width:100%}}
+@media print{.ay-vid{display:none}}

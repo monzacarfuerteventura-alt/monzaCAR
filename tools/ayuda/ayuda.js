@@ -5,6 +5,7 @@
    Estructura de cada módulo: objetivo · cuándo usarlo · mapa de la pantalla ·
    guías paso a paso («¿Cómo hago para…?») · glosario de estados.
    ===================================================================== */
+/*AY_VID*/const AY_VID={"agenda":{"dur":18.4,"movil":false,"pasos":[{"t":2.5,"txt":"Aquí salen las citas de la web, ya confirmadas y por día"},{"t":4.8,"txt":"El día antes: «Recordar por WhatsApp» (mensaje ya escrito)"},{"t":6.9,"txt":"Cuando el cliente viene, pulsa «Hecha»"},{"t":9.8,"txt":"¿Vacaciones o festivo? Cierra ese día y nadie podrá reservar"}]},"alm":{"dur":29.8,"movil":false,"pasos":[{"t":2.5,"txt":"Pulsa «Nueva pieza»"},{"t":4.8,"txt":"Nombre, ubicación y stock mínimo"},{"t":15,"txt":"Guarda: ya tiene su código y su etiqueta QR"},{"t":17.8,"txt":"Cuando llega material: «+ Entrada de material» con el albarán"},{"t":19.6,"txt":"Si algo baja del mínimo, sale solo en «Pedido»"}]},"caja":{"dur":35.5,"movil":false,"pasos":[{"t":2.5,"txt":"Al empezar el día pulsa «Abrir la caja»"},{"t":4.9,"txt":"Cuenta el dinero con + y −: billetes y monedas"},{"t":12.1,"txt":"Confirma: si no cuadra, te pedirá una explicación"},{"t":14.8,"txt":"Cada cobro en efectivo, en el momento"},{"t":25.4,"txt":"Salidas con foto del ticket y, al final del turno, «Cerrar la caja»"}]},"coches":{"dur":34.3,"movil":false,"pasos":[{"t":2.5,"txt":"Pulsa «+ Añadir coche»"},{"t":5,"txt":"Marca, modelo, año, kilómetros y precio final"},{"t":14.2,"txt":"Sube las fotos: arrástralas o toca la zona de fotos"},{"t":16.4,"txt":"Pon los precios de la competencia: la web enseña si está por debajo"},{"t":21.4,"txt":"Cuéntalo en 3 líneas: para quién es y por qué este"},{"t":26.9,"txt":"Pulsa «Publicar coche»: aparece al momento en la web"}]},"crm":{"dur":34.2,"movil":false,"pasos":[{"t":2.5,"txt":"¿Te llama o viene alguien? Pulsa «+ Nuevo cliente»"},{"t":4.9,"txt":"Escribe nombre y teléfono"},{"t":9.4,"txt":"Elige qué busca y cómo te ha llegado"},{"t":15.6,"txt":"Pulsa «Guardar cliente»: se abre su ficha"},{"t":18.2,"txt":"Elige un mensaje y ábrelo en WhatsApp ya escrito"},{"t":22.8,"txt":"Apunta lo que has hecho: le has escrito"},{"t":25,"txt":"Pon cuándo volver a llamarle y cambia el estado"}]},"dash":{"dur":28.7,"movil":false,"pasos":[{"t":2.5,"txt":"Arriba, los números clave del mes y si suben o bajan"},{"t":5.1,"txt":"Toca una tarjeta y se abre su detalle"},{"t":8.5,"txt":"La previsión te dice cómo cerrarás el mes"},{"t":10.7,"txt":"Mueve los deslizadores: ¿y si tuvieras más visitas o anuncios?"},{"t":13.8,"txt":"Marketing en vivo: oportunidades para vender hoy"},{"t":19.5,"txt":"«Informe PDF» para guardarlo; los lunes te llega uno solo"}]},"fin":{"dur":34.7,"movil":false,"pasos":[{"t":2.5,"txt":"Elige el periodo: día, semana, mes o año"},{"t":4.8,"txt":"¿Pagaste una factura? «− Nuevo gasto»"},{"t":7.1,"txt":"Proveedor, concepto e importe sin IGIC"},{"t":22.4,"txt":"Guarda: el IGIC y los totales se calculan solos"},{"t":25.2,"txt":"Fin de trimestre: «PDF asesoría» y los Excel de facturas"}]},"inicio":{"dur":21.2,"movil":false,"pasos":[{"t":2.6,"txt":"Escribe tu contraseña de gerente"},{"t":5.8,"txt":"Pulsa «Entrar»"},{"t":8.7,"txt":"Arriba tienes las pestañas: cada una es una parte del negocio"},{"t":11.4,"txt":"Toca una pestaña para abrirla, por ejemplo el CRM"},{"t":14.3,"txt":"¿Dudas en cualquier pantalla? Pulsa «¿Cómo funciona?»"}]},"jornada":{"dur":31.6,"movil":true,"pasos":[{"t":2.5,"txt":"Entra con tu usuario y tu PIN"},{"t":8.9,"txt":"Un botón grande: pulsa para empezar la jornada"},{"t":12.9,"txt":"Ya estás trabajando: te lleva directo al taller"},{"t":14.7,"txt":"¿Descanso o comida? Toca el reloj y «Iniciar pausa»"},{"t":19.3,"txt":"Al volver, pulsa «Reanudar»"},{"t":22.1,"txt":"Al irte: reloj → «Registrar salida»"}]},"taller":{"dur":38.1,"movil":false,"pasos":[{"t":2.5,"txt":"Entra un coche: pulsa «+ Nueva recepción»"},{"t":4.9,"txt":"Cliente, teléfono, matrícula y modelo"},{"t":13.4,"txt":"Pulsa «Crear y abrir FORM-01»: la orden tiene ya su número"},{"t":16.2,"txt":"Apunta kilómetros y nivel de combustible"},{"t":19.7,"txt":"Toca los testigos encendidos y escribe qué le pasa"},{"t":25.4,"txt":"Al terminar, firma y cierra la recepción"},{"t":27.4,"txt":"Sigue con las fichas 2, 3 y 4: inspección, tiempos y calidad"}]}};/*AY_VID_FIN*/
 const AY_ROLES=[["ger","Gerente"],["rec","Recepción"],["mec","Mecánico"],["cal","Calidad"],["caj","Caja"]];
 const AY_TODOS=["ger","rec","mec","cal","caj"];
 const AY_MODS=[
@@ -47,13 +48,13 @@ const AY_MODS=[
 {id:"dash",ico:"📊",titulo:"Dashboard",tab:"dash",roles:["ger"],
  objetivo:"Ver de un vistazo cómo va el negocio en el mes: visitas, clientes, ventas, taller y almacén.",
  cuando:["Cada lunes, para revisar la semana anterior.","A fin de mes, para descargar el informe PDF.","Cuando quieres saber qué anuncios o canales traen clientes."],
- mapa:{filas:[[[1,"Título · ‹ Mes › · Informe PDF · Excel",1]],[[2,"Indicadores (visitas, solicitudes, facturación…)",1]],[[3,"Gráficos: visitas, embudo, de dónde vienen",2],[4,"Coches: interés real",1]],[[5,"Taller: rendimiento y alertas",1],[6,"Almacén",1]]],
-  zonas:[[1,"Cabecera","Cambia de mes con las flechas ‹ ›. «Informe PDF» abre la impresión (elige «Guardar como PDF») y «Excel» descarga los datos."],
-   [2,"Indicadores","Visitas, solicitudes, conversión web, tiempo de respuesta, citas, presupuestos, facturación, clics en WhatsApp… Cada uno compara con el mes anterior."],
-   [3,"Gráficos","Visitas y solicitudes por día, embudo de clientes, de dónde vienen, cuándo te visitan, público y servicios de taller más pedidos."],
-   [4,"Coches: interés real","Qué coches miran y piden más: te dice cuáles mover de precio o destacar."],
-   [5,"Taller","Productividad de cada mecánico, desviación de tiempos, calidad a la primera, motivos de pausa, alertas y auditoría."],
-   [6,"Almacén","Resumen de stock bajo, consumos y mermas."]]},
+ mapa:{filas:[[[1,"Pulso del negocio: resumen + 8 indicadores",1]],[[2,"Previsión de cierre de mes",1],[3,"Simulador «¿y si…?»",1]],[[4,"Mapas de calor: cuándo te buscan y qué coches se miran",1]],[[5,"Flujo de clientes y dinero",1]],[[6,"Todo el detalle (capas) · Informes automáticos · Operación",1]]],
+  zonas:[[1,"Pulso del negocio","Resumen del mes en una frase y 8 indicadores con su mini-gráfico y si suben o bajan frente al mes anterior. La facturación va en naranja; si algo va mal sale «Atención». Toca una tarjeta para abrir su detalle."],
+   [2,"Previsión","Al ritmo de los últimos 14 días, cómo cerrarás el mes (visitas, solicitudes o facturación), con un margen de confianza y la línea del mes anterior."],
+   [3,"Simulador","Mueve los deslizadores (visitas, conversión, cierre, ticket, anuncios…) y ves al momento la facturación, el coste por cliente y el retorno. «Volver a mis datos» lo deja como estaba."],
+   [4,"Mapas de calor","Qué días y horas te visitan más (para publicar y anunciar ahí) y qué coches se miran cada día, con los que alguien está viendo ahora."],
+   [5,"Flujo","De qué canal viene cada cliente, qué pide y cómo acaba (cerrado, en curso o perdido), en clientes o en euros."],
+   [6,"Capas","Todo el detalle de siempre (visitas por día, embudo, canales, tabla de coches, servicios, horarios, promedios, taller y almacén) en bloques que abres cuando los necesitas, y los informes automáticos."]]},
  pasos:[
   {t:"Sacar el informe del mes en PDF",r:["ger"],p:["Abre <b>Dashboard</b>.","Elige el mes con las flechas <b>‹ ›</b>.","Pulsa <b>«Informe PDF»</b>; en la ventana de imprimir, elige <b>«Guardar como PDF»</b>."],tip:"Para la gestoría usa mejor el <b>PDF asesoría</b> de Finanzas: lleva las facturas emitidas y recibidas."},
   {t:"Revisar el rendimiento del taller",r:["ger"],p:["Baja hasta el bloque <b>«Taller · mes»</b>.","Mira la <b>productividad</b> de cada mecánico (verde ≥ 85 %, ámbar ≥ 65 %, rojo por debajo).","Toca cualquier alerta para abrir directamente la ficha de esa orden."],tip:"Si un mecánico sale siempre en rojo, mira primero los <b>motivos de las pausas</b>: casi siempre es falta de recambio o espera de autorización, no el mecánico."}],
@@ -331,17 +332,33 @@ function ayPaso(p,i){
     ${p.ojo?`<blockquote class="ay-note ojo"><b>⚠️ Ojo</b> ${p.ojo}</blockquote>`:""}${p.tip?`<blockquote class="ay-note"><b>💡 Buenas prácticas</b> ${p.tip}</blockquote>`:""}</details>`;
 }
 function ayTabla(e){ return `<div class="ay-tw"><table class="ay-t"><thead><tr>${e.c.map(c=>`<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${e.f.map(r=>`<tr>${r.map((c,i)=>i?`<td>${esc(c)}</td>`:`<td><b>${esc(c)}</b></td>`).join("")}</tr>`).join("")}</tbody></table></div>`; }
+/* ---------- vídeo-ayuda: primero se ve, luego (si hace falta) se lee ---------- */
+const ayT=t=>`${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,"0")}`;
+function ayVideo(m){ const v=typeof AY_VID!=="undefined"&&AY_VID[m.id]; if(!v) return "";
+  return `<section class="ay-vid${v.movil?" vert":""}">
+    <div class="ay-vbox"><video id="ay-v" controls playsinline preload="none" poster="/ayuda/videos/${m.id}.jpg" src="/ayuda/videos/${m.id}.mp4" aria-label="Vídeo: ${esc(m.titulo)}"></video></div>
+    <div class="ay-vside"><p class="ay-vh"><b>▶ Mira el vídeo</b> <span>${ayT(v.dur)} · sin sonido</span></p>
+      <ol class="ay-cap">${v.pasos.map((p,i)=>`<li><button type="button" data-ayseek="${p.t}"><i>${i+1}</i><span>${esc(p.txt)}</span><small>${ayT(p.t)}</small></button></li>`).join("")}</ol>
+      <p class="ay-vtip">Toca un paso para saltar a ese momento.</p></div>
+  </section>`;
+}
 function ayModulo(m,todo){
   const ps=ayPasos(m); if(AY_BUSQ&&!ps.length) return "";
   const puede=m.tab&&(!ME||!ME.equipo||["ordenes","alm"].includes(m.tab)||(m.tab==="caja"&&ME.caja))&&!(ME&&ME.equipo&&m.tab==="jornada");
-  return `<article class="ay-mod" id="ay-${m.id}">
-    <header class="ay-mh"><span class="ay-ico" aria-hidden="true">${m.ico}</span><div><small>Módulo</small><h2>${esc(m.titulo)}</h2></div>${puede&&!todo?`<button type="button" class="btn b-ghost b-sm" data-ayir="${m.tab}">Abrir ${esc(m.titulo.split(" ")[0])} →</button>`:""}</header>
-    ${AY_BUSQ?"":`<section class="ay-s"><h3><i>1</i>Para qué sirve</h3><p class="ay-obj"><b>Objetivo principal:</b> ${esc(m.objetivo)}</p>
+  const vid=!todo&&!AY_BUSQ?ayVideo(m):"";
+  const texto=`${AY_BUSQ?"":`<section class="ay-s"><h3><i>1</i>Para qué sirve</h3><p class="ay-obj"><b>Objetivo principal:</b> ${esc(m.objetivo)}</p>
       <p class="ay-sub">Cuándo usar esta sección</p><ul class="ay-cuando">${m.cuando.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>${m.flujo?`<p class="ay-sub">El recorrido</p>${ayFlujo(m.flujo)}`:""}</section>
     <section class="ay-s"><h3><i>2</i>Mapa de la pantalla</h3>${ayMapa(m,m.mapa)}${m.extra?`<p class="ay-sub">${esc(m.extra.t)}</p>${ayMapa({titulo:m.extra.t},m.extra)}`:""}</section>`}
     <section class="ay-s"><h3><i>3</i>Guías paso a paso</h3>${ps.length?ps.map(ayPaso).join(""):'<p class="hint">No hay guías para este puesto en esta sección.</p>'}</section>
-    ${AY_BUSQ?"":`<section class="ay-s"><h3><i>4</i>${esc(m.estados.t)}</h3>${ayTabla(m.estados)}</section>`}
+    ${AY_BUSQ?"":`<section class="ay-s"><h3><i>4</i>${esc(m.estados.t)}</h3>${ayTabla(m.estados)}</section>`}`;
+  return `<article class="ay-mod" id="ay-${m.id}">
+    <header class="ay-mh"><span class="ay-ico" aria-hidden="true">${m.ico}</span><div><small>Módulo</small><h2>${esc(m.titulo)}</h2></div>${puede&&!todo?`<button type="button" class="btn b-ghost b-sm" data-ayir="${m.tab}">Abrir ${esc(m.titulo.split(" ")[0])} →</button>`:""}</header>
+    ${vid}${vid?`<details class="ay-mas"><summary><span>📄 Ver los pasos por escrito</span><small>${ps.length} guía${ps.length===1?"":"s"} · para consultar un detalle</small></summary><div class="ay-mas-in">${texto}</div></details>`:texto}
   </article>`;
+}
+function ayVidEnlazar(auto){ const v=$("#ay-v"); if(!v) return; const bs=[...document.querySelectorAll("[data-ayseek]")];
+  v.addEventListener("timeupdate",()=>{ let k=-1; bs.forEach((b,i)=>{ if(v.currentTime>=+b.dataset.ayseek-0.05) k=i; }); bs.forEach((b,i)=>b.classList.toggle("on",i===k)); });
+  if(auto){ v.muted=true; v.play().catch(()=>{}); if(innerWidth<860) v.scrollIntoView({behavior:"smooth",block:"center"}); }
 }
 function ayPintar(){
   const box=$("#ay"); if(!box) return;
@@ -352,8 +369,9 @@ function ayPintar(){
       <div class="ay-rol" role="group" aria-label="Tu puesto"><span>¿Quién eres?</span><button type="button" class="chipb" data-ayrol="" aria-pressed="${!AY_ROL}">Todos</button>${AY_ROLES.map(([k,t])=>`<button type="button" class="chipb" data-ayrol="${k}" aria-pressed="${AY_ROL===k}">${t}</button>`).join("")}</div>
       <input class="in ay-busq" id="ay-busq" type="search" placeholder="Buscar: «cerrar caja», «presupuesto», «ITV»…" value="${esc(AY_BUSQ)}" aria-label="Buscar en la ayuda">
     </div>
-    <div class="ay-grid"><nav class="ay-nav" aria-label="Secciones de la ayuda">${ms.map(m=>`<button type="button" data-aymod="${m.id}" aria-current="${!AY_BUSQ&&m.id===AY_MOD}"><span aria-hidden="true">${m.ico}</span>${esc(m.titulo)}<small>${ayPasos(m).length} guía${ayPasos(m).length===1?"":"s"}</small></button>`).join("")}</nav>
+    <div class="ay-grid"><nav class="ay-nav" aria-label="Secciones de la ayuda">${ms.map(m=>`<button type="button" data-aymod="${m.id}" aria-current="${!AY_BUSQ&&m.id===AY_MOD}"><span aria-hidden="true">${m.ico}</span>${esc(m.titulo)}<small>${typeof AY_VID!=="undefined"&&AY_VID[m.id]?`▶ vídeo ${ayT(AY_VID[m.id].dur)}`:`${ayPasos(m).length} guía${ayPasos(m).length===1?"":"s"}`}</small></button>`).join("")}</nav>
       <div class="ay-body">${cuerpo}</div></div>`;
+  ayVidEnlazar(ayPintar.auto); ayPintar.auto=0;
 }
 
 /* ---------- pestaña ---------- */
@@ -362,12 +380,13 @@ const _ayShow=show;
 show=function(id){ const s=$("#s-ayuda"); if(s) s.hidden=id!=="s-ayuda"; _ayShow(id); };
 const _ayTab=abrirTab;
 abrirTab=function(t,push=true){ if(t==="ayuda"){ ayAbrir(); return; } return _ayTab(t,push); };
-function ayAbrir(mod){ show("s-ayuda"); history.replaceState(null,"","#ayuda"); if(mod) AY_MOD=mod; ayPintar(); }
+function ayAbrir(mod,auto){ ayPintar.auto=!!auto; show("s-ayuda"); history.replaceState(null,"","#ayuda"); if(mod) AY_MOD=mod; ayPintar(); }
 document.addEventListener("click",e=>{ const t=e.target;
   const r=t.closest("[data-ayrol]"); if(r){ AY_ROL=r.dataset.ayrol; ayPintar(); return; }
-  const m=t.closest("[data-aymod]"); if(m){ AY_MOD=m.dataset.aymod; AY_BUSQ=""; ayPintar(); const b=$("#s-ayuda .ay-body"); if(b&&innerWidth<860) b.scrollIntoView({behavior:"smooth",block:"start"}); return; }
+  const m=t.closest("[data-aymod]"); if(m){ AY_MOD=m.dataset.aymod; AY_BUSQ=""; ayPintar.auto=1; ayPintar(); const b=$("#s-ayuda .ay-body"); if(b&&innerWidth<860) b.scrollIntoView({behavior:"smooth",block:"start"}); return; }
   const ir=t.closest("[data-ayir]"); if(ir){ abrirTab(ir.dataset.ayir); return; }
-  const h=t.closest("[data-ayuda]"); if(h){ e.preventDefault(); ayAbrir(h.dataset.ayuda); return; }
+  const h=t.closest("[data-ayuda]"); if(h){ e.preventDefault(); ayAbrir(h.dataset.ayuda,true); return; }
+  const sk=t.closest("[data-ayseek]"); if(sk){ const v=$("#ay-v"); if(v){ v.currentTime=+sk.dataset.ayseek; v.play().catch(()=>{}); } return; }
   if(t.closest("#ay-pdf")) ayPdf();
 });
 document.addEventListener("input",e=>{ if(e.target.id==="ay-busq"){ AY_BUSQ=ayNorm(e.target.value); clearTimeout(ayPintar.t); ayPintar.t=setTimeout(()=>{ const pos=e.target.selectionStart; ayPintar(); const b=$("#ay-busq"); if(b){ b.focus(); try{ b.setSelectionRange(pos,pos); }catch(_){} } },200); } });

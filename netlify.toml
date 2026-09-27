@@ -1,6 +1,15 @@
 [build]
+  # Descarga las fuentes a /fonts para no pedirlas a Google en cada visita (tools/fuentes-locales.mjs)
+  command = "node tools/fuentes-locales.mjs"
   publish = "public"
   functions = "netlify/functions"
+
+# La dirección antigua de Netlify manda a la definitiva (una sola web para Google)
+[[redirects]]
+  from = "https://lestter7th.netlify.app/*"
+  to = "https://volcanocars.com/:splat"
+  status = 301
+  force = true
 
 # Secciones de la web con dirección propia (se generan con tools/build-en.py)
 [[redirects]]
@@ -66,7 +75,7 @@
 [[headers]]
   for = "/admin"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; frame-src 'none'; worker-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; frame-src 'none'; worker-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
     X-Robots-Tag = "noindex, nofollow, noarchive"
     Cache-Control = "no-store"
     Referrer-Policy = "no-referrer"
@@ -74,7 +83,7 @@
 [[headers]]
   for = "/admin.html"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; frame-src 'none'; worker-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; frame-src 'none'; worker-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
     X-Robots-Tag = "noindex, nofollow, noarchive"
     Cache-Control = "no-store"
     Referrer-Policy = "no-referrer"
@@ -83,7 +92,7 @@
 [[headers]]
   for = "/s/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
     X-Robots-Tag = "noindex, nofollow, noarchive"
     Referrer-Policy = "no-referrer"
     Cache-Control = "no-cache"
@@ -91,7 +100,7 @@
 [[headers]]
   for = "/seguimiento.html"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
     X-Robots-Tag = "noindex, nofollow, noarchive"
     Referrer-Policy = "no-referrer"
     Cache-Control = "no-cache"
@@ -100,7 +109,7 @@
 [[headers]]
   for = "/r/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
     X-Robots-Tag = "noindex, nofollow, noarchive"
     Referrer-Policy = "no-referrer"
     Cache-Control = "no-cache"
@@ -108,7 +117,7 @@
 [[headers]]
   for = "/reserva.html"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
     X-Robots-Tag = "noindex, nofollow, noarchive"
     Referrer-Policy = "no-referrer"
     Cache-Control = "no-cache"
@@ -124,3 +133,10 @@
   to = "/seguimiento.html"
   status = 200
 
+
+# Vídeos de la ayuda del panel: no se indexan y se guardan en caché una semana
+[[headers]]
+  for = "/ayuda/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "public, max-age=604800"

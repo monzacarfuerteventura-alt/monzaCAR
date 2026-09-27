@@ -25,13 +25,14 @@ export type Dia = {
   vistas: Record<string, number>; fuentes: Record<string, number>; dev: Record<string, number>; lang: Record<string, number>;
   coches: Record<string, number>; cochesV: Record<string, number>; clk: Record<string, number>; clkV: number;
   frm: Record<string, number>; horas: number[]; vid: number;
+  camp?: Record<string, number>; // visitantes distintos que entraron con utm_campaign=<nombre>
 };
-const vacio = (): Dia => ({ v: 0, pv: 0, ent: 0, vistas: {}, fuentes: {}, dev: {}, lang: {}, coches: {}, cochesV: {}, clk: {}, clkV: 0, frm: {}, horas: Array(24).fill(0), vid: 0 });
+const vacio = (): Dia => ({ v: 0, pv: 0, ent: 0, vistas: {}, fuentes: {}, dev: {}, lang: {}, coches: {}, cochesV: {}, clk: {}, clkV: 0, frm: {}, horas: Array(24).fill(0), vid: 0, camp: {} });
 
 // Suma un día a partir de los nombres de las claves
 export function resumir(keys: string[]): Dia {
   const d = vacio();
-  const vis = new Set<string>(), visClk = new Set<string>(), frm = new Map<string, Set<string>>(), cv = new Map<string, Set<string>>();
+  const vis = new Set<string>(), camp = new Map<string, Set<string>>(), visClk = new Set<string>(), frm = new Map<string, Set<string>>(), cv = new Map<string, Set<string>>();
   const primera = new Map<string, { f: string; dev: string; l: string }>();
   const inc = (o: Record<string, number>, k: string, n = 1) => { if (k) o[k] = (o[k] || 0) + n; };
   for (const key of keys) {
@@ -52,10 +53,12 @@ export function resumir(keys: string[]): Dia {
     } else if (t === "frm") {
       if (!frm.has(a)) frm.set(a, new Set()); frm.get(a)!.add(vh);
     } else if (t === "vid") d.vid++;
+    else if (t === "cmp" && a) { if (!camp.has(a)) camp.set(a, new Set()); camp.get(a)!.add(vh); }
   }
   d.v = vis.size; d.clkV = visClk.size;
   for (const [k, s] of frm) d.frm[k] = s.size;
   for (const [k, s] of cv) d.cochesV[k] = s.size;
+  d.camp = {}; for (const [k, s] of camp) d.camp[k] = s.size;
   for (const x of primera.values()) { inc(d.fuentes, FUENTE_NOMBRE[x.f] || x.f || "Directo"); inc(d.dev, x.dev === "m" ? "Móvil" : "Ordenador"); inc(d.lang, x.l === "en" ? "Inglés" : "Español"); }
   return d;
 }

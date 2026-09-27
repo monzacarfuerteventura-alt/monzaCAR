@@ -8,6 +8,12 @@ export function store(name: string) {
   return getDeployStore(name);
 }
 
+// Vacía la caché del CDN de Netlify de todo lo que lleve estas etiquetas (lista de coches, fichas, páginas de pueblos).
+// Nunca bloquea: si falla, la caché caduca sola en segundos.
+export async function purgar(tags: string[]) {
+  try { const { purgeCache } = await import("@netlify/functions"); await (purgeCache as any)({ tags }); } catch { /* sin token fuera de Netlify */ }
+}
+
 export const json = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
@@ -94,7 +100,46 @@ export type Car = {
   actualizado: string;
   vendidoEn?: string;
   mercado?: Mercado | null;
+  // Historial de precios (para poder enseñar «Antes X €» solo cuando es legal) y rebaja activa
+  precios?: { p: number; t: string }[];
+  rebaja?: Rebaja | null;
 };
+// Rebaja en curso. «antes» solo se rellena si ese precio fue el MÁS BAJO de los 30 días anteriores a la rebaja
+// (art. 20.3 de la Ley de Ordenación del Comercio Minorista / Directiva Ómnibus). Si no, la web no tacha nada.
+export type Rebaja = { desde: string; anterior: number; antes: number | null; pct: number; auto: boolean; regla?: string };
+
+// Precio de referencia legal: el más bajo aplicado en los 30 días anteriores a «cuando».
+export function precioMinimo30(precios: { p: number; t: string }[] | undefined, cuando: string, actual: number) {
+  const lim = Date.parse(cuando) - 30 * 864e5;
+  const h = (precios || []).filter((x) => Date.parse(x.t) <= Date.parse(cuando));
+  // el precio vigente al empezar la ventana también cuenta
+  const previo = [...h].reverse().find((x) => Date.parse(x.t) <= lim);
+  const dentro = h.filter((x) => Date.parse(x.t) > lim).map((x) => x.p);
+  const vals = [...(previo ? [previo.p] : []), ...dentro];
+  return vals.length ? Math.min(...vals) : actual;
+}
+// ¿Lleva al menos 30 días publicado con precio conocido? (si no, nunca se enseña «antes»)
+export function historialCompleto(car: Pick<Car, "creado" | "precios">, cuando: string) {
+  return Date.parse(cuando) - Date.parse(car.creado) >= 30 * 864e5;
+}
+// Aplica un precio nuevo guardando historial; si baja, deja apuntada la rebaja con su referencia legal.
+export function cambiarPrecio(car: Car, nuevo: number, opts: { auto?: boolean; regla?: string; cuando?: string } = {}): Car {
+  const t = opts.cuando || new Date().toISOString();
+  const precios = [...(car.precios || [])];
+  if (!precios.length) precios.push({ p: car.precio, t: car.creado });
+  if (nuevo === car.precio) return car;
+  const ref = precioMinimo30(precios, t, car.precio);
+  precios.push({ p: nuevo, t });
+  const out: Car = { ...car, precio: nuevo, precios: precios.slice(-40), actualizado: t };
+  if (nuevo < car.precio) {
+    const base = car.rebaja ? car.rebaja.anterior : car.precio;
+    const antes = historialCompleto(car, t) && ref > nuevo ? ref : null;
+    out.rebaja = { desde: car.rebaja?.desde || t, anterior: base, antes, pct: Math.round((1 - nuevo / base) * 1000) / 10, auto: !!opts.auto, regla: opts.regla || "" };
+  } else {
+    out.rebaja = null; // si sube (o se deshace) deja de estar rebajado
+  }
+  return out;
+}
 
 // Comparativa con el mercado (la rellenas en el panel mirando portales: coches.net, Wallapop, Milanuncios…)
 export type Mercado = { media: number; n: number; fuente: string; fecha: string; precios: number[] };
@@ -209,6 +254,15 @@ export function cleanCar(input: any, prev?: Car): { car?: Car; error?: string } 
   if (!car.marca || !car.modelo) return { error: "Falta la marca o el modelo." };
   if (car.anio < 1950 || car.anio > new Date().getFullYear() + 1) return { error: "El año no es válido." };
   if (!car.precio) return { error: "Falta el precio." };
+  // historial de precios y rebaja: se conservan; si el gerente cambia el precio a mano, se apunta
+  if (prev) {
+    car.precios = prev.precios; car.rebaja = prev.rebaja || null;
+    if (prev.precio !== car.precio) {
+      const nuevo = car.precio; car.precio = prev.precio;
+      const r = cambiarPrecio(car, nuevo, { cuando: now });
+      car.precio = r.precio; car.precios = r.precios; car.rebaja = r.rebaja;
+    }
+  } else car.precios = [{ p: car.precio, t: now }];
   return { car };
 }
 
@@ -273,7 +327,7 @@ function errorResend(status: number, msg: string) {
 export async function enviarAviso(asunto: string, filas: [string, string][], botones: { txt: string; url: string; color?: string }[] = [], replyTo = "") {
   return (await enviarEmail(asunto, filas, botones, replyTo)).ok;
 }
-export async function enviarEmail(asunto: string, filas: [string, string][], botones: { txt: string; url: string; color?: string }[] = [], replyTo = "", destino: string[] = []): Promise<ResultadoEmail> {
+export async function enviarEmail(asunto: string, filas: [string, string][], botones: { txt: string; url: string; color?: string }[] = [], replyTo = "", destino: string[] = [], htmlPropio = ""): Promise<ResultadoEmail> {
   const env = (globalThis as any).Netlify?.env;
   const key = String(env?.get("RESEND_API_KEY") || "").trim();
   const t = new Date().toISOString();
@@ -294,7 +348,7 @@ ${filas.filter(([, v]) => v).map(([k, v]) => `<tr><td style="padding:6px 10px 6p
     const r = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { authorization: `Bearer ${key}`, "content-type": "application/json" },
-      body: JSON.stringify({ from, to: para, subject: asunto, html, ...(replyTo ? { reply_to: replyTo } : {}) }),
+      body: JSON.stringify({ from, to: para, subject: asunto, html: htmlPropio || html, ...(replyTo ? { reply_to: replyTo } : {}) }),
       signal: AbortSignal.timeout(8000),
     });
     const d = (await r.json().catch(() => ({}))) as any;

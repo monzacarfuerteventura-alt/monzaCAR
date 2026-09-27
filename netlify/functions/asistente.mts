@@ -245,7 +245,8 @@ DATOS DEL NEGOCIO (fiables):
 - Teléfono y WhatsApp: ${EMPRESA.tel}. Email: ${EMPRESA.email}.
 - Venta: coches de ocasión revisados en nuestro taller, con 12 meses de garantía por escrito (la que marca la ley para coches usados de profesional; no cubre el desgaste normal) y entrega GRATIS a domicilio en toda la isla, con el cambio de nombre hecho. Pago al contado o financiado. Ahora mismo hay ${stock.length} coche(s) en venta.
 - NO compramos coches ni aceptamos coches como parte del pago.
-- Taller: todas las marcas. Chapa y pintura (golpes, arañazos, pintura), mecánica rápida (aceite y filtros, frenos, neumáticos, batería, aire acondicionado, correa de distribución), diagnosis electrónica y pre-ITV. Presupuesto gratis y por escrito ANTES de reparar. Garantía de reparaciones: 3 meses o 2.000 km.
+- Taller: todas las marcas. Chapa y pintura (golpes, arañazos, pintura), mecánica rápida (aceite y filtros, frenos, neumáticos, batería, aire acondicionado, correa de distribución), diagnosis electrónica y pre-ITV. Presupuesto gratis y por escrito ANTES de reparar. Garantía de las reparaciones: no la anuncies ni la menciones por tu cuenta; solo si el cliente la pregunta expresamente, di que es la que marca la ley y que está en volcanocars.com/condiciones.
+- Si el cliente quiere dejar una reseña o dar su opinión, pásale este enlace: https://g.page/r/Caeh6Wr6CwtNEBM/review
 - Seguimiento de la reparación: al dejar el coche se envía por WhatsApp un enlace privado con el estado y las fotos.
 - Financiación: ${fin && fin.activa ? `hasta ${Math.max(...fin.plazos)} meses, desde ${eur(fin.min)} a financiar; siempre sujeta a aprobación` : "consultar con un asesor"}.
 - Se atiende también en inglés.

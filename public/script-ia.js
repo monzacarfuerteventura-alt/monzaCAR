@@ -144,7 +144,7 @@
       <p>${esc(a.resumen || "")}</p>
       <input type="text" name="n" autocomplete="name" maxlength="80" placeholder="${T("Tu nombre", "Your name")}" aria-label="${T("Tu nombre", "Your name")}">
       <input type="tel" name="t" autocomplete="tel" maxlength="30" placeholder="${T("Tu teléfono", "Your phone")}" aria-label="${T("Tu teléfono", "Your phone")}">
-      <label class="ok"><input type="checkbox" name="ok"><span>${T("Acepto que Volcano Cars use estos datos solo para responder a mi solicitud.", "I agree that Volcano Cars may use these details only to answer my request.")} <a href="/privacidad" target="_blank" rel="noopener">${T("Privacidad", "Privacy")}</a></span></label>
+      <label class="ok"><input type="checkbox" name="ok"><span>${T("Acepto que MAILIN Y YERAY SL (Volcano Cars) use estos datos solo para responder a mi solicitud. Puedo pedir que los borren cuando quiera.", "I agree that Volcano Cars may use these details only to answer my request.")} <a href="/privacidad" target="_blank" rel="noopener">${T("Privacidad", "Privacy")}</a></span></label>
       <div class="err" hidden></div>
       <div class="fila"><button type="submit">${T("Enviar", "Send")}</button><a class="wa" href="${esc(waHref)}" target="_blank" rel="noopener">WhatsApp</a></div>`;
     B.M.appendChild(f); B.baja();

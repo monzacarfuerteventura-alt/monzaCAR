@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Volcano Cars · Used cars with a 1-year warranty, body repair and servicing in Fuerteventura</title>
-<meta name="description" content="Volcano Cars: the best used cars in Fuerteventura, checked in our own workshop with a 1-year warranty and free home delivery anywhere on the island. Body repair, paint and quick servicing in Antigua, near Caleta de Fuste, with instant online booking. We speak English.">
+<title>Volcano Cars · Used cars with a 12-month legal warranty, body repair and servicing in Fuerteventura</title>
+<meta name="description" content="Volcano Cars: used cars in Fuerteventura checked in our own workshop, with a 12-month legal warranty and free home delivery anywhere on the island. Body repair, paint and quick servicing in Antigua, near Caleta de Fuste, with instant online booking. We speak English.">
 <meta name="theme-color" content="#121212">
 <meta property="og:title" content="Volcano Cars · Body repair, paint, servicing and used cars in Fuerteventura">
-<meta property="og:description" content="Used cars checked in our own workshop with a 1-year warranty and free delivery anywhere on Fuerteventura. Mechanical workshop, body repair and paint in Antigua with instant online booking.">
+<meta property="og:description" content="Used cars checked in our own workshop with a 12-month legal warranty and free delivery anywhere on Fuerteventura. Mechanical workshop, body repair and paint in Antigua with instant online booking.">
 <meta property="og:image" content="https://volcanocars.com/coches/opel-astra-2010/anuncio.jpg">
 <meta property="og:url" content="https://volcanocars.com/en/">
 <meta property="og:locale" content="en_GB">
@@ -17,15 +17,15 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Figtree:wght@400;500;600;700&family=Titillium+Web:wght@600;700&display=swap">
+<link rel="preload" as="style" href="/fonts/fuentes.css">
+<link rel="stylesheet" href="/fonts/fuentes.css" media="print" onload="this.media='all'">
+<script src="/medicion.js"></script>
 <link rel="canonical" href="https://volcanocars.com/en/">
 <link rel="alternate" hreflang="es" href="https://volcanocars.com/">
 <link rel="alternate" hreflang="en" href="https://volcanocars.com/en/">
 <link rel="alternate" hreflang="x-default" href="https://volcanocars.com/">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":["AutoRepair","AutoDealer","AutoBodyShop"],"@id":"https://volcanocars.com/#negocio","name":"Volcano Cars","logo":"https://volcanocars.com/marca/logo-oscuro.svg","hasMap":"https://www.google.com/maps?cid=5551544135827693991","geo":{"@type":"GeoCoordinates","latitude":28.420871,"longitude":-13.8621004},"description":"Body repair and paint, quick servicing and checked used cars with a 12-month warranty and free home delivery anywhere on Fuerteventura, from Antigua.","telephone":"+34677960348","email":"volcanocars2026@gmail.com","url":"https://volcanocars.com/en/","image":"https://volcanocars.com/coches/opel-astra-2010/anuncio.jpg","priceRange":"€€",
+{"@context":"https://schema.org","@type":["AutoRepair","AutoDealer","AutoBodyShop"],"@id":"https://volcanocars.com/#negocio","name":"Volcano Cars","legalName":"MAILIN Y YERAY SL","taxID":"B93975647","sameAs":["https://www.google.com/maps?cid=5551544135827693991","https://www.instagram.com/volcanocars_antigua/","https://www.facebook.com/share/1KYczmU7be/"],"logo":"https://volcanocars.com/marca/logo-oscuro.svg","hasMap":"https://www.google.com/maps?cid=5551544135827693991","geo":{"@type":"GeoCoordinates","latitude":28.420871,"longitude":-13.8621004},"description":"Body repair and paint, quick servicing and checked used cars with a 12-month legal warranty and free home delivery anywhere on Fuerteventura, from Antigua.","telephone":"+34643566098","email":"volcanocars2026@gmail.com","url":"https://volcanocars.com/en/","image":"https://volcanocars.com/coches/opel-astra-2010/anuncio.jpg","priceRange":"€€",
  "address":{"@type":"PostalAddress","streetAddress":"Calle Valle Largo, Nave 8, Polígono Industrial","postalCode":"35610","addressLocality":"Antigua","addressRegion":"Las Palmas","addressCountry":"ES"},
  "areaServed":[{"@type":"Island","name":"Fuerteventura"},"Antigua","Caleta de Fuste","Puerto del Rosario","La Oliva","Corralejo","Tuineje","Gran Tarajal","Pájara","Costa Calma","Morro Jable"],
  "availableLanguage":["es","en"],
@@ -134,7 +134,7 @@ nav.mtabs{display:none}
 .btn-ghost:hover{border-color:var(--ink)}
 .btn-glass{background:rgba(255,255,255,.08);color:#fff;border:1.5px solid rgba(255,255,255,.22);backdrop-filter:blur(8px)}
 .btn-glass:hover{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4)}
-.btn-wa{background:#1F8B4C;color:#fff}
+.btn-wa{background:#16794A;color:#fff}
 .btn-wa:hover{transform:translateY(-2px)}
 
 .view[hidden]{display:none!important}
@@ -249,6 +249,7 @@ section.block{padding-block:64px}
 .chip{font-size:12.5px;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--surface-2);color:var(--ink)}
 .price-row{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}
 .price-row>div{min-width:0}.price-row .price{white-space:nowrap;line-height:1.05}.price-row .month{text-align:left;margin-top:4px}.price-row .ver{flex-shrink:0}
+.rebaja{display:flex;gap:8px;align-items:center;margin-bottom:4px;font-size:13px}.rebaja b{background:var(--rosso,#C63F1B);color:#fff;border-radius:6px;padding:2px 7px;font-weight:800}.rebaja s,.antes{color:var(--muted);font-weight:600}.antes{font-size:.6em}
 .price{font-family:var(--display);font-stretch:82%;font-weight:800;font-size:27px;letter-spacing:-.02em}
 .month{font-size:13px;color:var(--muted);text-align:right}
 .empty{background:var(--surface);border:1.5px dashed var(--line);border-radius:var(--r);padding:48px 22px;text-align:center;color:var(--muted)}
@@ -779,6 +780,7 @@ footer .logo-tag{color:rgba(242,239,234,.55)}
 .thumbs button.tv::after{content:"360°";position:absolute;inset:0;display:grid;place-items:center;font-size:12px;font-weight:800;letter-spacing:.06em;color:#fff;background:linear-gradient(135deg,rgba(217,72,28,.62),rgba(242,153,74,.5))}
 .m-vid{width:100%;height:100%;object-fit:contain;background:#000;display:block}
 /* visor 360° esferico */
+.esf-w:focus-visible{outline:3px solid var(--rosso);outline-offset:2px}
 .esf-w{position:relative;width:100%;height:100%;background:#000 center/cover no-repeat;touch-action:none;cursor:grab;outline:none;overflow:hidden}
 .esf-w:active{cursor:grabbing}
 .esf-w canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
@@ -1174,7 +1176,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
 .b-acts{display:flex;flex-wrap:wrap;gap:7px;align-self:flex-start;max-width:100%;animation:bm .35s var(--ease)}
 .b-acts button,.b-acts a{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;text-decoration:none;transition:border-color .2s,background-color .2s}
 .b-acts button:hover,.b-acts a:hover{border-color:var(--rosso)}
-.b-acts .wa{background:#1F8B4C;border-color:#1F8B4C;color:#fff}
+.b-acts .wa{background:#16794A;border-color:#16794A;color:#fff}
 .b-acts .pri{background:var(--rosso);border-color:var(--rosso);color:#fff}
 .b-car{display:flex!important;width:100%;justify-content:space-between;border-radius:14px!important;padding:10px 12px!important}
 .b-car span{color:var(--muted);font-weight:600;font-variant-numeric:tabular-nums}
@@ -1364,8 +1366,8 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
       <a href="#taller" data-go="taller">Workshop</a>
       <a href="#contacto" data-go="contacto">Contact</a>
     </nav>
-    <a class="head-cta" id="head-call" href="tel:+34677960348"><svg width="17" height="17"><use href="#i-phone"/></svg>Call us</a>
-    <a class="phone-top" id="phone-top" href="tel:+34677960348" aria-label="Call Volcano Cars"><svg width="17" height="17"><use href="#i-phone"/></svg><span class="pt-txt">Call</span></a>
+    <a class="head-cta" id="head-call" href="tel:+34643566098"><svg width="17" height="17"><use href="#i-phone"/></svg>Call us</a>
+    <a class="phone-top" id="phone-top" href="tel:+34643566098" aria-label="Call Volcano Cars"><svg width="17" height="17"><use href="#i-phone"/></svg><span class="pt-txt">Call</span></a>
     <a class="lang" href="/" hreflang="es" lang="es" aria-label="Versión en español">ES</a>
   </div>
 </header>
@@ -1391,7 +1393,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
           <svg class="hs-bg" aria-hidden="true"><use href="#i-car"/></svg>
           <div class="hs-kick"><span class="hs-ic"><svg width="20" height="20"><use href="#i-car"/></svg></span><span id="hs-stock">Cars for sale</span></div>
           <h2>Buy a Used Car</h2>
-          <p>Cars checked in our own workshop, with a 1-year warranty and free delivery anywhere on the island.</p>
+          <p>Cars checked in our own workshop, with a 12-month legal warranty and free delivery anywhere on the island.</p>
           <div class="hs-acts">
             <a class="btn btn-rosso hs-cta" href="#comprar" data-go="comprar">See available cars <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
           </div>
@@ -1400,7 +1402,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
           <svg class="hs-bg" aria-hidden="true"><use href="#i-wrench"/></svg>
           <div class="hs-kick"><span class="hs-ic"><svg width="20" height="20"><use href="#i-wrench"/></svg></span><span>Workshop in Antigua</span></div>
           <h2>Mechanics, Bodywork & Paint</h2>
-          <p>No-obligation quote, repair warranty and a promised finish date.</p>
+          <p>No-obligation quote, finish date in writing and tracking from your phone.</p>
           <div class="hs-acts">
             <a class="btn btn-hueso hs-cta" href="#taller" data-go="taller">Request a booking or quote <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
             <a class="hs-alt" data-wa target="_blank" rel="noopener"><svg width="16" height="16"><use href="#i-wa"/></svg><span>WhatsApp</span></a>
@@ -1412,7 +1414,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
         <a href="#contacto" data-go="contacto"><svg width="16" height="16" style="vertical-align:-3px;margin-right:6px"><use href="#i-pin"/></svg>Antigua Industrial Estate</a>
       </div>
       <ul class="trust" aria-label="Why Volcano Cars">
-        <li><svg width="16" height="16"><use href="#i-shield"/></svg>1-year warranty</li>
+        <li><svg width="16" height="16"><use href="#i-shield"/></svg>12-month legal warranty</li>
         <li><svg width="16" height="16"><use href="#i-check"/></svg>Checked in our own workshop</li>
         <li><svg width="16" height="16"><use href="#i-cal"/></svg>Instant online booking</li>
         <li><svg width="16" height="16"><use href="#i-truck"/></svg>Free delivery across the island</li>
@@ -1450,7 +1452,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
           <ul class="en-pts">
             <li><span class="ic"><svg width="20" height="20"><use href="#i-truck"/></svg></span><span><b>0 €</b> delivery, from the north to the south of the island</span></li>
             <li><span class="ic"><svg width="20" height="20"><use href="#i-cal"/></svg></span><span>You choose the day and time</span></li>
-            <li><span class="ic"><svg width="20" height="20"><use href="#i-shield"/></svg></span><span>With its 12-month warranty from the very first kilometre</span></li>
+            <li><span class="ic"><svg width="20" height="20"><use href="#i-shield"/></svg></span><span>With its 12-month legal warranty from the very first kilometre</span></li>
           </ul>
           <a class="btn btn-rosso" href="#comprar" data-go="comprar">See cars for sale <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
         </div>
@@ -1545,23 +1547,23 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
           <div class="stars" aria-label="5 out of 5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div>
           <blockquote>Fantastic paint job on our camper… True professionals, very attentive and friendly. Highly recommended.</blockquote>
           <div class="reply"><b>Volcano Cars replied:</b> Thank you, always at your service. It's a pleasure to work with customers like you.</div>
-          <div class="who"><span class="ava" style="background:#E8710A">O</span><span><b>Orlinda del Mazo</b><small>Local Guide · Body & paint</small></span></div>
+          <div class="who"><span class="ava" aria-hidden="true" style="background:#E8710A">O</span><span><b>Orlinda del Mazo</b><small>Local Guide · Body & paint</small></span></div>
         </article>
         <article class="rev rv d1">
           <span class="q" aria-hidden="true">“</span>
           <div class="stars" aria-label="5 out of 5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div>
           <blockquote>Highly recommended, reliable and fairly priced. And unbeatably quick, definitely the best.</blockquote>
-          <div class="who"><span class="ava" style="background:#C2185B">H</span><span><b>Herbert Jakobs</b><small>Local Guide · Body & paint</small></span></div>
+          <div class="who"><span class="ava" aria-hidden="true" style="background:#C2185B">H</span><span><b>Herbert Jakobs</b><small>Local Guide · Body & paint</small></span></div>
         </article>
         <article class="rev rv d2">
           <span class="q" aria-hidden="true">“</span>
           <div class="stars" aria-label="5 out of 5 stars"><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg><svg><use href="#i-star"/></svg></div>
           <blockquote>A big thank you: very kind, helpful, efficient and fairly priced. Failing the MOT (ITV) and having you just around the corner was great. Thanks again, see you soon! 😉</blockquote>
-          <div class="who"><span class="ava" style="background:#8D6E63">Y</span><span><b>Ylenia Suárez García</b><small>Local Guide · Mechanics</small></span></div>
+          <div class="who"><span class="ava" aria-hidden="true" style="background:#8D6E63">Y</span><span><b>Ylenia Suárez García</b><small>Local Guide · Mechanics</small></span></div>
         </article>
       </div>
       <div class="dots" id="rev-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
-      <div class="src rv"><span>Reviews published on our Google Maps listing, copied unchanged (some shortened) and translated. Google publishes them and we don't filter them: you can read them all, including negative ones.</span><a class="btn btn-glass" id="rev-link" target="_blank" rel="noopener">See all on Google Maps <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a></div>
+      <div class="src rv"><span>Reviews published on our Google Maps listing, copied unchanged (some shortened) and translated. Google publishes them and we don't filter them: you can read them all, including negative ones.</span><span style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn-glass" id="rev-link" target="_blank" rel="noopener">See all on Google Maps <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a><a class="btn btn-rosso" href="https://g.page/r/Caeh6Wr6CwtNEBM/review" target="_blank" rel="noopener">Leave a review <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></a></span></div>
     </div>
   </section>
 </div>
@@ -1570,7 +1572,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
 <div class="view" id="v-comprar" hidden>
   <section class="block">
     <div class="wrap">
-      <div class="sec-head"><div><div class="eyebrow">Buy a car</div><h2 class="page-h">Cars <span class="serif">for sale</span></h2><p>All checked in our workshop and with a 12-month warranty.</p></div></div>
+      <div class="sec-head"><div><div class="eyebrow">Buy a car</div><h2 class="page-h">Cars <span class="serif">for sale</span></h2><p>All checked in our workshop and with a 12-month legal warranty.</p></div></div>
       <div class="fx" id="fx" hidden></div>
       <p class="count num" id="count" style="font-weight:600;margin:0 0 18px"></p>
       <div class="grid" id="cat-grid"></div>
@@ -1614,7 +1616,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
         <ul class="g-pts">
           <li>Delivery date in writing</li>
           <li>A quote before we touch anything</li>
-          <li>Repairs guaranteed for 3 months or 2,000 km</li>
+          <li>Follow your repair on your phone</li>
         </ul>
       </div>
       <!-- Presupuesto exprés por foto (lo pinta /conversion.js) -->
@@ -1650,7 +1652,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
           </div>
           <div class="agenda" id="t-agenda" aria-live="polite"></div>
           <input class="hp" type="text" name="web" id="t-web" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <label class="consent"><input type="checkbox" id="t-ok" required><span>I agree that Volcano Cars may use these details only to answer my request. I can ask for them to be deleted at any time. <a href="/privacidad#en" target="_blank" rel="noopener">Privacy policy</a>.</span></label>
+          <label class="consent"><input type="checkbox" id="t-ok" required><span>I agree that MAILIN Y YERAY SL (Volcano Cars) may use these details only to answer my request. I can access, correct or ask for them to be deleted at any time. <a href="/privacidad#en" target="_blank" rel="noopener">Privacy policy</a>.</span></label>
           <div class="form-err" id="t-err" role="alert" hidden></div>
           <button class="btn btn-rosso" type="submit" id="t-btn"><span id="t-btn-t">Confirm appointment</span> <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></button>
           <p class="note" id="t-sel" hidden></p>
@@ -1684,7 +1686,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
         <p style="margin:0;color:var(--muted)">WhatsApp is the fastest way. We reply during opening hours.</p>
         <div class="metodos">
           <a class="metodo lux m-wa" id="c-wa" target="_blank" rel="noopener"><span class="m-ic"><svg width="22" height="22"><use href="#i-wa"/></svg></span><span><b>WhatsApp</b><small>The fastest way</small></span><svg class="m-arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
-          <a class="metodo lux m-tel" id="c-call"><span class="m-ic"><svg width="22" height="22"><use href="#i-phone"/></svg></span><span><b>Call now</b><small data-tel-txt>677 96 03 48</small></span><svg class="m-arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
+          <a class="metodo lux m-tel" id="c-call"><span class="m-ic"><svg width="22" height="22"><use href="#i-phone"/></svg></span><span><b>Call now</b><small data-tel-txt>643 56 60 98</small></span><svg class="m-arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
           <a class="metodo lux m-mail" id="c-email"><span class="m-ic"><svg width="22" height="22"><use href="#i-mail"/></svg></span><span><b>Send an email</b><small>We reply during opening hours</small></span><svg class="m-arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
           <a class="metodo lux m-map" data-map target="_blank" rel="noopener"><span class="m-ic"><svg width="22" height="22"><use href="#i-pin"/></svg></span><span><b>Open in Google Maps</b><small>Antigua Industrial Estate</small></span><svg class="m-arr" width="18" height="18"><use href="#i-arrow"/></svg></a>
         </div>
@@ -1699,7 +1701,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
   <div class="tricolore"></div>
   <div class="wrap foot">
     <div>
-      <a class="logo" href="#inicio" data-go="inicio"><svg class="vc-logo" viewBox="0 0 662 162" aria-hidden="true" style="color:#F2EFEA"><use href="#vc-logo"/></svg></a>
+      <a class="logo" href="#inicio" data-go="inicio" aria-label="Volcano Cars, home"><svg class="vc-logo" viewBox="0 0 662 162" aria-hidden="true" style="color:#F2EFEA"><use href="#vc-logo"/></svg></a>
       <p>Body repair and paint shop, quick servicing and used car sales in Antigua, Fuerteventura.</p>
     </div>
     <div><h4>Cars</h4><a href="#comprar" data-go="comprar">Buy a car</a><a href="/coches-segunda-mano-fuerteventura/">Used cars</a><a href="/financiacion-coches-fuerteventura/">Finance</a><a href="#contacto" data-go="contacto">Ask us anything</a></div>
@@ -1710,13 +1712,13 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
     <p><b>Used cars in</b> <a href="/coches-segunda-mano-corralejo">Corralejo</a> <a href="/coches-segunda-mano-la-oliva">La Oliva</a> <a href="/coches-segunda-mano-puerto-del-rosario">Puerto del Rosario</a> <a href="/coches-segunda-mano-antigua">Antigua</a> <a href="/coches-segunda-mano-caleta-de-fuste">Caleta de Fuste</a> <a href="/coches-segunda-mano-gran-tarajal">Gran Tarajal</a> <a href="/coches-segunda-mano-costa-calma">Costa Calma</a> <a href="/coches-segunda-mano-morro-jable">Morro Jable</a></p>
     <p><b>Car repairs for</b> <a href="/taller-mecanico-corralejo">Corralejo</a> <a href="/taller-mecanico-la-oliva">La Oliva</a> <a href="/taller-mecanico-puerto-del-rosario">Puerto del Rosario</a> <a href="/taller-mecanico-antigua">Antigua</a> <a href="/taller-mecanico-caleta-de-fuste">Caleta de Fuste</a> <a href="/taller-mecanico-gran-tarajal">Gran Tarajal</a> <a href="/taller-mecanico-costa-calma">Costa Calma</a> <a href="/taller-mecanico-morro-jable">Morro Jable</a></p>
   </nav>
-  <div class="wrap legal"><span>© <span id="yr"></span> Volcano Cars · <a href="/aviso-legal">Legal notice</a> · <a href="/condiciones">Terms and warranty</a> · <a href="/privacidad#en">Privacy</a> · <a href="/cookies#en">Cookies</a> · <button type="button" id="ck-open">Cookie settings</button></span><span>Made in Fuerteventura, land of volcanoes</span></div>
+  <div class="wrap legal"><span>© <span id="yr"></span> Volcano Cars · <a href="/aviso-legal">Legal notice</a> · <a href="/condiciones">Terms and warranty</a> · <a href="/privacidad#en">Privacy</a> · <a href="/cookies#en">Cookies</a> · <a href="https://www.instagram.com/volcanocars_antigua/" target="_blank" rel="noopener me">Instagram</a> · <a href="https://www.facebook.com/share/1KYczmU7be/" target="_blank" rel="noopener me">Facebook</a> · <button type="button" id="ck-open">Cookie settings</button></span><span>Made in Fuerteventura, land of volcanoes</span></div>
 </footer>
 
 <div class="barra-cita" id="barra-cita" hidden><span id="barra-txt"></span><button class="btn btn-rosso" type="button" id="barra-btn">Book <svg class="arr" width="16" height="16"><use href="#i-arrow"/></svg></button></div>
 
 <div class="ck" id="ck" role="dialog" aria-labelledby="ck-t" hidden>
-  <p id="ck-t"><b>Can we measure our ads?</b> We only use Google Ads cookies to see which ads bring us customers. The website works just the same without them. <a href="/cookies#en">More information</a>.</p>
+  <p id="ck-t"><b>Can we measure our ads?</b> We only use Google cookies (Analytics and Ads) to count visits and see which ads bring us customers. The website works just the same without them. <a href="/cookies#en">More information</a>.</p>
   <div class="ck-acts"><button class="btn btn-ink" type="button" id="ck-no">Reject</button><button class="btn btn-ink" type="button" id="ck-yes">Accept</button></div>
 </div>
 
@@ -1760,7 +1762,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
         </div>
         <div class="agenda" id="b-agenda" aria-live="polite"></div>
         <input class="hp" type="text" name="web" id="b-web" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <label class="consent"><input type="checkbox" id="b-ok" required><span>I agree that Volcano Cars may use these details only to answer my request. I can ask for them to be deleted at any time. <a href="/privacidad#en" target="_blank" rel="noopener">Privacy policy</a>.</span></label>
+        <label class="consent"><input type="checkbox" id="b-ok" required><span>I agree that MAILIN Y YERAY SL (Volcano Cars) may use these details only to answer my request. I can access, correct or ask for them to be deleted at any time. <a href="/privacidad#en" target="_blank" rel="noopener">Privacy policy</a>.</span></label>
         <div class="form-err" id="b-err" role="alert" hidden></div>
         <button class="btn btn-rosso" type="submit" id="b-btn"><span id="b-btn-t">Confirm viewing</span> <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></button>
         <div class="ok-msg" id="book-ok" role="status" hidden>Done! We'll call you during opening hours to arrange it.</div>
@@ -1774,9 +1776,9 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
    DATOS DE LA EMPRESA
    ===================================================================== */
 const EMPRESA = {
-  telefono: "677 96 03 48",          // se muestra así
-  telefonoLlamar: "+34677960348",    // para el botón de llamar
-  whatsapp: "34677960348",           // solo números, con prefijo 34
+  telefono: "643 56 60 98",          // se muestra así
+  telefonoLlamar: "+34643566098",    // para el botón de llamar
+  whatsapp: "34643566098",           // solo números, con prefijo 34
   email: "volcanocars2026@gmail.com",
   direccion: "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua, Las Palmas",
   horario: "Monday to Friday, 8:00 to 16:00, open all day. Closed Saturday and Sunday.",
@@ -1793,19 +1795,18 @@ const EMPRESA = {
    etiquetas de cada conversión. Mientras esté vacío, no se carga nada de
    Google y no aparece el aviso de cookies.
    ===================================================================== */
-const ADS = {
-  id: "",                 // ej. "AW-123456789"
-  conv: {
-    solicitud: "",        // formulario enviado (cita coche, taller o tasación)
-    whatsapp: "",         // clic en un botón de WhatsApp
-    llamada: ""           // clic en «Llamar» desde el móvil
-  }
-};
+// Los códigos de Google (Analytics y Ads) se ponen en UN solo sitio: /medicion.js
+const MED = window.VC_MED || { ga4: "", ads: "", conv: {} };
+const ADS = { id: MED.ads || MED.ga4 || "", ads: MED.ads || "", ga4: MED.ga4 || "", conv: MED.conv || {} };
 const IDIOMA = document.documentElement.lang === "en" ? "en" : "es";
 
 /* Los coches se cargan solos desde el panel de administración (/admin). */
 const API = "/api/coches";
 const FOTO = k => String(k).startsWith("/") ? k : "/api/fotos/" + encodeURIComponent(k);
+// Foto redimensionada y en WebP por el CDN de imágenes de Netlify; si fallara, se vuelve a la original (ver «error» más abajo)
+const FOTOW = (k,w) => "/.netlify/images?url=" + encodeURIComponent(FOTO(k)) + "&w=" + w + "&fm=webp&q=72";
+const IMGW = (k,w,sizes) => `src="${FOTOW(k,w)}" srcset="${FOTOW(k,Math.round(w/2))} ${Math.round(w/2)}w, ${FOTOW(k,w)} ${w}w" sizes="${sizes||"(max-width: 700px) 100vw, 400px"}" data-o="${FOTO(k)}"`;
+document.addEventListener("error",e=>{ const t=e.target; if(t&&t.tagName==="IMG"&&t.dataset&&t.dataset.o&&String(t.src).includes("/.netlify/images")){ t.removeAttribute("srcset"); t.src=t.dataset.o; } },true);
 
 /* Copia de seguridad: solo se muestra si el servidor no responde. Los coches se gestionan en /admin. */
 const COCHES_FIJOS = [
@@ -1871,7 +1872,7 @@ function diasVenta(c){
   return d < 1 ? "in under 24 h" : "in " + Math.ceil(d) + (Math.ceil(d)===1?" day":" days");
 }
 function soldCard(c){
-  const pic = c.fotos && c.fotos.length ? `<img src="${FOTO(c.fotos[0])}" alt="${esc(c.marca+" "+c.modelo)}, sold" loading="lazy">` : SILUETA;
+  const pic = c.fotos && c.fotos.length ? `<img ${IMGW(c.fotos[0],640)} alt="${esc(c.marca+" "+c.modelo)}, sold" loading="lazy">` : SILUETA;
   const en = diasVenta(c);
   return `<div class="car sold rv">
     <div class="car-img">${pic}<div class="stamp"><span><b>SOLD</b>${en?`<small>${en}</small>`:""}</span></div></div>
@@ -1881,7 +1882,7 @@ function soldCard(c){
       <div class="price-row num"><div class="price" style="color:var(--muted)">${eur(c.precio)}</div><div class="month">Sold${en?" "+en:""}</div></div>
     </div></div>`;
 }
-const GARANTIA_CHIP = `<span class="g-chip"><svg width="13" height="13"><use href="#i-shield"/></svg>${IDIOMA==="en"?"1-year warranty":"1 año de garantía"}</span>`;
+const GARANTIA_CHIP = `<span class="g-chip"><svg width="13" height="13"><use href="#i-shield"/></svg>${IDIOMA==="en"?"12-month legal warranty":"12 meses de garantía legal"}</span>`;
 const ENTREGA_CHIP = `<span class="g-chip d-chip"><svg width="14" height="14"><use href="#i-truck"/></svg>${EN?"Free home delivery":"Entrega gratis"}</span>`;
 
 /* Cuándo se publicó (fecha real del panel). Pasado un mes no se muestra. */
@@ -1907,7 +1908,7 @@ function sello360(c){
     `<video class="c-vid${c.video.tipo==="esferico"?" esf":""}" muted loop playsinline preload="none" data-src="${VSRC(c.video.key)}" aria-hidden="true" tabindex="-1"></video><span class="c-prog"></span>`;
 }
 function card(c){
-  const pic = c.fotos && c.fotos.length ? `<img src="${FOTO(c.fotos[0])}" alt="${esc(c.marca+" "+c.modelo)}" loading="lazy">` : (c.video&&c.video.poster ? `<img src="${FOTO(c.video.poster)}" alt="${esc(c.marca+" "+c.modelo)}" loading="lazy">` : SILUETA);
+  const pic = c.fotos && c.fotos.length ? `<img ${IMGW(c.fotos[0],640)} alt="${esc(c.marca+" "+c.modelo)}" loading="lazy">` : (c.video&&c.video.poster ? `<img src="${FOTO(c.video.poster)}" alt="${esc(c.marca+" "+c.modelo)}" loading="lazy">` : SILUETA);
   const nf = c.fotos && c.fotos.length > 1 ? `<span class="badge cnt">${c.fotos.length} photos</span>` : "";
   return `<button class="car lux" type="button" data-id="${esc(c.id)}" aria-label="View ${esc(c.marca+" "+c.modelo)}${c.video?(EN?", with 360° video":", con vídeo 360°"):""}">
     <div class="car-img">${pic}${badges(c)}${nf}${badgeOferta(c)}${sello360(c)}</div>
@@ -1917,7 +1918,7 @@ function card(c){
       ${senales(c)}
       ${demanda(c)}
       <div class="perks">${GARANTIA_CHIP}${c.estado!=="vendido"?ENTREGA_CHIP:""}</div>
-      <div class="price-row num"><div><div class="price">${eur(c.precio)}</div><div class="month">Final price · taxes incl.</div>${cuotaTarjeta(c)}</div><span class="ver">${IDIOMA==="en"?"View":"Ver"} <svg width="16" height="16"><use href="#i-arrow"/></svg></span></div>
+      <div class="price-row num"><div>${rebajaTxt(c)}<div class="price">${eur(c.precio)}</div><div class="month">Final price · taxes incl.</div>${cuotaTarjeta(c)}</div><span class="ver">${IDIOMA==="en"?"View":"Ver"} <svg width="16" height="16"><use href="#i-arrow"/></svg></span></div>
     </div></button>`;
 }
 const vacio = `<div class="empty" style="grid-column:1/-1"><b style="color:var(--ink)">New cars are on their way.</b><br>Message us on <a href="${wa("Hi Volcano Cars, I'm looking for a car: ")}" target="_blank" rel="noopener">WhatsApp</a> and we'll let you know as soon as one comes in that suits you.</div>`;
@@ -2133,7 +2134,7 @@ function showFoto(i, auto=false){
       if(auto){ const p=el.play(); if(p && p.catch) p.catch(()=>{}); }
     }
   } else {
-    $("#m-img").innerHTML=`<img src="${FOTO(it)}" alt="${esc(gal.c.marca+" "+gal.c.modelo)}, photo ${nfo} of ${nf}">`+badges(gal.c)+(nf>1?`<span class="badge cnt num">${nfo} / ${nf}</span>`:"");
+    $("#m-img").innerHTML=`<img ${IMGW(it,1200,"(max-width: 900px) 100vw, 900px")} alt="${esc(gal.c.marca+" "+gal.c.modelo)}, photo ${nfo} of ${nf}">`+badges(gal.c)+(nf>1?`<span class="badge cnt num">${nfo} / ${nf}</span>`:"");
   }
   $("#m-360").hidden = !gal.c.video || esVid(it);
   $("#m-prev").hidden=$("#m-next").hidden=f.length<2;
@@ -2224,12 +2225,12 @@ document.addEventListener("click",e=>{
   gal={fotos: c.video ? [{v:1}, ...fotos] : fotos.slice(), i:0, c};
   $("#m-thumbs").innerHTML=gal.fotos.map((k,j)=>esVid(k)
     ? `<button type="button" class="tv" data-j="${j}" aria-label="${EN?"360° video":"Vídeo 360°"}">${c.video.poster?`<img src="${FOTO(c.video.poster)}" alt="" loading="lazy">`:""}</button>`
-    : `<button type="button" data-j="${j}" aria-label="Photo ${j+(c.video?0:1)}"><img src="${FOTO(k)}" alt="" loading="lazy"></button>`).join("");
+    : `<button type="button" data-j="${j}" aria-label="Photo ${j+(c.video?0:1)}"><img ${IMGW(k,240,"120px")} alt="" loading="lazy"></button>`).join("");
   showFoto(c.video && fotos.length ? 1 : 0);
   const pub = c.estado==="disponible" ? publicado(c) : null;
   $("#m-added").hidden=!pub; if(pub) $("#m-added").innerHTML=`<svg width="16" height="16"><use href="#i-clock"/></svg>${pub.largo}`;
   $("#m-title").textContent=c.marca+" "+c.modelo; $("#m-ver").textContent=c.version||"";
-  $("#m-price").textContent=eur(c.precio); $("#m-month").textContent=c.estado==="reservado"?"Reserved":"Final price, taxes included";
+  $("#m-price").innerHTML=(c.rebaja&&c.rebaja.antes?`<s class="antes">${eur(c.rebaja.antes)}</s> `:"")+eur(c.precio); $("#m-month").textContent=c.estado==="reservado"?"Reserved":"Final price, taxes included";
   const rows=[["Year",c.anio],["Mileage",km(c.km)],["Fuel",T(c.combustible)],["Gearbox",T(c.cambio)],["Power",c.cv?c.cv+" hp":""],["Doors",c.puertas],["Colour",c.color],["DGT label",c.etiqueta]].filter(r=>r[1]);
   $("#m-specs").innerHTML=rows.map(([a,b])=>`<div><span>${a}</span><b>${esc(b)}</b></div>`).join("");
   $("#m-desc").textContent=c.descripcion||""; $("#m-desc").hidden=!c.descripcion;
@@ -2507,7 +2508,7 @@ document.querySelectorAll("[data-hours]").forEach(e=>e.textContent=EMPRESA.horar
 document.querySelectorAll("[data-hours-short]").forEach(e=>e.textContent=EMPRESA.horarioCorto);
 let mapaCargado=false;
 function cargarMapa(){ if(mapaCargado) return; mapaCargado=true; const f=document.createElement("iframe"); f.title="Mapa: Volcano Cars en Antigua"; f.loading="lazy"; f.referrerPolicy="no-referrer-when-downgrade";
-  f.src="https://www.google.com/maps?q="+encodeURIComponent(EMPRESA.mapaEmbed)+"&ll="+EMPRESA.mapaCoords+"&z=16&output=embed"; $("#c-map-load").replaceWith(f); }
+  f.src="https://www.google.com/maps?q="+EMPRESA.mapaCoords+"&z=16&output=embed"; /* por coordenadas: con la dirección, Google ponía el punto en el centro de Antigua */ $("#c-map-load").replaceWith(f); }
 $("#c-map-btn").onclick=cargarMapa;
 
 /* abierto / cerrado (hora de Canarias) */
@@ -2539,7 +2540,7 @@ const TRK=(()=>{
   return (t,a="",b="")=>{
     if(off) return;
     const d={t,a:String(a).slice(0,64),b:String(b).slice(0,20),l:IDIOMA,w:innerWidth};
-    if(entrada){ entrada=false; d.e=1; d.r=document.referrer||""; d.us=q.get("utm_source")||""; d.um=q.get("utm_medium")||""; d.g=q.get("gclid")?1:0; }
+    if(entrada){ entrada=false; d.e=1; d.r=document.referrer||""; d.us=q.get("utm_source")||""; d.uc=q.get("utm_campaign")||""; d.um=q.get("utm_medium")||""; d.g=q.get("gclid")?1:0; }
     const body=JSON.stringify(d);
     try{ if(navigator.sendBeacon && navigator.sendBeacon("/api/ev",new Blob([body],{type:"application/json"}))) return; }catch(_){}
     fetch("/api/ev",{method:"POST",body,keepalive:true,headers:{"content-type":"application/json"}}).catch(()=>{});
@@ -2562,9 +2563,9 @@ const VIEWS=["inicio","comprar","taller","contacto"];
 const RUTAS = IDIOMA!=="en";
 const rutaDe = v => v==="inicio" ? "/" : "/"+v;
 const META_VISTA = {
-  inicio:["Volcano Cars · Coches de ocasión con 1 año de garantía, chapa y pintura y mecánica en Fuerteventura"],
-  comprar:["Coches de ocasión en Fuerteventura con 1 año de garantía | Volcano Cars","Coches de segunda mano revisados en nuestro taller de Antigua, con 12 meses de garantía y entrega gratis en toda Fuerteventura. Precios desde 2.500 €."],
-  taller:["Taller mecánico, chapa y pintura en Antigua, Fuerteventura | Volcano Cars","Pide cita o presupuesto sin compromiso en nuestro taller de Antigua: mecánica, chapa y pintura, pre-ITV. Garantía de reparación y fecha de entrega por escrito."],
+  inicio:["Volcano Cars · Coches de ocasión con 12 meses de garantía legal, chapa y pintura y mecánica en Fuerteventura"],
+  comprar:["Coches de ocasión en Fuerteventura con 12 meses de garantía legal | Volcano Cars","Coches de segunda mano revisados en nuestro taller de Antigua, con 12 meses de garantía legal y entrega gratis en toda Fuerteventura. Precios desde 2.500 €."],
+  taller:["Taller mecánico, chapa y pintura en Antigua, Fuerteventura | Volcano Cars","Pide cita o presupuesto sin compromiso en nuestro taller de Antigua: mecánica, chapa y pintura, pre-ITV. Presupuesto y fecha de entrega por escrito."],
   contacto:["Contacto y cómo llegar | Volcano Cars, Antigua (Fuerteventura)","Teléfono, WhatsApp, horario y mapa de Volcano Cars en el Polígono Industrial de Antigua, Fuerteventura."]
 };
 const META0 = { d:(document.querySelector('meta[name="description"]')||{}).content||"" };
@@ -2619,12 +2620,12 @@ const head=$("#top"); const onScroll=()=>head.classList.toggle("scrolled",scroll
 addEventListener("scroll",onScroll,{passive:true}); onScroll();
 
 /* ---------- Google Ads + aviso de cookies (solo si ADS.id está puesto) ---------- */
-function medir(k){ try{ if(window.gtag && ADS.id && ADS.conv[k]) window.gtag("event","conversion",{send_to:ADS.id+"/"+ADS.conv[k]}); }catch(_){} }
+function medir(k){ try{ if(!window.gtag) return; if(ADS.ga4) window.gtag("event",{solicitud:"generate_lead",whatsapp:"click_whatsapp",llamada:"click_llamar"}[k]||k,{page_path:location.pathname}); if(ADS.ads && ADS.conv[k]) window.gtag("event","conversion",{send_to:ADS.ads+"/"+ADS.conv[k]}); }catch(_){} }
 function cargarAds(){
   if(!ADS.id || window.gtag) return;
   window.dataLayer=window.dataLayer||[]; window.gtag=function(){ window.dataLayer.push(arguments); };
-  window.gtag("consent","default",{ad_storage:"granted",ad_user_data:"granted",ad_personalization:"denied",analytics_storage:"denied"});
-  window.gtag("js",new Date()); window.gtag("config",ADS.id);
+  window.gtag("consent","default",{ad_storage:"granted",ad_user_data:"granted",ad_personalization:"denied",analytics_storage:"granted"});
+  window.gtag("js",new Date()); if(ADS.ga4) window.gtag("config",ADS.ga4); if(ADS.ads) window.gtag("config",ADS.ads);
   const sc=document.createElement("script"); sc.async=true; sc.src="https://www.googletagmanager.com/gtag/js?id="+encodeURIComponent(ADS.id); document.head.appendChild(sc);
 }
 const CK="mz_cookies";
@@ -2845,6 +2846,9 @@ function finMotivo(c){
 const entradaMax=c=>Math.max(0,Math.floor(Math.min(c.precio*0.8,c.precio-FIN.min)/100)*100);
 const entradaIni=c=>Math.min(entradaMax(c),Math.round(c.precio*FIN.entradaDef/10000)*100);
 function desde(c){ if(finMotivo(c)) return null; return simular(c.precio,entradaIni(c),Math.max(...FIN.plazos)); }
+// Rebaja: solo se tacha el precio anterior si es el más bajo de los 30 días previos (lo calcula el servidor)
+function rebajaTxt(c){ const r=c.rebaja; if(!r||c.estado==="vendido") return "";
+  return r.antes?`<div class="rebaja"><b>${L("Rebajado","Reduced")} −${String(Math.round((1-c.precio/r.antes)*100))} %</b><s>${eur(r.antes)}</s></div>`:`<div class="rebaja"><b>${L("Nuevo precio","New price")}</b></div>`; }
 function cuotaTarjeta(c){
   if(!FIN||!FIN.enTarjeta) return ""; const s=desde(c); if(!s) return "";
   return `<div class="c-fin">${L("o desde","or from")} <b>${eur(Math.ceil(s.q))}${L("/mes","/month")}</b>*</div>`;
@@ -2896,7 +2900,7 @@ function finAbrir(c){
         </div>
         <div class="field"><label for="fin-mail">${L("Email (opcional)","Email (optional)")}</label><input class="input" id="fin-mail" type="email" autocomplete="email"></div>
         <input class="hp" type="text" name="web" id="fin-web" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <label class="consent"><input type="checkbox" id="fin-ok"><span>${L("Acepto que Volcano Cars use estos datos para estudiar mi financiación y que los comparta solo con la entidad financiera que la estudie. Puedo pedir que los borren cuando quiera.","I agree that Volcano Cars may use this data to assess my finance and share it only with the lender that assesses it. I can ask for it to be deleted at any time.")} <a href="/privacidad#en" target="_blank" rel="noopener">${L("Política de privacidad","Privacy policy")}</a>.</span></label>
+        <label class="consent"><input type="checkbox" id="fin-ok"><span>${L("Acepto que MAILIN Y YERAY SL (Volcano Cars) use estos datos para estudiar mi financiación y que los comparta solo con la entidad financiera que la estudie. Puedo pedir que los borren cuando quiera.","I agree that Volcano Cars may use this data to assess my finance and share it only with the lender that assesses it. I can ask for it to be deleted at any time.")} <a href="/privacidad#en" target="_blank" rel="noopener">${L("Política de privacidad","Privacy policy")}</a>.</span></label>
         <div class="form-err" id="fin-err" role="alert" hidden></div>
         <button class="btn btn-rosso" type="submit" id="fin-btn">${L("Enviar pre-estudio","Send pre-approval request")} <svg class="arr" width="18" height="18"><use href="#i-arrow"/></svg></button>
       </form>
@@ -2980,12 +2984,12 @@ const BOT=(()=>{
     menu:()=>dice(L("Claro, dime. Puedes escribir tu pregunta o elegir una opción:","Sure. Type your question or pick an option:"),MENU()),
     horario:()=>dice(`<b>${esc(estado().txt)}</b>\n${esc(EMPRESA.horario)}`,[btn("donde",L("Cómo llegar","Directions")),btn("urgente",L("Presupuesto urgente","Urgent quote")),...MAS()]),
     donde:()=>dice(L(`Estamos en <b>${esc(EMPRESA.direccion)}</b>, en Antigua, en el centro de la isla.`,`We're at <b>${esc(EMPRESA.direccion)}</b>, in Antigua, in the middle of the island.`),[`<a href="${MAPA}" target="_blank" rel="noopener" data-map>${L("Abrir en Google Maps","Open in Google Maps")}</a>`,btn("horario",L("Horario","Opening hours")),...MAS()]),
-    garantia:()=>dice(L(`<b>Coches:</b> 12 meses de garantía desde la entrega, revisados en nuestro taller.\n<b>Reparaciones:</b> 3 meses o 2.000 km, lo que llegue antes.\nPara usarla, escríbenos con tu contrato o factura y lo revisamos.`,`<b>Cars:</b> 12-month warranty from delivery, checked in our own workshop.\n<b>Repairs:</b> 3 months or 2,000 km, whichever comes first.\nTo use it, message us with your contract or invoice and we'll check it.`),
+    garantia:()=>dice(L(`<b>Coches:</b> 12 meses de garantía legal desde la entrega, revisados en nuestro taller.\nPara usarla, escríbenos con tu contrato o factura y lo revisamos.`,`<b>Cars:</b> 12-month legal warranty from delivery, checked in our own workshop.\nTo use it, message us with your contract or invoice and we'll check it.`),
       [`<a href="/condiciones" target="_blank" rel="noopener">${L("Ver condiciones","See terms")}</a>`,waB(L("Hola Volcano Cars, quiero consultar la garantía de mi coche. ","Hi Volcano Cars, I'd like to ask about my car's warranty. "),L("Consultar mi garantía","Ask about my warranty")),...MAS()]),
     coches:()=>{
       const disp=COCHES.filter(c=>c.estado==="disponible").slice(0,5);
       if(!disp.length) return dice(L("Ahora mismo estamos preparando coches nuevos. Dinos qué buscas y te avisamos en cuanto entre uno que encaje.","We're preparing new cars right now. Tell us what you're after and we'll let you know as soon as one comes in."),[waB(L("Hola Volcano Cars, busco un coche: ","Hi Volcano Cars, I'm looking for a car: "),L("Decir qué busco","Tell you what I want")),...MAS()]);
-      return dice(L(`Tenemos <b>${disp.length===1?"1 coche":disp.length+" coches"}</b> a la venta, todos revisados y con 1 año de garantía. Toca uno para ver fotos, calcular la cuota o reservar día y hora para verlo y probarlo:`,`We have <b>${disp.length===1?"1 car":disp.length+" cars"}</b> for sale, all checked and with a 1-year warranty. Tap one to see photos, work out the payment or book a day and time to see and test drive it:`),
+      return dice(L(`Tenemos <b>${disp.length===1?"1 coche":disp.length+" coches"}</b> a la venta, todos revisados y con 12 meses de garantía legal. Toca uno para ver fotos, calcular la cuota o reservar día y hora para verlo y probarlo:`,`We have <b>${disp.length===1?"1 car":disp.length+" cars"}</b> for sale, all checked and with a 12-month legal warranty. Tap one to see photos, work out the payment or book a day and time to see and test drive it:`),
         [...disp.map(c=>`<button type="button" class="b-car" data-car="${esc(c.id)}">${esc(c.marca+" "+c.modelo)} · ${esc(c.anio)}<span>${eur(c.precio)}</span></button>`),btn("vertodos",L("Ver todos y filtrar","See all and filter")),btn("asesor",L("Hablar con un asesor","Talk to an adviser"))]);
     },
     urgente:()=>{ espera="urgente"; return dice(L("Vamos rápido. Cuéntame en una frase qué le pasa al coche (y la matrícula si la tienes a mano):","Let's be quick. Tell me in one sentence what's wrong with the car (and the registration if you have it):")); },
@@ -3002,7 +3006,7 @@ const BOT=(()=>{
     entrega:()=>dice(L("Sí: una vez firmada la compra, <b>te llevamos el coche gratis</b> a cualquier punto de Fuerteventura, de Corralejo a Morro Jable, el día que tú elijas.","Yes: once the sale is signed, <b>we deliver the car free</b> anywhere on Fuerteventura, from Corralejo to Morro Jable, on the day you choose."),[btn("coches",L("Ver coches","See cars")),...MAS()]),
     vender:()=>dice(L("Ahora mismo no compramos coches: solo vendemos coches revisados y reparamos el tuyo en el taller.","We don't buy cars at the moment: we only sell checked cars and repair yours in the workshop."),[btn("coches",L("Ver coches a la venta","See cars for sale")),btn("irtaller",L("Taller","Workshop")),...MAS()]),
     ingles:()=>dice(L("Sí, atendemos en inglés. También tienes la web en inglés.","Yes, we speak English. The whole website is in English too."),[`<a href="${L("/en/","/")}">${L("English version","Versión en español")}</a>`,...MAS()]),
-    itv:()=>dice(L("Hacemos <b>pre-ITV</b>: revisamos el coche y lo dejamos listo para pasarla a la primera. Puedes reservarla online.","We do <b>pre-ITV (MOT) checks</b>: we inspect the car and get it ready to pass first time. You can book online."),[btn("irtaller",L("Reservar pre-ITV","Book a pre-ITV check"),"pri"),...MAS()]),
+    itv:()=>dice(L("Hacemos <b>pre-ITV</b>: revisamos el coche y reparamos lo necesario antes de que vayas a la estación. Puedes reservarla online.","We do <b>pre-ITV (MOT) checks</b>: we inspect the car and fix what is needed before you go to the test station. You can book online."),[btn("irtaller",L("Reservar pre-ITV","Book a pre-ITV check"),"pri"),...MAS()]),
     precio:()=>dice(L("Cada reparación depende del coche, así que te damos <b>presupuesto por escrito y gratis</b> antes de tocar nada. Mándanos fotos o cuéntanos qué le pasa:","Every repair depends on the car, so we give you a <b>free written quote</b> before touching anything. Send photos or tell us what's wrong:"),[btn("urgente",L("Pedir presupuesto","Get a quote"),"pri"),btn("irtaller",L("Reservar cita","Book")),...MAS()]),
     asesor:()=>{ const on=abierto(), q=ultimo?L(`Hola Volcano Cars, os escribo desde la web: ${ultimo}`,`Hi Volcano Cars, I'm writing from the website: ${ultimo}`):L("Hola Volcano Cars, tengo una consulta: ","Hi Volcano Cars, I have a question: ");
       return dice(on?L("Ahora estamos <b>abiertos</b>: un asesor te contesta en minutos.","We're <b>open</b> now: an adviser will reply within minutes."):L(`Ahora estamos cerrados (${esc(estado().txt.replace(/^Cerrado · /,""))}). Déjanos el mensaje y te contestamos a primera hora.`,`We're closed right now. Leave us a message and we'll reply first thing.`),

@@ -76,6 +76,9 @@ export default async (req: Request, context: Context) => {
   const b = t === "pv" ? entrada : limpio(e.b, 20);
   const key = `ev/${dia}/${hhmmss}~${crypto.randomUUID().slice(0, 6)}~${t}~${limpio(e.a, 64)}~${b}~${fuente}~${movil ? "m" : "d"}~${e.l === "en" ? "en" : "es"}~${vh}`;
   await store("analitica").set(key, "1");
+  // Campañas: la primera página de la visita trae utm_campaign → se apunta aparte para medir cada campaña
+  const camp = entrada ? limpio(String(e.uc || "").toLowerCase(), 40) : "";
+  if (camp) await store("analitica").set(`ev/${dia}/${hhmmss}~${crypto.randomUUID().slice(0, 6)}~cmp~${camp}~~${fuente}~${movil ? "m" : "d"}~${e.l === "en" ? "en" : "es"}~${vh}`, "1");
   return new Response(null, { status: 204 });
 };
 

@@ -11,9 +11,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,600..900&family=Figtree:wght@400;500;600;700&family=Titillium+Web:wght@600;700&display=swap">
+<link rel="stylesheet" href="/fonts/fuentes.css">
 <style>
 :root{
   --ground:#F2EFEA; --surface:#FFFFFF; --surface-2:#E9E5DF; --line:#DCD8D1; --ink:#1B1B1A; --muted:#67635D;
@@ -94,7 +92,7 @@ label.chk input{width:20px;height:20px;accent-color:var(--magma);flex-shrink:0;m
 .btn[disabled]{opacity:.6;cursor:wait}
 .b-magma{background:var(--magma);color:#fff;flex:1 1 220px}
 .b-ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
-.b-wa{background:#1F8B4C;color:#fff;flex:1 1 180px}
+.b-wa{background:#16794A;color:#fff;flex:1 1 180px}
 .b-ink{background:var(--ink);color:var(--ground);flex:1 1 140px}
 .err{color:var(--bad);font-weight:600;font-size:14.5px}
 /* fotos */
@@ -134,7 +132,7 @@ dialog button{position:fixed;top:14px;right:14px;width:44px;height:44px;border-r
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const TOKEN=(location.pathname.match(/\/s\/([A-Za-z0-9]{16})/)||[])[1]||new URLSearchParams(location.search).get("t")||"";
-const TEL="+34677960348", WA="34677960348";
+const TEL="+34643566098", WA="34643566098";
 let D=null, EN=false;
 const L=(es,en)=>EN?en:es;
 const eur=n=>Number(n||0).toLocaleString(EN?"en-GB":"es-ES",{minimumFractionDigits:2,maximumFractionDigits:2})+" €";
@@ -193,6 +191,7 @@ function pintar(){
     <div class="estado-now ${d.estado==="listo"||d.estado==="entregado"?"listo":""}"><span class="ic">${svg(d.estado)}</span><div><b>${esc(est[0])}</b><span>${esc(estTxt)}</span></div></div>
     ${d.entrega&&idx<5?`<div class="entrega"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5.5" width="16" height="14" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/></svg><span>${L("Entrega prevista:","Expected ready:")} <b>${esc(fechaL(d.entrega))}</b></span></div>`:""}
   </section>`;
+  if(d.estado==="entregado") h+=`<section class="card" style="text-align:center"><h2 class="sec-t" style="margin:0 0 6px">${L("¿Qué tal te hemos tratado?","How did we do?")}</h2><p style="margin:0 0 14px;opacity:.8">${L("Tu opinión ayuda a otros conductores de Fuerteventura a elegir taller. Es menos de un minuto.","Your review helps other drivers in Fuerteventura choose a garage. It takes less than a minute.")}</p><a class="btn" style="display:inline-flex;gap:8px;align-items:center;justify-content:center;background:#D94A26;color:#fff;border-radius:999px;padding:13px 22px;font-weight:700;text-decoration:none" href="https://g.page/r/Caeh6Wr6CwtNEBM/review" target="_blank" rel="noopener">★★★★★ ${L("Dejar mi reseña en Google","Leave a Google review")}</a></section>`;
   // presupuesto
   const p=d.presupuesto;
   if(p){

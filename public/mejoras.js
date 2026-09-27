@@ -17,7 +17,7 @@
   const L = (es, en) => (EN ? en : es);
   const $ = (s, r = document) => r.querySelector(s);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-  const EMP = typeof EMPRESA !== "undefined" ? EMPRESA : { telefono: "677 96 03 48", whatsapp: "34677960348", email: "volcanocars2026@gmail.com" };
+  const EMP = typeof EMPRESA !== "undefined" ? EMPRESA : { telefono: "643 56 60 98", whatsapp: "34643566098", email: "volcanocars2026@gmail.com" };
   const trk = (...a) => { try { if (typeof TRK === "function") TRK(...a); } catch (_) {} };
   const medirC = (k) => { try { if (typeof medir === "function") medir(k); } catch (_) {} };
   const ORIG = (typeof ORIGEN !== "undefined" && ORIGEN) || { landing: location.pathname, referrer: (document.referrer || "").slice(0, 300) };
@@ -69,7 +69,7 @@
       <ul class="al-why">
         <li>${ICO.ok}${L("Te enteras antes que nadie: los buenos coches duran poco", "You hear first: good cars go fast")}</li>
         <li>${ICO.ok}${L("Solo coches que encajan con lo que pides. Sin spam", "Only cars that match what you ask for. No spam")}</li>
-        <li>${ICO.ok}<span data-entrega>${L("Revisados, con 1 año de garantía y entrega gratis en toda la isla", "Checked, 1-year warranty and free delivery island-wide")}</span></li>
+        <li>${ICO.ok}<span data-entrega>${L("Revisados, con 12 meses de garantía legal y entrega gratis en toda la isla", "Checked, 12-month legal warranty and free delivery island-wide")}</span></li>
       </ul>
       <form class="al-f" novalidate>
         <fieldset class="al-set">
@@ -112,8 +112,8 @@
       if (e.target.name === "al-zona") {
         fallo("");
         const z = e.target.value, ent = $("[data-entrega]", card);
-        ent.textContent = z === "Otro pueblo" ? L("Revisados, con 1 año de garantía y entrega gratis en toda la isla", "Checked, 1-year warranty and free delivery island-wide")
-          : L(`Revisados, con 1 año de garantía y te lo llevamos gratis a ${z}`, `Checked, 1-year warranty and free delivery to ${z}`);
+        ent.textContent = z === "Otro pueblo" ? L("Revisados, con 12 meses de garantía legal y entrega gratis en toda la isla", "Checked, 12-month legal warranty and free delivery island-wide")
+          : L(`Revisados, con 12 meses de garantía legal y te lo llevamos gratis a ${z}`, `Checked, 12-month legal warranty and free delivery to ${z}`);
         trk("clk", "alerta-pueblo", z);
       }
     });
@@ -158,7 +158,7 @@
 
   // Tarjeta de contacto (.vcf) para guardar el número: WhatsApp solo entrega las listas de difusión a quien lo tiene guardado
   function vcard() {
-    const tel = "+" + String(EMP.whatsapp || "34677960348").replace(/[^\d]/g, "");
+    const tel = "+" + String(EMP.whatsapp || "34643566098").replace(/[^\d]/g, "");
     const v = ["BEGIN:VCARD", "VERSION:3.0", "N:;Volcano Cars;;;", "FN:Volcano Cars", "ORG:Volcano Cars", `TEL;TYPE=CELL,VOICE:${tel}`, EMP.email ? `EMAIL:${EMP.email}` : "", `URL:${location.origin}/`, "NOTE:Coches de ocasión y taller en Antigua (Fuerteventura). Avisos de coches nuevos por WhatsApp.", "END:VCARD"].filter(Boolean).join("\r\n");
     return URL.createObjectURL(new Blob([v], { type: "text/vcard;charset=utf-8" }));
   }

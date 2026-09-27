@@ -104,7 +104,7 @@ header.top::after {
 .btn-ghost:hover { border-color: var(--tx-acc); box-shadow: 0 0 18px -6px var(--tx-glow); }
 .btn-ink { background: #FFFFFF; color: #0E0E0F; }
 .btn-glass { border-color: var(--tx-line-2); }
-.btn-wa, .b-wa { background: linear-gradient(180deg, #25A35B, #1F8B4C); box-shadow: 0 12px 26px -12px rgba(37, 163, 91, .6); }
+.btn-wa, .b-wa { background: linear-gradient(180deg, #1B8449, #136B3E); box-shadow: 0 12px 26px -12px rgba(37, 163, 91, .6); }
 
 /* ---------------- tarjetas y paneles ---------------- */
 .car, .panel, .metodo, .rev, .hs-card, .lc-car, .otro, .info > div, .banda, .card, .ofe, .pg-card, .lc-card {
@@ -198,3 +198,6 @@ footer { background: #0B0B0C !important; border-top: 1px solid var(--tx-line); }
   html:root:not([data-theme="light"]) body { background: #FFFFFF; color: #1B1B1A; }
   html:root:not([data-theme="light"]) body::before { display: none; }
 }
+
+/* Contraste AA (texto blanco sobre naranja): botón de llamar de las páginas de servicios */
+.pg-call { background: #C63F1B; }

@@ -1,12 +1,12 @@
 # Genera las páginas legales (aviso legal, privacidad, cookies).
 # Rellena TITULAR y NIF abajo y vuelve a ejecutar:  python3 tools/legal.py
-TITULAR = "[NOMBRE Y APELLIDOS O RAZÓN SOCIAL]"
-NIF = "[NIF/CIF]"
-REGISTRO = "[Solo si es sociedad: Registro Mercantil de Las Palmas, tomo, folio, hoja]"
-REG_TALLER = "[Nº de inscripción del taller en el Registro Industrial de Canarias]"
+TITULAR = "MAILIN Y YERAY SL"
+NIF = "B93975647"
+REGISTRO = ""  # PENDIENTE: «Inscrita en el Registro Mercantil de …, tomo …, folio …, hoja …» (sale en la escritura o en la nota simple)
+REG_TALLER = ""  # PENDIENTE: nº de inscripción del taller en el Registro Industrial de Canarias
 DIRECCION = "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua, Las Palmas"
 EMAIL = "volcanocars2026@gmail.com"
-TEL = "677 96 03 48"
+TEL = "643 56 60 98"
 ACTUALIZADO = "26 de septiembre de 2026"
 
 import pathlib
@@ -20,13 +20,13 @@ HEAD = """<!doctype html>
 <title>{title} · Volcano Cars</title>
 <meta name="robots" content="noindex, follow">
 <style>
-:root{{--ground:#F2EFEA;--surface:#FFFFFF;--line:#DCD8D1;--ink:#1B1B1A;--muted:#6B655E;--rosso:#D9481C;color-scheme:light}}
-@media all{{:root:not([data-theme="light"]){{--ground:#0D0E10;--surface:#16181B;--line:#2A2E33;--ink:#F3EFE9;--muted:#A49E97;--rosso:#E0413F;color-scheme:dark}}}}
-:root[data-theme="dark"]{{--ground:#0D0E10;--surface:#16181B;--line:#2A2E33;--ink:#F3EFE9;--muted:#A49E97;--rosso:#E0413F;color-scheme:dark}}
+:root{{--ground:#F2EFEA;--surface:#FFFFFF;--line:#DCD8D1;--ink:#1B1B1A;--muted:#6B655E;--rosso:#D9481C;--enlace:#B83A12;color-scheme:light}}
+@media all{{:root:not([data-theme="light"]){{--ground:#0D0E10;--surface:#16181B;--line:#2A2E33;--ink:#F3EFE9;--muted:#A49E97;--rosso:#E0413F;--enlace:#FF8A5C;color-scheme:dark}}}}
+:root[data-theme="dark"]{{--ground:#0D0E10;--surface:#16181B;--line:#2A2E33;--ink:#F3EFE9;--muted:#A49E97;--rosso:#E0413F;--enlace:#FF8A5C;color-scheme:dark}}
 *{{box-sizing:border-box}}
 body{{margin:0;background:var(--ground);color:var(--ink);font:16.5px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}}
 .wrap{{max-width:760px;margin:0 auto;padding:32px 16px 80px}}
-a{{color:var(--rosso)}}
+a{{color:var(--enlace)}}
 .back{{display:inline-block;margin-bottom:28px;font-weight:600;text-decoration:none}}
 h1{{font-size:clamp(28px,6vw,40px);line-height:1.1;margin:0 0 6px}}
 .upd{{color:var(--muted);margin:0 0 32px;font-size:14px}}
@@ -46,7 +46,9 @@ th,td{{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vert
 <p class="upd">Última actualización: {upd}</p>
 """
 FOOT = """
+<p style="margin-top:48px;font-size:14px;color:var(--muted)"><a href="/aviso-legal">Aviso legal</a> · <a href="/privacidad">Privacidad</a> · <a href="/cookies">Cookies</a> · <a href="/condiciones">Condiciones</a> · <a href="/cookies" data-ck-open>Configurar cookies</a></p>
 </main>
+<script src="/medicion.js" defer></script>
 </body>
 </html>
 """
@@ -57,8 +59,8 @@ TITULAR_BOX = f"""<div class="box">
 <b>Nombre comercial:</b> Volcano Cars<br>
 <b>Domicilio:</b> {DIRECCION}<br>
 <b>Email:</b> <a href="mailto:{EMAIL}">{EMAIL}</a> · <b>Teléfono:</b> {TEL}<br>
-<b>Taller:</b> {REG_TALLER}<br>
-<small>{REGISTRO}</small>
+{f"<b>Registro Industrial de Canarias (taller):</b> {REG_TALLER}<br>" if REG_TALLER else ""}
+{f"<small>{REGISTRO}</small>" if REGISTRO else ""}
 </div>"""
 
 aviso = HEAD.format(title="Aviso legal", upd=ACTUALIZADO) + f"""
@@ -69,7 +71,7 @@ aviso = HEAD.format(title="Aviso legal", upd=ACTUALIZADO) + f"""
 <p>Esta web informa sobre los servicios de taller (chapa y pintura, mecánica rápida) y sobre los vehículos de ocasión que vende Volcano Cars en Antigua, Fuerteventura, y permite pedir presupuesto, cita o tasación.</p>
 
 <h2>Precios y vehículos</h2>
-<p>La información de cada vehículo (fotos, kilómetros, equipamiento y precio) se publica con la mayor exactitud posible. Los precios mostrados son precios finales para el comprador, con todos los impuestos incluidos. Si hubiera un error tipográfico evidente, se avisará antes de firmar y prevalecerá lo firmado en el contrato de compraventa. La publicación de un vehículo no supone una reserva: la disponibilidad se confirma en el momento del contacto. Esta web no vende a distancia: las compraventas y reparaciones se contratan en nuestras instalaciones.</p>
+<p>La información de cada vehículo (fotos, kilómetros, equipamiento y precio) se publica con la mayor exactitud posible. Los precios mostrados son precios finales para el comprador, con todos los impuestos incluidos (IGIC). Si hubiera un error tipográfico evidente, se avisará antes de firmar y prevalecerá lo firmado en el contrato de compraventa. La publicación de un vehículo no supone una reserva: la disponibilidad se confirma en el momento del contacto. Los coches y las reparaciones se contratan en nuestras instalaciones, con contrato o presupuesto por escrito. Por la web solo se puede pedir cita, presupuesto o información, y hacer la reserva online de 50 € de un coche, que es siempre reembolsable (ver <a href="/condiciones#reserva">Condiciones</a>).</p>
 
 <h2>Garantía</h2>
 <p>Los vehículos de ocasión vendidos a consumidores tienen una garantía de 12 meses desde la entrega y las reparaciones del taller, de 3 meses o 2.000 km. Todos los detalles están en <a href="/condiciones">Condiciones de venta, taller y garantía</a>. Hay hojas de reclamaciones a disposición de los clientes en el taller.</p>
@@ -78,13 +80,22 @@ aviso = HEAD.format(title="Aviso legal", upd=ACTUALIZADO) + f"""
 <p>Los textos, fotografías, logotipos y el diseño de esta web pertenecen a Volcano Cars o se usan con permiso. No se pueden copiar ni reutilizar sin autorización.</p>
 
 <h2>Reseñas</h2>
-<p>Las reseñas de la web son una selección copiada literalmente de nuestra ficha pública de Google Maps (algunas recortadas; en la versión inglesa, traducidas). No hemos cambiado su contenido. No podemos verificar que cada autor haya sido cliente; Google publica las opiniones de cualquier usuario con cuenta. Todas las reseñas, también las negativas, pueden consultarse en Google Maps.</p>
+<p>Las reseñas de la web son una selección copiada literalmente de nuestra ficha pública de Google Maps (algunas recortadas; en la versión inglesa, traducidas). No hemos cambiado su contenido. No podemos verificar que cada autor haya sido cliente; Google publica las opiniones de cualquier usuario con cuenta. Todas las reseñas, también las negativas, pueden consultarse en Google Maps. No ofrecemos descuentos, regalos ni ninguna ventaja a cambio de reseñas, y no publicamos reseñas escritas por nosotros.</p>
+
+<h2>Uso de la web</h2>
+<p>Puedes usar esta web para informarte y contactar con nosotros. No está permitido usarla para fines ilícitos, enviar información falsa en nombre de otra persona ni intentar acceder a partes privadas (como el panel de gestión). Podemos cambiar los contenidos, los precios y la disponibilidad de los coches en cualquier momento; lo que vale es lo firmado en el contrato o en el presupuesto.</p>
+
+<h2>Accesibilidad</h2>
+<p>Queremos que cualquier persona pueda usar esta web: se puede navegar con el teclado, las imágenes tienen texto alternativo, los formularios tienen etiquetas y los colores cumplen el contraste recomendado (pautas WCAG 2.1, nivel AA). Si encuentras algo que no puedes usar, escríbenos a <a href="mailto:{EMAIL}">{EMAIL}</a> o llámanos al {TEL} y te atendemos por otra vía mientras lo arreglamos.</p>
 
 <h2>Responsabilidad</h2>
 <p>Volcano Cars no se hace responsable de los contenidos de webs de terceros a las que se enlaza (Google Maps, WhatsApp) ni de interrupciones técnicas ajenas a su control.</p>
 
 <h2>Legislación</h2>
 <p>Esta web se rige por la legislación española. Para cualquier controversia con consumidores serán competentes los juzgados del domicilio del consumidor.</p>
+
+<h2>Reclamaciones y resolución de conflictos</h2>
+<p>Si algo no ha ido bien, escríbenos a <a href="mailto:{EMAIL}">{EMAIL}</a> o pide en el taller una hoja de reclamaciones oficial del Gobierno de Canarias. Si no llegamos a un acuerdo, puedes acudir a la Dirección General de Comercio y Consumo del Gobierno de Canarias, a la oficina de consumo de tu ayuntamiento o solicitar un arbitraje de consumo; si lo pides, te diremos si aceptamos someternos a él.</p>
 """ + FOOT
 
 priv = HEAD.format(title="Política de privacidad", upd=ACTUALIZADO) + f"""
@@ -100,13 +111,14 @@ priv = HEAD.format(title="Política de privacidad", upd=ACTUALIZADO) + f"""
 <p>Solo para responder a tu solicitud y gestionar tu servicio: darte presupuesto, confirmar tu cita o tu visita para ver un coche, y, si dejas tu coche en el taller, enseñarte cómo va la reparación y el presupuesto en un enlace privado que solo tienes tú. Guardamos un registro de las gestiones que hacemos contigo (llamadas, mensajes, presupuestos) para atenderte bien. No te enviaremos publicidad salvo que te apuntes a los avisos de coches nuevos o a los avisos de ITV (ver más abajo), y no tomamos decisiones automatizadas sobre ti.</p>
 
 <h2>Base legal</h2>
-<p>Tu consentimiento, que das al marcar la casilla del formulario (art. 6.1.a del RGPD), y la aplicación de medidas precontractuales que tú solicitas (art. 6.1.b del RGPD). Puedes retirar el consentimiento cuando quieras, sin que afecte a lo tratado antes.</p>
+<p>Tu consentimiento, que das al marcar la casilla del formulario (art. 6.1.a del RGPD), y la aplicación de medidas precontractuales que tú solicitas (art. 6.1.b del RGPD). Si llegas a ser cliente, el contrato de compraventa o de reparación (art. 6.1.b) y el cumplimiento de nuestras obligaciones legales de facturación y de la normativa de talleres (art. 6.1.c). Puedes retirar el consentimiento cuando quieras, sin que afecte a lo tratado antes.</p>
+<p>Solo pedimos los datos imprescindibles para cada gestión: los campos que no hacen falta son opcionales. La web no está dirigida a menores de 14 años.</p>
 
 <h2>Cuánto tiempo los guardamos</h2>
 <p>Hasta 2 años desde tu solicitud; después se borran automáticamente. Si llegas a ser cliente (compra o reparación), los datos de la factura y del contrato se conservan el tiempo que exigen las leyes fiscales y mercantiles.</p>
 
 <h2>Quién más puede verlos</h2>
-<p>No cedemos tus datos a nadie, salvo a la entidad financiera en el caso descrito más abajo y solo si nos lo autorizas. Para que la web funcione usamos proveedores que actúan por cuenta nuestra: <b>Netlify, Inc.</b> (alojamiento de la web y almacenamiento de las solicitudes, con garantías del Marco de Privacidad de Datos UE-EE. UU. y cláusulas contractuales tipo) y <b>Resend</b> (Plus Five Five, Inc.), que nos reenvía cada solicitud a nuestro correo interno para poder contestarte enseguida, con cláusulas contractuales tipo. Si decides enviarnos el mensaje por <b>WhatsApp</b>, ese envío lo gestiona WhatsApp Ireland Ltd. según sus propias condiciones. Si aceptas las cookies de medición, <b>Google Ireland Ltd.</b> recibe los datos descritos en la <a href="/cookies">política de cookies</a>. Para mostrar los tipos de letra, tu navegador los descarga de <b>Google Fonts</b>, que recibe tu dirección IP (no instala cookies). El mapa de Google Maps solo se carga si pulsas «Ver el mapa aquí».</p>
+<p>No cedemos tus datos a nadie, salvo a la entidad financiera en el caso descrito más abajo y solo si nos lo autorizas. Para que la web funcione usamos proveedores que actúan por cuenta nuestra: <b>Netlify, Inc.</b> (alojamiento de la web y almacenamiento de las solicitudes, con garantías del Marco de Privacidad de Datos UE-EE. UU. y cláusulas contractuales tipo) y <b>Resend</b> (Plus Five Five, Inc.), que nos reenvía cada solicitud a nuestro correo interno para poder contestarte enseguida, con cláusulas contractuales tipo. Si decides enviarnos el mensaje por <b>WhatsApp</b>, ese envío lo gestiona WhatsApp Ireland Ltd. según sus propias condiciones. Si aceptas las cookies de medición, <b>Google Ireland Ltd.</b> recibe los datos descritos en la <a href="/cookies">política de cookies</a>. Los tipos de letra se sirven desde nuestro propio servidor: tu navegador no los pide a Google. El mapa de Google Maps solo se carga si pulsas «Ver el mapa aquí».</p>
 <h2>Reserva online, lista de espera y presupuesto por foto</h2>
 <p><b>Reserva de 50 €:</b> guardamos tu nombre, teléfono, email (si lo das), el coche, la fecha de tu visita y el justificante de pago que subas, para gestionar la reserva, la devolución o la compra. Los pagos con tarjeta los procesa <b>Stripe Payments Europe, Ltd.</b> (Irlanda); nosotros no vemos ni guardamos los datos de la tarjeta. Los justificantes y los datos del pago se conservan el tiempo que exigen las leyes fiscales. <b>Lista de espera:</b> si nos dejas tu nombre y WhatsApp en un coche reservado, solo los usamos para avisarte si vuelve a estar disponible. <b>Presupuesto por foto:</b> las fotos del daño solo las ve nuestro equipo para darte el presupuesto; se borran junto con tu solicitud. En los tres casos la base legal es tu solicitud (medidas precontractuales) y puedes pedir que borremos tus datos cuando quieras.</p>
 
@@ -129,17 +141,20 @@ priv = HEAD.format(title="Política de privacidad", upd=ACTUALIZADO) + f"""
 <p>Si pides un pre-estudio de financiación en la ficha de un coche, además de tu nombre y teléfono nos dices tu situación laboral y una franja aproximada de ingresos, y guardamos el cálculo que hiciste (precio, entrada, plazo y cuota). Los usamos para estudiar contigo si la financiación es viable y, solo si lo autorizas al marcar la casilla de ese formulario, los enviamos a la entidad financiera que estudie la operación, que será responsable de tus datos desde ese momento según su propia política de privacidad y te informará de ello. No pedimos tu DNI, nóminas ni datos bancarios por la web: si decides seguir adelante, te diremos qué documentos hacen falta. Volcano Cars no concede préstamos y no toma decisiones automatizadas sobre ti; la decisión la toma la entidad financiera.</p>
 
 <h2>Asistente de la web</h2>
-<p>El asistente que aparece abajo a la derecha funciona dentro de tu navegador: lo que escribes en él no se guarda ni se envía a ningún sitio. Solo si pulsas uno de sus botones de WhatsApp se abre WhatsApp con tu mensaje ya escrito, y eres tú quien decide enviarlo.</p>
+<p>El asistente que aparece abajo a la derecha contesta primero con respuestas preparadas que funcionan dentro de tu navegador. Si le escribes una pregunta libre, se aplica lo explicado en «Asistente con inteligencia artificial». Si pulsas uno de sus botones de WhatsApp, se abre WhatsApp con tu mensaje ya escrito y eres tú quien decide enviarlo.</p>
 
 <h2>Solicitudes por WhatsApp y teléfono</h2>
 <p>Si nos escribes por WhatsApp o nos llamas, usamos tu número y lo que nos cuentes solo para atenderte. Borramos las conversaciones que ya no necesitamos. En el taller, los datos de la ficha de recepción (nombre, DNI y vehículo) se usan para gestionar la reparación, emitir la factura y cumplir la normativa de talleres.</p>
+
+<h2>Transferencias fuera de la UE y seguridad</h2>
+<p>Algunos proveedores (Netlify, Resend, Groq, Stripe, Meta y Google) son empresas de Estados Unidos o de su grupo. Cuando tus datos salen del Espacio Económico Europeo, lo hacen con las garantías del Marco de Privacidad de Datos UE-EE. UU. o de las cláusulas contractuales tipo aprobadas por la Comisión Europea. La web funciona siempre con conexión cifrada (HTTPS) y el panel de gestión exige contraseña y verificación en dos pasos.</p>
 
 <h2>Tus derechos</h2>
 <p>Puedes pedir acceso, rectificación, supresión, oposición, limitación del tratamiento y portabilidad de tus datos escribiendo a <a href="mailto:{EMAIL}">{EMAIL}</a> o en nuestro taller, indicando tu nombre y teléfono. Si crees que no hemos atendido bien tu petición, puedes reclamar ante la Agencia Española de Protección de Datos (<a href="https://www.aepd.es" rel="noopener">www.aepd.es</a>).</p>
 """ + FOOT
 
 cook = HEAD.format(title="Política de cookies", upd=ACTUALIZADO) + f"""
-<p class="en" id="en" lang="en"><b>In English:</b> the website works without cookies. We only use Google Ads measurement cookies if you click “Accept”. You can change your choice at any time with “Cookie settings” at the bottom of the page.</p>
+<p class="en" id="en" lang="en"><b>In English:</b> the website works without cookies. We only use Google Analytics and Google Ads measurement cookies if you click “Accept”. You can change your choice at any time with “Cookie settings” at the bottom of the page.</p>
 
 <p>Una cookie es un pequeño archivo que la web guarda en tu navegador. Esta web funciona perfectamente sin cookies de publicidad: solo se usan si pulsas «Aceptar» en el aviso.</p>
 
@@ -151,10 +166,11 @@ cook = HEAD.format(title="Política de cookies", upd=ACTUALIZADO) + f"""
 <tr><td>mz_vis</td><td>Número aleatorio de la pestaña para contar cuántas personas están viendo un coche a la vez. Mientras la ficha está abierta, el servidor lo guarda junto a un resumen cifrado (hash) de la conexión durante menos de un minuto; no permite saber quién eres.</td><td>Se borra al cerrar la pestaña</td></tr>
 </table></div>
 
-<h2>Solo si pulsas «Aceptar»: medición de Google Ads</h2>
-<p>Las usamos para saber si una solicitud, una llamada o un WhatsApp vino de un anuncio nuestro en Google, y así no gastar en anuncios que no funcionan. No se usan para mostrarte publicidad personalizada.</p>
+<h2>Solo si pulsas «Aceptar»: medición de Google (Analytics y Ads)</h2>
+<p>Las usamos para saber cuántas personas visitan cada página y si una solicitud, una llamada o un WhatsApp vino de un anuncio nuestro en Google, y así no gastar en anuncios que no funcionan. No se usan para mostrarte publicidad personalizada.</p>
 <div class="tw"><table>
 <tr><th>Nombre</th><th>Titular</th><th>Para qué</th><th>Duración</th></tr>
+<tr><td>_ga, _ga_…</td><td>Google Ireland Ltd.</td><td>Google Analytics: contar visitas y ver qué páginas funcionan, de forma agregada.</td><td>2 años</td></tr>
 <tr><td>_gcl_au, _gcl_aw</td><td>Google Ireland Ltd.</td><td>Relacionar la visita con el anuncio en el que hiciste clic.</td><td>90 días</td></tr>
 </table></div>
 <p>Más información en la <a href="https://policies.google.com/technologies/ads?hl=es" rel="noopener">política de Google</a>.</p>
@@ -212,6 +228,7 @@ cond = HEAD.format(title="Condiciones de venta, taller y garantía", upd=ACTUALI
 <ul>
 <li><b>Qué es:</b> pagas 50 € y el coche queda apartado para ti durante <b>48 horas</b> desde que confirmamos el pago. Mientras dure la reserva, nadie más puede comprarlo ni reservarlo.</li>
 <li><b>100 % reembolsable:</b> si decides no comprarlo, por el motivo que sea, te devolvemos los 50 € íntegros por el mismo medio de pago en un plazo máximo de 14 días naturales desde que nos lo pidas. No es una señal de arras: no te obliga a comprar ni tiene penalización.</li>
+<li><b>Derecho de desistimiento:</b> como la reserva se paga a distancia, tienes por ley 14 días naturales para desistir sin dar explicaciones. En la práctica te devolvemos los 50 € siempre que nos lo pidas, aunque hayan pasado esos 14 días, mientras no hayas comprado el coche.</li>
 <li><b>A cuenta del precio:</b> si compras el coche, los 50 € se descuentan del precio final.</li>
 <li><b>Cómo se paga:</b> con tarjeta, Google Pay o Apple Pay a través de Stripe (la web nunca ve los datos de tu tarjeta), o por transferencia o Bizum subiendo el justificante. Con transferencia o Bizum el coche aparece como reservado al subir el justificante; si en 12 horas no hemos recibido el dinero, la reserva se anula y te avisamos.</li>
 <li><b>Cuando pasan las 48 horas:</b> te llamamos. Si lo necesitas (por ejemplo, porque esperas la respuesta de la financiera), podemos ampliar la reserva; si no, la liberamos y te devolvemos los 50 €.</li>
@@ -228,7 +245,7 @@ cond = HEAD.format(title="Condiciones de venta, taller y garantía", upd=ACTUALI
 </ul>
 
 <h2>7. Reclamaciones</h2>
-<p>Si algo no ha ido bien, cuéntanoslo primero: casi todo se arregla hablando. También puedes pedir en el taller una <b>hoja de reclamaciones oficial</b> del Gobierno de Canarias, o acudir a los servicios de consumo de tu ayuntamiento o del Gobierno de Canarias y al sistema arbitral de consumo.</p>
+<p>Si algo no ha ido bien, cuéntanoslo primero: casi todo se arregla hablando. También puedes pedir en el taller una <b>hoja de reclamaciones oficial</b> del Gobierno de Canarias, o acudir a los servicios de consumo de tu ayuntamiento o a la Dirección General de Comercio y Consumo del Gobierno de Canarias, y solicitar un arbitraje de consumo; si lo pides, te diremos si aceptamos someternos a él. Respondemos a las reclamaciones por escrito lo antes posible y, como máximo, en un mes.</p>
 """ + FOOT
 
 for name, html in (("aviso-legal.html", aviso), ("privacidad.html", priv), ("cookies.html", cook), ("condiciones.html", cond)):

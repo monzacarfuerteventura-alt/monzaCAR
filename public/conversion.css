@@ -254,7 +254,7 @@
 .rsv-solo .btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 10px; border: 0; cursor: pointer; padding: 14px 22px; border-radius: 999px; font-weight: 700; font-size: 15.5px; text-decoration: none; }
 .rsv-solo .btn-rosso { background: linear-gradient(180deg, #E4552F, var(--vc-acc) 45%, var(--vc-acc-2)); color: #FFFFFF; box-shadow: 0 12px 26px -12px var(--vc-glow); }
 .rsv-solo .btn-ghost { background: transparent; border: 1.5px solid var(--vc-line-2); color: #FFFFFF; }
-.rsv-solo .btn-wa { background: #1F8B4C; color: #FFFFFF; }
+.rsv-solo .btn-wa { background: #16794A; color: #FFFFFF; }
 .rsv-solo .btn[disabled] { opacity: .7; }
 .rsv-solo .form-err { padding: 11px 14px; border-radius: 12px; background: rgba(231, 76, 60, .14); border: 1px solid rgba(231, 76, 60, .4); color: #FFB4AB; font-size: 14px; }
 

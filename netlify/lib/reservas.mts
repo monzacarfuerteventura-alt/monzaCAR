@@ -22,7 +22,7 @@
   Almacén «reservas-docs»: justificantes de transferencia (privados, solo el panel).
 */
 import { randomBytes, createHmac, timingSafeEqual } from "node:crypto";
-import { store, enviarAviso, waNum } from "./shared.mts";
+import { store, enviarAviso, waNum, purgar } from "./shared.mts";
 import type { Car } from "./shared.mts";
 
 export const IMPORTE = 50;
@@ -105,6 +105,7 @@ export async function estadoCoche(id: string, estado: Car["estado"], si?: Car["e
   c.estado = estado; c.actualizado = ahora();
   if (estado === "vendido") c.vendidoEn = c.vendidoEn || ahora();
   await s.setJSON("coches", lista);
+  await purgar(["coches"]);
   return c;
 }
 

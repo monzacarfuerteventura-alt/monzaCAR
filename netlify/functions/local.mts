@@ -1,6 +1,6 @@
 import type { Config } from "@netlify/functions";
 import { store, SEMILLA, type Car } from "../lib/shared.mts";
-import { EMPRESA, escH, eur, kmTxt, foto, wa, slugDe, cabecera, pie } from "../lib/paginas.mts";
+import { EMPRESA, escH, eur, kmTxt, foto, imgAttrs, wa, slugDe, cabecera, pie } from "../lib/paginas.mts";
 import { MUNICIPIOS, porSlug, type Municipio } from "../lib/municipios.mts";
 
 /*
@@ -11,7 +11,7 @@ import { MUNICIPIOS, porSlug, type Municipio } from "../lib/municipios.mts";
   Si añades un pueblo allí, añade también sus dos direcciones en config.path (abajo) y en el sitemap.
 */
 
-const CACHE = { "cache-control": "public, max-age=0, must-revalidate", "netlify-cdn-cache-control": "public, s-maxage=300, stale-while-revalidate=3600" };
+const CACHE = { "cache-control": "public, max-age=0, must-revalidate", "netlify-cdn-cache-control": "public, s-maxage=300, stale-while-revalidate=3600", "netlify-cache-tag": "coches,paginas" };
 const SEG = { "x-content-type-options": "nosniff", "referrer-policy": "strict-origin-when-cross-origin", "x-frame-options": "DENY" };
 
 async function coches(): Promise<Car[]> {
@@ -72,7 +72,7 @@ function ruta(m: Municipio, destino: string) {
 
 function otrasZonas(m: Municipio, tipo: "venta" | "taller") {
   const base = tipo === "venta" ? "/coches-segunda-mano-" : "/taller-mecanico-";
-  return `<ul class="lc-zonas">${MUNICIPIOS.filter((x) => x.slug !== m.slug).map((x) => `<li><a href="${base}${x.slug}">${escH(x.nombre)}</a></li>`).join("")}</ul>`;
+  return `<ul class="lc-zonas">${MUNICIPIOS.filter((x) => x.slug !== m.slug && (tipo === "venta" ? x.indexarVenta : x.indexarTaller)).map((x) => `<li><a href="${base}${x.slug}">${escH(x.nombre)}</a></li>`).join("")}</ul>`;
 }
 
 // ---------- tarjeta de coche ----------
@@ -81,11 +81,11 @@ function tarjeta(c: Car, m: Municipio) {
   const res = c.estado === "reservado";
   const datos = [c.anio, kmTxt(c.km), c.combustible, c.cambio].filter(Boolean).map((x) => escH(x)).join(" · ");
   return `<a class="lc-car${res ? " res" : ""}" href="/coche/${escH(slugDe(c))}">
-    <div class="im">${f ? `<img src="${escH(foto(f))}" alt="${escH(`${c.marca} ${c.modelo} ${c.anio} de segunda mano`)}" loading="lazy" decoding="async">` : ""}
+    <div class="im">${f ? `<img ${imgAttrs(f, 480, "(max-width: 700px) 100vw, 360px")} alt="${escH(`${c.marca} ${c.modelo} ${c.anio} de segunda mano`)}" loading="lazy" decoding="async">` : ""}
       <span class="lc-tag">${res ? "Reservado" : `Entrega gratis ${escH(m.en)}`}</span></div>
     <div class="t"><b>${escH(c.marca)} ${escH(c.modelo)}</b>${c.version ? `<small>${escH(c.version)}</small>` : ""}
       <span class="d num">${datos}</span>
-      <div class="pr"><strong class="num">${eur(c.precio)}</strong><em>Precio final · 12 meses de garantía</em></div></div></a>`;
+      <div class="pr"><strong class="num">${eur(c.precio)}</strong><em>Precio final · 12 meses de garantía legal</em></div></div></a>`;
 }
 
 // =====================================================================
@@ -101,12 +101,12 @@ async function venta(origin: string, m: Municipio) {
   const url = `/coches-segunda-mano-${m.slug}`;
   const canonical = origin + url;
   const titulo = `Coches de Segunda Mano en ${m.nombre} | Garantía y Entrega Gratis - Volcano Cars`;
-  const desc = `Coches de segunda mano revisados para ${m.nombre}: 12 meses de garantía, entrega gratis a domicilio y financiación.${desde ? ` Desde ${eur(desde)}.` : ""} Taller propio en Antigua.`;
+  const desc = `Coches de segunda mano revisados para ${m.nombre}: 12 meses de garantía legal, entrega gratis a domicilio y financiación.${desde ? ` Desde ${eur(desde)}.` : ""} Taller propio en Antigua.`;
   const waTxt = `Hola Volcano Cars, vivo ${m.en} y busco un coche de segunda mano: `;
   const faq: [string, string][] = [
     [`¿Cuánto cuesta que me llevéis el coche a ${m.nombre}?`, `Nada. Una vez firmada la compra te llevamos el coche gratis a tu casa ${m.en} (o donde nos digas dentro de Fuerteventura), el día y a la hora que acordemos.`],
     [`¿Puedo probar el coche antes de comprarlo?`, `Sí. Reserva día y hora en la ficha del coche y te lo tenemos preparado en nuestra nave de Antigua, ${m.km <= 5 ? "a pocos minutos de ti" : `a ${m.km} km aproximadamente ${m.de}`}. La visita no te obliga a nada.`],
-    [`¿Qué garantía tienen los coches?`, `Los coches que vendemos a particulares tienen 12 meses de garantía desde la entrega, según nuestras <a href="/condiciones">condiciones</a>. Todos pasan antes por nuestro taller.`],
+    [`¿Qué garantía tienen los coches?`, `Los coches que vendemos a particulares tienen 12 meses de garantía legal desde la entrega, según nuestras <a href="/condiciones">condiciones</a>. Todos pasan antes por nuestro taller.`],
     [`¿Se puede financiar?`, `Sí. En cada coche tienes una calculadora con la cuota y puedes pedir un pre-estudio sin compromiso. La financiación está sujeta a la aprobación de la entidad financiera.`],
   ];
   const head = `<meta property="og:type" content="website"><meta property="og:title" content="${escH(titulo)}"><meta property="og:description" content="${escH(desc)}"><meta property="og:url" content="${escH(canonical)}">
@@ -128,20 +128,20 @@ ${ld({
     : `<div class="lc-vacio"><b>Ahora mismo estamos preparando los próximos coches.</b><p>Dinos qué buscas y te avisamos en cuanto entre uno que encaje, con entrega gratis ${escH(m.en)}.</p>
        <a class="btn b-wa" href="${escH(wa(waTxt))}" target="_blank" rel="noopener">Dinos qué buscas</a></div>`;
 
-  const html = cabecera(origin, titulo, desc, canonical, head, "index, follow, max-image-preview:large") + `
+  const html = cabecera(origin, titulo, desc, canonical, head, m.indexarVenta ? "index, follow, max-image-preview:large" : "noindex, follow") + `
 <div class="wrap">
   <nav class="migas" aria-label="Estás en"><ol><li><a href="/">Inicio</a></li><li><a href="/coches-segunda-mano-fuerteventura/">Coches de segunda mano</a></li><li aria-current="page">${escH(m.nombre)}</li></ol></nav>
   <header class="pg-hero lc-hero">
     <span class="eyebrow">Coches de ocasión · ${escH(m.nombre)}</span>
     <h1>Coches de segunda mano y ocasión en <span class="r">${escH(m.nombre)}</span></h1>
     <p class="lc-prop"><span class="lc-prop-ic" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></span>
-      <span>Te llevamos tu coche <b>gratis hasta la puerta de tu casa ${escH(m.en)}</b> con <b>12 meses de garantía</b>.</span></p>
+      <span>Te llevamos tu coche <b>gratis hasta la puerta de tu casa ${escH(m.en)}</b> con <b>12 meses de garantía legal</b>.</span></p>
     <div class="ctas">
       <a class="btn b-rosso" href="#catalogo">Ver coches disponibles${disp.length ? ` (${disp.length})` : ""}</a>
       <a class="btn b-wa" href="${escH(wa(waTxt))}" target="_blank" rel="noopener">WhatsApp</a>
       <a class="btn b-ghost" href="tel:${EMPRESA.telLink}">Llamar ${EMPRESA.tel}</a>
     </div>
-    <ul class="sello"><li>12 meses de garantía</li><li>Entrega gratis ${escH(m.en)}</li><li>Revisados en nuestro taller</li><li>Financiación</li></ul>
+    <ul class="sello"><li>12 meses de garantía legal</li><li>Entrega gratis ${escH(m.en)}</li><li>Revisados en nuestro taller</li><li>Financiación</li></ul>
   </header>
 
   <section class="sec" id="catalogo" aria-labelledby="h-cat">
@@ -179,6 +179,8 @@ ${ld({
     <p style="margin-top:22px">También entregamos gratis en ${m.cerca.map(escH).join(", ")} y en el resto de Fuerteventura.</p>
   </section>
 
+  ${m.extraVenta ? `<section class="sec" aria-labelledby="h-zona"><h2 id="h-zona">Comprar coche ${escH(m.en)}</h2>${m.extraVenta.map((t) => `<p>${t}</p>`).join("")}</section>` : ""}
+
   <section class="sec" aria-labelledby="h-faq"><h2 id="h-faq">Preguntas frecuentes ${escH(m.de)}</h2>${faqHTML(faq)}</section>
 
   <section class="sec"><div class="banda"><div><h2>¿Buscas coche ${escH(m.en)}?</h2><p>Dinos qué necesitas (presupuesto, tamaño, cambio automático…) y te enseñamos lo que tenemos o te avisamos cuando entre.</p></div>
@@ -186,7 +188,7 @@ ${ld({
 
   <section class="sec lc-links" aria-labelledby="h-z">
     <h2 id="h-z" class="lc-h3">Coches de segunda mano en otras zonas</h2>${otrasZonas(m, "venta")}
-    <p class="lc-cruz">¿Necesitas taller? <a href="/taller-mecanico-${m.slug}">Taller mecánico, chapa y pintura para clientes ${escH(m.de)}</a></p>
+    <p class="lc-cruz">¿Necesitas taller? <a href="${m.indexarTaller ? `/taller-mecanico-${m.slug}` : "/taller-mecanico-fuerteventura/"}">Taller mecánico, chapa y pintura para clientes ${escH(m.de)}</a></p>
   </section>
 </div>` + pie(waTxt);
   return html;
@@ -201,14 +203,14 @@ function taller(origin: string, m: Municipio) {
   const url = `/taller-mecanico-${m.slug}`;
   const canonical = origin + url;
   const titulo = `Taller Mecánico cerca de ${m.nombre} | Chapa, Pintura y Mantenimiento - Volcano Cars`;
-  const desc = `Taller mecánico, chapa y pintura para clientes ${m.de} (${m.km <= 5 ? "a 5 min" : `≈${m.min} min`}). Presupuesto sin compromiso, garantía y plazo por escrito. Cita online.`;
+  const desc = `Taller mecánico, chapa y pintura para clientes ${m.de} (${m.km <= 5 ? "a 5 min" : `≈${m.min} min`}). Presupuesto sin compromiso y plazo por escrito. Cita online.`;
   const waTxt = `Hola Volcano Cars, soy ${m.de} y quiero pedir presupuesto en el taller: `;
   const cerca = m.min <= 25 ? `a pocos minutos ${m.de}` : `${tiempo(m)} ${m.de}`;
   const faq: [string, string][] = [
     [`¿Tengo que ir hasta Antigua desde ${m.nombre}?`, `Sí, el taller está en el Polígono Industrial de Antigua, ${m.km <= 5 ? "en tu mismo municipio" : `a unos ${m.km} km (≈${m.min} min) ${m.de}`}. Para que el viaje merezca la pena te damos cita a una hora concreta y el presupuesto antes de empezar.`],
     [`¿Me dais presupuesto antes de reparar?`, `Siempre. No tocamos nada sin que hayas aceptado el presupuesto. Si durante la reparación aparece algo más, te llamamos antes.`],
-    [`¿Qué garantía tienen las reparaciones?`, `Las reparaciones tienen garantía de 3 meses o 2.000 km, según nuestras <a href="/condiciones">condiciones</a>.`],
     [`¿Trabajáis con todas las marcas?`, `Sí, somos un taller multimarca: mecánica, diagnosis, chapa y pintura para cualquier marca y modelo de turismo.`],
+    ...(m.faqTaller || []),
   ];
   const head = `<meta property="og:type" content="website"><meta property="og:title" content="${escH(titulo)}"><meta property="og:description" content="${escH(desc)}"><meta property="og:url" content="${escH(canonical)}">
 <meta property="og:image" content="${origin}/coches/opel-astra-2010/anuncio.jpg">
@@ -222,7 +224,7 @@ ${ld({
     ],
   })}`;
 
-  const html = cabecera(origin, titulo, desc, canonical, head, "index, follow") + `
+  const html = cabecera(origin, titulo, desc, canonical, head, m.indexarTaller ? "index, follow" : "noindex, follow") + `
 <div class="wrap">
   <nav class="migas" aria-label="Estás en"><ol><li><a href="/">Inicio</a></li><li><a href="/taller-mecanico-fuerteventura/">Taller mecánico</a></li><li aria-current="page">${escH(m.nombre)}</li></ol></nav>
   <div class="lc-top">
@@ -232,7 +234,7 @@ ${ld({
       <p class="lc-prop"><span class="lc-prop-ic" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></span>
         <span>Servicio técnico multimarca en Antigua, <b>${escH(cerca)}</b>. <b>Transparencia total</b> y <b>compromiso de plazo</b>.</span></p>
       <div class="ctas lc-movil"><a class="btn b-rosso" href="#reserva">Reservar hora o pedir presupuesto</a></div>
-      <ul class="sello"><li>Presupuesto antes de tocar nada</li><li>Fecha de entrega por escrito</li><li>3 meses o 2.000 km de garantía</li></ul>
+      <ul class="sello"><li>Presupuesto antes de tocar nada</li><li>Fecha de entrega por escrito</li><li>Seguimiento desde el móvil</li></ul>
       ${ruta(m, `clientes ${m.de}`)}
     </header>
     ${widget(m)}
@@ -242,7 +244,7 @@ ${ld({
     <h2 id="h-srv">Qué hacemos por tu coche</h2>
     <div class="grid3">
       <div class="card"><div class="ic">01</div><h3>Mecánica rápida</h3><p>Aceite y filtros, frenos, distribución, batería, aire acondicionado y neumáticos. <a href="/taller-mecanico-fuerteventura/">Ver taller mecánico</a>.</p></div>
-      <div class="card"><div class="ic">02</div><h3>Chapa y pintura</h3><p>Golpes, abolladuras, arañazos y pintura parcial o completa, con acabado de fábrica. <a href="/chapa-y-pintura-fuerteventura/">Ver chapa y pintura</a>.</p></div>
+      <div class="card"><div class="ic">02</div><h3>Chapa y pintura</h3><p>Golpes, abolladuras, arañazos y pintura parcial o completa, con acabado profesional. <a href="/chapa-y-pintura-fuerteventura/">Ver chapa y pintura</a>.</p></div>
       <div class="card"><div class="ic">03</div><h3>Diagnosis y pre-ITV</h3><p>Leemos las averías con equipo de diagnosis y dejamos el coche listo para pasar la ITV. <a href="/pre-itv-fuerteventura/">Ver pre-ITV</a>.</p></div>
     </div>
   </section>
@@ -255,10 +257,12 @@ ${ld({
         <li><div><b>Reservas tu hora</b><span>Aquí mismo o por WhatsApp. Sin esperas al llegar.</span></div></li>
         <li><div><b>Presupuesto cerrado</b><span>Te decimos qué tiene y cuánto cuesta antes de empezar.</span></div></li>
         <li><div><b>Fecha de entrega por escrito</b><span>Y te avisamos por WhatsApp en cuanto esté listo.</span></div></li>
-        <li><div><b>Garantía de la reparación</b><span>3 meses o 2.000 km.</span></div></li>
+        <li><div><b>Síguelo desde el móvil</b><span>Con un enlace privado: estado y fotos del trabajo.</span></div></li>
       </ol>
     </div>
   </section>
+
+  ${m.extraTaller ? `<section class="sec" aria-labelledby="h-zona"><h2 id="h-zona">Tu coche ${escH(m.en)}: lo que conviene saber</h2>${m.extraTaller.map((t) => `<p>${t}</p>`).join("")}<p>Más información: <a href="/taller-mecanico-fuerteventura/">taller mecánico</a>, <a href="/chapa-y-pintura-fuerteventura/">chapa y pintura</a>, <a href="/pre-itv-fuerteventura/">pre-ITV</a> y nuestra <a href="/itv-fuerteventura/">guía de la ITV en Fuerteventura</a>.</p></section>` : ""}
 
   <section class="sec" aria-labelledby="h-faq"><h2 id="h-faq">Preguntas frecuentes</h2>${faqHTML(faq)}</section>
 
@@ -267,7 +271,7 @@ ${ld({
 
   <section class="sec lc-links" aria-labelledby="h-z">
     <h2 id="h-z" class="lc-h3">Taller para clientes de otras zonas</h2>${otrasZonas(m, "taller")}
-    <p class="lc-cruz">¿Buscas coche? <a href="/coches-segunda-mano-${m.slug}">Coches de segunda mano con entrega gratis ${escH(m.en)}</a></p>
+    <p class="lc-cruz">¿Buscas coche? <a href="${m.indexarVenta ? `/coches-segunda-mano-${m.slug}` : "/coches-segunda-mano-fuerteventura/"}">Coches de segunda mano con entrega gratis ${escH(m.en)}</a></p>
   </section>
 </div>
 ${scriptReserva(m)}` + pie(waTxt);
@@ -297,7 +301,7 @@ function widget(m: Municipio) {
     </div>
     <div id="r-agenda" class="lc-ag" aria-live="polite"><p class="lc-ag-msg">Cargando horas libres…</p></div>
     <input class="lc-hp" type="text" name="web" id="r-web" tabindex="-1" autocomplete="off" aria-hidden="true">
-    <label class="lc-ok"><input type="checkbox" id="r-ok" required><span>Acepto que Volcano Cars use estos datos solo para responder a mi solicitud. Puedo pedir que los borren cuando quiera. <a href="/privacidad" target="_blank" rel="noopener">Política de privacidad</a>.</span></label>
+    <label class="lc-ok"><input type="checkbox" id="r-ok" required><span>Acepto que MAILIN Y YERAY SL (Volcano Cars) use estos datos solo para responder a mi solicitud. Puedo acceder a ellos, corregirlos o pedir que los borren cuando quiera. <a href="/privacidad" target="_blank" rel="noopener">Política de privacidad</a>.</span></label>
     <p class="lc-err" id="r-err" role="alert" hidden></p>
     <button class="btn b-rosso" type="submit" id="r-btn">Confirmar cita</button>
     <p class="lc-nota" id="r-nota">La cita queda confirmada al momento. Te esperamos en Antigua.</p>
@@ -346,6 +350,7 @@ f.addEventListener("submit",async e=>{e.preventDefault();err("");
   if(!r.ok){if(j.ocupada){err("Esa hora se acaba de ocupar. Elige otra, por favor.");st.hora="";cargar();return;}throw new Error(j.error||"");}
   const resumen=(cita?"Cita en el taller el "+bonita(st.fecha)+" a las "+st.hora:"Solicitud de presupuesto")+" · "+coche;
   const c=$("#r-conf");c.innerHTML='<b>'+(cita?"¡Cita confirmada!":"¡Solicitud recibida!")+'</b><p>'+esc(resumen)+'</p><p>'+(cita?"Te esperamos en el Polígono Industrial de Antigua. Si no puedes venir, avísanos por WhatsApp.":"Te enviamos el presupuesto por WhatsApp o te llamamos en horario de apertura.")+'</p><a class="btn b-wa" target="_blank" rel="noopener" href="'+wa("Hola Volcano Cars, "+(cita?"tengo cita en el taller el "+bonita(st.fecha)+" a las "+st.hora:"acabo de pedir presupuesto")+" ("+coche+"). ")+'">Escribir por WhatsApp</a>';
+  try{document.dispatchEvent(new Event("vc:solicitud"));}catch(_){}
   f.hidden=true;c.hidden=false;c.scrollIntoView({block:"center",behavior:"smooth"});
  }catch(x){err((x&&x.message)||"No hemos podido enviarlo. Escríbenos por WhatsApp o llámanos al "+C.tel+".");}
  finally{b.disabled=false;}

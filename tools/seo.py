@@ -7,7 +7,7 @@ from urllib.parse import quote
 
 BASE = "https://volcanocars.com"
 OUT = pathlib.Path(__file__).resolve().parent.parent / "public"
-TEL, TEL_LINK, WA = "677 96 03 48", "+34677960348", "34677960348"
+TEL, TEL_LINK, WA = "643 56 60 98", "+34643566098", "34643566098"
 CALLE, CP, LOC = "Calle Valle Largo, Nave 8, Polígono Industrial", "35610", "Antigua"
 DIRECCION = f"{CALLE}, {CP} {LOC}, Las Palmas"
 HORARIO = "Lunes a viernes, de 8:00 a 16:00"
@@ -17,8 +17,9 @@ ZONAS = ["Antigua", "Caleta de Fuste", "Puerto del Rosario", "Corralejo", "La Ol
 e = html.escape
 wa = lambda t: f"https://wa.me/{WA}?text={quote(t)}"
 
-NEGOCIO = {"@type": ["AutoDealer", "AutoRepair", "AutoBodyShop"], "@id": BASE + "/#negocio", "name": "Volcano Cars", "url": BASE + "/",
-           "telephone": "+34677960348", "email": "volcanocars2026@gmail.com", "image": BASE + "/coches/opel-astra-2010/anuncio.jpg",
+NEGOCIO = {"@type": ["AutoDealer", "AutoRepair", "AutoBodyShop"], "@id": BASE + "/#negocio", "name": "Volcano Cars", "legalName": "MAILIN Y YERAY SL", "taxID": "B93975647", "url": BASE + "/",
+           "sameAs": ["https://www.google.com/maps?cid=5551544135827693991", "https://www.instagram.com/volcanocars_antigua/", "https://www.facebook.com/share/1KYczmU7be/"],  # añade aquí Facebook, Instagram… cuando existan
+           "telephone": "+34643566098", "email": "volcanocars2026@gmail.com", "image": BASE + "/coches/opel-astra-2010/anuncio.jpg",
            "logo": BASE + "/marca/logo-oscuro.svg", "priceRange": "€€",
            "address": {"@type": "PostalAddress", "streetAddress": CALLE, "postalCode": CP, "addressLocality": LOC, "addressRegion": "Las Palmas", "addressCountry": "ES"},
            "hasMap": "https://www.google.com/maps?cid=5551544135827693991", "geo": {"@type": "GeoCoordinates", "latitude": 28.420871, "longitude": -13.8621004},
@@ -34,7 +35,7 @@ def cabecera(p):
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{e(p['title'])}</title>
 <meta name="description" content="{e(p['desc'])}">
-<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="robots" content="{p.get('robots', 'index, follow, max-image-preview:large')}">
 <meta name="theme-color" content="#121212">
 <link rel="canonical" href="{BASE}{p['url']}">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -42,9 +43,8 @@ def cabecera(p):
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Figtree:wght@400;500;600;700&family=Titillium+Web:wght@600;700&display=swap">
+<link rel="preload" as="style" href="/fonts/fuentes.css">
+<link rel="stylesheet" href="/fonts/fuentes.css" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="/paginas.css">
 <link rel="stylesheet" href="/tema.css">
 <meta property="og:type" content="website">
@@ -55,6 +55,7 @@ def cabecera(p):
 <meta property="og:url" content="{BASE}{p['url']}">
 <meta property="og:image" content="{BASE}/coches/opel-astra-2010/anuncio.jpg">
 <script type="application/ld+json">{ldj}</script>
+<script src="/medicion.js" defer></script>
 </head>
 <body>
 <header class="pg-top"><div class="wrap">
@@ -83,6 +84,8 @@ def cabecera(p):
 LOCALES = [("corralejo", "Corralejo"), ("la-oliva", "La Oliva"), ("puerto-del-rosario", "Puerto del Rosario"), ("antigua", "Antigua"),
            ("caleta-de-fuste", "Caleta de Fuste"), ("gran-tarajal", "Gran Tarajal"), ("costa-calma", "Costa Calma"), ("morro-jable", "Morro Jable")]
 LOCAL_SLUG = {n: k for k, n in LOCALES}
+IDX_TALLER = ["antigua", "puerto-del-rosario", "caleta-de-fuste", "corralejo", "gran-tarajal"]  # = indexar en netlify/lib/municipios.mts
+IDX_VENTA = ["puerto-del-rosario", "caleta-de-fuste", "corralejo", "gran-tarajal"]
 VENTA_URL = lambda p: p['url'].startswith(("/coches", "/financiacion"))
 
 def pie(p):
@@ -90,16 +93,16 @@ def pie(p):
   <section class="sec"><h2>Preguntas frecuentes</h2><div class="faq">{''.join(f'<details><summary>{e(q)}</summary><p>{a}</p></details>' for q, a in p['faq'])}</div></section>
   <section class="sec"><div class="banda"><div><h2>{p['banda'][0]}</h2><p>{e(DIRECCION)}. {HORARIO}, en horario continuado.</p></div>
     <div class="ctas">{p['banda'][1]}</div></div></section>
-  <section class="sec"><h2>{'Coches de segunda mano por zonas' if VENTA_URL(p) else 'Taller para clientes de toda la isla'}</h2><div class="chips">{''.join(f'<a href="/{"coches-segunda-mano" if VENTA_URL(p) else "taller-mecanico"}-{k}">{e(n)}</a>' for k, n in LOCALES)}</div></section>
+  {'' if p.get('sin_zonas') else f'''<section class="sec"><h2>{'Coches de segunda mano por zonas' if VENTA_URL(p) else 'Taller para clientes de toda la isla'}</h2><div class="chips">{''.join(f'<a href="/{"coches-segunda-mano" if VENTA_URL(p) else "taller-mecanico"}-{k}">{e(n)}</a>' for k, n in LOCALES if k in (IDX_VENTA if VENTA_URL(p) else IDX_TALLER))}</div></section>'''}
   <section class="sec"><h2>También te puede interesar</h2><div class="chips">{''.join(f'<a href="{u}">{e(t)}</a>' for u, t in RELACION if u != p['url'])}</div></section>
 </div>
 </main>
 <footer class="pg-foot"><div class="wrap">
-  <div><img src="/marca/logo-claro.svg" alt="Volcano Cars" width="180" height="44" loading="lazy"><p>Coches de ocasión revisados con 1 año de garantía, taller mecánico y chapa y pintura en Antigua, Fuerteventura.</p></div>
+  <div><img src="/marca/logo-claro.svg" alt="Volcano Cars" width="180" height="44" loading="lazy"><p>Coches de ocasión revisados con 12 meses de garantía legal, taller mecánico y chapa y pintura en Antigua, Fuerteventura.</p></div>
   <div><h4>Coches</h4><a href="/comprar">Coches disponibles</a><a href="/coches-segunda-mano-fuerteventura/">Segunda mano en Fuerteventura</a><a href="/financiacion-coches-fuerteventura/">Financiación</a></div>
   <div><h4>Taller</h4><a href="/taller-mecanico-fuerteventura/">Taller mecánico</a><a href="/chapa-y-pintura-fuerteventura/">Chapa y pintura</a><a href="/pre-itv-fuerteventura/">Pre-ITV</a><a href="/taller">Pedir cita</a></div>
   <div><h4>Visítanos</h4><a href="{MAPA}" target="_blank" rel="noopener">{e(CALLE)}<br>{CP} {LOC}</a><a href="tel:{TEL_LINK}">{TEL}</a><a href="/contacto">{HORARIO}</a></div>
-  <div class="pg-legal"><span>© {datetime.date.today().year} Volcano Cars</span><a href="/aviso-legal">Aviso legal</a><a href="/condiciones">Condiciones y garantía</a><a href="/privacidad">Privacidad</a><a href="/cookies">Cookies</a><a href="/en/">English</a></div>
+  <div class="pg-legal"><span>© {datetime.date.today().year} Volcano Cars</span><a href="/aviso-legal">Aviso legal</a><a href="/condiciones">Condiciones y garantía</a><a href="/privacidad">Privacidad</a><a href="/cookies">Cookies</a><a href="/cookies" data-ck-open>Configurar cookies</a><a href="https://www.instagram.com/volcanocars_antigua/" target="_blank" rel="noopener me">Instagram</a><a href="https://www.facebook.com/share/1KYczmU7be/" target="_blank" rel="noopener me">Facebook</a><a href="/en/">English</a></div>
 </div></footer>
 <nav class="pg-barra" aria-label="Contacto rápido"><a class="btn b-wa" href="{e(wa(p['wa']))}" target="_blank" rel="noopener">WhatsApp</a><a class="btn b-ink" href="tel:{TEL_LINK}">Llamar</a></nav>
 {p.get('script', '')}
@@ -134,11 +137,11 @@ B_COCHES = '<a class="btn b-rosso" href="/comprar">Ver coches disponibles</a>'
 
 RELACION = [("/coches-segunda-mano-fuerteventura/", "Coches de segunda mano"), ("/financiacion-coches-fuerteventura/", "Financiación"),
             ("/taller-mecanico-fuerteventura/", "Taller mecánico"), ("/chapa-y-pintura-fuerteventura/", "Chapa y pintura"),
-            ("/pre-itv-fuerteventura/", "Pre-ITV"), ("/contacto", "Cómo llegar")]
+            ("/pre-itv-fuerteventura/", "Pre-ITV"), ("/itv-fuerteventura/", "Guía de la ITV"), ("/contacto", "Cómo llegar")]
 
 COMPROMISO = [
     ("€", "Presupuesto por escrito", "Antes de tocar nada te damos el presupuesto por escrito, válido 12 días hábiles. Sin tu autorización no hacemos ningún trabajo."),
-    ("3", "3 meses o 2.000 km de garantía", "Todas las reparaciones tienen garantía de 3 meses o 2.000 km, lo que llegue antes, en piezas y mano de obra."),
+    ("VER", "Sigue tu reparación en el móvil", "Te mandamos un enlace privado para ver en qué punto está tu coche y las fotos del trabajo, sin tener que llamar."),
     ("10 %", "Tu coche a tiempo", "Te damos la fecha de entrega por escrito. Si no está listo ese día, te descontamos el 10 % de la mano de obra por cada día laborable de retraso, hasta el 50 %."),
 ]
 
@@ -147,19 +150,19 @@ PAGINAS = []
 # ---------------------------------------------------------------- coches de segunda mano
 PAGINAS.append(dict(
     url="/coches-segunda-mano-fuerteventura/", miga="Coches de segunda mano",
-    title="Coches de segunda mano en Fuerteventura con 1 año de garantía · Volcano Cars",
+    title="Coches de segunda mano en Fuerteventura con 12 meses de garantía legal · Volcano Cars",
     og="Coches de segunda mano en Fuerteventura · Volcano Cars",
-    desc="Coches de segunda mano en Fuerteventura revisados en nuestro taller de Antigua, con 12 meses de garantía, financiación y entrega a domicilio gratis en toda la isla.",
+    desc="Coches de segunda mano en Fuerteventura revisados en nuestro taller de Antigua, con 12 meses de garantía legal, financiación y entrega a domicilio gratis en toda la isla.",
     eyebrow="Coches de ocasión en Fuerteventura",
-    h1='Coches de segunda mano en Fuerteventura <span class="r">con 1 año de garantía</span>',
+    h1='Coches de segunda mano en Fuerteventura <span class="r">con 12 meses de garantía legal</span>',
     lead="Cada coche que vendemos pasa antes por nuestro taller de Antigua. Precio final con impuestos, garantía de 12 meses, cambio de nombre incluido y te lo llevamos gratis a casa, de Corralejo a Morro Jable.",
     ctas=B_COCHES + B_WA("Hola Volcano Cars, busco un coche: ", "Dinos qué buscas") + B_TEL,
-    sellos=["12 meses de garantía", "Revisados en nuestro taller", "Entrega gratis en la isla", "Financiación a tu medida"],
+    sellos=["12 meses de garantía legal", "Revisados en nuestro taller", "Entrega gratis en la isla", "Financiación a tu medida"],
     wa="Hola Volcano Cars, busco un coche: ",
     body=lambda: f"""
   <section class="sec"><h2>Por qué comprar tu coche aquí</h2>
     {tarjetas([("1", "Revisado por mecánicos", "No somos un escaparate: tenemos taller propio. Revisamos cada coche y te contamos qué se le ha hecho."),
-               ("12", "12 meses de garantía", "Garantía legal de 12 meses desde la entrega, con el taller a tu disposición en Antigua si notas cualquier fallo."),
+               ("12", "12 meses de garantía legal", "Garantía legal de 12 meses desde la entrega, con el taller a tu disposición en Antigua si notas cualquier fallo."),
                ("0 €", "Entrega a domicilio gratis", "Una vez firmada la compra, te lo llevamos sin coste a cualquier punto de Fuerteventura, el día que elijas."),
                ("€", "Precio final, sin sorpresas", "El precio publicado incluye impuestos. El cambio de nombre en Tráfico corre de nuestra cuenta."),
                ("%", "Financiación", "Calcula tu cuota en la ficha de cada coche y pide un pre-estudio gratis, sin compromiso."),
@@ -190,8 +193,8 @@ PAGINAS.append(dict(
             ("Te lo llevamos gratis", "Lo recoges en el taller o te lo llevamos a casa en cualquier punto de la isla.")])}
   </section>
   <section class="sec"><h2>Entrega gratis en toda la isla</h2><p>Llevamos tu coche sin coste a cualquier municipio de Fuerteventura, por ejemplo:</p>
-    <ul class="zonas">{''.join(f'<li><a href="/coches-segunda-mano-{LOCAL_SLUG[z]}">{z}</a></li>' if z in LOCAL_SLUG else f'<li>{z}</li>' for z in ZONAS)}</ul></section>""",
-    faq=[("¿Los coches tienen garantía?", "Sí. Los coches que vendemos a particulares tienen 12 meses de garantía desde la entrega. Cubre los defectos que el coche ya tuviera al entregártelo; no cubre el desgaste normal por uso (pastillas, neumáticos, embrague, batería…). <a href='/condiciones'>Ver condiciones</a>."),
+    <ul class="zonas">{''.join(f'<li><a href="/coches-segunda-mano-{LOCAL_SLUG[z]}">{z}</a></li>' if LOCAL_SLUG.get(z) in IDX_VENTA else f'<li>{z}</li>' for z in ZONAS)}</ul></section>""",
+    faq=[("¿Los coches tienen garantía?", "Sí. Los coches que vendemos a particulares tienen 12 meses de garantía legal desde la entrega. Cubre los defectos que el coche ya tuviera al entregártelo; no cubre el desgaste normal por uso (pastillas, neumáticos, embrague, batería…). <a href='/condiciones'>Ver condiciones</a>."),
          ("¿Puedo probar el coche antes de comprarlo?", "Claro. En la ficha de cada coche puedes elegir día y hora para venir a verlo y probarlo en Antigua. La visita no te obliga a nada."),
          ("¿Me lo lleváis a casa?", "Sí, una vez firmada la compra te lo llevamos gratis a cualquier punto de Fuerteventura, el día y a la hora que acordemos. También puedes recogerlo en el taller."),
          ("¿Se puede financiar?", "Sí. En cada coche tienes una calculadora con la cuota, la TAE y el ejemplo completo, y puedes pedir un pre-estudio sin compromiso. La financiación está sujeta a la aprobación de la entidad financiera. <a href='/financiacion-coches-fuerteventura/'>Cómo funciona</a>."),
@@ -212,7 +215,7 @@ PAGINAS.append(dict(
     h1='Taller mecánico en Fuerteventura, <span class="r">con cita al momento</span>',
     lead="Mecánica rápida para todas las marcas en el polígono de Antigua, en el centro de la isla. Eliges el servicio, el día y la hora en la web y tu cita queda confirmada al momento. Presupuesto por escrito antes de empezar.",
     ctas=B_CITA + B_WA("Hola Volcano Cars, quiero pedir cita en el taller: ") + B_TEL,
-    sellos=["Todas las marcas", "Presupuesto por escrito", "3 meses o 2.000 km de garantía", "Atendemos en inglés"],
+    sellos=["Todas las marcas", "Presupuesto por escrito", "Seguimiento desde el móvil", "Atendemos en inglés"],
     wa="Hola Volcano Cars, quiero pedir cita en el taller: ",
     body=lambda: f"""
   <section class="sec"><h2>Qué hacemos</h2>
@@ -235,7 +238,6 @@ PAGINAS.append(dict(
   </section>""",
     faq=[("¿Trabajáis con todas las marcas?", "Sí, trabajamos con coches de todas las marcas y modelos."),
          ("¿Cuánto cuesta una reparación?", "Depende del coche y de lo que necesite, por eso te damos siempre un presupuesto por escrito antes de hacer nada. Es gratis y es válido 12 días hábiles."),
-         ("¿Qué garantía tienen las reparaciones?", "3 meses o 2.000 km, lo que llegue antes, desde la entrega. Cubre las piezas y la mano de obra de lo reparado."),
          ("¿Y si el coche no está listo el día acordado?", "Te descontamos en la factura el 10 % de la mano de obra por cada día laborable de retraso, hasta el 50 %. Las excepciones (por ejemplo, una pieza que no llega a tiempo y te avisamos) están en las <a href='/condiciones'>condiciones</a>."),
          ("¿Puedo ver cómo va mi coche?", "Sí. Cuando dejas el coche te enviamos por WhatsApp un enlace privado donde ves el estado, las fotos y el presupuesto en tiempo real, y puedes aprobarlo desde el móvil."),
          ("¿Cuál es el horario del taller?", f"{HORARIO}, en horario continuado. Sábados y domingos, cerrado."),
@@ -249,12 +251,12 @@ PAGINAS.append(dict(
     url="/chapa-y-pintura-fuerteventura/", miga="Chapa y pintura", servicio="Chapa y pintura", lista=LISTA_CHAPA,
     title="Chapa y pintura en Fuerteventura (Antigua) · Presupuesto por escrito · Volcano Cars",
     og="Chapa y pintura en Fuerteventura · Volcano Cars",
-    desc="Taller de chapa y pintura en Antigua, Fuerteventura: golpes, abolladuras, arañazos y pintura parcial o completa. Presupuesto por escrito, fecha de entrega garantizada y cita online.",
+    desc="Taller de chapa y pintura en Antigua, Fuerteventura: golpes, abolladuras, arañazos y pintura parcial o completa. Presupuesto por escrito, fecha de entrega por escrito y cita online.",
     eyebrow="Carrocería en Antigua",
     h1='Chapa y pintura en Fuerteventura, <span class="r">como el primer día</span>',
     lead="Reparamos golpes, abolladuras y arañazos y pintamos piezas sueltas o el coche entero. Mándanos fotos por WhatsApp para una primera orientación y te damos el presupuesto por escrito al ver el coche.",
     ctas=B_WA("Hola Volcano Cars, os mando fotos de un golpe para presupuesto: ", "Mandar fotos por WhatsApp") + B_CITA + B_TEL,
-    sellos=["Presupuesto por escrito", "Fecha de entrega garantizada", "3 meses o 2.000 km de garantía", "Todas las marcas"],
+    sellos=["Presupuesto por escrito", "Fecha de entrega por escrito", "Seguimiento desde el móvil", "Todas las marcas"],
     wa="Hola Volcano Cars, os mando fotos de un golpe para presupuesto: ",
     body=lambda: f"""
   <section class="sec"><h2>Qué reparamos</h2>
@@ -267,11 +269,10 @@ PAGINAS.append(dict(
     {pasos([("Mándanos fotos", "Por WhatsApp, del daño de cerca y del coche entero. Te damos una primera orientación."),
             ("Trae el coche", "Reserva día y hora en la web. Lo vemos y te damos el presupuesto por escrito y la fecha de entrega."),
             ("Sigue la reparación", "Te enviamos un enlace privado para ver el estado y las fotos del trabajo desde el móvil."),
-            ("Recógelo", "Con la reparación garantizada 3 meses o 2.000 km.")])}
+            ("Recógelo", "Con la factura desglosada y todo lo que hemos hecho explicado.")])}
   </section>""",
     faq=[("¿Me podéis dar presupuesto por fotos?", "Con fotos te damos una primera orientación por WhatsApp. El presupuesto por escrito, que es el que vale, lo hacemos viendo el coche en el taller."),
          ("¿Cuánto tardáis?", "Depende del daño. Te damos la fecha de entrega por escrito antes de empezar y, si no cumplimos, te descontamos el 10 % de la mano de obra por cada día laborable de retraso, hasta el 50 %."),
-         ("¿Qué garantía tiene la reparación?", "3 meses o 2.000 km, lo que llegue antes, en piezas y mano de obra."),
          ("¿Trabajáis con todas las marcas?", "Sí, con coches de todas las marcas y modelos."),
          ("¿Dónde estáis?", f"En {e(DIRECCION)}, en el centro de la isla. {HORARIO}.")],
     banda=("Mándanos fotos del golpe", B_WA("Hola Volcano Cars, os mando fotos de un golpe para presupuesto: ", "Enviar fotos") + B_CITA),
@@ -284,7 +285,7 @@ PAGINAS.append(dict(
     og="Pre-ITV en Fuerteventura · Volcano Cars",
     desc="Revisión pre-ITV en Antigua, Fuerteventura: revisamos tu coche antes de la inspección y reparamos lo necesario con presupuesto por escrito. Cita online al momento.",
     eyebrow="Pre-ITV en Antigua",
-    h1='Pre-ITV: pasa la ITV <span class="r">a la primera</span>',
+    h1='Pre-ITV: llega a la ITV <span class="r">con todo revisado</span>',
     lead="Antes de ir a la estación de ITV, revisamos tu coche en nuestro taller de Antigua. Si algo no está bien, te damos presupuesto por escrito para dejarlo listo y te evitas la segunda visita.",
     ctas=B_CITA + B_WA("Hola Volcano Cars, quiero hacer la pre-ITV: ") + B_TEL,
     sellos=["Cita online al momento", "Presupuesto por escrito", "Todas las marcas"],
@@ -306,8 +307,7 @@ PAGINAS.append(dict(
   </section>""",
     faq=[("¿Pasáis vosotros la ITV?", "No: la ITV la hace la estación oficial. Nosotros revisamos el coche antes y reparamos lo necesario para que la pase."),
          ("¿Cuánto cuesta la pre-ITV?", "Pídenos precio por WhatsApp o por teléfono. Si luego hay que reparar algo, te damos presupuesto por escrito antes de hacerlo."),
-         ("¿Y si me han dado la ITV desfavorable?", "Tráenos el informe de la inspección: reparamos los defectos con presupuesto por escrito para que puedas volver a pasarla."),
-         ("¿Qué garantía tienen las reparaciones?", "3 meses o 2.000 km, lo que llegue antes.")],
+         ("¿Y si me han dado la ITV desfavorable?", "Tráenos el informe de la inspección: reparamos los defectos con presupuesto por escrito para que puedas volver a pasarla.")],
     banda=("Reserva tu pre-ITV", B_CITA + B_WA("Hola Volcano Cars, quiero hacer la pre-ITV: ")),
 ))
 
@@ -343,6 +343,102 @@ PAGINAS.append(dict(
          ("¿Quién concede el préstamo?", "La entidad financiera con la que trabajamos. Volcano Cars no concede préstamos: te ayudamos a tramitar la solicitud y a elegir la mejor opción.")],
     banda=("Elige coche y calcula tu cuota", B_COCHES + B_WA("Hola Volcano Cars, quiero información sobre financiación: ")),
     script="""<script>fetch("/api/financiacion").then(r=>r.ok?r.json():null).then(f=>{ if(!f||!f.activa||!f.plazos||!f.plazos.length) return; const m=Math.max(...f.plazos); document.querySelectorAll("[data-fin-max]").forEach(e=>e.textContent=m+" meses"); }).catch(()=>{});</script>""",
+))
+
+# ---------------------------------------------------------------- contacto y cómo llegar (página propia, antes era una copia de la portada)
+RUTAS_LLEGAR = [  # distancias y tiempos APROXIMADOS por carretera hasta la nave (los mismos que netlify/lib/municipios.mts)
+    ("Antigua (pueblo)", 3, 5), ("Caleta de Fuste", 12, 15), ("Puerto del Rosario", 20, 20), ("Gran Tarajal", 30, 30),
+    ("La Oliva", 42, 35), ("Corralejo", 55, 45), ("Costa Calma", 60, 45), ("Morro Jable", 80, 65)]
+PAGINAS.append(dict(
+    url="/contacto", miga="Contacto y cómo llegar", sin_zonas=True,
+    title="Contacto y cómo llegar · Volcano Cars, Polígono Industrial de Antigua (Fuerteventura)",
+    og="Volcano Cars · Contacto y cómo llegar",
+    desc="Teléfono, WhatsApp, email, horario y cómo llegar a Volcano Cars: Calle Valle Largo, Nave 8, Polígono Industrial de Antigua, Fuerteventura. Lunes a viernes de 8:00 a 16:00.",
+    eyebrow="Contacto",
+    h1='Volcano Cars, <span class="r">en el Polígono de Antigua</span>',
+    lead=f"Taller mecánico, chapa y pintura y venta de coches de ocasión en {e(DIRECCION)}. {HORARIO}, en horario continuado. Te atendemos en español y en inglés.",
+    ctas=B_TEL + B_WA("Hola Volcano Cars, ") + f'<a class="btn b-ghost" href="{MAPA}" target="_blank" rel="noopener">Abrir en Google Maps</a>',
+    sellos=["Cita online al momento", "WhatsApp", "Atendemos en inglés"],
+    wa="Hola Volcano Cars, ",
+    body=lambda: f"""
+  <section class="sec"><h2>Datos de contacto</h2>
+    {tarjetas([("☎", "Teléfono", f'<a href="tel:{TEL_LINK}">{TEL}</a><br>{HORARIO}'),
+               ("WA", "WhatsApp", f'<a href="{e(wa("Hola Volcano Cars, "))}" target="_blank" rel="noopener">Escríbenos por WhatsApp</a><br>Te respondemos en horario de taller.'),
+               ("@", "Email", '<a href="mailto:volcanocars2026@gmail.com">volcanocars2026@gmail.com</a>'),
+               ("⌖", "Dirección", f'<a href="{MAPA}" target="_blank" rel="noopener">{e(CALLE)}<br>{CP} {LOC}, Fuerteventura (Las Palmas)</a>'),
+               ("⏱", "Horario", f"{HORARIO}, sin cerrar a mediodía. Sábados, domingos y festivos, cerrado."),
+               ("ES·EN", "Idiomas", "Atendemos en español y en inglés.")])}
+  </section>
+  <section class="sec"><h2>Cómo llegar desde cada zona</h2>
+    <p>Estamos en la <b>Calle Valle Largo, Nave 8</b>, dentro del Polígono Industrial de Antigua. Tiempos aproximados en coche hasta la nave:</p>
+    <div class="tabla-wrap"><table class="tabla"><thead><tr><th>Desde</th><th>Distancia</th><th>Tiempo</th></tr></thead><tbody>
+    {''.join(f'<tr><td>{e(n)}</td><td>≈ {km} km</td><td>≈ {mi} min</td></tr>' for n, km, mi in RUTAS_LLEGAR)}
+    </tbody></table></div>
+    <p style="margin-top:12px"><a class="btn b-rosso" href="{MAPA}" target="_blank" rel="noopener">Cómo llegar con Google Maps</a></p>
+    <p style="color:var(--muted)">¿Te pilla lejos? Si compras un coche, te lo llevamos gratis a cualquier punto de la isla. Para el taller, te damos cita a una hora fija y el presupuesto antes de empezar, para que no hagas el viaje en balde.</p>
+  </section>
+  <section class="sec"><h2>¿Qué necesitas?</h2>
+    {tarjetas([("01", "Taller mecánico", 'Aceite, frenos, diagnosis, distribución, aire acondicionado. <a href="/taller-mecanico-fuerteventura/">Ver taller</a>'),
+               ("02", "Chapa y pintura", 'Golpes, arañazos y pintura con presupuesto por escrito. <a href="/chapa-y-pintura-fuerteventura/">Ver chapa y pintura</a>'),
+               ("03", "Coches de ocasión", 'Revisados en nuestro taller, con 12 meses de garantía legal. <a href="/coches-segunda-mano-fuerteventura/">Ver coches</a>')])}
+  </section>""",
+    faq=[("¿Hace falta cita para el taller?", "Es lo mejor: reservas la hora en la web y la cita queda confirmada al momento. Si vienes sin cita te atendemos en cuanto podamos."),
+         ("¿Abrís los sábados?", f"No. Abrimos {HORARIO.lower()}, en horario continuado."),
+         ("¿Se puede aparcar?", "Estamos en una nave del polígono industrial: al llegar, llámanos o escríbenos por WhatsApp y te indicamos dónde dejar el coche."),
+         ("¿Habláis inglés?", "Sí, te atendemos en español y en inglés. <a href='/en/'>English version</a>.")],
+    banda=("Te esperamos en Antigua", B_CITA + B_WA("Hola Volcano Cars, ")),
+))
+
+# ---------------------------------------------------------------- guía de la ITV en Fuerteventura (contenido útil que busca mucha gente de la isla)
+PAGINAS.append(dict(
+    url="/itv-fuerteventura/", miga="Guía de la ITV", servicio="Pre-ITV", lista=["Revisión pre-ITV", "Reparación de defectos de la ITV"],
+    title="ITV en Fuerteventura: cada cuánto se pasa, qué revisan y cómo aprobar a la primera · Volcano Cars",
+    og="Guía de la ITV en Fuerteventura · Volcano Cars",
+    desc="Todo sobre la ITV en Fuerteventura: cada cuánto hay que pasarla, qué miran, los fallos más habituales, qué pasa si sale desfavorable y cómo prepararla para aprobar a la primera.",
+    eyebrow="Guía práctica",
+    h1='La ITV en Fuerteventura, <span class="r">sin sorpresas</span>',
+    lead="Cada cuánto toca, qué revisan en la estación, los defectos que más suspenden en la isla y qué hacer si te la dan desfavorable. Explicado por mecánicos, sin letra pequeña.",
+    ctas='<a class="btn b-rosso" href="/pre-itv-fuerteventura/">Reservar pre-ITV</a>' + B_WA("Hola Volcano Cars, tengo que pasar la ITV: ") + B_TEL,
+    sellos=["Actualizada en 2026", "Escrita por nuestro taller", "Pre-ITV en Antigua"],
+    wa="Hola Volcano Cars, tengo que pasar la ITV: ",
+    body=lambda: f"""
+  <section class="sec"><h2>¿Cada cuánto hay que pasar la ITV?</h2>
+    <p>Para un turismo de uso particular (coche normal, hasta 9 plazas):</p>
+    <div class="tabla-wrap"><table class="tabla"><thead><tr><th>Antigüedad del coche</th><th>Cada cuánto</th></tr></thead><tbody>
+      <tr><td>Hasta 4 años</td><td>No tiene que pasarla</td></tr>
+      <tr><td>De 4 a 10 años</td><td>Cada 2 años</td></tr>
+      <tr><td>Más de 10 años</td><td>Cada año</td></tr>
+    </tbody></table></div>
+    <p>La fecha exacta está en la pegatina del parabrisas y en la tarjeta ITV. Puedes pasarla hasta 30 días antes de que caduque sin perder días: la siguiente fecha se cuenta desde la de caducidad, no desde el día que vas. Taxis, autocaravanas, furgonetas y vehículos de alquiler tienen otros plazos.</p>
+  </section>
+  <section class="sec"><h2>Dónde pasarla en Fuerteventura</h2>
+    <p>En la isla hay estaciones de ITV en la zona de Puerto del Rosario y El Matorral. Casi todas trabajan <b>con cita previa</b>: pídela en la web de la estación y comprueba allí la dirección, el horario y la documentación antes de ir.</p>
+    <p>Lleva el <b>permiso de circulación</b>, la <b>tarjeta ITV</b> (ficha técnica) y, si te la piden, el recibo del seguro en vigor.</p>
+  </section>
+  <section class="sec"><h2>Los fallos que más suspenden</h2>
+    {tarjetas([("01", "Luces", "Una bombilla fundida (freno, matrícula, intermitente) o faros mal alineados. Es el fallo más tonto y de los más habituales."),
+               ("02", "Neumáticos", "Dibujo por debajo de 1,6 mm, cortes, bultos o medidas distintas a las de la ficha técnica."),
+               ("03", "Frenos", "Pastillas gastadas, discos con escalón o un freno que tira más de un lado que del otro."),
+               ("04", "Emisiones", "Humo o gases por encima del límite. Un filtro sucio, una sonda averiada o un testigo de motor encendido lo delatan."),
+               ("05", "Suspensión y dirección", "Holguras en rótulas y bieletas, amortiguadores que pierden aceite, silentblocks rotos."),
+               ("06", "Óxido por el salitre", "En Fuerteventura el salitre se come bajos, anclajes y tubos de freno. La ITV mira los bajos con el coche levantado.")])}
+  </section>
+  <section class="sec"><h2>¿Y si sale desfavorable o negativa?</h2>
+    {pasos([("Desfavorable", "Tienes 2 meses para reparar los defectos y volver a la misma estación. Mientras tanto, puedes circular con el coche."),
+            ("Negativa", "El defecto es peligroso: el coche solo puede ir al taller o volver a la ITV (en grúa, si hace falta)."),
+            ("Tráenos el informe", "Con la hoja de la inspección te damos presupuesto por escrito para arreglar exactamente lo que marca, sin tocar nada más sin tu permiso."),
+            ("Segunda inspección", "Con el coche reparado, vuelves a la estación y solo revisan lo que falló.")])}
+  </section>
+  <section class="sec"><h2>Cómo aprobar a la primera</h2>
+    <p>Lo más barato es no suspender: una segunda visita cuesta tiempo, otro viaje y a veces otra tasa. En nuestra <a href="/pre-itv-fuerteventura/">pre-ITV</a> revisamos luces, frenos, neumáticos, dirección, suspensión, bajos y testigos con equipo de diagnosis, y te decimos qué fallaría antes de que lo diga la estación. Si hay que arreglar algo, presupuesto por escrito primero.</p>
+    <p>¿Tu coche vive cerca del mar? Pide que miremos los bajos: en la costa de la isla el salitre es la causa número uno de óxido en tubos de freno y anclajes.</p>
+  </section>""",
+    faq=[("¿Puedo pasar la ITV antes de que caduque?", "Sí, hasta 30 días antes, y la próxima fecha se cuenta desde la de caducidad, así que no pierdes nada."),
+         ("¿Qué pasa si circulo con la ITV caducada?", "Es una infracción grave y te pueden multar; además, si tienes un accidente, el seguro puede darte problemas. Mejor no arriesgar."),
+         ("¿Hacéis vosotros la ITV?", "No: la ITV la hace la estación oficial. Nosotros revisamos y reparamos el coche antes (pre-ITV) o después, si te la han dado desfavorable."),
+         ("¿Cuánto tardáis en arreglar los defectos de la ITV?", "Depende del defecto. Con el informe de la inspección te damos presupuesto y fecha de entrega por escrito."),
+         ("¿Me avisáis cuando me toque la ITV?", "Sí, si nos dejas el coche en el taller puedes pedir que te avisemos por WhatsApp 30 y 7 días antes de que caduque.")],
+    banda=("Deja la ITV en manos de mecánicos", '<a class="btn b-rosso" href="/pre-itv-fuerteventura/">Reservar pre-ITV</a>' + B_WA("Hola Volcano Cars, tengo que pasar la ITV: ")),
 ))
 
 for p in PAGINAS:

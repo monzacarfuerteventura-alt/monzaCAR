@@ -1,0 +1,25 @@
+/* RESPUESTAS · reseñas de Google (tools/respuestas) */
+#s-resp[hidden]{display:none}
+.rs-canales{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.rs-canal{appearance:none;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:9px 16px;font:inherit;font-weight:700;cursor:pointer}
+.rs-canal[aria-pressed="true"]{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.rs-canal:disabled{opacity:.55;cursor:default}.rs-canal small{font-weight:600;font-size:11px;opacity:.8}
+.rs-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:16px;align-items:start}
+.rs-form{display:grid;gap:14px}.rs-form .field{margin:0}.rs-form label small{font-weight:500;color:var(--muted)}
+.rs-stars,.rs-chips{display:flex;gap:7px;flex-wrap:wrap}
+.rs-stars button,.rs-chip{appearance:none;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 13px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;touch-action:manipulation}
+.rs-stars button[aria-pressed="true"]{background:#E3A008;border-color:#E3A008;color:#1B1B1A}
+.rs-chip[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.rs-out{display:grid;gap:12px;position:sticky;top:12px}
+.rs-out-h{display:flex;justify-content:space-between;align-items:center}.rs-out-h h3{margin:0}
+#rs-texto{min-height:330px;font-size:15px;line-height:1.5;resize:vertical}
+.rs-out .quick{display:flex;gap:8px;flex-wrap:wrap}
+.rs-aviso{background:var(--bad-soft,#FBE4E1);border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.45}
+.rs-tips{margin-top:16px}.rs-tips h3{margin:0 0 8px}.rs-tips ul{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14.5px;line-height:1.45}
+@media (max-width:860px){.rs-grid{grid-template-columns:1fr}.rs-out{position:static}}
+.rs-waform{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.rs-waform .field{margin:0}.rs-waform label small{font-weight:500;color:var(--muted)}
+.rs-wag{margin:18px 0 10px;font-size:16px}
+.rs-walist{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+.rs-wa{display:grid;gap:8px;align-content:start;padding:16px}.rs-wa p{margin:0;font-size:14.5px;line-height:1.45;white-space:pre-wrap}
+.rs-wa-h{display:flex;justify-content:space-between;gap:8px;align-items:center}.rs-wa-h code{font-size:12.5px;background:var(--surface-2);border-radius:6px;padding:2px 7px}
+@media (max-width:860px){.rs-waform{grid-template-columns:1fr}}

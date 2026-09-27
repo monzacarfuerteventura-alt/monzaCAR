@@ -25,7 +25,7 @@
   const L = (es, en) => (EN ? en : es);
   const LOC = EN ? "en-GB" : "es-ES";
   const EMP = typeof EMPRESA !== "undefined" ? EMPRESA : {
-    telefono: "677 96 03 48", telefonoLlamar: "+34677960348", whatsapp: "34677960348", email: "volcanocars2026@gmail.com",
+    telefono: "643 56 60 98", telefonoLlamar: "+34643566098", whatsapp: "34643566098", email: "volcanocars2026@gmail.com",
     direccion: "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua, Las Palmas", mapaEnlace: "https://maps.app.goo.gl/dz8icDhkUkB4oznd8",
   };
   const $ = (s, r = document) => r.querySelector(s);
@@ -668,7 +668,7 @@
           </span>
         </label>
         <input class="hp" type="text" id="pf-web" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <label class="consent"><input type="checkbox" id="pf-ok"><span>${L("Acepto que Volcano Cars use estos datos y fotos solo para darme el presupuesto. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacidad</a>.", "I agree Volcano Cars may use these details and photos only to quote me. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacy</a>.")}</span></label>
+        <label class="consent"><input type="checkbox" id="pf-ok"><span>${L("Acepto que MAILIN Y YERAY SL (Volcano Cars) use estos datos y fotos solo para darme el presupuesto. Puedo pedir que los borren cuando quiera. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacidad</a>.", "I agree Volcano Cars may use these details and photos only to quote me. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacy</a>.")}</span></label>
         <div class="form-err" id="pf-err" role="alert" hidden></div>
         <button class="btn btn-rosso pf-go" type="submit"><span>${L("Enviar fotos y pedir presupuesto", "Send photos and get a quote")}</span></button>
         <div class="pf-ok" hidden></div>

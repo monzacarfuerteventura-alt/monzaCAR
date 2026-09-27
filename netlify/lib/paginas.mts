@@ -3,9 +3,9 @@ import type { Car } from "./shared.mts";
 
 export const EMPRESA = {
   nombre: "Volcano Cars",
-  tel: "677 96 03 48",
-  telLink: "+34677960348",
-  wa: "34677960348",
+  tel: "643 56 60 98",
+  telLink: "+34643566098",
+  wa: "34643566098",
   email: "volcanocars2026@gmail.com",
   calle: "Calle Valle Largo, Nave 8, Polígono Industrial",
   cp: "35610",
@@ -25,6 +25,9 @@ export const eur = (n: number) => {
 };
 export const kmTxt = (n: number) => String(Math.round(n || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " km";
 export const foto = (k: string) => (k.startsWith("/") ? k : "/api/fotos/" + encodeURIComponent(k));
+// Misma foto, redimensionada y en WebP por el CDN de imágenes de Netlify (si fallara, onerror vuelve a la original)
+export const fotoW = (k: string, w: number) => `/.netlify/images?url=${encodeURIComponent(foto(k))}&w=${w}&fm=webp&q=72`;
+export const imgAttrs = (k: string, w: number, sizes = "100vw") => `src="${fotoW(k, w)}" srcset="${fotoW(k, Math.round(w / 2))} ${Math.round(w / 2)}w, ${fotoW(k, w)} ${w}w, ${fotoW(k, Math.round(w * 1.6))} ${Math.round(w * 1.6)}w" sizes="${sizes}" onerror="this.onerror=null;this.removeAttribute('srcset');this.src='${foto(k).replace(/'/g, "")}'"`;
 export const wa = (t: string) => `https://wa.me/${EMPRESA.wa}?text=${encodeURIComponent(t)}`;
 
 // Dirección bonita de cada coche: /coche/toyota-c-hr-2020-1a2b3c4d  (la web usa la misma regla)
@@ -50,13 +53,13 @@ export function cabecera(origin: string, titulo: string, descripcion: string, ca
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Figtree:wght@400;500;600;700&family=Titillium+Web:wght@600;700&display=swap">
+<link rel="preload" as="style" href="/fonts/fuentes.css">
+<link rel="stylesheet" href="/fonts/fuentes.css" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="/paginas.css">
 <link rel="stylesheet" href="/tema.css">
 <meta property="og:site_name" content="Volcano Cars">
 <meta property="og:locale" content="es_ES">
+<script src="/medicion.js" defer></script>
 ${extraHead}
 </head>
 <body>
@@ -76,11 +79,11 @@ ${extraHead}
 export function pie(waTxt = "Hola Volcano Cars, tengo una consulta: ") {
   return `</main>
 <footer class="pg-foot"><div class="wrap">
-  <div><img src="/marca/logo-claro.svg" alt="Volcano Cars" width="180" height="44" loading="lazy"><p>Coches de ocasión revisados con 1 año de garantía, taller mecánico y chapa y pintura en Antigua, Fuerteventura.</p></div>
+  <div><img src="/marca/logo-claro.svg" alt="Volcano Cars" width="180" height="44" loading="lazy"><p>Coches de ocasión revisados con 12 meses de garantía legal, taller mecánico y chapa y pintura en Antigua, Fuerteventura.</p></div>
   <div><h4>Coches</h4><a href="/comprar">Coches disponibles</a><a href="/coches-segunda-mano-fuerteventura/">Segunda mano en Fuerteventura</a><a href="/financiacion-coches-fuerteventura/">Financiación</a></div>
   <div><h4>Taller</h4><a href="/taller-mecanico-fuerteventura/">Taller mecánico</a><a href="/chapa-y-pintura-fuerteventura/">Chapa y pintura</a><a href="/pre-itv-fuerteventura/">Pre-ITV</a><a href="/taller">Pedir cita</a></div>
   <div><h4>Visítanos</h4><a href="${EMPRESA.mapa}" target="_blank" rel="noopener">${escH(EMPRESA.calle)}<br>${EMPRESA.cp} ${EMPRESA.localidad}</a><a href="tel:${EMPRESA.telLink}">${EMPRESA.tel}</a><a href="/contacto">${escH(EMPRESA.horario)}</a></div>
-  <div class="pg-legal"><span>© ${new Date().getFullYear()} Volcano Cars</span><a href="/aviso-legal">Aviso legal</a><a href="/condiciones">Condiciones y garantía</a><a href="/privacidad">Privacidad</a><a href="/cookies">Cookies</a><a href="/en/">English</a></div>
+  <div class="pg-legal"><span>© ${new Date().getFullYear()} Volcano Cars</span><a href="/aviso-legal">Aviso legal</a><a href="/condiciones">Condiciones y garantía</a><a href="/privacidad">Privacidad</a><a href="/cookies">Cookies</a><a href="/cookies" data-ck-open>Configurar cookies</a><a href="https://www.instagram.com/volcanocars_antigua/" target="_blank" rel="noopener me">Instagram</a><a href="https://www.facebook.com/share/1KYczmU7be/" target="_blank" rel="noopener me">Facebook</a><a href="/en/">English</a></div>
 </div></footer>
 <nav class="pg-barra" aria-label="Contacto rápido"><a class="btn b-wa" href="${escH(wa(waTxt))}" target="_blank" rel="noopener">WhatsApp</a><a class="btn b-ink" href="tel:${EMPRESA.telLink}">Llamar</a></nav>
 </body>

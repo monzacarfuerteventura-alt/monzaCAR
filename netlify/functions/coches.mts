@@ -1,5 +1,5 @@
 import type { Config } from "@netlify/functions";
-import { store, json, isAdmin, cleanCar, esFotoSubida, borrarVideo, SEMILLA, type Car } from "../lib/shared.mts";
+import { store, json, isAdmin, cleanCar, esFotoSubida, borrarVideo, purgar, SEMILLA, type Car } from "../lib/shared.mts";
 import { caducar, apartadoDe, cancelar, vender } from "../lib/reservas.mts";
 
 const KEY = "coches";
@@ -24,6 +24,7 @@ async function videoListo(car: Car): Promise<string | null> {
 }
 async function save(list: Car[]) {
   await store("monzacar").setJSON(KEY, list);
+  await purgar(["coches"]); // la web enseña el cambio al momento, sin esperar a que caduque la caché
 }
 
 export default async (req: Request) => {
@@ -44,6 +45,9 @@ export default async (req: Request) => {
       headers: {
         "content-type": "application/json; charset=utf-8",
         "cache-control": all ? "no-store" : "public, max-age=0, must-revalidate",
+        // Lista pública: el CDN la sirve desde caché (30 s + 5 min mientras se refresca) → en un pico de visitas
+        // la función y la base de datos apenas trabajan. Al editar un coche se vacía al momento (purgar).
+        ...(all ? {} : { "netlify-cdn-cache-control": "public, s-maxage=30, stale-while-revalidate=300", "netlify-cache-tag": "coches" }),
       },
     });
   }

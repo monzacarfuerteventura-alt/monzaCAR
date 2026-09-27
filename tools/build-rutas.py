@@ -7,13 +7,14 @@ import pathlib, re, html
 ROOT = pathlib.Path(__file__).resolve().parent.parent / "public"
 BASE = "https://volcanocars.com"
 RUTAS = {
-    "comprar": ("Coches de ocasión en Fuerteventura con 1 año de garantía | Volcano Cars",
-                "Coches de segunda mano revisados en nuestro taller de Antigua, con 12 meses de garantía y entrega gratis en toda Fuerteventura. Precios desde 2.500 €."),
+    "comprar": ("Coches de ocasión en Fuerteventura con 12 meses de garantía legal | Volcano Cars",
+                "Coches de segunda mano revisados en nuestro taller de Antigua, con 12 meses de garantía legal y entrega gratis en toda Fuerteventura. Precios desde 2.500 €."),
     "taller": ("Taller mecánico, chapa y pintura en Antigua, Fuerteventura | Volcano Cars",
-               "Pide cita o presupuesto sin compromiso en nuestro taller de Antigua: mecánica, chapa y pintura, pre-ITV. Garantía de reparación y fecha de entrega por escrito."),
-    "contacto": ("Contacto y cómo llegar | Volcano Cars, Antigua (Fuerteventura)",
-                 "Teléfono, WhatsApp, horario y mapa de Volcano Cars en el Polígono Industrial de Antigua, Fuerteventura."),
+               "Pide cita o presupuesto sin compromiso en nuestro taller de Antigua: mecánica, chapa y pintura, pre-ITV. Presupuesto y fecha de entrega por escrito."),
 }
+# /contacto ya no es una copia de la portada: es una página propia (la genera tools/seo.py).
+# /comprar y /taller siguen siendo la web (catálogo y reserva de cita), pero fuera del índice de Google:
+# son copias de la portada y competían con /coches-segunda-mano-fuerteventura/ y /taller-mecanico-fuerteventura/.
 src = (ROOT / "index.html").read_text(encoding="utf-8")
 
 def sub1(pat, rep, s):
@@ -36,10 +37,11 @@ for k, (t, d) in RUTAS.items():
     s = sub1(r'<meta property="og:description" content="[^"]*">', f'<meta property="og:description" content="{html.escape(d)}">', s)
     s = sub1(r'<meta property="og:url" content="[^"]*">', f'<meta property="og:url" content="{url}">', s)
     s = sub1(r'<link rel="canonical" href="[^"]*">', f'<link rel="canonical" href="{url}">', s)
+    s = s.replace(f'<link rel="canonical" href="{url}">', f'<link rel="canonical" href="{url}">\n<meta name="robots" content="noindex, follow">', 1)
     s = re.sub(r'<link rel="alternate" hreflang="[^"]*" href="[^"]*">\n', "", s)
     # la sección correcta ya visible al cargar (sin parpadeo de la portada)
     s = s.replace('<html lang="es">', f'<html lang="es" data-vista="{k}">', 1)
     d_out = ROOT / k
     d_out.mkdir(exist_ok=True)
     (d_out / "index.html").write_text(s, encoding="utf-8")
-print("OK: /comprar, /taller y /contacto generados")
+print("OK: /comprar y /taller generados (noindex)")
