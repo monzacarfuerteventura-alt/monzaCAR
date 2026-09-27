@@ -10,6 +10,7 @@ import { store, json, enviarAviso, waNum, mismoOrigen } from "../lib/shared.mts"
   Stripe (opcional, refuerzo):
   - POST /api/stripe/webhook            → mismo efecto si el cliente cierra el navegador antes de volver
   Variables en Netlify: STRIPE_SECRET_KEY (obligatoria) y STRIPE_WEBHOOK_SECRET (solo para el webhook).
+  Clave configurada en Netlify el 27/09/2026.
   Sin STRIPE_SECRET_KEY la web sigue funcionando: el cliente acepta el presupuesto como antes, sin pagar.
 */
 
