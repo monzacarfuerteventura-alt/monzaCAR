@@ -16,7 +16,10 @@ export default async (req: Request) => {
     const data = await fotos.get(key, { type: "arrayBuffer" });
     if (!data) return new Response("No encontrada", { status: 404 });
     return new Response(data, {
-      headers: { "content-type": MIME[key.split(".").pop()!], "cache-control": "public, max-age=31536000, immutable", "x-content-type-options": "nosniff", ...(key.endsWith(".pdf") ? { "content-disposition": `inline; filename="factura-${key.slice(0, 8)}.pdf"` } : {}) },
+      // Los PDF son facturas y tickets (datos personales): nunca en cachés públicas ni en Google
+      headers: key.endsWith(".pdf")
+        ? { "content-type": "application/pdf", "cache-control": "private, no-store", "x-robots-tag": "noindex, nofollow, noarchive", "referrer-policy": "no-referrer", "x-content-type-options": "nosniff", "content-disposition": `inline; filename="factura-${key.slice(0, 8)}.pdf"` }
+        : { "content-type": MIME[key.split(".").pop()!], "cache-control": "public, max-age=31536000, immutable", "x-content-type-options": "nosniff" },
     });
   }
 

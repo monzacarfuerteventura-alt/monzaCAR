@@ -150,6 +150,7 @@ TEXT = {
     "Inicio": "Home",
     "Kilómetros": "Mileage (km)",
     "La forma más rápida es WhatsApp. Te contestamos en horario de apertura.": "WhatsApp is the fastest way. We reply during opening hours.",
+    "Saltar al contenido": "Skip to content",
     "Llamar": "Call",
     "Llamar ahora": "Call now",
     "Llámanos": "Call us",

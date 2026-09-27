@@ -28,6 +28,13 @@
  "address":{"@type":"PostalAddress","streetAddress":"Calle Valle Largo, Nave 8, Polígono Industrial","postalCode":"35610","addressLocality":"Antigua","addressRegion":"Las Palmas","addressCountry":"ES"},
  "areaServed":[{"@type":"Island","name":"Fuerteventura"},"Antigua","Caleta de Fuste","Puerto del Rosario","La Oliva","Corralejo","Tuineje","Gran Tarajal","Pájara","Costa Calma","Morro Jable"],
  "availableLanguage":["es","en"],
+ "potentialAction":{"@type":"ReserveAction","name":"Pedir cita en el taller","target":{"@type":"EntryPoint","urlTemplate":"https://volcanocars.com/taller","actionPlatform":["https://schema.org/MobileWebPlatform","https://schema.org/DesktopWebPlatform"]},"result":{"@type":"Reservation","name":"Cita de taller"}},
+ "hasOfferCatalog":{"@type":"OfferCatalog","name":"Servicios de Volcano Cars","itemListElement":[
+  {"@type":"Offer","itemOffered":{"@type":"Service","name":"Taller mecánico multimarca","url":"https://volcanocars.com/taller-mecanico-fuerteventura/"}},
+  {"@type":"Offer","itemOffered":{"@type":"Service","name":"Chapa y pintura","url":"https://volcanocars.com/chapa-y-pintura-fuerteventura/"}},
+  {"@type":"Offer","itemOffered":{"@type":"Service","name":"Pre-ITV","url":"https://volcanocars.com/pre-itv-fuerteventura/"}},
+  {"@type":"Offer","itemOffered":{"@type":"Service","name":"Venta de coches de segunda mano revisados","url":"https://volcanocars.com/coches-segunda-mano-fuerteventura/"}},
+  {"@type":"Offer","itemOffered":{"@type":"Service","name":"Financiación de coches","url":"https://volcanocars.com/financiacion-coches-fuerteventura/"}}]},
  "openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"16:00"}]}
 </script>
 <style>
@@ -1287,6 +1294,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
 <link rel="stylesheet" href="/tema.css">
 </head>
 <body>
+<a class="skip" href="#main">Saltar al contenido</a>
 <!-- SVG sprites -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="vc-logo" viewBox="0 0 662 162">
@@ -1378,7 +1386,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
   <a href="/contacto" data-go="contacto"><svg><use href="#i-phone"/></svg>Contacto</a>
 </nav>
 
-<main>
+<main id="main">
 <!-- ================= INICIO ================= -->
 <div class="view" id="v-inicio">
   <section class="hero hero-split" aria-labelledby="hs-h1">
@@ -1804,7 +1812,7 @@ const IDIOMA = document.documentElement.lang === "en" ? "en" : "es";
 const API = "/api/coches";
 const FOTO = k => String(k).startsWith("/") ? k : "/api/fotos/" + encodeURIComponent(k);
 // Foto redimensionada y en WebP por el CDN de imágenes de Netlify; si fallara, se vuelve a la original (ver «error» más abajo)
-const FOTOW = (k,w) => "/.netlify/images?url=" + encodeURIComponent(FOTO(k)) + "&w=" + w + "&fm=webp&q=72";
+const FOTOW = (k,w) => "/.netlify/images?url=" + encodeURIComponent(FOTO(k)) + "&w=" + w + "&q=72"; // sin «fm»: Netlify elige AVIF o WebP según el navegador
 const IMGW = (k,w,sizes) => `src="${FOTOW(k,w)}" srcset="${FOTOW(k,Math.round(w/2))} ${Math.round(w/2)}w, ${FOTOW(k,w)} ${w}w" sizes="${sizes||"(max-width: 700px) 100vw, 400px"}" data-o="${FOTO(k)}"`;
 document.addEventListener("error",e=>{ const t=e.target; if(t&&t.tagName==="IMG"&&t.dataset&&t.dataset.o&&String(t.src).includes("/.netlify/images")){ t.removeAttribute("srcset"); t.src=t.dataset.o; } },true);
 

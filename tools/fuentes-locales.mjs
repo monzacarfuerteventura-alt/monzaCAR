@@ -19,6 +19,39 @@ try {
   }
   fs.writeFileSync(path.join(DIR, "fuentes.css"), "/* Generado al publicar por tools/fuentes-locales.mjs */\n" + out);
   console.log(`fuentes-locales: ${urls.length} archivos guardados en /fonts`);
+  // Precarga de la letra de los títulos (Archivo, alfabeto latino): el H1 es lo más grande que se ve al abrir
+  // la web (LCP). Sin precarga, el navegador no la pide hasta leer fuentes.css, que se carga en diferido.
+  try {
+    const bloque = out.split("/* ").find((b) => b.startsWith("latin */") && /font-family:\s*'Archivo'/.test(b));
+    const woff = bloque && (bloque.match(/url\((\/fonts\/[a-f0-9]+\.woff2)\)/) || [])[1];
+    if (woff) {
+      const PUB = path.resolve(DIR, "..");
+      const tag = `<link rel="preload" as="font" type="font/woff2" href="${woff}" crossorigin>`;
+      const html = [];
+      const recorrer = (d) => { for (const f of fs.readdirSync(d, { withFileTypes: true })) {
+        const p = path.join(d, f.name);
+        if (f.isDirectory()) { if (!["ayuda", "coches", "fonts", "marca"].includes(f.name)) recorrer(p); }
+        else if (f.name.endsWith(".html") && f.name !== "admin.html") html.push(p);
+      } };
+      recorrer(PUB);
+      let n = 0;
+      for (const f of html) {
+        const t = fs.readFileSync(f, "utf8");
+        if (t.includes('rel="preload" as="font"') || !t.includes('href="/fonts/fuentes.css"')) continue;
+        const i = t.search(/<link rel="(preload|stylesheet)"[^>]*href="\/fonts\/fuentes\.css"/);
+        if (i < 0) continue;
+        fs.writeFileSync(f, t.slice(0, i) + tag + "\n" + t.slice(i)); n++;
+      }
+      // La página de coches (función coches-fv) usa una copia de su HTML: también lleva la precarga
+      const plant = path.resolve(PUB, "..", "netlify", "lib", "plantilla-coches-fv.mts");
+      if (fs.existsSync(plant)) {
+        const t = fs.readFileSync(plant, "utf8");
+        const marca = '<link rel=\\"stylesheet\\" href=\\"/fonts/fuentes.css\\"';
+        if (!t.includes("as=\\\"font\\\"") && t.includes(marca)) { fs.writeFileSync(plant, t.replace(marca, JSON.stringify(tag).slice(1, -1) + "\\n" + marca)); n++; }
+      }
+      console.log(`fuentes-locales: precarga de ${woff} en ${n} páginas`);
+    }
+  } catch (e2) { console.log("fuentes-locales: sin precarga (" + e2.message + ")"); }
 } catch (e) {
   console.log("fuentes-locales: no se pudieron descargar (" + e.message + "); se mantiene el respaldo de Google Fonts");
 }

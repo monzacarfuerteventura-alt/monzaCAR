@@ -26,7 +26,7 @@ export const eur = (n: number) => {
 export const kmTxt = (n: number) => String(Math.round(n || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + " km";
 export const foto = (k: string) => (k.startsWith("/") ? k : "/api/fotos/" + encodeURIComponent(k));
 // Misma foto, redimensionada y en WebP por el CDN de imágenes de Netlify (si fallara, onerror vuelve a la original)
-export const fotoW = (k: string, w: number) => `/.netlify/images?url=${encodeURIComponent(foto(k))}&w=${w}&fm=webp&q=72`;
+export const fotoW = (k: string, w: number) => `/.netlify/images?url=${encodeURIComponent(foto(k))}&w=${w}&q=72`; // sin «fm»: Netlify elige AVIF o WebP según el navegador
 export const imgAttrs = (k: string, w: number, sizes = "100vw") => `src="${fotoW(k, w)}" srcset="${fotoW(k, Math.round(w / 2))} ${Math.round(w / 2)}w, ${fotoW(k, w)} ${w}w, ${fotoW(k, Math.round(w * 1.6))} ${Math.round(w * 1.6)}w" sizes="${sizes}" onerror="this.onerror=null;this.removeAttribute('srcset');this.src='${foto(k).replace(/'/g, "")}'"`;
 export const wa = (t: string) => `https://wa.me/${EMPRESA.wa}?text=${encodeURIComponent(t)}`;
 

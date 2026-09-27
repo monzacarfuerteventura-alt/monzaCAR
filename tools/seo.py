@@ -160,6 +160,7 @@ PAGINAS.append(dict(
     sellos=["12 meses de garantía legal", "Revisados en nuestro taller", "Entrega gratis en la isla", "Financiación a tu medida"],
     wa="Hola Volcano Cars, busco un coche: ",
     body=lambda: f"""
+  <!--STOCK-->
   <section class="sec"><h2>Por qué comprar tu coche aquí</h2>
     {tarjetas([("1", "Revisado por mecánicos", "No somos un escaparate: tenemos taller propio. Revisamos cada coche y te contamos qué se le ha hecho."),
                ("12", "12 meses de garantía legal", "Garantía legal de 12 meses desde la entrega, con el taller a tu disposición en Antigua si notas cualquier fallo."),
@@ -448,3 +449,9 @@ for p in PAGINAS:
     pag = cabecera(p).replace(e('<span data-fin-max>varios años</span>'), '<span data-fin-max>varios años</span>') + p['body']() + pie(p)
     (d / "index.html").write_text(pag, encoding="utf-8")
     print("escrito", p['url'])
+    if p['url'] == "/coches-segunda-mano-fuerteventura/":
+        # Plantilla para netlify/functions/coches-fv.mts: esa función sirve esta misma página con los coches
+        # en venta ya pintados donde está <!--STOCK--> (para que Google vea el stock sin JavaScript)
+        import json
+        (OUT.parent / "netlify" / "lib" / "plantilla-coches-fv.mts").write_text(
+            "// GENERADO por tools/seo.py: no editar a mano\nexport const PLANTILLA: string = " + json.dumps(pag, ensure_ascii=False) + ";\n", encoding="utf-8")
