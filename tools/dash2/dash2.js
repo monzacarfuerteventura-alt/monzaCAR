@@ -264,4 +264,4 @@ addEventListener("afterprint",()=>{ document.querySelectorAll(".d2-capa").forEac
   a.parentNode.insertBefore(d,a); d.lastElementChild.append(a,tl); })();
 // Enlace directo desde el email del informe: …/admin.html#informe=semanal-2026-09-14
 (function(){ const m=location.hash.match(/^#informe=(.+)$/); if(!m) return; const id=decodeURIComponent(m[1]);
-  const esperar=setInterval(()=>{ if(typeof ME!=="undefined"&&ME&&!ME.equipo){ clearInterval(esperar); abrirTab("dash"); setTimeout(()=>d2AbrirInforme(id),400); } },500); setTimeout(()=>clearInterval(esperar),120000); })();
+  const esperar=setInterval(()=>{ if(typeof ME!=="undefined"&&ME&&PUEDE_TODO()){ clearInterval(esperar); abrirTab("dash"); setTimeout(()=>d2AbrirInforme(id),400); } },500); setTimeout(()=>clearInterval(esperar),120000); })();

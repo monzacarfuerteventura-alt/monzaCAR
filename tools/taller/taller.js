@@ -39,7 +39,7 @@ const T_ACC={crear:"Recepción creada",guardar:"Guardado",firmar:"Firmado",ficha
 /* ---------- estado ---------- */
 let TF=null, TW={}, TF_TAB="f1", TEQ=[], TVISTA="", TBUSQ="", TFILTRO="activas", TDIRTY=false, TSAVING=false, T_SKEW=0, TTOOL="R", TVER=0, TSAVED="";
 const T_OPEN=new Set(["A"]);
-const ES_EQ=()=>!!(ME&&ME.equipo);
+const ES_EQ=()=>!!(ME&&ME.equipo&&ME.rol!=="gerente"); // equipo SIN puesto de gerente (el gerente del equipo ve lo mismo que la contraseña)
 const ES_GER=()=>!ME||ME.rol==="gerente";
 const tNombre=uid=>!uid?"—":uid==="gerente"?"Gerente":(TEQ.find(p=>p.id===uid)||{}).nombre||"Persona dada de baja";
 const tClone=o=>o==null?o:JSON.parse(JSON.stringify(o));
@@ -81,9 +81,11 @@ function tResF2(f2){ let r=0,a=0,ok=0,na=0,h=0; if(f2) for(const id of F2_IDS){ 
 async function entrarEquipo(d){
   ME={rol:d.rol,nombre:d.nombre,uid:d.uid,equipo:true,caja:!!d.caja};
   try{ sessionStorage.setItem("vc_me",JSON.stringify(ME)); }catch(_){}
-  document.body.classList.add("modo-equipo"); document.body.classList.toggle("con-caja",!!ME.caja); tUsuario(); if(ME.rol==="gerente") setTimeout(()=>cjVigilar(),1200);
+  document.body.classList.add("modo-equipo"); document.body.classList.toggle("con-caja",!!ME.caja); document.body.classList.toggle("eq-ger",ME.rol==="gerente"); tUsuario(); if(ME.rol==="gerente") setTimeout(()=>cjVigilar(),1200);
   TVISTA=TVISTA||"mios";
   await Promise.all([tCargarEquipo(), api("/api/ordenes").then(r=>{ ORDENES=r; }).catch(()=>{})]);
+  // Todo el equipo trabaja también CRM, Agenda y Coches: se cargan en segundo plano (si aún no ha fichado, se cargan al fichar)
+  try{ if(typeof loadList==="function") loadList(true).catch(()=>{}); if(typeof loadLeads==="function") loadLeads(false).catch(()=>{}); }catch(_){ }
   let abierta=""; try{ abierta=sessionStorage.getItem("vc_tf")||""; }catch(_){}
   if(abierta&&location.hash==="#fichas") abrirFichas(abierta); else abrirTab(location.hash==="#caja"&&ME.caja?"caja":location.hash==="#inventario"?"alm":"ordenes",false);
 }
@@ -175,7 +177,7 @@ function tMios(){
   if(rol==="recepcion") h+=bloque("Recepciones sin firmar","Termina la ficha de entrada y que firme el cliente.",rec,"f1","Todo firmado.")+bloque("Listos para entregar","",listos,"f4","Ninguno ahora.");
   else if(rol==="calidad") h+=bloque("Pendientes de control de calidad","Revisa y firma FORM-04. Nunca un coche que hayas reparado tú.",cal,"f4","Nada pendiente.")+bloque("Por inspeccionar","",insp,"f2","Nada pendiente.");
   else { if(!ES_GER()) h+=bloque("Asignados a mí","Pulsa para fichar el inicio, las pausas y el final.",asign,"f3","No tienes trabajos asignados.");
-    h+=bloque("Por inspeccionar (FORM-02)","Coches recibidos que esperan la inspección 360°.",insp,"f2","Nada pendiente.")+bloque("Aprobados sin mecánico","El cliente ya ha dicho que sí: asigna o empieza el trabajo.",sinAsignar,"f3","Ninguno.")+bloque("Control de calidad (FORM-04)",ES_GER()?"":"Solo coches que NO has reparado tú.",cal,"f4","Nada pendiente.");
+    h+=bloque("Por inspeccionar (FORM-02)","Coches recibidos que esperan la inspección 360°.",insp,"f2","Nada pendiente.")+bloque("Aprobados sin mecánico","El cliente ya ha dicho que sí: asigna o empieza el trabajo.",sinAsignar,"f3","Ninguno.")+bloque("Control de calidad · 30 puntos (FORM-04)",ES_GER()?"":"Solo coches que NO has reparado tú.",cal,"f4","Nada pendiente.");
     if(ES_GER()) h+=bloque("Recepciones sin firmar","",rec,"f1","Todo firmado."); }
   return h;
 }
@@ -215,7 +217,7 @@ function tCsv(){
 function tNuevaRecepcion(){
   let d=$("#dlg-rec");
   if(!d){ d=document.createElement("dialog"); d.id="dlg-rec"; d.className="t-dlg"; document.body.appendChild(d); }
-  const cand=ES_EQ()?[]:LEADS.filter(x=>x.tipo==="taller"&&!x.orden&&x.estado!=="perdida").slice(0,40);
+  const cand=(typeof LEADS!=="undefined"?LEADS:[]).filter(x=>x.tipo==="taller"&&!x.orden&&x.estado!=="perdida").slice(0,40);
   d.innerHTML=`<form method="dialog" id="f-rec"><h2>Nueva recepción</h2><p class="hint">Se crea la orden con su número y se abre la ficha de recepción (FORM-01) para completarla con el cliente delante.</p>
     ${cand.length?`<div class="field"><label for="rc-lead">¿Viene de una cita o solicitud del CRM?</label><select class="in" id="rc-lead"><option value="">No, cliente nuevo</option>${cand.map(x=>`<option value="${esc(x.id)}">${esc(x.nombre)} · ${esc(queEs(x))}${x.cita?" · cita "+esc(fecha(x.cita.fecha)):""}</option>`).join("")}</select></div>`:""}
     <div id="rc-man" class="t-g2"><div class="field"><label for="rc-nom">Nombre del cliente *</label><input class="in" id="rc-nom" maxlength="80" autocomplete="off"></div><div class="field"><label for="rc-tel">Teléfono</label><input class="in num" id="rc-tel" inputmode="tel" maxlength="30" autocomplete="off"></div>
@@ -277,12 +279,12 @@ function tEstadoFicha(k){ const f=TF.fichas;
 }
 function tCabecera(){
   const o=TF.orden, f=TF.fichas, i=tFase(o.estado);
-  const tabs=[["f1","FORM-01","Recepción"],["f2","FORM-02","Inspección 360°"],["f3","FORM-03","Tiempos"],["f4","FORM-04","Calidad"],["audit","","Auditoría"]];
+  const tabs=[["f1","FORM-01","Recepción"],["f2","FORM-02","Inspección 360°"],["f3","FORM-03","Tiempos"],["f4","FORM-04","Calidad · 30 pts"],["audit","","Auditoría"]];
   return `<div class="t-fhead">
     <button type="button" class="btn b-ghost b-sm" data-tvolver>← Taller</button>
     <div class="t-fid"><small>Orden</small><b class="num">${esc(f.num||"—")}</b></div>
     <div class="t-fcar"><span class="mat">${esc((o.vehiculo.matricula||"—").toUpperCase())}</span><b>${esc(o.vehiculo.coche||"Coche")}</b><small>${esc(o.cliente.nombre)}${o.cliente.telefono?" · "+esc(o.cliente.telefono):""}</small></div>
-    <div class="t-facts"><button type="button" class="btn b-ghost b-sm" data-tprint="uno">Imprimir esta ficha</button><button type="button" class="btn b-brand b-sm" data-tprint="todas">PDF de la orden</button>${ES_GER()&&!ES_EQ()?`<button type="button" class="btn b-ghost b-sm" data-tdrawer>Presupuesto y cliente</button>`:""}</div>
+    <div class="t-facts"><button type="button" class="btn b-ghost b-sm" data-tprint="uno">Imprimir esta ficha</button><button type="button" class="btn b-brand b-sm" data-tprint="todas">PDF de la orden</button><button type="button" class="btn b-ghost b-sm" data-tdrawer>Presupuesto y cliente</button></div>
   </div>
   <ol class="t-fases">${T_FASES.map((x,k)=>`<li class="${k<i?"hecho":k===i?"act":""}"><i>${k<i?"✓":k+1}</i><span>${x[1]}${k===i&&T_SUB[o.estado]?`<small>${T_SUB[o.estado]}</small>`:""}</span></li>`).join("")}</ol>
   <nav class="t-tabs" role="tablist">${tabs.map(([k,n,t])=>{ const [c,s]=tEstadoFicha(k); return `<button type="button" role="tab" data-ttabb="${k}" aria-selected="${TF_TAB===k}">${n?`<small>${n}</small>`:""}<b>${t}</b><em class="t-st ${c}">${esc(s)}</em></button>`; }).join("")}</nav>`;
@@ -642,7 +644,7 @@ setInterval(async()=>{ if(!TF||$("#s-ficha").hidden||document.hidden||TDIRTY||TS
 
 /* ---------- el cajón de la orden (gerente) enlaza con las fichas ---------- */
 const _tAbrirOrdenDrawer=abrirOrden;
-abrirOrden=function(token){ if(ES_EQ()) return abrirFichas(token); _tAbrirOrdenDrawer(token); };
+abrirOrden=function(token){ _tAbrirOrdenDrawer(token); }; // todo el equipo abre la orden completa (presupuesto, cliente, fotos)
 const _tHtmlOrden=htmlOrden;
 htmlOrden=function(o){ const h=_tHtmlOrden(o), f=o.fichas||{};
   const caja=`<section class="dw-box t-dwbox"><h3>Fichas SOP-01 ${o.num?`<span class="chip num">${esc(o.num)}</span>`:""}</h3><div class="t-dwrow">${tFichasChips(o)}${tPipe(o,true)}</div>
@@ -732,9 +734,9 @@ async function tItvCargar(){ try{ TITV=await tApi("itv"); TITV_T=Date.now(); }ca
   if(TVISTA==="itv"){ $("#t-barra").innerHTML=tBarra(); tItvPintar(); } }
 function tItvTexto(x){ const n=(x.nombre||"").trim().split(/\s+/)[0]||"", coche=(x.coche||"coche")+(x.matricula?` (${x.matricula.toUpperCase()})`:""), f=tF(x.itv), t=tItvTramo(x);
   const baja="\n\nSi no quieres recibir más avisos de ITV, contesta BAJA.";
-  if(t==="cad") return `Hola ${n}, somos Volcano Cars, tu taller en Antigua. Te escribimos porque la ITV de tu ${coche} caducó el ${f}. Si quieres, te revisamos el coche antes de pasarla (Pre-ITV: luces, frenos, neumáticos, emisiones y testigos) para que la pases a la primera. ¿Te damos cita esta semana?${baja}`;
-  if(t==="7") return `Hola ${n}, somos Volcano Cars (Antigua). La ITV de tu ${coche} caduca el ${f}: quedan ${x.dias===0?"horas":x.dias===1?"1 día":x.dias+" días"}. ¿Quieres que le echemos un vistazo antes de que vayas? Contesta a este mensaje y te damos hora.${baja}`;
-  return `Hola ${n}, somos Volcano Cars, tu taller en Antigua. Te recordamos que la ITV de tu ${coche} caduca el ${f} (dentro de ${x.dias} días). Si quieres, te hacemos una revisión Pre-ITV antes para que la pases a la primera: https://volcanocars.com/pre-itv-fuerteventura ¿Te reservamos un hueco?${baja}`;
+  if(t==="cad") return `Hola ${n}, somos Volcano Cars, tu taller en Costa de Antigua. Te escribimos porque la ITV de tu ${coche} caducó el ${f}. Si quieres, te revisamos el coche antes de pasarla (Pre-ITV: luces, frenos, neumáticos, emisiones y testigos) para que la pases a la primera. ¿Te damos cita esta semana?${baja}`;
+  if(t==="7") return `Hola ${n}, somos Volcano Cars (Costa de Antigua). La ITV de tu ${coche} caduca el ${f}: quedan ${x.dias===0?"horas":x.dias===1?"1 día":x.dias+" días"}. ¿Quieres que le echemos un vistazo antes de que vayas? Contesta a este mensaje y te damos hora.${baja}`;
+  return `Hola ${n}, somos Volcano Cars, tu taller en Costa de Antigua. Te recordamos que la ITV de tu ${coche} caduca el ${f} (dentro de ${x.dias} días). Si quieres, te hacemos una revisión Pre-ITV antes para que la pases a la primera: https://volcanocars.com/pre-itv-fuerteventura ¿Te reservamos un hueco?${baja}`;
 }
 function tItvCard(x){ const t=tItvTramo(x), hecho=tItvHecho(x), coche=esc(x.coche||"Coche");
   const cuando=x.dias<0?`Caducó hace ${-x.dias} día${x.dias===-1?"":"s"}`:x.dias===0?"Caduca hoy":`Caduca en ${x.dias} día${x.dias===1?"":"s"}`;
@@ -770,7 +772,7 @@ document.addEventListener("click",e=>{ const t=e.target;
 async function tPdfOrden(token){ try{ const [r]=await Promise.all([tApi("fichas/"+token),TEQ.length?null:tCargarEquipo(),typeof alCargarOrden==="function"?alCargarOrden(token):null]); const prev=TF; TF=r; tImprimir(["f1","f2","f3","f4"]); TF=prev; }catch(err){ toast(err.message); } }
 function tImprimir(cuales){
   let el=$("#t-print"); if(!el){ el=document.createElement("div"); el.id="t-print"; document.body.appendChild(el); }
-  const T={f1:["FORM-01","Ficha de recepción del vehículo"],f2:["FORM-02","Inspección 360°"],f3:["FORM-03","Control de tiempos"],f4:["FORM-04","Control de calidad"]};
+  const T={f1:["FORM-01","Ficha de recepción del vehículo"],f2:["FORM-02","Inspección 360°"],f3:["FORM-03","Control de tiempos"],f4:["FORM-04","Control de calidad · 30 puntos"]};
   el.innerHTML=cuales.map(k=>`<article class="tp-pag"><header class="tp-h"><img src="/marca/logo-oscuro.svg" alt="Volcano Cars" height="26"><div><b>${T[k][1]}</b><small>Orden <b>${esc(TF.fichas.num)}</b> · ${esc((TF.orden.vehiculo.matricula||"").toUpperCase())} · ${esc(TF.orden.vehiculo.coche||"")} · ${esc(TF.orden.cliente.nombre)}</small></div><span class="tp-badge">${T[k][0]}</span></header>
     ${({f1:tP1,f2:tP2,f3:tP3,f4:tP4})[k]()}
     <footer class="tp-f">Volcano Cars · Manual SOP-01 Recepción, inspección y control de tiempos · ${T[k][0]} · Versión 1.1 · Impreso ${esc(tFH(new Date().toISOString()))}</footer></article>`).join("");

@@ -10,6 +10,7 @@ import {
   nuevoToken, nuevoCodigo, vistaPublica, pasarAPendiente, confirmar, cancelar, vender, leerEspera, guardarEspera,
   avisarGerente, caducar, crearPagoTarjeta, comprobarPago, alPagarConTarjeta, firmaStripeValida, msgVuelveDisponible, msgConfirmacion,
 } from "../lib/reservas.mts";
+import { permiso, esRespuesta } from "../lib/acceso.mts";
 
 /*
   RESERVA ONLINE DE 50 € · LISTA DE ESPERA
@@ -81,7 +82,7 @@ export default async (req: Request, context: Context) => {
 
   // ---------------- panel: datos de pago ----------------
   if (a === "config" && req.method === "PUT") {
-    if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
+    { const _q = await permiso(req, "gerente"); if (esRespuesta(_q)) return _q; } // datos de cobro (IBAN, Bizum): solo el gerente
     const i = (await req.json().catch(() => ({}))) as any;
     const iban = str(i.iban, 42).replace(/\s+/g, "").toUpperCase();
     if (iban && !ibanValido(iban)) return json({ error: "Ese IBAN no es correcto. Revísalo (ES + 22 números)." }, 400);
@@ -127,7 +128,7 @@ export default async (req: Request, context: Context) => {
 
   // ---------------- panel: marcar avisado / quitar de la lista de espera ----------------
   if (a === "espera" && b && req.method === "PATCH") {
-    if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
+    { const _q = await permiso(req, "equipo"); if (esRespuesta(_q)) return _q; }
     const i = (await req.json().catch(() => ({}))) as any;
     const lista = await leerEspera(b);
     const e = lista.find((x) => x.id === str(i.id, 20));
@@ -216,7 +217,7 @@ export default async (req: Request, context: Context) => {
 
   // ---------------- panel: lista de reservas ----------------
   if (!a && req.method === "GET") {
-    if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
+    { const _q = await permiso(req, "equipo"); if (esRespuesta(_q)) return _q; }
     await caducar(origin, true).catch(() => {});
     const s = R();
     const { blobs } = await s.list({ prefix: "r/" });
@@ -238,7 +239,7 @@ export default async (req: Request, context: Context) => {
   // justificante: el cliente lo sube · el panel lo ve
   if (b === "justificante") {
     if (req.method === "GET") {
-      if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
+      { const _q = await permiso(req, "equipo"); if (esRespuesta(_q)) return _q; }
       if (!r.justificante) return new Response("No hay justificante", { status: 404 });
       const data = await DOCS().get(r.justificante, { type: "arrayBuffer" });
       if (!data) return new Response("No encontrado", { status: 404 });
@@ -309,7 +310,7 @@ export default async (req: Request, context: Context) => {
 
   // ---------------- panel: acciones sobre una reserva ----------------
   if (!b && req.method === "PATCH") {
-    if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
+    { const _q = await permiso(req, "equipo"); if (esRespuesta(_q)) return _q; }
     const i = (await req.json().catch(() => ({}))) as any;
     let espera: Espera[] = [];
     switch (i.accion) {

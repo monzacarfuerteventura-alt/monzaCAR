@@ -1,5 +1,6 @@
 import type { Config } from "@netlify/functions";
 import { store, json, isAdmin } from "../lib/shared.mts";
+import { permiso, esRespuesta } from "../lib/acceso.mts";
 
 /*
   HISTORIAL SIN SORPRESAS  ·  el informe de revisión de cada coche en PDF
@@ -51,10 +52,7 @@ export default async (req: Request) => {
     });
   }
 
-  if (!(await isAdmin(req))) {
-    await new Promise((r) => setTimeout(r, 600));
-    return json({ error: "No autorizado" }, 401);
-  }
+  { const _q = await permiso(req, req.method === "DELETE" ? "gerente" : "equipo"); if (esRespuesta(_q)) return _q; }
 
   if (req.method === "PUT") {
     if (Number(req.headers.get("content-length") || 0) > MAX) return json({ error: "El PDF pesa más de 5,5 MB. Escanéalo a 150 ppp o en blanco y negro y vuelve a subirlo." }, 413);

@@ -2,6 +2,7 @@ import type { Config } from "@netlify/functions";
 import { json, isAdmin } from "../lib/shared.mts";
 import { generar, type Informe } from "../lib/informe.mts";
 import { mk } from "../lib/marketing.mts";
+import { permiso, esRespuesta } from "../lib/acceso.mts";
 
 /*
   INFORMES AUTOMÁTICOS (panel, solo gerente). Los genera solos «informe-programado» (lunes y día 1).
@@ -10,7 +11,7 @@ import { mk } from "../lib/marketing.mts";
   - POST /api/informes-auto        → { tipo, enviar } genera ahora el último periodo cerrado
 */
 export default async (req: Request) => {
-  if (!(await isAdmin(req))) { await new Promise((r) => setTimeout(r, 600)); return json({ error: "No autorizado" }, 401); }
+  { const _q = await permiso(req, "gerente"); if (esRespuesta(_q)) return _q; }
   const url = new URL(req.url);
   const id = decodeURIComponent(url.pathname.split("/").filter(Boolean)[2] || "");
   if (req.method === "GET" && !id) {

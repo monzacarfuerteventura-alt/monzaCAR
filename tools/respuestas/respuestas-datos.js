@@ -31,7 +31,7 @@ es: {
   hola: n => n ? [`¡Hola, ${n}!`, `Hola, ${n}:`] : ["¡Hola!", "Hola:"],
   graciasTexto: ["Muchísimas gracias por tu reseña.", "Gracias de corazón por tomarte el tiempo de escribirnos.", "Qué alegría leer tu comentario."],
   serv: {
-    taller: ["Nos alegra saber que tu coche salió del taller como esperabas.", "Que confíes en nuestro taller de Antigua para cuidar tu coche es lo que más valoramos.", "Nos encanta saber que quedaste contento con el trabajo en tu coche."],
+    taller: ["Nos alegra saber que tu coche salió del taller como esperabas.", "Que confíes en nuestro taller de Costa de Antigua para cuidar tu coche es lo que más valoramos.", "Nos encanta saber que quedaste contento con el trabajo en tu coche."],
     chapa: ["Nos alegra mucho que el acabado de chapa y pintura te haya convencido.", "Ver cómo queda un coche después de pasar por chapa y pintura es lo que más nos gusta de este trabajo, y nos alegra que el resultado te haya gustado.", "Que tu coche haya vuelto a quedar como el primer día es justo lo que buscamos."],
     coche: ["Nos alegra muchísimo que estés contento con tu coche. ¡Que lo disfrutes muchos kilómetros por Fuerteventura!", "Que hayas elegido tu coche con nosotros es un orgullo. ¡A disfrutarlo!", "Nos alegra que la compra de tu coche haya ido tan bien. ¡Que lo disfrutes por toda la isla!"],
     itv: ["Nos alegra que tu coche esté listo para pasar la ITV sin sorpresas.", "Que llegues a la ITV con todo revisado y tranquilo es justo lo que buscamos.", "Nos alegra haberte ayudado a dejar el coche listo para la ITV."],
@@ -47,7 +47,7 @@ es: {
     ingles: ["Nos alegra haber podido atenderte en inglés sin problema.", "Atender a cada cliente en su idioma es importante para nosotros."],
     entrega: ["Nos alegra que la entrega a domicilio te haya facilitado las cosas.", "Llevarte el coche a casa es parte del servicio, y nos alegra que lo hayas valorado."]
   },
-  cierrePos: ["Aquí nos tienes en Antigua para lo que necesites.", "Gracias por confiar en nosotros y por recomendarnos.", "Te esperamos para la próxima."],
+  cierrePos: ["Aquí nos tienes en Costa de Antigua para lo que necesites.", "Gracias por confiar en nosotros y por recomendarnos.", "Te esperamos para la próxima."],
   solo5: [n => `Muchas gracias por las 5 estrellas${n ? ", " + n : ""}. Nos alegra mucho que hayas quedado contento. Aquí nos tienes para lo que necesites.`,
           n => `¡Gracias por tu valoración${n ? ", " + n : ""}! Que quedes contento es lo que buscamos cada día. Te esperamos para la próxima.`,
           n => `Mil gracias por confiar en Volcano Cars${n ? ", " + n : ""}. Nos alegra que todo haya ido bien. ¡Hasta pronto!`],
@@ -68,7 +68,7 @@ en: {
   hola: n => n ? [`Hi ${n}!`, `Hi ${n},`] : ["Hi!", "Hello,"],
   graciasTexto: ["Thank you so much for your review.", "Thanks a lot for taking the time to write to us.", "What a joy to read your comment."],
   serv: {
-    taller: ["We're glad your car left the workshop just as you expected.", "Your trust in our workshop in Antigua means a lot to us.", "We're really happy you were pleased with the work on your car."],
+    taller: ["We're glad your car left the workshop just as you expected.", "Your trust in our workshop in Costa de Antigua means a lot to us.", "We're really happy you were pleased with the work on your car."],
     chapa: ["We're so glad you liked the bodywork and paint finish.", "Seeing a car looking like new after bodywork is the best part of our job, and we're glad you loved the result.", "Getting your car back looking like day one is exactly what we aim for."],
     coche: ["We're delighted you're happy with your car. Enjoy many miles around Fuerteventura!", "We're proud you chose your car with us. Enjoy it!", "We're glad buying your car went so smoothly. Enjoy it all over the island!"],
     itv: ["We're glad your car is ready to pass the ITV with no surprises.", "Getting to the ITV with everything checked and peace of mind is exactly what we aim for.", "We're happy we could help get your car ready for the ITV."],
@@ -84,7 +84,7 @@ en: {
     ingles: ["We're glad we could look after you in English.", "Helping every customer in their own language matters to us."],
     entrega: ["We're glad home delivery made things easier for you.", "Bringing the car to your door is part of the service, and we're happy you valued it."]
   },
-  cierrePos: ["We're here in Antigua whenever you need us.", "Thanks for trusting us and recommending us.", "See you next time!"],
+  cierrePos: ["We're here in Costa de Antigua whenever you need us.", "Thanks for trusting us and recommending us.", "See you next time!"],
   solo5: [n => `Thank you so much for the 5 stars${n ? ", " + n : ""}. We're really glad you were happy. We're here whenever you need us.`,
           n => `Thanks for your rating${n ? ", " + n : ""}! Happy customers are what we work for every day. See you next time.`,
           n => `Many thanks for trusting Volcano Cars${n ? ", " + n : ""}. We're glad everything went well. See you soon!`],
@@ -135,8 +135,8 @@ function rsGenerar(o){
 const RS_WA_DATOS = {web:"volcanocars.com", mapa:"https://maps.app.goo.gl/dz8icDhkUkB4oznd8", resena:"https://g.page/r/Caeh6Wr6CwtNEBM/review"};
 const RS_WA = [
  {g:"Automáticos (se configuran una vez)", k:"bienvenida", a:"(automático)", t:"Mensaje de bienvenida",
-  es:"¡Hola! 👋 Gracias por escribir a Volcano Cars: taller mecánico, chapa y pintura y coches de ocasión en Antigua. Cuéntanos qué coche es y qué necesitas, y te respondemos enseguida. Si lo prefieres, pide cita aquí: {web}/taller",
-  en:"Hi! 👋 Thanks for messaging Volcano Cars: mechanics, bodywork & paint and used cars in Antigua. Tell us about your car and what you need, and we'll get back to you right away. You can also book here: {web}/taller"},
+  es:"¡Hola! 👋 Gracias por escribir a Volcano Cars: taller mecánico, chapa y pintura y coches de ocasión en Costa de Antigua. Cuéntanos qué coche es y qué necesitas, y te respondemos enseguida. Si lo prefieres, pide cita aquí: {web}/taller",
+  en:"Hi! 👋 Thanks for messaging Volcano Cars: mechanics, bodywork & paint and used cars in Costa de Antigua. Tell us about your car and what you need, and we'll get back to you right away. You can also book here: {web}/taller"},
  {g:"Automáticos (se configuran una vez)", k:"ausencia", a:"(automático)", t:"Mensaje de ausencia (fuera de horario)",
   es:"¡Hola! Ahora estamos fuera del horario del taller (lunes a viernes, de 8:00 a 16:00). Déjanos el coche y lo que necesitas y te respondemos a primera hora. Si quieres adelantar, pide cita aquí: {web}/taller",
   en:"Hi! We're outside workshop hours right now (Monday to Friday, 8:00 to 16:00). Leave us your car details and what you need, and we'll reply first thing. To get ahead, book here: {web}/taller"},
@@ -144,8 +144,8 @@ const RS_WA = [
   es:"¡Hola{n}! Gracias por escribirnos. Para ayudarte rápido: ¿qué coche es (marca, modelo y año) y qué le pasa o qué necesitas?",
   en:"Hi{n}! Thanks for your message. To help you quickly: what car is it (make, model and year) and what's the problem or what do you need?"},
  {g:"Primer contacto", k:"ubicacion", a:"/ubicacion", t:"Dónde estamos",
-  es:"Estamos en Calle Valle Largo, Nave 8, Polígono Industrial de Antigua. Aquí tienes el mapa: {mapa} · Lunes a viernes, de 8:00 a 16:00.",
-  en:"We're at Calle Valle Largo, Nave 8, Antigua industrial estate. Here's the map: {mapa} · Monday to Friday, 8:00 to 16:00."},
+  es:"Estamos en Calle Valle Largo, Nave 8, Polígono Industrial de Costa de Antigua. Aquí tienes el mapa: {mapa} · Lunes a viernes, de 8:00 a 16:00.",
+  en:"We're at Calle Valle Largo, Nave 8, Costa de Antigua industrial estate. Here's the map: {mapa} · Monday to Friday, 8:00 to 16:00."},
  {g:"Primer contacto", k:"horario", a:"/horario", t:"Horario",
   es:"Abrimos de lunes a viernes, de 8:00 a 16:00, sin cerrar a mediodía. Sábados y domingos, cerrado.",
   en:"We're open Monday to Friday, 8:00 to 16:00, straight through lunch. Closed on weekends."},
@@ -153,8 +153,8 @@ const RS_WA = [
   es:"Perfecto{n}. ¿Te viene bien {cuando}? Si prefieres otro momento, dime qué día te encaja y te lo reservo.",
   en:"Perfect{n}. Does {cuando} work for you? If not, tell me which day suits you and I'll book it."},
  {g:"Taller", k:"citaok", a:"/citaok", t:"Cita confirmada",
-  es:"¡Hecho{n}! Te esperamos {cuando} en Calle Valle Largo, Nave 8 (Pol. Ind. de Antigua). Ubicación: {mapa} · Si te surge algo, avísanos por aquí.",
-  en:"Done{n}! See you {cuando} at Calle Valle Largo, Nave 8 (Antigua industrial estate). Location: {mapa} · If anything comes up, just let us know here."},
+  es:"¡Hecho{n}! Te esperamos {cuando} en Calle Valle Largo, Nave 8 (Pol. Ind. de Costa de Antigua). Ubicación: {mapa} · Si te surge algo, avísanos por aquí.",
+  en:"Done{n}! See you {cuando} at Calle Valle Largo, Nave 8 (Costa de Antigua industrial estate). Location: {mapa} · If anything comes up, just let us know here."},
  {g:"Taller", k:"recordatorio", a:"/recordatorio", t:"Recordatorio el día antes",
   es:"Hola{n}, te recordamos tu cita en Volcano Cars {cuando}. ¿Nos confirmas que vienes? 👍",
   en:"Hi{n}, just a reminder of your appointment at Volcano Cars {cuando}. Can you confirm you're coming? 👍"},
@@ -206,3 +206,52 @@ function rsWa(m, o){
     .replace(/\{cuando\}/g, o.cuando || def.cuando).replace(/\{link\}/g, o.link || "https://" + RS_WA_DATOS.web)
     .replace(/\{mapa\}/g, RS_WA_DATOS.mapa).replace(/\{resena\}/g, RS_WA_DATOS.resena).replace(/\{web\}/g, RS_WA_DATOS.web);
 }
+
+/* ---------- INSTAGRAM Y FACEBOOK (27-09-2026) ----------
+   Perfiles oficiales y respuestas para comentarios públicos y mensajes privados (DM).
+   Mismas variables que WhatsApp: {n} {nombre} {coche} {cuando} {link} {mapa} {resena} {web} */
+const RS_REDES = {
+  ig: {txt:"Instagram @volcanocars_antigua", url:"https://www.instagram.com/volcanocars_antigua/"},
+  igDm: {txt:"Mensajes de Instagram", url:"https://www.instagram.com/direct/inbox/"},
+  fb: {txt:"Facebook · Volcanocars", url:"https://www.facebook.com/share/1KYczmU7be/"},
+  meta: {txt:"Bandeja de Meta Business Suite (IG + FB)", url:"https://business.facebook.com/latest/inbox/all"},
+  wa: "https://wa.me/34643566098"
+};
+const RS_RS = [
+ {g:"Comentarios públicos (se contestan en la publicación)", k:"rs-precio", a:"💬 comentario", t:"«¿Precio?» / «Info»",
+  es:"¡Hola{n}! 👋 Te acabamos de escribir por privado con el precio y todos los detalles del {coche}. Revisa tus mensajes 📩",
+  en:"Hi{n}! 👋 We've just sent you a private message with the price and all the details of the {coche}. Check your inbox 📩"},
+ {g:"Comentarios públicos (se contestan en la publicación)", k:"rs-elogio", a:"💬 comentario", t:"Comentario bonito",
+  es:"¡Muchas gracias{n}! 🧡 Nos alegra un montón que te guste. ¡Te esperamos en Costa de Antigua!",
+  en:"Thanks so much{n}! 🧡 We're really glad you like it. See you in Costa de Antigua!"},
+ {g:"Comentarios públicos (se contestan en la publicación)", k:"rs-donde", a:"💬 comentario", t:"«¿Dónde estáis?»",
+  es:"¡Hola{n}! 📍 Estamos en Calle Valle Largo, Nave 8, Costa de Antigua (Fuerteventura). Aquí tienes el mapa: {mapa} · Lunes a viernes, de 8:00 a 16:00.",
+  en:"Hi{n}! 📍 We're at Calle Valle Largo, Unit 8, Costa de Antigua (Fuerteventura). Here's the map: {mapa} · Monday to Friday, 8:00 to 16:00."},
+ {g:"Comentarios públicos (se contestan en la publicación)", k:"rs-vendido", a:"💬 comentario", t:"Coche ya vendido o reservado",
+  es:"¡Hola{n}! Este {coche} ya está reservado 🙏 Tenemos más coches revisados en {web} y, si nos escribes por privado, te avisamos en cuanto entre uno parecido.",
+  en:"Hi{n}! This {coche} is already reserved 🙏 We have more checked cars at {web}, and if you message us privately we'll let you know as soon as a similar one comes in."},
+ {g:"Comentarios públicos (se contestan en la publicación)", k:"rs-queja", a:"💬 comentario", t:"Queja en público",
+  es:"Sentimos mucho lo ocurrido{n}. Queremos solucionarlo contigo: escríbenos por privado o al WhatsApp 643 56 60 98 y lo vemos personalmente.",
+  en:"We're really sorry about this{n}. We want to sort it out with you: please send us a private message or WhatsApp +34 643 56 60 98 and we'll look into it personally."},
+ {g:"Mensajes privados (DM)", k:"rs-coche", a:"✉️ privado", t:"Información de un coche",
+  es:"¡Hola{n}! 👋 Gracias por escribirnos. El {coche} está disponible y revisado en nuestro taller. Aquí tienes la ficha con fotos, precio y financiación: {link}\n¿Te viene bien venir a verlo y probarlo? Abrimos de lunes a viernes, de 8:00 a 16:00.",
+  en:"Hi{n}! 👋 Thanks for your message. The {coche} is available and checked in our own workshop. Here's the listing with photos, price and finance: {link}\nWould you like to come and test drive it? We're open Monday to Friday, 8:00 to 16:00."},
+ {g:"Mensajes privados (DM)", k:"rs-cita", a:"✉️ privado", t:"Cita en el taller",
+  es:"¡Hola{n}! 🔧 Para tu {coche} tenemos hueco {cuando}. Puedes reservar al momento aquí: {web}/taller o, si lo prefieres, dinos y te la apuntamos nosotros.",
+  en:"Hi{n}! 🔧 We have a slot for your {coche} {cuando}. You can book instantly here: {web}/taller or just tell us and we'll book it for you."},
+ {g:"Mensajes privados (DM)", k:"rs-fotos", a:"✉️ privado", t:"Presupuesto de chapa por fotos",
+  es:"¡Claro{n}! 📸 Mándanos 2 o 3 fotos del golpe (una de cerca y otra de lejos) y la matrícula, y te damos presupuesto sin compromiso. También puedes subirlas aquí: {web}/taller#prioridad",
+  en:"Sure{n}! 📸 Send us 2 or 3 photos of the damage (one close-up, one from further away) and the number plate, and we'll give you a no-obligation quote. You can also upload them here: {web}/taller#prioridad"},
+ {g:"Mensajes privados (DM)", k:"rs-fin", a:"✉️ privado", t:"Financiación",
+  es:"¡Sí{n}, se puede financiar! En la ficha tienes la calculadora de cuotas: {link}\nSi nos dices la entrada y el plazo que prefieres, te preparamos el pre-estudio sin compromiso.",
+  en:"Yes{n}, finance is available! The listing has a monthly payment calculator: {link}\nTell us your deposit and preferred term and we'll prepare a no-obligation pre-assessment."},
+ {g:"Mensajes privados (DM)", k:"rs-entrega", a:"✉️ privado", t:"Entrega a domicilio",
+  es:"Una vez firmada la compra, te llevamos el {coche} gratis a cualquier punto de Fuerteventura 🚚 ¿En qué zona vives?",
+  en:"Once the purchase is signed, we deliver the {coche} free anywhere on Fuerteventura 🚚 Which area do you live in?"},
+ {g:"Mensajes privados (DM)", k:"rs-wa", a:"✉️ privado", t:"Pasar la conversación a WhatsApp",
+  es:"Para ir más rápido, ¿seguimos por WhatsApp{n}? Escríbenos al 643 56 60 98 o pulsa aquí: https://wa.me/34643566098",
+  en:"To make it quicker, shall we continue on WhatsApp{n}? Message us on +34 643 56 60 98 or tap here: https://wa.me/34643566098"},
+ {g:"Mensajes privados (DM)", k:"rs-story", a:"✉️ privado", t:"Gracias por la mención o la story",
+  es:"¡Gracias por compartirlo{n}! 🧡 Nos hace muchísima ilusión. Si te apetece dejarnos una reseña en Google, nos ayudas un montón: {resena}",
+  en:"Thanks for sharing{n}! 🧡 It means a lot to us. If you'd like to leave us a Google review, it helps us loads: {resena}"}
+];

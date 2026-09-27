@@ -2,6 +2,7 @@ import type { Config, Context } from "@netlify/functions";
 import { createHash } from "node:crypto";
 import { store, json, isAdmin, canarias, canalDe, sumarDias, mismoOrigen } from "../lib/shared.mts";
 import { TIPOS, BOT, FUENTE, limpio, salDelDia, diaResumido, type Dia } from "../lib/analitica.mts";
+import { permiso, esRespuesta } from "../lib/acceso.mts";
 
 /*
   ANALÍTICA PROPIA, SIN COOKIES
@@ -30,7 +31,7 @@ export default async (req: Request, context: Context) => {
   const url = new URL(req.url);
 
   if (url.pathname === "/api/stats") {
-    if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
+    { const _q = await permiso(req, "gerente"); if (esRespuesta(_q)) return _q; }
     const { fecha: hoy } = canarias();
     const ok = (f: string | null) => (f && /^\d{4}-\d{2}-\d{2}$/.test(f) ? f : "");
     let desde = ok(url.searchParams.get("desde")) || sumarDias(hoy, -29);

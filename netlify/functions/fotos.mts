@@ -24,12 +24,12 @@ export default async (req: Request) => {
   }
 
   if (req.method === "POST" && !key) {
-    const qf = await quien(req); if (!qf) return json({ error: "No autorizado" }, 401);
+    const qf = await quien(req); if (!qf) return json({ error: "Tu sesión ha caducado. Vuelve a entrar." }, 401);
     const bloqueo = await exigirJornada(qf); if (bloqueo) return bloqueo; // el equipo no trabaja sin haber fichado // gerente o equipo del taller (fotos de daños y de la inspección)
     const type = (req.headers.get("content-type") || "").split(";")[0];
     const ext = TYPES[type];
     if (!ext) return json({ error: "Formato no admitido. Usa una foto (JPG, PNG, WEBP) o un PDF." }, 415);
-    if (ext === "pdf" && !(await isAdmin(req))) return json({ error: "Solo el gerente puede subir PDF." }, 403);
+    // PDF (informes FORM-02/FORM-04): lo puede subir cualquier persona del equipo que haya fichado
     const buf = await req.arrayBuffer();
     if (!buf.byteLength) return json({ error: "La foto está vacía." }, 400);
     if (ext === "pdf" && new TextDecoder().decode(new Uint8Array(buf, 0, Math.min(5, buf.byteLength))) !== "%PDF-") return json({ error: "Ese archivo no es un PDF válido." }, 415);

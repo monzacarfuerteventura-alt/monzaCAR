@@ -1,5 +1,7 @@
 import type { Config } from "@netlify/functions";
 import { store, json, isAdmin } from "../lib/shared.mts";
+import { permiso, esRespuesta } from "../lib/acceso.mts";
+import { ALMACENES, SOLO_NOMBRES, volcar } from "../lib/copia.mts";
 
 /*
   COPIA DE SEGURIDAD COMPLETA (solo el gerente, con su contraseña):  GET /api/copia
@@ -8,28 +10,16 @@ import { store, json, isAdmin } from "../lib/shared.mts";
   No incluye: las fotos y vídeos (van aparte, se listan sus nombres), las estadísticas de visitas, el
   registro de seguridad ni la clave de la verificación en dos pasos (por seguridad).
 */
-const ALMACENES = ["monzacar", "solicitudes", "ordenes", "taller", "caja", "finanzas", "almacen", "seguridad"];
-const SOLO_NOMBRES = ["monzacar-fotos", "monzacar-videos"];
-const FUERA = (st: string, k: string) =>
-  st === "seguridad" && (k.startsWith("log/") || k.startsWith("bloqueo/") || k.startsWith("fallo") || k.startsWith("aviso/") || /^config\/(totp|min-iat)/.test(k));
-
-async function volcar(nombre: string) {
-  const s = store(nombre);
-  const { blobs } = await s.list();
-  const claves = blobs.map((b) => b.key).filter((k) => !FUERA(nombre, k)).sort();
-  const out: Record<string, unknown> = {};
-  for (let i = 0; i < claves.length; i += 25) {
-    await Promise.all(claves.slice(i, i + 25).map(async (k) => {
-      const t = await s.get(k, { type: "text" }).catch(() => null);
-      if (t == null) return;
-      try { out[k] = JSON.parse(t); } catch { out[k] = t; }
-    }));
-  }
-  return out;
-}
-
 export default async (req: Request) => {
-  if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
+  { const _q = await permiso(req, "gerente"); if (esRespuesta(_q)) return _q; }
+  // Copias automáticas diarias (copia-programada.mts): ?auto=lista o ?auto=AAAA-MM-DD
+  const auto = new URL(req.url).searchParams.get("auto");
+  if (auto === "lista") { const { blobs } = await store("copias").list({ prefix: "diaria/" }); return json(blobs.map((b) => b.key.slice(7, 17)).sort().reverse()); }
+  if (auto && /^\d{4}-\d{2}-\d{2}$/.test(auto)) {
+    const t = await store("copias").get("diaria/" + auto + ".json", { type: "text" });
+    if (!t) return json({ error: "No hay copia de ese día." }, 404);
+    return new Response(t, { headers: { "content-type": "application/json; charset=utf-8", "content-disposition": `attachment; filename="volcano-cars-copia-${auto}.json"`, "cache-control": "no-store" } });
+  }
   const datos: Record<string, unknown> = {};
   for (const n of ALMACENES) datos[n] = await volcar(n).catch((e) => ({ error: String(e?.message || e) }));
   const archivos: Record<string, string[]> = {};

@@ -115,7 +115,7 @@ ${fotos[0] ? `<meta property="og:image" content="${escH(origin + fotos[0])}">` :
   // «Historial Sin Sorpresas»: solo si el taller ha subido el PDF de este coche (FORM-02 + FORM-04)
   const informe = ((await store("monzacar-informes").get("indice", { type: "json" }).catch(() => null)) as Record<string, { fecha: string }> | null)?.[c.id];
   const hist = informe && !vendido ? `<style>.hist{display:flex;gap:12px;align-items:center;margin:14px 0 4px;padding:13px 14px;border-radius:14px;border:1.5px solid #1F8B4C;background:#EAF6EF;color:#123D24;text-decoration:none}.hist:hover{background:#DDF1E5}.hist svg{flex:none}.hist b{display:block;font-size:15px}.hist small{display:block;font-size:12.5px;line-height:1.35;color:#2E5A40}</style>
-      <a class="hist" href="/api/informes/${encodeURIComponent(c.id)}" download><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/><path d="M9 14.5l2 2 4-4"/></svg><span><b>📄 Descargar Historial Sin Sorpresas (PDF)</b><small>Inspección 360° de 80 puntos (FORM-02) y control de calidad pre-entrega FORM-04 firmado por el taller. Informe publicado el ${escH(new Date(informe.fecha).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric", timeZone: "Atlantic/Canary" }))}.</small></span></a>` : "";
+      <a class="hist" href="/api/informes/${encodeURIComponent(c.id)}" download><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/><path d="M9 14.5l2 2 4-4"/></svg><span><b>📄 Descargar Historial Sin Sorpresas (PDF)</b><small>Inspección 360° de 80 puntos (FORM-02) y control de calidad pre-entrega de 30 puntos (FORM-04) firmado por el taller. Informe publicado el ${escH(new Date(informe.fecha).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric", timeZone: "Atlantic/Canary" }))}.</small></span></a>` : "";
 
   const html = cabecera(origin, titulo, desc, canonical, head, vendido ? "noindex, follow" : "index, follow, max-image-preview:large") + `
 <div class="wrap">
@@ -140,13 +140,13 @@ ${fotos[0] ? `<meta property="og:image" content="${escH(origin + fotos[0])}">` :
         <a class="btn ${reservaOnline && !reservado ? "b-ghost" : "b-ink"}" href="${enWeb}">Calcular cuota de financiación</a>
         <a class="btn b-wa" href="${escH(wa(waTxt))}" target="_blank" rel="noopener">Preguntar por WhatsApp</a>
         <a class="btn b-ghost" href="tel:${EMPRESA.telLink}">Llamar ${EMPRESA.tel}</a></div>`}
-      <ul class="perks"><li>12 meses de garantía legal desde la entrega</li><li>Revisado en nuestro taller de Antigua</li><li>Entrega a domicilio gratis en toda Fuerteventura</li><li>Nos encargamos del cambio de nombre</li></ul>
+      <ul class="perks"><li>12 meses de garantía legal desde la entrega</li><li>Revisado en nuestro taller de Costa de Antigua</li><li>Entrega a domicilio gratis en toda Fuerteventura</li><li>Nos encargamos del cambio de nombre</li></ul>
     </aside>
   </div>
   ${vendido ? `<p class="aviso">Este coche ya está vendido. Te enseñamos otros parecidos más abajo.</p>` : ""}
   ${c.descripcion ? `<section class="sec"><h2>Sobre este ${escH(nombre)}</h2><p style="white-space:pre-line">${escH(c.descripcion)}</p></section>` : ""}
   ${c.equipamiento.length ? `<section class="sec"><h2>Equipamiento</h2><ul class="eq">${c.equipamiento.map((e) => `<li>${escH(e)}</li>`).join("")}</ul></section>` : ""}
-  <section class="sec"><div class="banda"><div><h2>Ven a verlo a Antigua</h2><p>${escH(EMPRESA.direccion)}. ${escH(EMPRESA.horario)}. Elige día y hora en la web y te lo tenemos preparado para probarlo.</p></div>
+  <section class="sec"><div class="banda"><div><h2>Ven a verlo a Costa de Antigua</h2><p>${escH(EMPRESA.direccion)}. ${escH(EMPRESA.horario)}. Elige día y hora en la web y te lo tenemos preparado para probarlo.</p></div>
     <div class="ctas"><a class="btn b-rosso" href="${vendido ? "/comprar" : enWeb}">${vendido ? "Ver coches" : "Elegir día y hora"}</a><a class="btn b-wa" href="${escH(wa(waTxt))}" target="_blank" rel="noopener">WhatsApp</a></div></div></section>
   ${otros.length ? `<section class="sec"><h2>Otros coches disponibles</h2>${tarjetas(otros)}</section>` : ""}
 </div>` + pie(waTxt);

@@ -16,7 +16,7 @@ He quitado del `<dialog id="car-modal">` estos tres bloques:
 
 ```html
 <div class="guarantee">12 meses de garantía · revisado en nuestro taller · cambio de nombre incluido</div>
-<div class="m-perk">Entrega a domicilio gratis en cualquier punto de Fuerteventura, o recógelo en Antigua</div>
+<div class="m-perk">Entrega a domicilio gratis en cualquier punto de Fuerteventura, o recógelo en Costa de Antigua</div>
 <div class="m-actions">
   <a id="m-wa">Preguntar por WhatsApp</a> <a id="m-call">Llamar</a> <a id="m-share">Compartir</a>
 </div>

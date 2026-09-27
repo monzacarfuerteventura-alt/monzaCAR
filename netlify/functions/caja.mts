@@ -29,7 +29,7 @@ export default async (req: Request) => {
   const url = new URL(req.url), p = url.pathname.split("/").filter(Boolean), accion = p[2] || "", id = p[3] || "";
   if (req.method !== "GET" && !mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
   const q = await quien(req);
-  if (!q) return json({ error: "No autorizado" }, 401);
+  if (!q) return json({ error: "Tu sesión ha caducado. Vuelve a entrar." }, 401);
   const bloqueo = await exigirJornada(q); if (bloqueo) return bloqueo; // el equipo no trabaja sin haber fichado
   if (!q.caja) return json({ error: "No tienes permiso para usar la caja. Pídeselo al gerente." }, 403);
   const body = req.method === "POST" ? ((await req.json().catch(() => ({}))) as any) : {};

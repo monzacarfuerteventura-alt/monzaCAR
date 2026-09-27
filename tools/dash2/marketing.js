@@ -9,7 +9,7 @@
 const MK={abierto:false,mini:false,tab:"vivo",hoy:null,t:null,conf:null};
 const mkSlug=c=>{ if(!/^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(c.id)) return c.id; const b=`${c.marca} ${c.modelo} ${c.anio}`.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,""); return (b?b+"-":"")+c.id.slice(0,8).toLowerCase(); };
 const mkURL=(ruta,src,med,camp)=>`https://volcanocars.com${ruta}${ruta.includes("?")?"&":"?"}utm_source=${encodeURIComponent(src)}&utm_medium=${encodeURIComponent(med)}&utm_campaign=${encodeURIComponent(camp)}`;
-const mkGer=()=>typeof ME!=="undefined"&&ME&&!ME.equipo;
+const mkGer=()=>typeof ME!=="undefined"&&ME&&PUEDE_TODO();
 try{ const g=JSON.parse(localStorage.getItem("vc_mk")||"{}"); MK.abierto=!!g.a; MK.mini=!!g.m; MK.tab=g.t||"vivo"; }catch(_){}
 const mkGuardarUI=()=>{ try{ localStorage.setItem("vc_mk",JSON.stringify({a:MK.abierto,m:MK.mini,t:MK.tab})); }catch(_){} };
 

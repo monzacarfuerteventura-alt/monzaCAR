@@ -8,9 +8,9 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent / "public"
 BASE = "https://volcanocars.com"
 RUTAS = {
     "comprar": ("Coches de ocasión en Fuerteventura con 12 meses de garantía legal | Volcano Cars",
-                "Coches de segunda mano revisados en nuestro taller de Antigua, con 12 meses de garantía legal y entrega gratis en toda Fuerteventura. Precios desde 2.500 €."),
-    "taller": ("Taller mecánico, chapa y pintura en Antigua, Fuerteventura | Volcano Cars",
-               "Pide cita o presupuesto sin compromiso en nuestro taller de Antigua: mecánica, chapa y pintura, pre-ITV. Presupuesto y fecha de entrega por escrito."),
+                "Coches de segunda mano revisados en nuestro taller de Costa de Antigua, con 12 meses de garantía legal y entrega gratis en toda Fuerteventura. Precios desde 2.500 €."),
+    "taller": ("Taller mecánico, chapa y pintura en Costa de Antigua, Fuerteventura | Volcano Cars",
+               "Pide cita o presupuesto sin compromiso en nuestro taller de Costa de Antigua: mecánica, chapa y pintura, pre-ITV. Presupuesto y fecha de entrega por escrito."),
 }
 # /contacto ya no es una copia de la portada: es una página propia (la genera tools/seo.py).
 # /comprar y /taller siguen siendo la web (catálogo y reserva de cita), pero fuera del índice de Google:

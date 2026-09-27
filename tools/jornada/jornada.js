@@ -64,6 +64,7 @@ async function jFichar(acc,extra={}){
     const hora=jHM(r.t), txt={entrada:`Entrada registrada a las ${hora}`,pausa:`Pausa desde las ${hora}`,reanudar:`De vuelta a las ${hora}`,salida:`Salida registrada a las ${hora} · hoy ${jH(r.jornada.hoy.trabajoMin)}`}[r.accion]+(r.orden?` · orden ${r.orden} ${r.accion==="pausa"||r.accion==="salida"?"pausada":"reanudada"}`:"");
     jToast(txt,1);
     if(r.accion==="entrada"||r.accion==="reanudar"){ // directo al trabajo: se recarga en segundo plano lo que faltaba
+      if(typeof loadList==="function") loadList(true).catch(()=>{}); if(typeof loadLeads==="function") loadLeads(false).catch(()=>{}); // CRM, Agenda y Coches al día al fichar
       Promise.all([api("/api/ordenes").then(o=>{ ORDENES=o; }).catch(()=>{}),typeof tCargarEquipo==="function"?tCargarEquipo():null]).then(()=>{ if(!$("#s-ordenes").hidden) renderOrdenes(); });
       abrirTab(J_TAB||"ordenes");
     } else jAbrir();
@@ -100,9 +101,9 @@ const _jShow=show;
 show=function(id){ ["s-fichar","s-jornada"].forEach(x=>{ const s=$("#"+x); if(s) s.hidden=x!==id; }); _jShow(id); if(id==="s-fichar") $("#tabsrow").hidden=true; };
 const _jTab=abrirTab;
 abrirTab=function(t,push=true){
-  if(ME&&ME.equipo&&t!=="ayuda"&&(!J||J.estado!=="trabajando")){ J_TAB=t==="caja"||t==="alm"?t:"ordenes"; jAbrir(); return; }
-  if(t==="jornada"){ jgAbrir(); return; }
-  if(ME&&ME.equipo) J_TAB=t==="caja"||t==="alm"?t:"ordenes";
+  if(ME&&ME.equipo&&t!=="ayuda"&&(!J||J.estado!=="trabajando")){ J_TAB=puedeTab(t)&&t!=="jornada"?t:"ordenes"; jAbrir(); return; }
+  if(t==="jornada"){ if(ME&&ME.equipo&&!PUEDE_TODO()){ jAbrir(); return; } jgAbrir(); return; }
+  if(ME&&ME.equipo) J_TAB=puedeTab(t)?t:"ordenes";
   return _jTab(t,push);
 };
 const _jEntrar=entrarEquipo;
@@ -241,7 +242,8 @@ $("#dw-body").addEventListener("change",async e=>{ if(!DW||DW.tipo!=="jornada"||
 
 /* ---------- cartel QR para imprimir ---------- */
 async function jgCartel(nuevo){ try{ const r=await api("/api/jornada/qr",nuevo?{method:"POST",headers:{"content-type":"application/json"},body:"{}"}:{});
-    jgImprimir(`<div class="jp-cartel"><small>VOLCANO CARS · TALLER</small><h1>Ficha aquí</h1><p>Abre la cámara del móvil y apunta al código.<br>Entrada y vuelta de la pausa: <b>automáticas</b>. Si estás trabajando, eliges pausa o salida.</p>
+    if(window.vcCartel) jgImprimir(`<style>${vcCartel.css}</style>${vcCartel.html({qrSvg:QR.svg(r.url,420),desde:fechaHora(r.desde)})}`,"Cartel de fichaje Volcano Cars"); // diseño A4 de marca (public/cartel-fichaje.js)
+    else jgImprimir(`<div class="jp-cartel"><small>VOLCANO CARS · TALLER</small><h1>Ficha aquí</h1><p>Abre la cámara del móvil y apunta al código.<br>Entrada y vuelta de la pausa: <b>automáticas</b>. Si estás trabajando, eliges pausa o salida.</p>
       <div class="jp-qr">${QR.svg(r.url,420)}</div><p class="jp-pie">¿Tienes NFC? Acerca el móvil a la pegatina.<br><small>Código válido desde ${esc(fechaHora(r.desde))}. Si se pierde el cartel, el gerente lo cambia y este deja de valer.</small></p></div>`,"Cartel de fichaje");
     if(nuevo) toast("Código nuevo: imprime el cartel y reescribe la pegatina NFC con el enlace nuevo");
     if(navigator.clipboard) navigator.clipboard.writeText(r.url).catch(()=>{});
@@ -250,7 +252,7 @@ async function jgCartel(nuevo){ try{ const r=await api("/api/jornada/qr",nuevo?{
 /* ---------- PDF para firmar (uno por trabajador y mes) ---------- */
 async function jgPdf(uid,mes){ try{ mes=mes||J_MES; const r=await api(`/api/jornada/registro?mes=${mes}${uid?"&uid="+encodeURIComponent(uid):""}`);
     const ps=r.personas.filter(p=>p.dias.length||uid); if(!ps.length) return toast("Sin fichajes en ese mes");
-    jgImprimir(ps.map(p=>`<section class="jp-hoja"><header><div><small>REGISTRO DIARIO DE JORNADA · art. 34.9 del Estatuto de los Trabajadores</small><h1>${esc(nombreMes(mes))}</h1></div><div class="jp-emp"><b>Volcano Cars</b><br>${esc(typeof EMPRESA_DIR!=="undefined"?EMPRESA_DIR:"Calle Valle Largo, Nave 8, 35610 Antigua (Las Palmas)")}</div></header>
+    jgImprimir(ps.map(p=>`<section class="jp-hoja"><header><div><small>REGISTRO DIARIO DE JORNADA · art. 34.9 del Estatuto de los Trabajadores</small><h1>${esc(nombreMes(mes))}</h1></div><div class="jp-emp"><b>Volcano Cars</b><br>${esc(typeof EMPRESA_DIR!=="undefined"?EMPRESA_DIR:"Calle Valle Largo, Nave 8, 35610 Costa de Antigua (Las Palmas)")}</div></header>
       <div class="jp-dat"><span>Trabajador: <b>${esc(p.nombre)}</b></span><span>Puesto: <b>${esc({mecanico:"Mecánico",calidad:"Calidad",recepcion:"Recepción",gerente:"Gerente"}[p.rol]||p.rol)}</b></span><span>Jornada: <b>${String(p.jornadaH).replace(".",",")} h/día</b></span></div>
       <table><thead><tr><th>Día</th><th>Entrada</th><th>Pausas</th><th>Salida</th><th>Pausa</th><th>Trabajado</th><th>Ordinarias</th><th>Extra</th><th>Observaciones</th></tr></thead><tbody>
       ${p.dias.map(d=>{ const v=d.eventos.filter(x=>x.tipo!=="anulacion"&&!d.eventos.some(a=>a.tipo==="anulacion"&&a.anula===x.n)).sort((a,b)=>a.t.localeCompare(b.t));

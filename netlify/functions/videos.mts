@@ -1,5 +1,6 @@
 import type { Config } from "@netlify/functions";
 import { store, json, isAdmin, esVideo, borrarVideo, VIDEO_TROZO } from "../lib/shared.mts";
+import { permiso, esRespuesta } from "../lib/acceso.mts";
 
 // Vídeos 360° de los coches.
 // Las funciones de Netlify no aceptan subidas ni respuestas de más de 6 MB, así que el vídeo
@@ -56,10 +57,7 @@ export default async (req: Request) => {
   }
 
   // ---------- panel ----------
-  if (!(await isAdmin(req))) {
-    await new Promise((r) => setTimeout(r, 600));
-    return json({ error: "No autorizado" }, 401);
-  }
+  { const _q = await permiso(req, "equipo"); if (esRespuesta(_q)) return _q; }
 
   // Empezar una subida
   if (req.method === "POST" && !key) {

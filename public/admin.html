@@ -505,7 +505,7 @@ dialog.dlg form{display:grid;gap:12px;padding:20px}
 .t-yo i{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-style:normal;font-weight:800}
 .t-yo small{display:block;color:var(--muted);font-size:11.5px}
 @media (max-width:560px){.t-yo span{display:none}}
-body.modo-equipo #tabs [data-tab]:not([data-tab="ordenes"]):not([data-tab="caja"]):not([data-tab="alm"]),body.modo-equipo:not(.con-caja) #tabs [data-tab="caja"],body.modo-equipo #btn-seg,body.modo-equipo #topacts a{display:none!important}
+body.modo-equipo:not(.eq-ger) #tabs [data-tab="dash"],body.modo-equipo:not(.eq-ger) #tabs [data-tab="fin"],body.modo-equipo:not(.con-caja):not(.eq-ger) #tabs [data-tab="caja"],body.modo-equipo:not(.eq-ger) #btn-seg{display:none!important}
 body.modo-equipo #s-ordenes .head{margin-bottom:10px}
 
 /* barra y filtros */
@@ -1183,6 +1183,19 @@ b.fn-c-ing,b.fn-c-egr{background:none;color:var(--ink)}
 .rs-wa{display:grid;gap:8px;align-content:start;padding:16px}.rs-wa p{margin:0;font-size:14.5px;line-height:1.45;white-space:pre-wrap}
 .rs-wa-h{display:flex;justify-content:space-between;gap:8px;align-items:center}.rs-wa-h code{font-size:12.5px;background:var(--surface-2);border-radius:6px;padding:2px 7px}
 @media (max-width:860px){.rs-waform{grid-template-columns:1fr}}
+
+/* 27-09-2026 · nada se corta: rejilla fluida, campos que encogen y etiquetas que bajan de línea */
+#s-resp,#rs{max-width:100%;min-width:0;overflow-x:hidden}
+#rs .card{max-width:100%;min-width:0;overflow:auto}
+.rs-waform{grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr))}
+.rs-waform>*,.rs-grid>*,.rs-form>*{min-width:0}
+.rs-waform .in,.rs-form .in{width:100%;max-width:100%;box-sizing:border-box}
+.rs-waform label,.rs-form label{white-space:normal;overflow-wrap:anywhere;line-height:1.3}
+.rs-walist{grid-template-columns:repeat(auto-fill,minmax(min(320px,100%),1fr))}
+.rs-wa p{overflow-wrap:anywhere}
+.rs-canales{overflow-x:auto;flex-wrap:wrap}
+.rs-perfiles{display:flex;gap:14px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.rs-perfiles .quick{display:flex;gap:8px;flex-wrap:wrap}
 /*RESP-CSS-FIN*/
 /*DASH2-CSS-INICIO*//* DASHBOARD 2 · centro de mando (tools/dash2) — tokens propios encima de los del panel */
 :root{--d2-bg:#121211;--d2-card:#1B1B1A;--d2-card2:#232321;--d2-line:#35342F;--d2-ink:#F2EFEA;--d2-mut:#A9A49B;
@@ -1350,7 +1363,7 @@ b.fn-c-ing,b.fn-c-egr{background:none;color:var(--ink)}
 @media print{body.print-d2r #d2-print{display:block}}
 
 /* MARKETING EN VIVO · panel lateral flotante (tools/dash2/marketing.js) */
-.mk-fab{position:fixed;right:18px;bottom:18px;z-index:40;display:inline-flex;gap:9px;align-items:center;border:1px solid rgba(229,86,42,.6);background:linear-gradient(135deg,#2A1A14,#1B1B1A);color:#F2EFEA;font:800 14px/1 var(--body);padding:13px 16px;border-radius:999px;cursor:pointer;box-shadow:0 14px 34px -10px rgba(229,86,42,.55),0 6px 18px rgba(0,0,0,.45);transition:transform .2s var(--d2-ease),box-shadow .2s}
+.mk-fab{position:fixed;right:18px;bottom:calc(78px + env(safe-area-inset-bottom,0px) + var(--badge-x,0px));z-index:40;display:inline-flex;gap:9px;align-items:center;border:1px solid rgba(229,86,42,.6);background:linear-gradient(135deg,#2A1A14,#1B1B1A);color:#F2EFEA;font:800 14px/1 var(--body);padding:13px 16px;border-radius:999px;cursor:pointer;box-shadow:0 14px 34px -10px rgba(229,86,42,.55),0 6px 18px rgba(0,0,0,.45);transition:transform .2s var(--d2-ease),box-shadow .2s}
 .mk-fab:hover{transform:translateY(-2px)}.mk-fab:focus-visible{outline:3px solid var(--d2-a);outline-offset:3px}
 .mk-fab[aria-expanded="true"]{opacity:0;pointer-events:none}
 .mk-dot{width:9px;height:9px;border-radius:50%;background:var(--d2-ok);animation:d2pulse 1.8s infinite}
@@ -1452,7 +1465,10 @@ b.fn-c-ing,b.fn-c-egr{background:none;color:var(--ink)}
 .ay-body{display:grid;gap:22px;min-width:0}
 .ay-mod{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:grid;gap:22px}
 .ay-mh{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
-.ay-mh>div{flex:1;min-width:0}
+.ay-mh>div{flex:1 1 200px;min-width:0}
+.ay-mh>.btn{flex:0 0 auto;margin-left:auto}
+.ay-mh h2{overflow-wrap:anywhere;hyphens:auto}
+@media (max-width:640px){.ay-mh{gap:10px}.ay-mh h2{font-size:clamp(20px,6.2vw,26px)}.ay-ico{width:44px;height:44px;font-size:22px}.ay-mh>.btn{flex:1 1 100%;width:100%;margin-left:0;justify-content:center;order:3}}
 .ay-mh small{color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:12px}
 .ay-mh h2{margin:0;font-family:var(--display);font-stretch:85%;text-transform:uppercase;font-size:28px;line-height:1.05}
 .ay-ico{width:54px;height:54px;border-radius:14px;background:var(--surface-2);display:grid;place-items:center;font-size:28px}
@@ -1651,6 +1667,9 @@ html body.modo-equipo #tabs #tab-ayuda{display:inline-flex!important}
   #j-print .jp-firmas{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:26px}
   #j-print .jp-firmas span{display:block;height:48px;border-bottom:1px solid #111;margin-bottom:4px}
   #j-print .jp-gen{color:#666}
+  @page cartel{size:A4;margin:0}
+  body.print-jornada #j-print:has(.vcp){page:cartel;padding:0;margin:0}
+  #j-print .vcp{break-inside:avoid}
   #j-print .jp-cartel{text-align:center;padding-top:10mm}
   #j-print .jp-cartel h1{font-size:54pt;margin:4mm 0}
   #j-print .jp-cartel p{font-size:15pt}
@@ -1948,6 +1967,21 @@ html body.modo-equipo #tabs #tab-ayuda{display:inline-flex!important}
 .g-pnav a{font-size:7.5pt;font-weight:800;text-decoration:none;color:#F2EFEA;background:rgba(255,255,255,.1);border-radius:99px;padding:2px 7px}
 .g-pnav a.on{background:#D9481C}
 /*GUIA-CSS-FIN*/
+
+/*UX-2709-CSS-INICIO*/
+/* 27-09-2026 · nada queda tapado por la etiqueta «Powered by Netlify» (abajo a la derecha) */
+@media (max-width:640px){
+  .mk-dw{bottom:calc(64px + env(safe-area-inset-bottom,0px))!important;height:min(78vh,calc(100dvh - 90px))!important}
+  .toast,#j-toast{bottom:calc(74px + env(safe-area-inset-bottom,0px))!important}
+}
+/* barra superior en el móvil: los botones se desplazan en horizontal en vez de salirse de la pantalla */
+@media (max-width:640px){
+  .top .bar{min-width:0}
+  #topacts{min-width:0;flex:1 1 auto;justify-content:flex-end;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 0}
+  #topacts::-webkit-scrollbar{display:none}
+  #topacts>*{flex:0 0 auto}
+}
+/*UX-2709-CSS-FIN*/
 </style>
 <link rel="stylesheet" href="/tema-admin.css">
 </head>
@@ -2073,7 +2107,7 @@ html body.modo-equipo #tabs #tab-ayuda{display:inline-flex!important}
   <!-- RESPUESTAS: textos para contestar reseñas y mensajes con un clic (tools/respuestas) -->
   <section id="s-resp" hidden>
     <div class="head">
-      <div><h1 style="font-size:28px">Respuestas</h1><p>Elige el caso y copia una respuesta personalizada: reseñas de Google y mensajes de WhatsApp.</p></div>
+      <div><h1 style="font-size:28px">Respuestas</h1><p>Elige el caso y copia una respuesta personalizada: reseñas de Google, WhatsApp, Instagram y Facebook.</p></div>
     </div>
     <div id="rs"></div>
   </section>
@@ -2303,10 +2337,15 @@ function show(id){ ["s-login","s-list","s-form","s-leads","s-agenda","s-dash","s
   document.querySelectorAll("#tabs [data-tab]").forEach(b=>b.setAttribute("aria-selected", String(TABS[b.dataset.tab]===id)));
   window.scrollTo(0,0); }
 
+/* ---------- acceso por puesto (27-09-2026) ----------
+   Contraseña del panel o puesto Gerente → todo el panel.
+   Calidad, Recepción y Mecánico → todo lo operativo (Taller, CRM, Agenda, Coches, Inventario, Respuestas, Ayuda
+   y la Caja si el gerente se la dio). Dashboard y Finanzas quedan para el gerente. */
+const PUEDE_TODO=()=>!ME||!ME.equipo||ME.rol==="gerente";
+function puedeTab(t){ if(PUEDE_TODO()) return true; if(t==="dash"||t==="fin") return false; if(t==="caja") return !!ME.caja; return true; }
 async function api(path, opts={}){
   const r = await fetch(path, {...opts, headers:{...(opts.headers||{}), authorization:"Bearer "+PW}});
-  if(r.status===401){ if(ME&&ME.equipo&&!/^\/api\/(taller|ordenes|fotos|login)/.test(path)) throw new Error("No tienes permiso para esto.");
-    logout("Tu sesión ha caducado. Vuelve a entrar."); throw new Error("La sesión ha caducado. Vuelve a entrar."); }
+  if(r.status===401){ logout("Tu sesión ha caducado. Vuelve a entrar."); throw new Error("La sesión ha caducado. Vuelve a entrar."); }
   const data = await r.json().catch(()=>({}));
   if(r.status===423&&typeof jBloquear==="function") jBloquear(data); // sin fichar: pantalla de fichaje
   if(!r.ok) throw new Error(data.error || "Algo ha fallado ("+r.status+"). Inténtalo de nuevo.");
@@ -2732,7 +2771,7 @@ let LEADS=[], ORDENES=[], filtro="activas", tipoF="", busq="", vista="lista", DW
 
 /* ---------- navegación entre pestañas ---------- */
 function abrirTab(t,push=true){
-  if(ME&&ME.equipo&&!(t==="caja"&&ME.caja)&&t!=="alm") t="ordenes";
+  if(!puedeTab(t)){ toast(t==="caja"?"La caja la usa quien tenga permiso del gerente":"Esa sección es solo para el puesto de Gerente"); t="ordenes"; }
   if(t==="alm"){ alAbrirTab(); return; }
   if(t==="caja"){ cjAbrirTab(); return; }
   if(t==="fin"){ fnAbrirTab(); return; }
@@ -2911,7 +2950,7 @@ function plantillas(x){
   if(x.alerta){ const a=x.alerta;
     L.unshift(["🔔 Confirmar alta en avisos",en?`Hi ${n}, this is Volcano Cars 🔔 You're on our new-car alert list (${a.zona}${a.presupuesto?", "+a.presupuesto:""}). When a car that fits comes in, you'll hear it here before we advertise it. Save this number so our messages reach you. Reply STOP any time and we'll remove you.`:`Hola ${n}, te escribimos de Volcano Cars 🔔 Ya estás en la lista de avisos de coches nuevos (${a.zona}${a.presupuesto?", "+a.presupuesto.toLowerCase():""}). Cuando entre uno que encaje, te lo contamos por aquí antes de anunciarlo. Guarda este número para que te lleguen los avisos. Si en algún momento no quieres más, responde BAJA y te quitamos.`]);
     L.push(["🚗 Aviso: coche nuevo",en?`Hi ${n}, Volcano Cars here 🔔 As promised, you're hearing it first: a ___ (year ___, ___ km) for ___ € has just come in, checked in our workshop with a 12-month legal warranty${a.zona!=="Otro pueblo"?" and free delivery to "+a.zona:""}. It goes online tomorrow. Would it be a bad idea to hold it for you until you see it?`:`Hola ${n}, te escribimos de Volcano Cars 🔔 Como te prometimos, te enteras antes que nadie: acaba de entrar un ___ (año ___, ___ km) por ___ €, revisado en nuestro taller y con 12 meses de garantía legal${a.zona!=="Otro pueblo"?", y te lo llevamos gratis a "+a.zona:""}. Mañana lo publicamos. ¿Sería una mala idea guardártelo hasta que lo veas?`]); }
-  if(x.cita) L.push(["Recordar la cita",en?`Hi ${n}, a quick reminder of your appointment at Volcano Cars on ${fechaLarga(x.cita.fecha)} at ${x.cita.hora}. Calle Valle Largo, Unit 8, Antigua. See you soon!`:`Hola ${n}, te recordamos tu cita en Volcano Cars el ${fechaLarga(x.cita.fecha).toLowerCase()} a las ${x.cita.hora}. Calle Valle Largo, Nave 8, Antigua. ¡Te esperamos!`]);
+  if(x.cita) L.push(["Recordar la cita",en?`Hi ${n}, a quick reminder of your appointment at Volcano Cars on ${fechaLarga(x.cita.fecha)} at ${x.cita.hora}. Calle Valle Largo, Unit 8, Costa de Antigua. See you soon!`:`Hola ${n}, te recordamos tu cita en Volcano Cars el ${fechaLarga(x.cita.fecha).toLowerCase()} a las ${x.cita.hora}. Calle Valle Largo, Nave 8, Costa de Antigua. ¡Te esperamos!`]);
   if(x.coche) L.push(["Seguimiento del coche",en?`Hi ${n}, did you get a chance to think about the ${x.coche.titulo}? We can reserve it for you or send you more photos and the 360° video.`:`Hola ${n}, ¿pudiste pensar lo del ${x.coche.titulo}? Si quieres te lo reservamos o te mandamos más fotos y el vídeo 360°.`]);
   if(x.financiacion){ const f=x.financiacion; L.push(["Documentos para financiar",en?`Hi ${n}, thanks for your finance request for the ${x.coche?x.coche.titulo:"car"} (${eurA(f.importe)} over ${f.plazo} months). To send it to the lender we need: ID card/NIE (both sides), your last 2 payslips (or last tax return if self-employed) and a bank certificate with your IBAN. You can bring them to the workshop or we can call you to explain.`:`Hola ${n}, gracias por tu solicitud de financiación del ${x.coche?x.coche.titulo:"coche"} (${eurA(f.importe)} a ${f.plazo} meses). Para enviarla a la financiera necesitamos: DNI o NIE por las dos caras, las 2 últimas nóminas (o la última declaración de la renta si eres autónomo) y un certificado de titularidad de tu cuenta. Puedes traerlos al taller o te llamamos y te lo explicamos.`]);
     L.push(["Financiación aprobada",en?`Great news ${n}: your finance for the ${x.coche?x.coche.titulo:"car"} has been approved! When would you like to come and sign?`:`¡Buenas noticias, ${n}! Tu financiación del ${x.coche?x.coche.titulo:"coche"} está aprobada. ¿Cuándo te viene bien venir a firmar?`]); }
@@ -3365,7 +3404,7 @@ function renderAgenda(){
   for(const x of citas){
     if(x.cita.fecha!==dia){ dia=x.cita.fecha; html+=`<h2 style="font-size:18px;margin:14px 0 2px">${x.cita.fecha===hoy?"Hoy · ":""}${fechaLarga(dia)}</h2>`; }
     const qué = x.coche ? "Ver el "+x.coche.titulo : (x.servicios&&x.servicios.length?x.servicios.join(", "):"Taller")+(x.vehiculo&&x.vehiculo.coche?" · "+x.vehiculo.coche:"");
-    const rec=`Hola ${x.nombre.split(" ")[0]}, te recordamos tu cita en Volcano Cars el ${fechaLarga(x.cita.fecha).toLowerCase()} a las ${x.cita.hora}. Calle Valle Largo, Nave 8, Antigua. ¡Te esperamos!`;
+    const rec=`Hola ${x.nombre.split(" ")[0]}, te recordamos tu cita en Volcano Cars el ${fechaLarga(x.cita.fecha).toLowerCase()} a las ${x.cita.hora}. Calle Valle Largo, Nave 8, Costa de Antigua. ¡Te esperamos!`;
     html+=`<article class="lead cita-item lux t-${x.tipo} ${x===prox?"prox":""} ${x.estado==="ganada"?"hecha":""}" data-id="${esc(x.id)}" style="grid-template-columns:auto 1fr;display:grid;align-items:start">
       <div class="c-hora">${esc(x.cita.hora)}${x===prox?'<small>Próxima</small>':""}</div>
       <div style="display:grid;gap:8px"><div><span class="tipo ${x.tipo}">${x.cita.agenda==="visita"?"Visita":"Taller"}</span><b>${esc(x.nombre)}</b> ${x.estado==="ganada"?'<span class="tipo tasacion">Hecha</span>':""}</div>
@@ -3420,7 +3459,7 @@ function pintarVivo(){
 }
 async function tick(){
   if(!PW) return;
-  if(ME&&ME.equipo) return tallerTick();
+  if(ME&&ME.equipo&&(typeof J==="undefined"||!J||J.estado!=="trabajando")) return; // sin fichar no se pide nada (la pantalla de fichaje manda)
   const editando = !$("#s-form").hidden;
   try{
     const [cars, leads, int, vi, ords] = await Promise.all([
@@ -3520,7 +3559,7 @@ try{ sessionStorage.removeItem("mz_pw"); }catch(_){}          // la contraseña 
 try{ PW=sessionStorage.getItem(TOK_KEY)||""; }catch(_){ PW=""; }
 const guardarToken=t=>{ PW=t; try{ sessionStorage.setItem(TOK_KEY,t); }catch(_){} };
 function logout(msg){ PW=""; ME=null; try{ sessionStorage.removeItem(TOK_KEY); sessionStorage.removeItem("vc_me"); sessionStorage.removeItem("vc_tf"); }catch(_){}
-  document.body.classList.remove("modo-equipo","con-caja"); if(typeof cjBadge==="function") cjBadge(0); if(typeof tUsuario==="function") tUsuario(); if(typeof TDIRTY!=="undefined") TDIRTY=false;
+  document.body.classList.remove("modo-equipo","con-caja","eq-ger"); if(typeof cjBadge==="function") cjBadge(0); if(typeof tUsuario==="function") tUsuario(); if(typeof TDIRTY!=="undefined") TDIRTY=false;
   if(typeof cerrarDrawer==="function") cerrarDrawer(); show("s-login");
   if(typeof msg==="string"){ $("#login-err").textContent=msg; $("#login-err").hidden=false; } }
 $("#logout").onclick=()=>logout();
@@ -3591,7 +3630,7 @@ function pintarSeguridad(){
       <div id="s2fa-paso"></div></section>
     <section class="dw-box"><h3>Sesiones</h3><p class="hint" style="margin:0 0 10px">Si has entrado desde un ordenador ajeno o crees que alguien ha visto tu contraseña, cierra todas las sesiones y cambia ADMIN_PASSWORD en Netlify.${e.sesionesDesde?` Último cierre general: ${esc(fechaHora(e.sesionesDesde))}.`:""}</p><button type="button" class="btn b-brand b-sm" data-cerrar-todas>Cerrar sesión en todos los dispositivos</button></section>
     <section class="dw-box"><h3>Conexiones bloqueadas ahora</h3>${(SEG.bloqueos||[]).length?`<div class="tabla-wrap"><table class="tabla"><tbody>${SEG.bloqueos.map(b=>`<tr><td class="num">${esc(b.ip)}</td><td>${esc(b.motivo)}<br><small>hasta ${esc(fechaHora(b.hasta))}</small></td><td class="n"><button type="button" class="chipb" data-desbloquear="${esc(b.id)}">Desbloquear</button></td></tr>`).join("")}</tbody></table></div>`:'<p class="hint" style="margin:0">Ninguna.</p>'}</section>
-    <section class="dw-box"><h3>Copia de seguridad</h3><p class="hint" style="margin:0 0 10px">Descarga en un archivo <b>todos</b> los datos del negocio: coches, clientes y citas, órdenes del taller, equipo, caja, finanzas y almacén. Guárdalo en tu ordenador o en un pendrive <b>una vez por semana</b>. Las fotos no van dentro.</p><button type="button" class="btn b-ghost b-sm" data-backup>Descargar copia de seguridad</button></section>
+    <section class="dw-box"><h3>Copia de seguridad</h3><p class="hint" style="margin:0 0 10px">Descarga en un archivo <b>todos</b> los datos del negocio: coches, clientes y citas, órdenes del taller, equipo, caja, finanzas y almacén. Guárdalo en tu ordenador o en un pendrive <b>una vez por semana</b>. Las fotos no van dentro.</p><button type="button" class="btn b-ghost b-sm" data-backup>Descargar copia de seguridad</button><p class="hint" style="margin:12px 0 6px"><b>Copia automática diaria</b> (03:05): la web guarda sola una copia cada noche y conserva los últimos 30 días.</p><div class="quick"><button type="button" class="btn b-ghost b-sm" data-backup-auto>Ver copias automáticas</button></div><div id="bk-auto"></div></section>
     <section class="dw-box"><h3>Registro de seguridad (30 días)</h3>${reg.length?`<div class="tabla-wrap"><table class="tabla reg"><tbody>${reg.map(x=>{ const [t,c]=EVT[x.tipo]||[x.tipo,""]; return `<tr class="${c}"><td><b>${esc(t)}</b>${x.txt&&x.txt!==t?`<br><small>${esc(x.txt)}</small>`:""}</td><td><small>${esc(x.disp)}${x.pais?" · "+esc(x.pais):""}<br>${esc(x.ip)}</small></td><td class="n"><small>${esc(fechaHora(x.t))}</small></td></tr>`; }).join("")}</tbody></table></div>`:'<p class="hint" style="margin:0">Sin actividad todavía.</p>'}</section>
     <p class="hint" style="padding-bottom:30px">Las conexiones se guardan recortadas (p. ej. 83.45.x.x) y se borran a los 30 días.</p>`;
 }
@@ -3621,6 +3660,8 @@ async function clickSeguridad(e){
   const t=e.target;
   if(t.closest("[data-cerrar-todas]")){ if(!confirm("¿Cerrar la sesión en todos los ordenadores y móviles? En este seguirás dentro.")) return; const r=await accionSeg({accion:"cerrar-sesiones"}); guardarToken(r.token); toast("Hecho: las demás sesiones ya no sirven"); SEG=await api("/api/seguridad"); pintarSeguridad(); return; }
   const d=t.closest("[data-desbloquear]"); if(d){ await accionSeg({accion:"desbloquear",id:d.dataset.desbloquear}); SEG=await api("/api/seguridad"); pintarSeguridad(); toast("Desbloqueada"); return; }
+  if(t.closest("[data-backup-auto]")){ try{ const l=await api("/api/copia?auto=lista"); $("#bk-auto").innerHTML=l.length?`<div class="quick" style="margin-top:8px">${l.slice(0,30).map(d=>`<button type="button" class="btn b-ghost b-sm" data-backup-dia="${esc(d)}">${esc(d.split("-").reverse().join("/"))}</button>`).join("")}</div>`:'<p class="hint">Aún no hay copias automáticas: la primera se hace esta noche.</p>'; }catch(err){ toast(err.message); } return; }
+  const bd=t.closest("[data-backup-dia]"); if(bd){ try{ const r=await fetch("/api/copia?auto="+encodeURIComponent(bd.dataset.backupDia),{headers:{authorization:"Bearer "+PW}}); if(!r.ok) throw new Error("No se pudo descargar esa copia ("+r.status+")."); const blob=await r.blob(); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`volcano-cars-copia-${bd.dataset.backupDia}.json`; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500); toast("Copia descargada"); }catch(err){ toast(err.message); } return; }
   if(t.closest("[data-backup]")){ const b=t.closest("[data-backup]"); b.disabled=true; const txt=b.textContent; b.textContent="Preparando la copia…";
     try{ const r=await fetch("/api/copia",{headers:{authorization:"Bearer "+PW}}); if(!r.ok) throw new Error(r.status===401?"Solo el gerente puede descargar la copia completa.":"No se pudo preparar la copia ("+r.status+").");
       const blob=await r.blob(); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`volcano-cars-copia-completa-${hoyC()}.json`; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500); toast("Copia completa descargada");
@@ -3703,7 +3744,7 @@ const T_ACC={crear:"Recepción creada",guardar:"Guardado",firmar:"Firmado",ficha
 /* ---------- estado ---------- */
 let TF=null, TW={}, TF_TAB="f1", TEQ=[], TVISTA="", TBUSQ="", TFILTRO="activas", TDIRTY=false, TSAVING=false, T_SKEW=0, TTOOL="R", TVER=0, TSAVED="";
 const T_OPEN=new Set(["A"]);
-const ES_EQ=()=>!!(ME&&ME.equipo);
+const ES_EQ=()=>!!(ME&&ME.equipo&&ME.rol!=="gerente"); // equipo SIN puesto de gerente (el gerente del equipo ve lo mismo que la contraseña)
 const ES_GER=()=>!ME||ME.rol==="gerente";
 const tNombre=uid=>!uid?"—":uid==="gerente"?"Gerente":(TEQ.find(p=>p.id===uid)||{}).nombre||"Persona dada de baja";
 const tClone=o=>o==null?o:JSON.parse(JSON.stringify(o));
@@ -3745,9 +3786,11 @@ function tResF2(f2){ let r=0,a=0,ok=0,na=0,h=0; if(f2) for(const id of F2_IDS){ 
 async function entrarEquipo(d){
   ME={rol:d.rol,nombre:d.nombre,uid:d.uid,equipo:true,caja:!!d.caja};
   try{ sessionStorage.setItem("vc_me",JSON.stringify(ME)); }catch(_){}
-  document.body.classList.add("modo-equipo"); document.body.classList.toggle("con-caja",!!ME.caja); tUsuario(); if(ME.rol==="gerente") setTimeout(()=>cjVigilar(),1200);
+  document.body.classList.add("modo-equipo"); document.body.classList.toggle("con-caja",!!ME.caja); document.body.classList.toggle("eq-ger",ME.rol==="gerente"); tUsuario(); if(ME.rol==="gerente") setTimeout(()=>cjVigilar(),1200);
   TVISTA=TVISTA||"mios";
   await Promise.all([tCargarEquipo(), api("/api/ordenes").then(r=>{ ORDENES=r; }).catch(()=>{})]);
+  // Todo el equipo trabaja también CRM, Agenda y Coches: se cargan en segundo plano (si aún no ha fichado, se cargan al fichar)
+  try{ if(typeof loadList==="function") loadList(true).catch(()=>{}); if(typeof loadLeads==="function") loadLeads(false).catch(()=>{}); }catch(_){ }
   let abierta=""; try{ abierta=sessionStorage.getItem("vc_tf")||""; }catch(_){}
   if(abierta&&location.hash==="#fichas") abrirFichas(abierta); else abrirTab(location.hash==="#caja"&&ME.caja?"caja":location.hash==="#inventario"?"alm":"ordenes",false);
 }
@@ -3839,7 +3882,7 @@ function tMios(){
   if(rol==="recepcion") h+=bloque("Recepciones sin firmar","Termina la ficha de entrada y que firme el cliente.",rec,"f1","Todo firmado.")+bloque("Listos para entregar","",listos,"f4","Ninguno ahora.");
   else if(rol==="calidad") h+=bloque("Pendientes de control de calidad","Revisa y firma FORM-04. Nunca un coche que hayas reparado tú.",cal,"f4","Nada pendiente.")+bloque("Por inspeccionar","",insp,"f2","Nada pendiente.");
   else { if(!ES_GER()) h+=bloque("Asignados a mí","Pulsa para fichar el inicio, las pausas y el final.",asign,"f3","No tienes trabajos asignados.");
-    h+=bloque("Por inspeccionar (FORM-02)","Coches recibidos que esperan la inspección 360°.",insp,"f2","Nada pendiente.")+bloque("Aprobados sin mecánico","El cliente ya ha dicho que sí: asigna o empieza el trabajo.",sinAsignar,"f3","Ninguno.")+bloque("Control de calidad (FORM-04)",ES_GER()?"":"Solo coches que NO has reparado tú.",cal,"f4","Nada pendiente.");
+    h+=bloque("Por inspeccionar (FORM-02)","Coches recibidos que esperan la inspección 360°.",insp,"f2","Nada pendiente.")+bloque("Aprobados sin mecánico","El cliente ya ha dicho que sí: asigna o empieza el trabajo.",sinAsignar,"f3","Ninguno.")+bloque("Control de calidad · 30 puntos (FORM-04)",ES_GER()?"":"Solo coches que NO has reparado tú.",cal,"f4","Nada pendiente.");
     if(ES_GER()) h+=bloque("Recepciones sin firmar","",rec,"f1","Todo firmado."); }
   return h;
 }
@@ -3879,7 +3922,7 @@ function tCsv(){
 function tNuevaRecepcion(){
   let d=$("#dlg-rec");
   if(!d){ d=document.createElement("dialog"); d.id="dlg-rec"; d.className="t-dlg"; document.body.appendChild(d); }
-  const cand=ES_EQ()?[]:LEADS.filter(x=>x.tipo==="taller"&&!x.orden&&x.estado!=="perdida").slice(0,40);
+  const cand=(typeof LEADS!=="undefined"?LEADS:[]).filter(x=>x.tipo==="taller"&&!x.orden&&x.estado!=="perdida").slice(0,40);
   d.innerHTML=`<form method="dialog" id="f-rec"><h2>Nueva recepción</h2><p class="hint">Se crea la orden con su número y se abre la ficha de recepción (FORM-01) para completarla con el cliente delante.</p>
     ${cand.length?`<div class="field"><label for="rc-lead">¿Viene de una cita o solicitud del CRM?</label><select class="in" id="rc-lead"><option value="">No, cliente nuevo</option>${cand.map(x=>`<option value="${esc(x.id)}">${esc(x.nombre)} · ${esc(queEs(x))}${x.cita?" · cita "+esc(fecha(x.cita.fecha)):""}</option>`).join("")}</select></div>`:""}
     <div id="rc-man" class="t-g2"><div class="field"><label for="rc-nom">Nombre del cliente *</label><input class="in" id="rc-nom" maxlength="80" autocomplete="off"></div><div class="field"><label for="rc-tel">Teléfono</label><input class="in num" id="rc-tel" inputmode="tel" maxlength="30" autocomplete="off"></div>
@@ -3941,12 +3984,12 @@ function tEstadoFicha(k){ const f=TF.fichas;
 }
 function tCabecera(){
   const o=TF.orden, f=TF.fichas, i=tFase(o.estado);
-  const tabs=[["f1","FORM-01","Recepción"],["f2","FORM-02","Inspección 360°"],["f3","FORM-03","Tiempos"],["f4","FORM-04","Calidad"],["audit","","Auditoría"]];
+  const tabs=[["f1","FORM-01","Recepción"],["f2","FORM-02","Inspección 360°"],["f3","FORM-03","Tiempos"],["f4","FORM-04","Calidad · 30 pts"],["audit","","Auditoría"]];
   return `<div class="t-fhead">
     <button type="button" class="btn b-ghost b-sm" data-tvolver>← Taller</button>
     <div class="t-fid"><small>Orden</small><b class="num">${esc(f.num||"—")}</b></div>
     <div class="t-fcar"><span class="mat">${esc((o.vehiculo.matricula||"—").toUpperCase())}</span><b>${esc(o.vehiculo.coche||"Coche")}</b><small>${esc(o.cliente.nombre)}${o.cliente.telefono?" · "+esc(o.cliente.telefono):""}</small></div>
-    <div class="t-facts"><button type="button" class="btn b-ghost b-sm" data-tprint="uno">Imprimir esta ficha</button><button type="button" class="btn b-brand b-sm" data-tprint="todas">PDF de la orden</button>${ES_GER()&&!ES_EQ()?`<button type="button" class="btn b-ghost b-sm" data-tdrawer>Presupuesto y cliente</button>`:""}</div>
+    <div class="t-facts"><button type="button" class="btn b-ghost b-sm" data-tprint="uno">Imprimir esta ficha</button><button type="button" class="btn b-brand b-sm" data-tprint="todas">PDF de la orden</button><button type="button" class="btn b-ghost b-sm" data-tdrawer>Presupuesto y cliente</button></div>
   </div>
   <ol class="t-fases">${T_FASES.map((x,k)=>`<li class="${k<i?"hecho":k===i?"act":""}"><i>${k<i?"✓":k+1}</i><span>${x[1]}${k===i&&T_SUB[o.estado]?`<small>${T_SUB[o.estado]}</small>`:""}</span></li>`).join("")}</ol>
   <nav class="t-tabs" role="tablist">${tabs.map(([k,n,t])=>{ const [c,s]=tEstadoFicha(k); return `<button type="button" role="tab" data-ttabb="${k}" aria-selected="${TF_TAB===k}">${n?`<small>${n}</small>`:""}<b>${t}</b><em class="t-st ${c}">${esc(s)}</em></button>`; }).join("")}</nav>`;
@@ -4306,7 +4349,7 @@ setInterval(async()=>{ if(!TF||$("#s-ficha").hidden||document.hidden||TDIRTY||TS
 
 /* ---------- el cajón de la orden (gerente) enlaza con las fichas ---------- */
 const _tAbrirOrdenDrawer=abrirOrden;
-abrirOrden=function(token){ if(ES_EQ()) return abrirFichas(token); _tAbrirOrdenDrawer(token); };
+abrirOrden=function(token){ _tAbrirOrdenDrawer(token); }; // todo el equipo abre la orden completa (presupuesto, cliente, fotos)
 const _tHtmlOrden=htmlOrden;
 htmlOrden=function(o){ const h=_tHtmlOrden(o), f=o.fichas||{};
   const caja=`<section class="dw-box t-dwbox"><h3>Fichas SOP-01 ${o.num?`<span class="chip num">${esc(o.num)}</span>`:""}</h3><div class="t-dwrow">${tFichasChips(o)}${tPipe(o,true)}</div>
@@ -4396,9 +4439,9 @@ async function tItvCargar(){ try{ TITV=await tApi("itv"); TITV_T=Date.now(); }ca
   if(TVISTA==="itv"){ $("#t-barra").innerHTML=tBarra(); tItvPintar(); } }
 function tItvTexto(x){ const n=(x.nombre||"").trim().split(/\s+/)[0]||"", coche=(x.coche||"coche")+(x.matricula?` (${x.matricula.toUpperCase()})`:""), f=tF(x.itv), t=tItvTramo(x);
   const baja="\n\nSi no quieres recibir más avisos de ITV, contesta BAJA.";
-  if(t==="cad") return `Hola ${n}, somos Volcano Cars, tu taller en Antigua. Te escribimos porque la ITV de tu ${coche} caducó el ${f}. Si quieres, te revisamos el coche antes de pasarla (Pre-ITV: luces, frenos, neumáticos, emisiones y testigos) para que la pases a la primera. ¿Te damos cita esta semana?${baja}`;
-  if(t==="7") return `Hola ${n}, somos Volcano Cars (Antigua). La ITV de tu ${coche} caduca el ${f}: quedan ${x.dias===0?"horas":x.dias===1?"1 día":x.dias+" días"}. ¿Quieres que le echemos un vistazo antes de que vayas? Contesta a este mensaje y te damos hora.${baja}`;
-  return `Hola ${n}, somos Volcano Cars, tu taller en Antigua. Te recordamos que la ITV de tu ${coche} caduca el ${f} (dentro de ${x.dias} días). Si quieres, te hacemos una revisión Pre-ITV antes para que la pases a la primera: https://volcanocars.com/pre-itv-fuerteventura ¿Te reservamos un hueco?${baja}`;
+  if(t==="cad") return `Hola ${n}, somos Volcano Cars, tu taller en Costa de Antigua. Te escribimos porque la ITV de tu ${coche} caducó el ${f}. Si quieres, te revisamos el coche antes de pasarla (Pre-ITV: luces, frenos, neumáticos, emisiones y testigos) para que la pases a la primera. ¿Te damos cita esta semana?${baja}`;
+  if(t==="7") return `Hola ${n}, somos Volcano Cars (Costa de Antigua). La ITV de tu ${coche} caduca el ${f}: quedan ${x.dias===0?"horas":x.dias===1?"1 día":x.dias+" días"}. ¿Quieres que le echemos un vistazo antes de que vayas? Contesta a este mensaje y te damos hora.${baja}`;
+  return `Hola ${n}, somos Volcano Cars, tu taller en Costa de Antigua. Te recordamos que la ITV de tu ${coche} caduca el ${f} (dentro de ${x.dias} días). Si quieres, te hacemos una revisión Pre-ITV antes para que la pases a la primera: https://volcanocars.com/pre-itv-fuerteventura ¿Te reservamos un hueco?${baja}`;
 }
 function tItvCard(x){ const t=tItvTramo(x), hecho=tItvHecho(x), coche=esc(x.coche||"Coche");
   const cuando=x.dias<0?`Caducó hace ${-x.dias} día${x.dias===-1?"":"s"}`:x.dias===0?"Caduca hoy":`Caduca en ${x.dias} día${x.dias===1?"":"s"}`;
@@ -4434,7 +4477,7 @@ document.addEventListener("click",e=>{ const t=e.target;
 async function tPdfOrden(token){ try{ const [r]=await Promise.all([tApi("fichas/"+token),TEQ.length?null:tCargarEquipo(),typeof alCargarOrden==="function"?alCargarOrden(token):null]); const prev=TF; TF=r; tImprimir(["f1","f2","f3","f4"]); TF=prev; }catch(err){ toast(err.message); } }
 function tImprimir(cuales){
   let el=$("#t-print"); if(!el){ el=document.createElement("div"); el.id="t-print"; document.body.appendChild(el); }
-  const T={f1:["FORM-01","Ficha de recepción del vehículo"],f2:["FORM-02","Inspección 360°"],f3:["FORM-03","Control de tiempos"],f4:["FORM-04","Control de calidad"]};
+  const T={f1:["FORM-01","Ficha de recepción del vehículo"],f2:["FORM-02","Inspección 360°"],f3:["FORM-03","Control de tiempos"],f4:["FORM-04","Control de calidad · 30 puntos"]};
   el.innerHTML=cuales.map(k=>`<article class="tp-pag"><header class="tp-h"><img src="/marca/logo-oscuro.svg" alt="Volcano Cars" height="26"><div><b>${T[k][1]}</b><small>Orden <b>${esc(TF.fichas.num)}</b> · ${esc((TF.orden.vehiculo.matricula||"").toUpperCase())} · ${esc(TF.orden.vehiculo.coche||"")} · ${esc(TF.orden.cliente.nombre)}</small></div><span class="tp-badge">${T[k][0]}</span></header>
     ${({f1:tP1,f2:tP2,f3:tP3,f4:tP4})[k]()}
     <footer class="tp-f">Volcano Cars · Manual SOP-01 Recepción, inspección y control de tiempos · ${T[k][0]} · Versión 1.1 · Impreso ${esc(tFH(new Date().toISOString()))}</footer></article>`).join("");
@@ -5158,7 +5201,7 @@ function alPedido(){
 }
 function alTextoPedido(prov){
   const l=AL.piezas.filter(p=>p.stock<=p.minimo&&(p.proveedor||"Sin proveedor")===prov);
-  return `Hola, somos Volcano Cars (Antigua, Fuerteventura). Queremos pedir:\n${l.map(p=>`- ${alN(AL_PED[p.id]??alSugerido(p))} ${p.unidad} · ${p.nombre}${p.ref?" (ref. "+p.ref+")":""}`).join("\n")}\n¿Nos confirmas precio y plazo? Gracias.`;
+  return `Hola, somos Volcano Cars (Costa de Antigua, Fuerteventura). Queremos pedir:\n${l.map(p=>`- ${alN(AL_PED[p.id]??alSugerido(p))} ${p.unidad} · ${p.nombre}${p.ref?" (ref. "+p.ref+")":""}`).join("\n")}\n¿Nos confirmas precio y plazo? Gracias.`;
 }
 function alMovimientos(){
   if(!AL_MOVS){ alCargarMovs(); return '<div class="empty">Cargando movimientos…</div>'; }
@@ -5441,9 +5484,9 @@ const rvEnlaceCoche = (id) => `${location.origin}/comprar?coche=${encodeURICompo
 function rvMsgConfirmacion(r) {
   const n = r.nombre.split(" ")[0];
   const cuando = r.entrega ? ` Te lo llevamos gratis a ${r.entrega.municipio} el ${rvFecha(r.entrega.fecha)} por la ${r.entrega.franja.toLowerCase()}; te llamamos para confirmar la hora.`
-    : r.cita ? ` Nos vemos el ${rvFecha(r.cita.fecha)} a las ${r.cita.hora} en nuestra exposición de Antigua para probarlo.` : " Ven a probarlo a nuestra exposición de Antigua cuando te venga bien.";
+    : r.cita ? ` Nos vemos el ${rvFecha(r.cita.fecha)} a las ${r.cita.hora} en nuestra exposición de Costa de Antigua para probarlo.` : " Ven a probarlo a nuestra exposición de Costa de Antigua cuando te venga bien.";
   return r.idioma === "en"
-    ? `Congratulations, ${n}! Your ${r.coche.titulo} has been successfully reserved at Volcano Cars. You have 48 hours of exclusive reservation.${r.cita ? ` See you on ${r.cita.fecha} at ${r.cita.hora} at our showroom in Antigua to test drive it.` : ""} Your receipt: ${location.origin}/r/${r.token}`
+    ? `Congratulations, ${n}! Your ${r.coche.titulo} has been successfully reserved at Volcano Cars. You have 48 hours of exclusive reservation.${r.cita ? ` See you on ${r.cita.fecha} at ${r.cita.hora} at our showroom in Costa de Antigua to test drive it.` : ""} Your receipt: ${location.origin}/r/${r.token}`
     : `¡Enhorabuena, ${n}! Tu ${r.coche.titulo} ha sido bloqueado con éxito en Volcano Cars. Tienes 48 horas de reserva exclusiva.${cuando} Tu comprobante: ${location.origin}/r/${r.token}`;
 }
 function rvMsgDisponible(e, titulo, id) {
@@ -5455,7 +5498,7 @@ function rvMsgDisponible(e, titulo, id) {
 const rvWa = (tel, txt) => `https://wa.me/${waNum(tel)}?text=${encodeURIComponent(txt)}`;
 
 async function rvCargar(forzar) {
-  if (!PW || (ME && ME.equipo) || rvCargando) return;
+  if (!PW || rvCargando) return;
   if (!forzar && Date.now() - rvUltima < 4000) return;
   rvCargando = true;
   try { RV = await api("/api/reservas"); rvUltima = Date.now(); rvPintar(); rvContador(); }
@@ -5601,7 +5644,7 @@ if ($("#dw-body")) new MutationObserver(rvPintarFotos).observe($("#dw-body"), { 
 // Cargar al abrir «Coches» y cada minuto (para el contador de la pestaña)
 const rvShow0 = show;
 show = function (id) { rvShow0(id); if (id === "s-list") rvCargar(); };
-setInterval(() => { if (PW && !document.hidden && !(ME && ME.equipo)) rvCargar(); }, 60000);
+setInterval(() => { if (PW && !document.hidden) rvCargar(); }, 60000);
 /*RSV-JS-FIN*/
 /*RESP-JS-INICIO*//* =====================================================================
    RESPUESTAS · textos para contestar reseñas de Google (y, más adelante,
@@ -5636,7 +5679,7 @@ es: {
   hola: n => n ? [`¡Hola, ${n}!`, `Hola, ${n}:`] : ["¡Hola!", "Hola:"],
   graciasTexto: ["Muchísimas gracias por tu reseña.", "Gracias de corazón por tomarte el tiempo de escribirnos.", "Qué alegría leer tu comentario."],
   serv: {
-    taller: ["Nos alegra saber que tu coche salió del taller como esperabas.", "Que confíes en nuestro taller de Antigua para cuidar tu coche es lo que más valoramos.", "Nos encanta saber que quedaste contento con el trabajo en tu coche."],
+    taller: ["Nos alegra saber que tu coche salió del taller como esperabas.", "Que confíes en nuestro taller de Costa de Antigua para cuidar tu coche es lo que más valoramos.", "Nos encanta saber que quedaste contento con el trabajo en tu coche."],
     chapa: ["Nos alegra mucho que el acabado de chapa y pintura te haya convencido.", "Ver cómo queda un coche después de pasar por chapa y pintura es lo que más nos gusta de este trabajo, y nos alegra que el resultado te haya gustado.", "Que tu coche haya vuelto a quedar como el primer día es justo lo que buscamos."],
     coche: ["Nos alegra muchísimo que estés contento con tu coche. ¡Que lo disfrutes muchos kilómetros por Fuerteventura!", "Que hayas elegido tu coche con nosotros es un orgullo. ¡A disfrutarlo!", "Nos alegra que la compra de tu coche haya ido tan bien. ¡Que lo disfrutes por toda la isla!"],
     itv: ["Nos alegra que tu coche esté listo para pasar la ITV sin sorpresas.", "Que llegues a la ITV con todo revisado y tranquilo es justo lo que buscamos.", "Nos alegra haberte ayudado a dejar el coche listo para la ITV."],
@@ -5652,7 +5695,7 @@ es: {
     ingles: ["Nos alegra haber podido atenderte en inglés sin problema.", "Atender a cada cliente en su idioma es importante para nosotros."],
     entrega: ["Nos alegra que la entrega a domicilio te haya facilitado las cosas.", "Llevarte el coche a casa es parte del servicio, y nos alegra que lo hayas valorado."]
   },
-  cierrePos: ["Aquí nos tienes en Antigua para lo que necesites.", "Gracias por confiar en nosotros y por recomendarnos.", "Te esperamos para la próxima."],
+  cierrePos: ["Aquí nos tienes en Costa de Antigua para lo que necesites.", "Gracias por confiar en nosotros y por recomendarnos.", "Te esperamos para la próxima."],
   solo5: [n => `Muchas gracias por las 5 estrellas${n ? ", " + n : ""}. Nos alegra mucho que hayas quedado contento. Aquí nos tienes para lo que necesites.`,
           n => `¡Gracias por tu valoración${n ? ", " + n : ""}! Que quedes contento es lo que buscamos cada día. Te esperamos para la próxima.`,
           n => `Mil gracias por confiar en Volcano Cars${n ? ", " + n : ""}. Nos alegra que todo haya ido bien. ¡Hasta pronto!`],
@@ -5673,7 +5716,7 @@ en: {
   hola: n => n ? [`Hi ${n}!`, `Hi ${n},`] : ["Hi!", "Hello,"],
   graciasTexto: ["Thank you so much for your review.", "Thanks a lot for taking the time to write to us.", "What a joy to read your comment."],
   serv: {
-    taller: ["We're glad your car left the workshop just as you expected.", "Your trust in our workshop in Antigua means a lot to us.", "We're really happy you were pleased with the work on your car."],
+    taller: ["We're glad your car left the workshop just as you expected.", "Your trust in our workshop in Costa de Antigua means a lot to us.", "We're really happy you were pleased with the work on your car."],
     chapa: ["We're so glad you liked the bodywork and paint finish.", "Seeing a car looking like new after bodywork is the best part of our job, and we're glad you loved the result.", "Getting your car back looking like day one is exactly what we aim for."],
     coche: ["We're delighted you're happy with your car. Enjoy many miles around Fuerteventura!", "We're proud you chose your car with us. Enjoy it!", "We're glad buying your car went so smoothly. Enjoy it all over the island!"],
     itv: ["We're glad your car is ready to pass the ITV with no surprises.", "Getting to the ITV with everything checked and peace of mind is exactly what we aim for.", "We're happy we could help get your car ready for the ITV."],
@@ -5689,7 +5732,7 @@ en: {
     ingles: ["We're glad we could look after you in English.", "Helping every customer in their own language matters to us."],
     entrega: ["We're glad home delivery made things easier for you.", "Bringing the car to your door is part of the service, and we're happy you valued it."]
   },
-  cierrePos: ["We're here in Antigua whenever you need us.", "Thanks for trusting us and recommending us.", "See you next time!"],
+  cierrePos: ["We're here in Costa de Antigua whenever you need us.", "Thanks for trusting us and recommending us.", "See you next time!"],
   solo5: [n => `Thank you so much for the 5 stars${n ? ", " + n : ""}. We're really glad you were happy. We're here whenever you need us.`,
           n => `Thanks for your rating${n ? ", " + n : ""}! Happy customers are what we work for every day. See you next time.`,
           n => `Many thanks for trusting Volcano Cars${n ? ", " + n : ""}. We're glad everything went well. See you soon!`],
@@ -5740,8 +5783,8 @@ function rsGenerar(o){
 const RS_WA_DATOS = {web:"volcanocars.com", mapa:"https://maps.app.goo.gl/dz8icDhkUkB4oznd8", resena:"https://g.page/r/Caeh6Wr6CwtNEBM/review"};
 const RS_WA = [
  {g:"Automáticos (se configuran una vez)", k:"bienvenida", a:"(automático)", t:"Mensaje de bienvenida",
-  es:"¡Hola! 👋 Gracias por escribir a Volcano Cars: taller mecánico, chapa y pintura y coches de ocasión en Antigua. Cuéntanos qué coche es y qué necesitas, y te respondemos enseguida. Si lo prefieres, pide cita aquí: {web}/taller",
-  en:"Hi! 👋 Thanks for messaging Volcano Cars: mechanics, bodywork & paint and used cars in Antigua. Tell us about your car and what you need, and we'll get back to you right away. You can also book here: {web}/taller"},
+  es:"¡Hola! 👋 Gracias por escribir a Volcano Cars: taller mecánico, chapa y pintura y coches de ocasión en Costa de Antigua. Cuéntanos qué coche es y qué necesitas, y te respondemos enseguida. Si lo prefieres, pide cita aquí: {web}/taller",
+  en:"Hi! 👋 Thanks for messaging Volcano Cars: mechanics, bodywork & paint and used cars in Costa de Antigua. Tell us about your car and what you need, and we'll get back to you right away. You can also book here: {web}/taller"},
  {g:"Automáticos (se configuran una vez)", k:"ausencia", a:"(automático)", t:"Mensaje de ausencia (fuera de horario)",
   es:"¡Hola! Ahora estamos fuera del horario del taller (lunes a viernes, de 8:00 a 16:00). Déjanos el coche y lo que necesitas y te respondemos a primera hora. Si quieres adelantar, pide cita aquí: {web}/taller",
   en:"Hi! We're outside workshop hours right now (Monday to Friday, 8:00 to 16:00). Leave us your car details and what you need, and we'll reply first thing. To get ahead, book here: {web}/taller"},
@@ -5749,8 +5792,8 @@ const RS_WA = [
   es:"¡Hola{n}! Gracias por escribirnos. Para ayudarte rápido: ¿qué coche es (marca, modelo y año) y qué le pasa o qué necesitas?",
   en:"Hi{n}! Thanks for your message. To help you quickly: what car is it (make, model and year) and what's the problem or what do you need?"},
  {g:"Primer contacto", k:"ubicacion", a:"/ubicacion", t:"Dónde estamos",
-  es:"Estamos en Calle Valle Largo, Nave 8, Polígono Industrial de Antigua. Aquí tienes el mapa: {mapa} · Lunes a viernes, de 8:00 a 16:00.",
-  en:"We're at Calle Valle Largo, Nave 8, Antigua industrial estate. Here's the map: {mapa} · Monday to Friday, 8:00 to 16:00."},
+  es:"Estamos en Calle Valle Largo, Nave 8, Polígono Industrial de Costa de Antigua. Aquí tienes el mapa: {mapa} · Lunes a viernes, de 8:00 a 16:00.",
+  en:"We're at Calle Valle Largo, Nave 8, Costa de Antigua industrial estate. Here's the map: {mapa} · Monday to Friday, 8:00 to 16:00."},
  {g:"Primer contacto", k:"horario", a:"/horario", t:"Horario",
   es:"Abrimos de lunes a viernes, de 8:00 a 16:00, sin cerrar a mediodía. Sábados y domingos, cerrado.",
   en:"We're open Monday to Friday, 8:00 to 16:00, straight through lunch. Closed on weekends."},
@@ -5758,8 +5801,8 @@ const RS_WA = [
   es:"Perfecto{n}. ¿Te viene bien {cuando}? Si prefieres otro momento, dime qué día te encaja y te lo reservo.",
   en:"Perfect{n}. Does {cuando} work for you? If not, tell me which day suits you and I'll book it."},
  {g:"Taller", k:"citaok", a:"/citaok", t:"Cita confirmada",
-  es:"¡Hecho{n}! Te esperamos {cuando} en Calle Valle Largo, Nave 8 (Pol. Ind. de Antigua). Ubicación: {mapa} · Si te surge algo, avísanos por aquí.",
-  en:"Done{n}! See you {cuando} at Calle Valle Largo, Nave 8 (Antigua industrial estate). Location: {mapa} · If anything comes up, just let us know here."},
+  es:"¡Hecho{n}! Te esperamos {cuando} en Calle Valle Largo, Nave 8 (Pol. Ind. de Costa de Antigua). Ubicación: {mapa} · Si te surge algo, avísanos por aquí.",
+  en:"Done{n}! See you {cuando} at Calle Valle Largo, Nave 8 (Costa de Antigua industrial estate). Location: {mapa} · If anything comes up, just let us know here."},
  {g:"Taller", k:"recordatorio", a:"/recordatorio", t:"Recordatorio el día antes",
   es:"Hola{n}, te recordamos tu cita en Volcano Cars {cuando}. ¿Nos confirmas que vienes? 👍",
   en:"Hi{n}, just a reminder of your appointment at Volcano Cars {cuando}. Can you confirm you're coming? 👍"},
@@ -5812,18 +5855,68 @@ function rsWa(m, o){
     .replace(/\{mapa\}/g, RS_WA_DATOS.mapa).replace(/\{resena\}/g, RS_WA_DATOS.resena).replace(/\{web\}/g, RS_WA_DATOS.web);
 }
 
+/* ---------- INSTAGRAM Y FACEBOOK (27-09-2026) ----------
+   Perfiles oficiales y respuestas para comentarios públicos y mensajes privados (DM).
+   Mismas variables que WhatsApp: {n} {nombre} {coche} {cuando} {link} {mapa} {resena} {web} */
+const RS_REDES = {
+  ig: {txt:"Instagram @volcanocars_antigua", url:"https://www.instagram.com/volcanocars_antigua/"},
+  igDm: {txt:"Mensajes de Instagram", url:"https://www.instagram.com/direct/inbox/"},
+  fb: {txt:"Facebook · Volcanocars", url:"https://www.facebook.com/share/1KYczmU7be/"},
+  meta: {txt:"Bandeja de Meta Business Suite (IG + FB)", url:"https://business.facebook.com/latest/inbox/all"},
+  wa: "https://wa.me/34643566098"
+};
+const RS_RS = [
+ {g:"Comentarios públicos (se contestan en la publicación)", k:"rs-precio", a:"💬 comentario", t:"«¿Precio?» / «Info»",
+  es:"¡Hola{n}! 👋 Te acabamos de escribir por privado con el precio y todos los detalles del {coche}. Revisa tus mensajes 📩",
+  en:"Hi{n}! 👋 We've just sent you a private message with the price and all the details of the {coche}. Check your inbox 📩"},
+ {g:"Comentarios públicos (se contestan en la publicación)", k:"rs-elogio", a:"💬 comentario", t:"Comentario bonito",
+  es:"¡Muchas gracias{n}! 🧡 Nos alegra un montón que te guste. ¡Te esperamos en Costa de Antigua!",
+  en:"Thanks so much{n}! 🧡 We're really glad you like it. See you in Costa de Antigua!"},
+ {g:"Comentarios públicos (se contestan en la publicación)", k:"rs-donde", a:"💬 comentario", t:"«¿Dónde estáis?»",
+  es:"¡Hola{n}! 📍 Estamos en Calle Valle Largo, Nave 8, Costa de Antigua (Fuerteventura). Aquí tienes el mapa: {mapa} · Lunes a viernes, de 8:00 a 16:00.",
+  en:"Hi{n}! 📍 We're at Calle Valle Largo, Unit 8, Costa de Antigua (Fuerteventura). Here's the map: {mapa} · Monday to Friday, 8:00 to 16:00."},
+ {g:"Comentarios públicos (se contestan en la publicación)", k:"rs-vendido", a:"💬 comentario", t:"Coche ya vendido o reservado",
+  es:"¡Hola{n}! Este {coche} ya está reservado 🙏 Tenemos más coches revisados en {web} y, si nos escribes por privado, te avisamos en cuanto entre uno parecido.",
+  en:"Hi{n}! This {coche} is already reserved 🙏 We have more checked cars at {web}, and if you message us privately we'll let you know as soon as a similar one comes in."},
+ {g:"Comentarios públicos (se contestan en la publicación)", k:"rs-queja", a:"💬 comentario", t:"Queja en público",
+  es:"Sentimos mucho lo ocurrido{n}. Queremos solucionarlo contigo: escríbenos por privado o al WhatsApp 643 56 60 98 y lo vemos personalmente.",
+  en:"We're really sorry about this{n}. We want to sort it out with you: please send us a private message or WhatsApp +34 643 56 60 98 and we'll look into it personally."},
+ {g:"Mensajes privados (DM)", k:"rs-coche", a:"✉️ privado", t:"Información de un coche",
+  es:"¡Hola{n}! 👋 Gracias por escribirnos. El {coche} está disponible y revisado en nuestro taller. Aquí tienes la ficha con fotos, precio y financiación: {link}\n¿Te viene bien venir a verlo y probarlo? Abrimos de lunes a viernes, de 8:00 a 16:00.",
+  en:"Hi{n}! 👋 Thanks for your message. The {coche} is available and checked in our own workshop. Here's the listing with photos, price and finance: {link}\nWould you like to come and test drive it? We're open Monday to Friday, 8:00 to 16:00."},
+ {g:"Mensajes privados (DM)", k:"rs-cita", a:"✉️ privado", t:"Cita en el taller",
+  es:"¡Hola{n}! 🔧 Para tu {coche} tenemos hueco {cuando}. Puedes reservar al momento aquí: {web}/taller o, si lo prefieres, dinos y te la apuntamos nosotros.",
+  en:"Hi{n}! 🔧 We have a slot for your {coche} {cuando}. You can book instantly here: {web}/taller or just tell us and we'll book it for you."},
+ {g:"Mensajes privados (DM)", k:"rs-fotos", a:"✉️ privado", t:"Presupuesto de chapa por fotos",
+  es:"¡Claro{n}! 📸 Mándanos 2 o 3 fotos del golpe (una de cerca y otra de lejos) y la matrícula, y te damos presupuesto sin compromiso. También puedes subirlas aquí: {web}/taller#prioridad",
+  en:"Sure{n}! 📸 Send us 2 or 3 photos of the damage (one close-up, one from further away) and the number plate, and we'll give you a no-obligation quote. You can also upload them here: {web}/taller#prioridad"},
+ {g:"Mensajes privados (DM)", k:"rs-fin", a:"✉️ privado", t:"Financiación",
+  es:"¡Sí{n}, se puede financiar! En la ficha tienes la calculadora de cuotas: {link}\nSi nos dices la entrada y el plazo que prefieres, te preparamos el pre-estudio sin compromiso.",
+  en:"Yes{n}, finance is available! The listing has a monthly payment calculator: {link}\nTell us your deposit and preferred term and we'll prepare a no-obligation pre-assessment."},
+ {g:"Mensajes privados (DM)", k:"rs-entrega", a:"✉️ privado", t:"Entrega a domicilio",
+  es:"Una vez firmada la compra, te llevamos el {coche} gratis a cualquier punto de Fuerteventura 🚚 ¿En qué zona vives?",
+  en:"Once the purchase is signed, we deliver the {coche} free anywhere on Fuerteventura 🚚 Which area do you live in?"},
+ {g:"Mensajes privados (DM)", k:"rs-wa", a:"✉️ privado", t:"Pasar la conversación a WhatsApp",
+  es:"Para ir más rápido, ¿seguimos por WhatsApp{n}? Escríbenos al 643 56 60 98 o pulsa aquí: https://wa.me/34643566098",
+  en:"To make it quicker, shall we continue on WhatsApp{n}? Message us on +34 643 56 60 98 or tap here: https://wa.me/34643566098"},
+ {g:"Mensajes privados (DM)", k:"rs-story", a:"✉️ privado", t:"Gracias por la mención o la story",
+  es:"¡Gracias por compartirlo{n}! 🧡 Nos hace muchísima ilusión. Si te apetece dejarnos una reseña en Google, nos ayudas un montón: {resena}",
+  en:"Thanks for sharing{n}! 🧡 It means a lot to us. If you'd like to leave us a Google review, it helps us loads: {resena}"}
+];
+
 /* =====================================================================
    RESPUESTAS · pestaña del gerente para contestar con un clic.
    Ahora: reseñas de Google. Los textos y el generador están en
    respuestas-datos.js; esto es solo la pantalla.
    ===================================================================== */
 let RS = {canal:"google", nombre:"", estrellas:5, caso:"texto", serv:"general", destaca:[], idioma:"es", v:0, coche:"", cuando:"", link:"", tel:""};
-const RS_CANALES = [["google","⭐ Reseñas de Google",true],["whatsapp","💬 WhatsApp",true],["redes","📷 Instagram y Facebook",false]];
+const RS_CANALES = [["google","⭐ Reseñas de Google",true],["whatsapp","💬 WhatsApp",true],["redes","📷 Instagram y Facebook",true]];
 const RS_GBP = "https://business.google.com/reviews";
 
 function rsPintar(){
   const el = $("#rs"); if(!el) return;
   if(RS.canal==="whatsapp") return rsPintarWa(el);
+  if(RS.canal==="redes") return rsPintarRedes(el);
   if(!RS_CASOS[RS.estrellas].some(c=>c[0]===RS.caso)) RS.caso = RS_CASOS[RS.estrellas][0][0];
   const texto = rsGenerar(RS);
   const chip = (attr,val,txt,on)=>`<button type="button" class="rs-chip" ${attr}="${val}" aria-pressed="${on}">${esc(txt)}</button>`;
@@ -5875,6 +5968,28 @@ function rsPintarWa(el){
   <p class="hint" style="margin:10px 0 14px">Rellena lo que sepas y copia el mensaje. En WhatsApp Business escribe el <b>atajo</b> (ej. <b>/cita</b>) si ya los guardaste como respuestas rápidas.</p>
   ${grupos.map(g=>`<h3 class="rs-wag">${esc(g)}</h3><div class="rs-walist">${RS_WA.filter(m=>m.g===g).map(m=>{ const x=rsWa(m,RS); return `<article class="card rs-wa"><div class="rs-wa-h"><b>${esc(m.t)}</b><code>${esc(m.a)}</code></div><p>${esc(x)}</p><div class="quick"><button type="button" class="btn b-brand b-sm" data-rswcopiar="${m.k}">Copiar</button>${tel&&m.a.startsWith("/")?`<a class="btn b-wa b-sm" target="_blank" rel="noopener" href="https://wa.me/${tel}?text=${encodeURIComponent(x)}">Abrir en WhatsApp</a>`:""}</div></article>`; }).join("")}</div>`).join("")}`;
 }
+/* ---------- Instagram y Facebook ---------- */
+function rsPintarRedes(el){
+  const grupos=[...new Set(RS_RS.map(m=>m.g))], lnk=(o,cls)=>`<a class="btn ${cls} b-sm" href="${o.url}" target="_blank" rel="noopener">${esc(o.txt)} ↗</a>`;
+  el.innerHTML = rsCanalesHtml()+`
+  <section class="card rs-perfiles"><div><b>Perfiles oficiales</b><p class="hint" style="margin:4px 0 0">Contesta desde la bandeja de Meta Business Suite: ahí llegan juntos los mensajes y comentarios de Instagram y Facebook.</p></div>
+    <div class="quick">${lnk(RS_REDES.meta,"b-brand")}${lnk(RS_REDES.ig,"b-ghost")}${lnk(RS_REDES.igDm,"b-ghost")}${lnk(RS_REDES.fb,"b-ghost")}</div></section>
+  <section class="card rs-waform">
+    <div class="field"><label for="rs-rn">Nombre <small>(o @usuario)</small></label><input class="in" id="rs-rn" data-rsw="nombre" value="${esc(RS.nombre)}" placeholder="Ej.: Laura" autocomplete="off"></div>
+    <div class="field"><label for="rs-rc">Coche</label><input class="in" id="rs-rc" data-rsw="coche" value="${esc(RS.coche)}" placeholder="Ej.: Opel Astra 2010" autocomplete="off"></div>
+    <div class="field"><label for="rs-rq">Día y hora</label><input class="in" id="rs-rq" data-rsw="cuando" value="${esc(RS.cuando)}" placeholder="Ej.: el martes a las 10:00" autocomplete="off"></div>
+    <div class="field"><label for="rs-rl">Enlace <small>(ficha del coche)</small></label><input class="in" id="rs-rl" data-rsw="link" value="${esc(RS.link)}" placeholder="https://volcanocars.com/coche/…" autocomplete="off"></div>
+    <div class="field"><label>Idioma</label><div class="rs-chips"><button type="button" class="rs-chip" data-rsidi="es" aria-pressed="${RS.idioma==="es"}">Español</button><button type="button" class="rs-chip" data-rsidi="en" aria-pressed="${RS.idioma==="en"}">English</button></div></div>
+  </section>
+  <p class="hint" style="margin:10px 0 14px"><b>Regla de oro:</b> en público, nunca precios de reparaciones ni datos del cliente; lleva la conversación a privado o a WhatsApp. Contesta en menos de 1 hora en horario de taller: Instagram premia las cuentas que responden rápido.</p>
+  ${grupos.map(g=>`<h3 class="rs-wag">${esc(g)}</h3><div class="rs-walist">${RS_RS.filter(m=>m.g===g).map(m=>{ const x=rsWa(m,RS); return `<article class="card rs-wa"><div class="rs-wa-h"><b>${esc(m.t)}</b><code>${esc(m.a)}</code></div><p>${esc(x)}</p><div class="quick"><button type="button" class="btn b-brand b-sm" data-rswcopiar="${m.k}">Copiar</button><a class="btn b-ghost b-sm" href="${m.a.includes("privado")?RS_REDES.meta.url:RS_REDES.ig.url}" target="_blank" rel="noopener">${m.a.includes("privado")?"Abrir bandeja":"Abrir Instagram"} ↗</a></div></article>`; }).join("")}</div>`).join("")}
+  <section class="card rs-tips"><h3>Respuestas automáticas en Instagram y Facebook (se configuran una vez)</h3><ol style="margin:0;padding-left:20px;display:grid;gap:6px;font-size:14.5px;line-height:1.45">
+    <li>Abre <a href="${RS_REDES.meta.url}" target="_blank" rel="noopener">Meta Business Suite</a> con la cuenta que administra la página «Volcanocars».</li>
+    <li>Bandeja de entrada → <b>Automatizaciones</b> → <b>Respuesta instantánea</b>: pega el mensaje «Información de un coche» (versión sin enlace) y actívalo para Instagram y Facebook.</li>
+    <li>En <b>Mensaje de ausencia</b> pon el horario (lunes a viernes, de 8:00 a 16:00) y el WhatsApp 643 56 60 98.</li>
+    <li>En <b>Preguntas frecuentes</b> añade: «¿Dónde estáis?», «¿Financiáis?», «¿Pedir cita en el taller?» con las respuestas de esta pantalla.</li>
+  </ol></section>`;
+}
 function rsTexto(){ const t=$("#rs-texto"); return t?t.value:""; }
 
 /* ---------- pestaña ---------- */
@@ -5891,7 +6006,7 @@ document.addEventListener("click",e=>{ const t=e.target; if(!t.closest || !t.clo
   const d=t.closest("[data-rsdest]"); if(d){ const x=d.dataset.rsdest; RS.destaca=RS.destaca.includes(x)?RS.destaca.filter(y=>y!==x):[...RS.destaca,x].slice(-2); rsPintar(); return; }
   const i=t.closest("[data-rsidi]"); if(i){ RS.idioma=i.dataset.rsidi; rsPintar(); return; }
   if(t.closest("[data-rsotra]")){ RS.v++; rsPintar(); return; }
-  const wc=t.closest("[data-rswcopiar]"); if(wc){ const m=RS_WA.find(x=>x.k===wc.dataset.rswcopiar); const x=rsWa(m,RS); (navigator.clipboard?navigator.clipboard.writeText(x):Promise.reject()).then(()=>toast("Mensaje copiado.")).catch(()=>toast("No se pudo copiar: mantén pulsado el texto.")); return; }
+  const wc=t.closest("[data-rswcopiar]"); if(wc){ const m=[...RS_WA,...RS_RS].find(x=>x.k===wc.dataset.rswcopiar); const x=rsWa(m,RS); (navigator.clipboard?navigator.clipboard.writeText(x):Promise.reject()).then(()=>toast("Mensaje copiado.")).catch(()=>toast("No se pudo copiar: mantén pulsado el texto.")); return; }
   if(t.closest("[data-rscopiar]")){ const x=rsTexto(); (navigator.clipboard?navigator.clipboard.writeText(x):Promise.reject()).then(()=>toast("Respuesta copiada. Pégala en Google.")).catch(()=>{ const a=$("#rs-texto"); a.select(); document.execCommand("copy"); toast("Respuesta copiada."); }); return; }
 });
 document.addEventListener("change",e=>{ const f=e.target&&e.target.dataset&&e.target.dataset.rsw; if(f){ RS[f]=e.target.value; rsPintar(); } });
@@ -6163,7 +6278,7 @@ addEventListener("afterprint",()=>{ document.querySelectorAll(".d2-capa").forEac
   a.parentNode.insertBefore(d,a); d.lastElementChild.append(a,tl); })();
 // Enlace directo desde el email del informe: …/admin.html#informe=semanal-2026-09-14
 (function(){ const m=location.hash.match(/^#informe=(.+)$/); if(!m) return; const id=decodeURIComponent(m[1]);
-  const esperar=setInterval(()=>{ if(typeof ME!=="undefined"&&ME&&!ME.equipo){ clearInterval(esperar); abrirTab("dash"); setTimeout(()=>d2AbrirInforme(id),400); } },500); setTimeout(()=>clearInterval(esperar),120000); })();
+  const esperar=setInterval(()=>{ if(typeof ME!=="undefined"&&ME&&PUEDE_TODO()){ clearInterval(esperar); abrirTab("dash"); setTimeout(()=>d2AbrirInforme(id),400); } },500); setTimeout(()=>clearInterval(esperar),120000); })();
 
 /* =====================================================================
    MARKETING EN VIVO · panel lateral flotante (solo gerente)
@@ -6176,7 +6291,7 @@ addEventListener("afterprint",()=>{ document.querySelectorAll(".d2-capa").forEac
 const MK={abierto:false,mini:false,tab:"vivo",hoy:null,t:null,conf:null};
 const mkSlug=c=>{ if(!/^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(c.id)) return c.id; const b=`${c.marca} ${c.modelo} ${c.anio}`.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,""); return (b?b+"-":"")+c.id.slice(0,8).toLowerCase(); };
 const mkURL=(ruta,src,med,camp)=>`https://volcanocars.com${ruta}${ruta.includes("?")?"&":"?"}utm_source=${encodeURIComponent(src)}&utm_medium=${encodeURIComponent(med)}&utm_campaign=${encodeURIComponent(camp)}`;
-const mkGer=()=>typeof ME!=="undefined"&&ME&&!ME.equipo;
+const mkGer=()=>typeof ME!=="undefined"&&ME&&PUEDE_TODO();
 try{ const g=JSON.parse(localStorage.getItem("vc_mk")||"{}"); MK.abierto=!!g.a; MK.mini=!!g.m; MK.tab=g.t||"vivo"; }catch(_){}
 const mkGuardarUI=()=>{ try{ localStorage.setItem("vc_mk",JSON.stringify({a:MK.abierto,m:MK.mini,t:MK.tab})); }catch(_){} };
 
@@ -6690,7 +6805,7 @@ function ayVideo(m){ const v=typeof AY_VID!=="undefined"&&AY_VID[m.id]; if(!v) r
 }
 function ayModulo(m,todo){
   const ps=ayPasos(m); if(AY_BUSQ&&!ps.length) return "";
-  const puede=m.tab&&(!ME||!ME.equipo||["ordenes","alm"].includes(m.tab)||(m.tab==="caja"&&ME.caja))&&!(ME&&ME.equipo&&m.tab==="jornada");
+  const puede=m.tab&&puedeTab(m.tab);
   const vid=!todo&&!AY_BUSQ?ayVideo(m):"";
   const texto=`${AY_BUSQ?"":`<section class="ay-s"><h3><i>1</i>Para qué sirve</h3><p class="ay-obj"><b>Objetivo principal:</b> ${esc(m.objetivo)}</p>
       <p class="ay-sub">Cuándo usar esta sección</p><ul class="ay-cuando">${m.cuando.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>${m.flujo?`<p class="ay-sub">El recorrido</p>${ayFlujo(m.flujo)}`:""}</section>
@@ -6823,6 +6938,7 @@ async function jFichar(acc,extra={}){
     const hora=jHM(r.t), txt={entrada:`Entrada registrada a las ${hora}`,pausa:`Pausa desde las ${hora}`,reanudar:`De vuelta a las ${hora}`,salida:`Salida registrada a las ${hora} · hoy ${jH(r.jornada.hoy.trabajoMin)}`}[r.accion]+(r.orden?` · orden ${r.orden} ${r.accion==="pausa"||r.accion==="salida"?"pausada":"reanudada"}`:"");
     jToast(txt,1);
     if(r.accion==="entrada"||r.accion==="reanudar"){ // directo al trabajo: se recarga en segundo plano lo que faltaba
+      if(typeof loadList==="function") loadList(true).catch(()=>{}); if(typeof loadLeads==="function") loadLeads(false).catch(()=>{}); // CRM, Agenda y Coches al día al fichar
       Promise.all([api("/api/ordenes").then(o=>{ ORDENES=o; vivoOk=true; ultimo=Date.now(); if(typeof pintarVivo==="function") pintarVivo(); }).catch(()=>{}),typeof tCargarEquipo==="function"?tCargarEquipo():null]).then(()=>{ if(!$("#s-ordenes").hidden) renderOrdenes(); });
       abrirTab(J_TAB||"ordenes");
     } else jAbrir();
@@ -6859,9 +6975,9 @@ const _jShow=show;
 show=function(id){ ["s-fichar","s-jornada"].forEach(x=>{ const s=$("#"+x); if(s) s.hidden=x!==id; }); _jShow(id); if(id==="s-fichar") $("#tabsrow").hidden=true; };
 const _jTab=abrirTab;
 abrirTab=function(t,push=true){
-  if(ME&&ME.equipo&&t!=="ayuda"&&(!J||J.estado!=="trabajando")){ J_TAB=t==="caja"||t==="alm"?t:"ordenes"; jAbrir(); return; }
-  if(t==="jornada"){ jgAbrir(); return; }
-  if(ME&&ME.equipo) J_TAB=t==="caja"||t==="alm"?t:"ordenes";
+  if(ME&&ME.equipo&&t!=="ayuda"&&(!J||J.estado!=="trabajando")){ J_TAB=puedeTab(t)&&t!=="jornada"?t:"ordenes"; jAbrir(); return; }
+  if(t==="jornada"){ if(ME&&ME.equipo&&!PUEDE_TODO()){ jAbrir(); return; } jgAbrir(); return; }
+  if(ME&&ME.equipo) J_TAB=puedeTab(t)?t:"ordenes";
   return _jTab(t,push);
 };
 const _jEntrar=entrarEquipo;
@@ -7000,7 +7116,8 @@ $("#dw-body").addEventListener("change",async e=>{ if(!DW||DW.tipo!=="jornada"||
 
 /* ---------- cartel QR para imprimir ---------- */
 async function jgCartel(nuevo){ try{ const r=await api("/api/jornada/qr",nuevo?{method:"POST",headers:{"content-type":"application/json"},body:"{}"}:{});
-    jgImprimir(`<div class="jp-cartel"><small>VOLCANO CARS · TALLER</small><h1>Ficha aquí</h1><p>Abre la cámara del móvil y apunta al código.<br>Entrada y vuelta de la pausa: <b>automáticas</b>. Si estás trabajando, eliges pausa o salida.</p>
+    if(window.vcCartel) jgImprimir(`<style>${vcCartel.css}</style>${vcCartel.html({qrSvg:QR.svg(r.url,420),desde:fechaHora(r.desde)})}`,"Cartel de fichaje Volcano Cars"); // diseño A4 de marca (public/cartel-fichaje.js)
+    else jgImprimir(`<div class="jp-cartel"><small>VOLCANO CARS · TALLER</small><h1>Ficha aquí</h1><p>Abre la cámara del móvil y apunta al código.<br>Entrada y vuelta de la pausa: <b>automáticas</b>. Si estás trabajando, eliges pausa o salida.</p>
       <div class="jp-qr">${QR.svg(r.url,420)}</div><p class="jp-pie">¿Tienes NFC? Acerca el móvil a la pegatina.<br><small>Código válido desde ${esc(fechaHora(r.desde))}. Si se pierde el cartel, el gerente lo cambia y este deja de valer.</small></p></div>`,"Cartel de fichaje");
     if(nuevo) toast("Código nuevo: imprime el cartel y reescribe la pegatina NFC con el enlace nuevo");
     if(navigator.clipboard) navigator.clipboard.writeText(r.url).catch(()=>{});
@@ -7009,7 +7126,7 @@ async function jgCartel(nuevo){ try{ const r=await api("/api/jornada/qr",nuevo?{
 /* ---------- PDF para firmar (uno por trabajador y mes) ---------- */
 async function jgPdf(uid,mes){ try{ mes=mes||J_MES; const r=await api(`/api/jornada/registro?mes=${mes}${uid?"&uid="+encodeURIComponent(uid):""}`);
     const ps=r.personas.filter(p=>p.dias.length||uid); if(!ps.length) return toast("Sin fichajes en ese mes");
-    jgImprimir(ps.map(p=>`<section class="jp-hoja"><header><div><small>REGISTRO DIARIO DE JORNADA · art. 34.9 del Estatuto de los Trabajadores</small><h1>${esc(nombreMes(mes))}</h1></div><div class="jp-emp"><b>Volcano Cars</b><br>${esc(typeof EMPRESA_DIR!=="undefined"?EMPRESA_DIR:"Calle Valle Largo, Nave 8, 35610 Antigua (Las Palmas)")}</div></header>
+    jgImprimir(ps.map(p=>`<section class="jp-hoja"><header><div><small>REGISTRO DIARIO DE JORNADA · art. 34.9 del Estatuto de los Trabajadores</small><h1>${esc(nombreMes(mes))}</h1></div><div class="jp-emp"><b>Volcano Cars</b><br>${esc(typeof EMPRESA_DIR!=="undefined"?EMPRESA_DIR:"Calle Valle Largo, Nave 8, 35610 Costa de Antigua (Las Palmas)")}</div></header>
       <div class="jp-dat"><span>Trabajador: <b>${esc(p.nombre)}</b></span><span>Puesto: <b>${esc({mecanico:"Mecánico",calidad:"Calidad",recepcion:"Recepción",gerente:"Gerente"}[p.rol]||p.rol)}</b></span><span>Jornada: <b>${String(p.jornadaH).replace(".",",")} h/día</b></span></div>
       <table><thead><tr><th>Día</th><th>Entrada</th><th>Pausas</th><th>Salida</th><th>Pausa</th><th>Trabajado</th><th>Ordinarias</th><th>Extra</th><th>Observaciones</th></tr></thead><tbody>
       ${p.dias.map(d=>{ const v=d.eventos.filter(x=>x.tipo!=="anulacion"&&!d.eventos.some(a=>a.tipo==="anulacion"&&a.anula===x.n)).sort((a,b)=>a.t.localeCompare(b.t));
@@ -7149,7 +7266,7 @@ inicio:()=>`
   ${gHero("02",{num:"02",titulo:"Publicar el anuncio",intro:"El título dice qué es. La primera línea, para quién es. El resto quita miedos. Todos los datos coinciden con FORM-02 y FORM-04.",chips:[["Objetivo","Mensajes y llamadas"],["Tiempo","< 48 h"],["Quién","Vendedor"]]})}
   ${gHazlo(["Fija con el gerente los <b>3 precios</b>: anuncio, objetivo y mínimo. Solo el de anuncio se publica.","Rellena la ficha en el panel: marca, modelo, versión, año, km, <b>precio final con IGIC</b>, combustible, cambio y etiqueta.","Escribe la descripción con la plantilla: <b>para quién · por qué este · lo que debes saber</b>. Equipamiento, una línea por cosa.","Haz la <b>comparativa de mercado</b> con al menos 3 anuncios reales del mismo coche y pégala en el panel.","Publica y copia el mismo texto en portales, redes y estado de WhatsApp. Usa <b>Compartir</b> para mandar el enlace del coche."])}
   <div class="g-sec">${gH("Anatomía de un anuncio de alto impacto")}<dl class="g-anat">
-    ${[["Título","Qué es","c-magma","Seat Ibiza 1.0 TSI Style · 2019 · 68.000 km · Gasolina · Manual","En el panel: marca + modelo + versión (la web lo monta sola)"],["Para quién","Conecta","c-magma","Ideal para moverte a diario por la isla: consume poco y cabe en cualquier aparcamiento.","Primera línea de la descripción"],["Por qué este","Da confianza","c-gris","Revisado en nuestro taller (FORM-02): aceite, filtros y pastillas nuevos · ITV hasta 06/2027 · 2 llaves y libro.","Descripción"],["Equipamiento","Lo que se usa","c-gris","Aire acondicionado · pantalla con CarPlay y Android Auto · sensores traseros · control de crucero.","Equipamiento: una línea por elemento"],["Transparencia","Quita miedos","c-ambar","Lo que debes saber: pequeño rayón en el paragolpes trasero (foto 24).","Descripción + foto 24"],["Garantía","Seguridad","c-gris","12 meses de garantía legal · cambio de nombre incluido · entrega gratis en toda Fuerteventura · financiación disponible.","La web lo añade sola en cada ficha"],["Precio","Claro","c-gris","10.990 € · precio final, IGIC incluido.","Precio (con céntimos si hace falta)"],["Llamada","Acción","c-verde","Ven a probarlo sin compromiso a Antigua. Escríbenos por WhatsApp al 643 56 60 98.","Portales y redes (en la web ya hay botones)"]].map(([t,s,c,v,p])=>`<div><dt class="${c}">${t}<small>${s}</small></dt><dd>${v}<em>${p}</em></dd></div>`).join("")}</dl></div>
+    ${[["Título","Qué es","c-magma","Seat Ibiza 1.0 TSI Style · 2019 · 68.000 km · Gasolina · Manual","En el panel: marca + modelo + versión (la web lo monta sola)"],["Para quién","Conecta","c-magma","Ideal para moverte a diario por la isla: consume poco y cabe en cualquier aparcamiento.","Primera línea de la descripción"],["Por qué este","Da confianza","c-gris","Revisado en nuestro taller (FORM-02): aceite, filtros y pastillas nuevos · ITV hasta 06/2027 · 2 llaves y libro.","Descripción"],["Equipamiento","Lo que se usa","c-gris","Aire acondicionado · pantalla con CarPlay y Android Auto · sensores traseros · control de crucero.","Equipamiento: una línea por elemento"],["Transparencia","Quita miedos","c-ambar","Lo que debes saber: pequeño rayón en el paragolpes trasero (foto 24).","Descripción + foto 24"],["Garantía","Seguridad","c-gris","12 meses de garantía legal · cambio de nombre incluido · entrega gratis en toda Fuerteventura · financiación disponible.","La web lo añade sola en cada ficha"],["Precio","Claro","c-gris","10.990 € · precio final, IGIC incluido.","Precio (con céntimos si hace falta)"],["Llamada","Acción","c-verde","Ven a probarlo sin compromiso a Costa de Antigua. Escríbenos por WhatsApp al 643 56 60 98.","Portales y redes (en la web ya hay botones)"]].map(([t,s,c,v,p])=>`<div><dt class="${c}">${t}<small>${s}</small></dt><dd>${v}<em>${p}</em></dd></div>`).join("")}</dl></div>
   <div class="g-2"><div class="g-sino si"><b class="t c-verde">SÍ</b><ul><li>Frases cortas y datos concretos (km, año, fecha de ITV).</li><li>Decir para quién es el coche.</li><li>Contar el defecto con foto.</li><li>El mismo texto en todos los canales.</li><li>Renovar la foto de portada a los 15 días sin contactos.</li></ul></div>
     <div class="g-sino no"><b class="t c-magma">NO</b><ul><li>«Precio negociable»: invita al regateo.</li><li>«Urge vender»: suena a problema.</li><li>Mayúsculas continuas y exclamaciones.</li><li>«Impecable» sin un dato que lo pruebe.</li><li>Datos que no coinciden con FORM-02 y FORM-04.</li></ul></div></div>
   <div class="g-2">${gCall("oscuro","3 precios por coche","<b>Anuncio</b> (el que se publica) · <b>Objetivo</b> (al que queremos cerrar) · <b>Mínimo</b> (nunca por debajo y nunca se revela). Los fija el gerente antes de publicar.")}${gCall("piedra","Publicación","Mismo anuncio en la web, portales (coches.net, Wallapop, Milanuncios), redes y estado de WhatsApp, el mismo día. Coche con 45 días sin pruebas → revisión de fotos, precio y texto con el gerente.")}</div>
@@ -7204,7 +7321,7 @@ inicio:()=>`
 
 "06":()=>`
   ${gHero("06",{num:"06",titulo:"Cerrar y seguir",intro:"Ningún cliente se queda sin fecha de próximo contacto. El seguimiento con técnica convierte los «me lo pienso» en ventas y las ventas en reseñas.",chips:[["Objetivo","Venta + reseña"],["Tiempo","Mismo día"],["Quién","Vendedor · gerente revisa"]]})}
-  ${gHazlo(["Firma en Antigua y acuerda la entrega: <b>gratis en toda la isla</b> o recogida en el taller.","Marca el coche <b>«Vendido»</b> y el cliente <b>«Ganada»</b> con el importe.","A los 7 días: «¿Qué tal los primeros días?» + plantilla <b>«Pedir reseña en Google»</b>.","A los 6 meses: recordatorio de revisión en nuestro taller.","Si se pierde: estado <b>«Perdida»</b> con el motivo, en sus palabras."])}
+  ${gHazlo(["Firma en Costa de Antigua y acuerda la entrega: <b>gratis en toda la isla</b> o recogida en el taller.","Marca el coche <b>«Vendido»</b> y el cliente <b>«Ganada»</b> con el importe.","A los 7 días: «¿Qué tal los primeros días?» + plantilla <b>«Pedir reseña en Google»</b>.","A los 6 meses: recordatorio de revisión en nuestro taller.","Si se pierde: estado <b>«Perdida»</b> con el motivo, en sus palabras."])}
   <div class="g-sec">${gH("Los 5 estados de cada cliente")}<div class="g-est">
     <div class="c-gris"><b>Lead entrante</b>Conseguir la prueba<em>CRM: Nueva / Contactado</em></div>
     <div class="c-piedra"><b>Prueba realizada</b>Resolver dudas<em>CRM: Cita</em></div>
@@ -7228,7 +7345,7 @@ chuleta:()=>`
   ${gCall("oscuro","Tono","Voz tranquila y grave · silencio después de cada técnica · nunca «pero» después de una etiqueta · nada gratis: cada rebaja, a cambio de algo.")}`,
 
 anexo:()=>`
-  ${gHero("anexo",{eyebrow:"ANEXO A · UNA HOJA POR PRUEBA",titulo:"Condiciones de la prueba en carretera",intro:`Volcano Cars · ${typeof EMPRESA_DIR!=="undefined"?EMPRESA_DIR:"Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua"} · 643 56 60 98. Rellenar y firmar antes de salir.`})}
+  ${gHero("anexo",{eyebrow:"ANEXO A · UNA HOJA POR PRUEBA",titulo:"Condiciones de la prueba en carretera",intro:`Volcano Cars · ${typeof EMPRESA_DIR!=="undefined"?EMPRESA_DIR:"Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Costa de Antigua"} · 643 56 60 98. Rellenar y firmar antes de salir.`})}
   <div class="no-pdf" style="display:flex;justify-content:flex-end"><button type="button" class="btn b-brand b-sm" data-gimprimir="anexo">Imprimir solo el Anexo A</button></div>
   <div class="g-form">${["Vehículo","Matrícula","Km salida","Combustible salida","Conductor","DNI / NIE","Nº de carnet","Caducidad del carnet","Hora de salida","Hora de vuelta","Km vuelta","Acompañante Volcano Cars"].map(t=>`<div><b>${t}</b><span></span></div>`).join("")}</div>
   <div class="g-sec">${gH("El conductor declara que:")}<ol class="g-decl">
@@ -7307,5 +7424,7 @@ async function guiaPDF(solo){
 </script>
 <!-- Historial Sin Sorpresas (subir PDF) y «Alertas que encajan» al dar de alta un coche -->
 <script src="/panel-mejoras.js" defer></script>
+<script src="/panel-plus.js" defer></script>
+<script src="/cartel-fichaje.js" defer></script>
 </body>
 </html>

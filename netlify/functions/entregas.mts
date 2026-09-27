@@ -1,6 +1,7 @@
 import type { Config } from "@netlify/functions";
 import { store, json, isAdmin, mismoOrigen, purgar, type Car } from "../lib/shared.mts";
 import { estore, leerEntregas, limpiarEntrega, type Entrega } from "../lib/entregas.mts";
+import { permiso, esRespuesta } from "../lib/acceso.mts";
 
 /*
   ENTREGAS Y OPINIONES (panel, solo gerente)
@@ -12,7 +13,7 @@ import { estore, leerEntregas, limpiarEntrega, type Entrega } from "../lib/entre
 const ID = /^[A-Za-z0-9-]{3,60}$/;
 
 export default async (req: Request) => {
-  if (!(await isAdmin(req))) { await new Promise((r) => setTimeout(r, 500)); return json({ error: "No autorizado" }, 401); }
+  { const _q = await permiso(req, req.method === "DELETE" ? "gerente" : "equipo"); if (esRespuesta(_q)) return _q; }
   const id = new URL(req.url).pathname.split("/").filter(Boolean)[2] || "";
   const s = estore();
 

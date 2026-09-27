@@ -189,7 +189,7 @@ export default async (req: Request, context: Context) => {
   const p = url.pathname.split("/").filter(Boolean); // api, taller, recurso, id, sub
   if (req.method !== "GET" && !mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
   const q = await quien(req);
-  if (!q) return json({ error: "No autorizado" }, 401);
+  if (!q) return json({ error: "Tu sesión ha caducado. Vuelve a entrar." }, 401);
   const bloqueo = await exigirJornada(q); if (bloqueo) return bloqueo; // el equipo no trabaja sin haber fichado
   const body = req.method === "GET" || req.method === "DELETE" ? {} : ((await req.json().catch(() => ({}))) as any);
   const recurso = p[2] || "";
@@ -236,7 +236,7 @@ export default async (req: Request, context: Context) => {
 
   // ---------- avisos de ITV (30 y 7 días antes, solo con el consentimiento aparte de FORM-01) ----------
   if (recurso === "itv") {
-    if (!(q.admin || q.rol === "recepcion")) return json({ error: "Solo el gerente o recepción." }, 403);
+    // avisos de ITV: cualquier persona del equipo que atienda al cliente
     type Reg = { avisos: Record<string, { a30?: string; a7?: string; cad?: string }>; bajas: Record<string, string> };
     const reg = (((await tstore().get("itv-avisos", { type: "json" }).catch(() => null)) as Reg | null) || { avisos: {}, bajas: {} }) as Reg;
     reg.avisos ||= {}; reg.bajas ||= {};
@@ -279,7 +279,7 @@ export default async (req: Request, context: Context) => {
 
   // ---------- nueva recepción (crea la orden) ----------
   if (recurso === "recepcion" && req.method === "POST") {
-    if (!(q.admin || q.rol === "recepcion" || q.rol === "mecanico")) return json({ error: "No autorizado" }, 403);
+    // Cualquier puesto del taller abre una recepción (gerente, calidad, recepción y mecánico): antes Calidad recibía «No autorizado»
     const t = new Date().toISOString(), token = nuevoToken();
     const f1 = limpiarF1(body, null);
     if (f1.cliente.nombre.length < 2) return json({ error: "Falta el nombre del cliente." }, 400);

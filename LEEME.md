@@ -126,3 +126,25 @@ En el modal de reserva de 50 €, la opción «Aún no lo sé» se ha cambiado p
 Al elegirla se piden municipio, dirección exacta, día (lunes a viernes, próximos 10 días laborables) y mañana o tarde; son obligatorios (web y servidor).
 La dirección llega con la etiqueta `[ENTREGA A DOMICILIO SOLICITADA - DIRECCIÓN: …]` en el CRM, en el email y en Telegram, en el WhatsApp del justificante de Bizum/transferencia,
 en el mensaje de confirmación, en el comprobante PDF y en Panel → Coches → Reservas (con enlace al mapa).
+
+## Intervención 27-09-2026 (permisos, Costa de Antigua, cartel, sonido y voz)
+- **Permisos por puesto** (`netlify/lib/acceso.mts`): todas las funciones del panel usan `permiso(req, "equipo" | "gerente")`.
+  - Contraseña del panel o persona con puesto **Gerente** (usuario + PIN) → todo el panel.
+  - **Calidad, Recepción y Mecánico** → Taller (incluida «Nueva recepción», que antes daba «No autorizado» a Calidad), CRM, Agenda,
+    Coches, Reservas, Entregas, Inventario, Respuestas, Ayuda y la Caja si el gerente se la da. Dashboard, Finanzas, Seguridad,
+    Marketing, equipo y copia completa: solo Gerente. Borrar coches, clientes, órdenes o informes: solo Gerente.
+  - Todo el equipo tiene que fichar la entrada antes de trabajar (registro de jornada): sin fichar, el panel enseña la pantalla de fichaje.
+  - Cerrar todas las sesiones y la verificación en dos pasos de la contraseña: solo entrando con la contraseña.
+- **Pruebas** (`tools/pruebas/`): `bun tools/pruebas/e2e-permisos.mjs` (97 comprobaciones de las funciones reales con cada puesto)
+  y `python3 tools/pruebas/e2e-panel.py` con `bun tools/pruebas/servidor-local.mjs` (el panel en Chromium, 27 comprobaciones).
+- **Costa de Antigua** en toda la web, el panel, las plantillas y los datos de Google (addressLocality). Se mantiene «Antigua»
+  donde es el nombre del municipio (páginas por pueblo, listas de municipios de entrega y enlaces /…-antigua).
+- **Tarjetas de la portada**: 30 puntos (el control de calidad FORM-04 tiene exactamente 30 puntos por coche), 8:00–16:00 y GRATIS 0€.
+- **Cartel de fichaje QR/NFC** A4 de marca: `public/cartel-fichaje.js` (lo usa Jornada → «Ver e imprimir el cartel»).
+- **Sonidos y guía por voz** del panel: `public/panel-plus.js` (botones 🔊 y 🗣️ arriba; se recuerdan en cada dispositivo).
+- **Respuestas → Instagram y Facebook**: plantillas de comentarios y mensajes privados, perfiles oficiales y bandeja de Meta.
+- **Botón Marketing Live** y asistente de la web suben si aparece la etiqueta «Powered by Netlify». Lo mejor es apagarla:
+  Netlify → Project configuration → General → «Powered by Netlify» badge → Disable.
+- **Copia de seguridad automática diaria** (`copia-programada.mts`, 03:05 UTC, guarda 30 días) → Panel → Seguridad → «Ver copias automáticas».
+- **Lanzamiento**: redirecciones 301 de www/http a https://volcanocars.com, caché de fuentes/fotos y página de gracias virtual
+  (`/gracias` en Google Analytics) al enviar un formulario.

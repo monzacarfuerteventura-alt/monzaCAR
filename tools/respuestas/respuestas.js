@@ -4,12 +4,13 @@
    respuestas-datos.js; esto es solo la pantalla.
    ===================================================================== */
 let RS = {canal:"google", nombre:"", estrellas:5, caso:"texto", serv:"general", destaca:[], idioma:"es", v:0, coche:"", cuando:"", link:"", tel:""};
-const RS_CANALES = [["google","⭐ Reseñas de Google",true],["whatsapp","💬 WhatsApp",true],["redes","📷 Instagram y Facebook",false]];
+const RS_CANALES = [["google","⭐ Reseñas de Google",true],["whatsapp","💬 WhatsApp",true],["redes","📷 Instagram y Facebook",true]];
 const RS_GBP = "https://business.google.com/reviews";
 
 function rsPintar(){
   const el = $("#rs"); if(!el) return;
   if(RS.canal==="whatsapp") return rsPintarWa(el);
+  if(RS.canal==="redes") return rsPintarRedes(el);
   if(!RS_CASOS[RS.estrellas].some(c=>c[0]===RS.caso)) RS.caso = RS_CASOS[RS.estrellas][0][0];
   const texto = rsGenerar(RS);
   const chip = (attr,val,txt,on)=>`<button type="button" class="rs-chip" ${attr}="${val}" aria-pressed="${on}">${esc(txt)}</button>`;
@@ -61,6 +62,28 @@ function rsPintarWa(el){
   <p class="hint" style="margin:10px 0 14px">Rellena lo que sepas y copia el mensaje. En WhatsApp Business escribe el <b>atajo</b> (ej. <b>/cita</b>) si ya los guardaste como respuestas rápidas.</p>
   ${grupos.map(g=>`<h3 class="rs-wag">${esc(g)}</h3><div class="rs-walist">${RS_WA.filter(m=>m.g===g).map(m=>{ const x=rsWa(m,RS); return `<article class="card rs-wa"><div class="rs-wa-h"><b>${esc(m.t)}</b><code>${esc(m.a)}</code></div><p>${esc(x)}</p><div class="quick"><button type="button" class="btn b-brand b-sm" data-rswcopiar="${m.k}">Copiar</button>${tel&&m.a.startsWith("/")?`<a class="btn b-wa b-sm" target="_blank" rel="noopener" href="https://wa.me/${tel}?text=${encodeURIComponent(x)}">Abrir en WhatsApp</a>`:""}</div></article>`; }).join("")}</div>`).join("")}`;
 }
+/* ---------- Instagram y Facebook ---------- */
+function rsPintarRedes(el){
+  const grupos=[...new Set(RS_RS.map(m=>m.g))], lnk=(o,cls)=>`<a class="btn ${cls} b-sm" href="${o.url}" target="_blank" rel="noopener">${esc(o.txt)} ↗</a>`;
+  el.innerHTML = rsCanalesHtml()+`
+  <section class="card rs-perfiles"><div><b>Perfiles oficiales</b><p class="hint" style="margin:4px 0 0">Contesta desde la bandeja de Meta Business Suite: ahí llegan juntos los mensajes y comentarios de Instagram y Facebook.</p></div>
+    <div class="quick">${lnk(RS_REDES.meta,"b-brand")}${lnk(RS_REDES.ig,"b-ghost")}${lnk(RS_REDES.igDm,"b-ghost")}${lnk(RS_REDES.fb,"b-ghost")}</div></section>
+  <section class="card rs-waform">
+    <div class="field"><label for="rs-rn">Nombre <small>(o @usuario)</small></label><input class="in" id="rs-rn" data-rsw="nombre" value="${esc(RS.nombre)}" placeholder="Ej.: Laura" autocomplete="off"></div>
+    <div class="field"><label for="rs-rc">Coche</label><input class="in" id="rs-rc" data-rsw="coche" value="${esc(RS.coche)}" placeholder="Ej.: Opel Astra 2010" autocomplete="off"></div>
+    <div class="field"><label for="rs-rq">Día y hora</label><input class="in" id="rs-rq" data-rsw="cuando" value="${esc(RS.cuando)}" placeholder="Ej.: el martes a las 10:00" autocomplete="off"></div>
+    <div class="field"><label for="rs-rl">Enlace <small>(ficha del coche)</small></label><input class="in" id="rs-rl" data-rsw="link" value="${esc(RS.link)}" placeholder="https://volcanocars.com/coche/…" autocomplete="off"></div>
+    <div class="field"><label>Idioma</label><div class="rs-chips"><button type="button" class="rs-chip" data-rsidi="es" aria-pressed="${RS.idioma==="es"}">Español</button><button type="button" class="rs-chip" data-rsidi="en" aria-pressed="${RS.idioma==="en"}">English</button></div></div>
+  </section>
+  <p class="hint" style="margin:10px 0 14px"><b>Regla de oro:</b> en público, nunca precios de reparaciones ni datos del cliente; lleva la conversación a privado o a WhatsApp. Contesta en menos de 1 hora en horario de taller: Instagram premia las cuentas que responden rápido.</p>
+  ${grupos.map(g=>`<h3 class="rs-wag">${esc(g)}</h3><div class="rs-walist">${RS_RS.filter(m=>m.g===g).map(m=>{ const x=rsWa(m,RS); return `<article class="card rs-wa"><div class="rs-wa-h"><b>${esc(m.t)}</b><code>${esc(m.a)}</code></div><p>${esc(x)}</p><div class="quick"><button type="button" class="btn b-brand b-sm" data-rswcopiar="${m.k}">Copiar</button><a class="btn b-ghost b-sm" href="${m.a.includes("privado")?RS_REDES.meta.url:RS_REDES.ig.url}" target="_blank" rel="noopener">${m.a.includes("privado")?"Abrir bandeja":"Abrir Instagram"} ↗</a></div></article>`; }).join("")}</div>`).join("")}
+  <section class="card rs-tips"><h3>Respuestas automáticas en Instagram y Facebook (se configuran una vez)</h3><ol style="margin:0;padding-left:20px;display:grid;gap:6px;font-size:14.5px;line-height:1.45">
+    <li>Abre <a href="${RS_REDES.meta.url}" target="_blank" rel="noopener">Meta Business Suite</a> con la cuenta que administra la página «Volcanocars».</li>
+    <li>Bandeja de entrada → <b>Automatizaciones</b> → <b>Respuesta instantánea</b>: pega el mensaje «Información de un coche» (versión sin enlace) y actívalo para Instagram y Facebook.</li>
+    <li>En <b>Mensaje de ausencia</b> pon el horario (lunes a viernes, de 8:00 a 16:00) y el WhatsApp 643 56 60 98.</li>
+    <li>En <b>Preguntas frecuentes</b> añade: «¿Dónde estáis?», «¿Financiáis?», «¿Pedir cita en el taller?» con las respuestas de esta pantalla.</li>
+  </ol></section>`;
+}
 function rsTexto(){ const t=$("#rs-texto"); return t?t.value:""; }
 
 /* ---------- pestaña ---------- */
@@ -77,7 +100,7 @@ document.addEventListener("click",e=>{ const t=e.target; if(!t.closest || !t.clo
   const d=t.closest("[data-rsdest]"); if(d){ const x=d.dataset.rsdest; RS.destaca=RS.destaca.includes(x)?RS.destaca.filter(y=>y!==x):[...RS.destaca,x].slice(-2); rsPintar(); return; }
   const i=t.closest("[data-rsidi]"); if(i){ RS.idioma=i.dataset.rsidi; rsPintar(); return; }
   if(t.closest("[data-rsotra]")){ RS.v++; rsPintar(); return; }
-  const wc=t.closest("[data-rswcopiar]"); if(wc){ const m=RS_WA.find(x=>x.k===wc.dataset.rswcopiar); const x=rsWa(m,RS); (navigator.clipboard?navigator.clipboard.writeText(x):Promise.reject()).then(()=>toast("Mensaje copiado.")).catch(()=>toast("No se pudo copiar: mantén pulsado el texto.")); return; }
+  const wc=t.closest("[data-rswcopiar]"); if(wc){ const m=[...RS_WA,...RS_RS].find(x=>x.k===wc.dataset.rswcopiar); const x=rsWa(m,RS); (navigator.clipboard?navigator.clipboard.writeText(x):Promise.reject()).then(()=>toast("Mensaje copiado.")).catch(()=>toast("No se pudo copiar: mantén pulsado el texto.")); return; }
   if(t.closest("[data-rscopiar]")){ const x=rsTexto(); (navigator.clipboard?navigator.clipboard.writeText(x):Promise.reject()).then(()=>toast("Respuesta copiada. Pégala en Google.")).catch(()=>{ const a=$("#rs-texto"); a.select(); document.execCommand("copy"); toast("Respuesta copiada."); }); return; }
 });
 document.addEventListener("change",e=>{ const f=e.target&&e.target.dataset&&e.target.dataset.rsw; if(f){ RS[f]=e.target.value; rsPintar(); } });

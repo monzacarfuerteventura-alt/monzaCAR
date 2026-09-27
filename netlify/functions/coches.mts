@@ -1,6 +1,7 @@
 import type { Config } from "@netlify/functions";
 import { store, json, isAdmin, cleanCar, esFotoSubida, borrarVideo, purgar, SEMILLA, type Car } from "../lib/shared.mts";
 import { caducar, apartadoDe, cancelar, vender } from "../lib/reservas.mts";
+import { permiso, esRespuesta } from "../lib/acceso.mts";
 
 const KEY = "coches";
 
@@ -33,7 +34,7 @@ export default async (req: Request) => {
 
   if (req.method === "GET") {
     const all = url.searchParams.get("todos") === "1";
-    if (all && !(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
+    if (all) { const _q = await permiso(req, "equipo"); if (esRespuesta(_q)) return _q; }
     // reservas online caducadas → el coche vuelve a «Disponible» antes de enseñar la lista
     await caducar(url.origin).catch(() => {});
     const list = await load();
@@ -52,10 +53,8 @@ export default async (req: Request) => {
     });
   }
 
-  if (!(await isAdmin(req))) {
-    await new Promise((r) => setTimeout(r, 600));
-    return json({ error: "No autorizado" }, 401);
-  }
+  // Panel: cualquier persona del equipo publica y edita coches; borrar uno de la web, solo el gerente
+  { const _q = await permiso(req, req.method === "DELETE" ? "gerente" : "equipo"); if (esRespuesta(_q)) return _q; }
 
   let body: any = {};
   if (req.method === "POST" || req.method === "PUT") {

@@ -28,9 +28,9 @@ const rvEnlaceCoche = (id) => `${location.origin}/comprar?coche=${encodeURICompo
 // Mismos textos que la web (netlify/lib/reservas.mts)
 function rvMsgConfirmacion(r) {
   const n = r.nombre.split(" ")[0];
-  const cuando = r.cita ? ` Nos vemos el ${rvFecha(r.cita.fecha)} a las ${r.cita.hora} en nuestra exposición de Antigua para probarlo.` : " Ven a probarlo a nuestra exposición de Antigua cuando te venga bien.";
+  const cuando = r.cita ? ` Nos vemos el ${rvFecha(r.cita.fecha)} a las ${r.cita.hora} en nuestra exposición de Costa de Antigua para probarlo.` : " Ven a probarlo a nuestra exposición de Costa de Antigua cuando te venga bien.";
   return r.idioma === "en"
-    ? `Congratulations, ${n}! Your ${r.coche.titulo} has been successfully reserved at Volcano Cars. You have 48 hours of exclusive reservation.${r.cita ? ` See you on ${r.cita.fecha} at ${r.cita.hora} at our showroom in Antigua to test drive it.` : ""} Your receipt: ${location.origin}/r/${r.token}`
+    ? `Congratulations, ${n}! Your ${r.coche.titulo} has been successfully reserved at Volcano Cars. You have 48 hours of exclusive reservation.${r.cita ? ` See you on ${r.cita.fecha} at ${r.cita.hora} at our showroom in Costa de Antigua to test drive it.` : ""} Your receipt: ${location.origin}/r/${r.token}`
     : `¡Enhorabuena, ${n}! Tu ${r.coche.titulo} ha sido bloqueado con éxito en Volcano Cars. Tienes 48 horas de reserva exclusiva.${cuando} Tu comprobante: ${location.origin}/r/${r.token}`;
 }
 function rvMsgDisponible(e, titulo, id) {
@@ -42,7 +42,7 @@ function rvMsgDisponible(e, titulo, id) {
 const rvWa = (tel, txt) => `https://wa.me/${waNum(tel)}?text=${encodeURIComponent(txt)}`;
 
 async function rvCargar(forzar) {
-  if (!PW || (ME && ME.equipo) || rvCargando) return;
+  if (!PW || rvCargando) return;
   if (!forzar && Date.now() - rvUltima < 4000) return;
   rvCargando = true;
   try { RV = await api("/api/reservas"); rvUltima = Date.now(); rvPintar(); rvContador(); }
@@ -187,4 +187,4 @@ if ($("#dw-body")) new MutationObserver(rvPintarFotos).observe($("#dw-body"), { 
 // Cargar al abrir «Coches» y cada minuto (para el contador de la pestaña)
 const rvShow0 = show;
 show = function (id) { rvShow0(id); if (id === "s-list") rvCargar(); };
-setInterval(() => { if (PW && !document.hidden && !(ME && ME.equipo)) rvCargar(); }, 60000);
+setInterval(() => { if (PW && !document.hidden) rvCargar(); }, 60000);

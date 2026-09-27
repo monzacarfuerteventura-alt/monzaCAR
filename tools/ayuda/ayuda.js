@@ -344,7 +344,7 @@ function ayVideo(m){ const v=typeof AY_VID!=="undefined"&&AY_VID[m.id]; if(!v) r
 }
 function ayModulo(m,todo){
   const ps=ayPasos(m); if(AY_BUSQ&&!ps.length) return "";
-  const puede=m.tab&&(!ME||!ME.equipo||["ordenes","alm"].includes(m.tab)||(m.tab==="caja"&&ME.caja))&&!(ME&&ME.equipo&&m.tab==="jornada");
+  const puede=m.tab&&puedeTab(m.tab);
   const vid=!todo&&!AY_BUSQ?ayVideo(m):"";
   const texto=`${AY_BUSQ?"":`<section class="ay-s"><h3><i>1</i>Para qué sirve</h3><p class="ay-obj"><b>Objetivo principal:</b> ${esc(m.objetivo)}</p>
       <p class="ay-sub">Cuándo usar esta sección</p><ul class="ay-cuando">${m.cuando.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>${m.flujo?`<p class="ay-sub">El recorrido</p>${ayFlujo(m.flujo)}`:""}</section>

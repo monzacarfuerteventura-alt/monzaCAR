@@ -58,7 +58,7 @@ export default async (req: Request) => {
   const url = new URL(req.url), parts = url.pathname.split("/").filter(Boolean), accion = parts[2] || "", id = parts[3] || "", sub = parts[4] || "";
   if (req.method !== "GET" && !mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
   const q = await quien(req);
-  if (!q) return json({ error: "No autorizado" }, 401);
+  if (!q) return json({ error: "Tu sesión ha caducado. Vuelve a entrar." }, 401);
   const bloqueo = await exigirJornada(q); if (bloqueo) return bloqueo; // el equipo no trabaja sin haber fichado
   const catalogo = q.admin || q.rol === "recepcion";
   const body = req.method === "POST" ? ((await req.json().catch(() => ({}))) as any) : {};
@@ -232,7 +232,7 @@ export default async (req: Request) => {
     }
     if (sub === "localizar") { // auditoría al cierre: ¿dónde está?
       if (h.estado !== "uso") return json({ error: "No está fuera." }, 409);
-      if (!q.admin && !q.caja && h.uso?.uid !== q.uid) return json({ error: "No autorizado." }, 403);
+      if (!q.admin && !q.caja && h.uso?.uid !== q.uid) return json({ error: "Esta herramienta la tiene otra persona: la puede mover ella, el gerente o quien lleve la caja." }, 403);
       if (nota.length < 5) return json({ error: "Escribe dónde está exactamente (p. ej. «dentro del Seat Ibiza de la orden VC-2026-0003, elevador 2»)." }, 400);
       h.uso!.confirmado = hoy; h.uso!.nota = nota; await guardar(); await hist("localizada"); return json({ ok: true, herramienta: h });
     }

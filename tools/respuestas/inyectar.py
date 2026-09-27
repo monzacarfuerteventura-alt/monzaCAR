@@ -26,7 +26,7 @@ if 'data-tab="resp"' not in s:
 SEC = '''  <!-- RESPUESTAS: textos para contestar reseñas y mensajes con un clic (tools/respuestas) -->
   <section id="s-resp" hidden>
     <div class="head">
-      <div><h1 style="font-size:28px">Respuestas</h1><p>Elige el caso y copia una respuesta personalizada: reseñas de Google y mensajes de WhatsApp.</p></div>
+      <div><h1 style="font-size:28px">Respuestas</h1><p>Elige el caso y copia una respuesta personalizada: reseñas de Google, WhatsApp, Instagram y Facebook.</p></div>
     </div>
     <div id="rs"></div>
   </section>

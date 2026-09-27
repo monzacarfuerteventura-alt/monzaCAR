@@ -210,7 +210,7 @@ h3{font-size:21px;font-weight:800;font-stretch:100%}
 @media (max-width:860px){.lc-dos{grid-template-columns:1fr}}
 .lc-dos .pasos{margin-top:0}
 .pasos li>div{min-width:0}
-/* recorrido Antigua → pueblo */
+/* recorrido Costa de Antigua → pueblo */
 .lc-ruta{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;margin-top:20px;padding:18px;border-radius:20px;background:var(--surface);border:1px solid var(--line)}
 .lc-pt{display:grid;justify-items:center;text-align:center;gap:2px;min-width:0}
 .lc-pt b{font-size:15px;line-height:1.2}

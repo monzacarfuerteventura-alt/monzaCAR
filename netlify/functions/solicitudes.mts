@@ -2,6 +2,8 @@ import type { Config, Context } from "@netlify/functions";
 import { store, json, isAdmin, mismoOrigen } from "../lib/shared.mts";
 import { notificarExternos } from "../lib/notificar.mts";
 import { RETENCION, AGENDAS, ESTADOS, MOTIVOS, ACTIVIDAD, str, fechaISO, ahoraCanarias, sumarDias, diaSemana, HORAS, HORIZONTE, bloqueos, huecoValido, ocupados, liberar, limpiar, dentroDelLimite, avisar, ocuparHueco, fotosExisten, borrarFotos, marcarFotosUsadas, type Solicitud } from "../lib/solicitud.mts";
+import { permiso, esRespuesta } from "../lib/acceso.mts";
+import { quien } from "../lib/taller.mts";
 
 // Solicitudes de clientes, citas en tiempo real y mini CRM. La lógica común está en netlify/lib/solicitud.mts.
 export default async (req: Request, context: Context) => {
@@ -12,7 +14,7 @@ export default async (req: Request, context: Context) => {
   // ---------- calendario ----------
   if (partes[1] === "citas") {
     if (partes[2] === "bloqueos") {
-      if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
+      { const _q = await permiso(req, "equipo"); if (esRespuesta(_q)) return _q; }
       if (req.method === "GET") return json(await bloqueos());
       if (req.method === "PUT") {
         const input = (await req.json().catch(() => ({}))) as any;
@@ -40,7 +42,7 @@ export default async (req: Request, context: Context) => {
   const id = partes[2] || "";
 
   // ---------- el panel apunta un cliente a mano ----------
-  if (req.method === "POST" && !id && (await isAdmin(req))) {
+  if (req.method === "POST" && !id && (await isAdmin(req) || !!(await quien(req)))) { // gerente o cualquiera del equipo
     const input = await req.json().catch(() => null);
     if (input && input.manual === true) {
       const { s: sol, error } = limpiar(input, true);
@@ -81,7 +83,7 @@ export default async (req: Request, context: Context) => {
   }
 
   // ---------- a partir de aquí, solo el panel ----------
-  if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
+  { const _q = await permiso(req, req.method === "DELETE" ? "gerente" : "equipo"); if (esRespuesta(_q)) return _q; }
 
   if (req.method === "GET" && !id) {
     const { blobs } = await s.list({ prefix: "s/" });

@@ -13,7 +13,7 @@ La reserva tiene 3 pasos:
    - **Tarjeta, Google Pay o Apple Pay:** va a la página de pago segura de Stripe y vuelve sola a la web.
    - **Transferencia o Bizum:** ve tu IBAN, el titular, el importe y el concepto automático (por ejemplo, `Reserva VC-7K3M9Q Opel Astra`). Cada dato lleva su botón «Copiar». Luego sube el justificante (una captura vale) o te lo manda por WhatsApp.
 3. **Confirmación:**
-   - Ve el mensaje «¡Enhorabuena, Juan! Tu Opel Astra ha sido bloqueado con éxito… Tienes 48 horas de reserva exclusiva. Nos vemos el viernes 25 a las 10:00 en nuestra exposición de Antigua para probarlo.»
+   - Ve el mensaje «¡Enhorabuena, Juan! Tu Opel Astra ha sido bloqueado con éxito… Tienes 48 horas de reserva exclusiva. Nos vemos el viernes 25 a las 10:00 en nuestra exposición de Costa de Antigua para probarlo.»
    - Tiene los botones **📄 Descargar comprobante PDF** y **Reenviar por WhatsApp**, y puede añadir la visita a su calendario.
    - Recibe un enlace privado (`/r/…`) donde puede ver su reserva cuando quiera.
 

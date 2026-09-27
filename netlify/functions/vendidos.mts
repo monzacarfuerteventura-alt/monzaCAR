@@ -109,7 +109,7 @@ ${CSS}`;
   <header class="pg-hero vd-hero">
     <span class="eyebrow">Ya tienen dueño</span>
     <h1>Coches vendidos y <span class="r">entregados</span></h1>
-    <p>Cada coche de esta página pasó por nuestro taller de Antigua antes de venderse y salió con 12 meses de garantía legal. Cuando el cliente nos da permiso, publicamos la foto de la entrega y lo que nos dijo ese día, tal cual.</p>
+    <p>Cada coche de esta página pasó por nuestro taller de Costa de Antigua antes de venderse y salió con 12 meses de garantía legal. Cuando el cliente nos da permiso, publicamos la foto de la entrega y lo que nos dijo ese día, tal cual.</p>
     ${stats}
   </header>
 

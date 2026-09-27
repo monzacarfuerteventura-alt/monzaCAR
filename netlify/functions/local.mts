@@ -6,7 +6,7 @@ import { MUNICIPIOS, porSlug, type Municipio } from "../lib/municipios.mts";
 /*
   PÁGINAS LOCALES PARA GOOGLE (SEO local), una por pueblo y servicio:
     /coches-segunda-mano-<pueblo>   → catálogo en vivo + entrega gratis a domicilio en ese pueblo
-    /taller-mecanico-<pueblo>       → taller en Antigua para clientes de ese pueblo + reserva de cita al momento
+    /taller-mecanico-<pueblo>       → taller en Costa de Antigua para clientes de ese pueblo + reserva de cita al momento
   Los pueblos, distancias y textos están en netlify/lib/municipios.mts.
   Si añades un pueblo allí, añade también sus dos direcciones en config.path (abajo) y en el sitemap.
 */
@@ -58,10 +58,10 @@ function faqLD(faq: [string, string][]) {
 }
 const faqHTML = (faq: [string, string][]) => `<div class="faq">${faq.map(([q, a]) => `<details><summary>${escH(q)}</summary><p>${a}</p></details>`).join("")}</div>`;
 
-// ---------- recorrido Antigua → pueblo ----------
+// ---------- recorrido Costa de Antigua → pueblo ----------
 function ruta(m: Municipio, destino: string) {
   if (m.km <= 5) {
-    return `<div class="lc-ruta cerca"><div class="lc-pt"><span class="lc-dot"></span><b>Volcano Cars</b><small>Polígono Industrial de Antigua</small></div>
+    return `<div class="lc-ruta cerca"><div class="lc-pt"><span class="lc-dot"></span><b>Volcano Cars</b><small>Polígono Industrial de Costa de Antigua</small></div>
       <div class="lc-linea"><span>Estamos ${escH(m.en)}</span></div>
       <div class="lc-pt b"><span class="lc-dot"></span><b>${escH(destino)}</b><small>a 5 minutos o menos</small></div></div>`;
   }
@@ -101,11 +101,11 @@ async function venta(origin: string, m: Municipio) {
   const url = `/coches-segunda-mano-${m.slug}`;
   const canonical = origin + url;
   const titulo = `Coches de Segunda Mano en ${m.nombre} | Garantía y Entrega Gratis - Volcano Cars`;
-  const desc = `Coches de segunda mano revisados para ${m.nombre}: 12 meses de garantía legal, entrega gratis a domicilio y financiación.${desde ? ` Desde ${eur(desde)}.` : ""} Taller propio en Antigua.`;
+  const desc = `Coches de segunda mano revisados para ${m.nombre}: 12 meses de garantía legal, entrega gratis a domicilio y financiación.${desde ? ` Desde ${eur(desde)}.` : ""} Taller propio en Costa de Antigua.`;
   const waTxt = `Hola Volcano Cars, vivo ${m.en} y busco un coche de segunda mano: `;
   const faq: [string, string][] = [
     [`¿Cuánto cuesta que me llevéis el coche a ${m.nombre}?`, `Nada. Una vez firmada la compra te llevamos el coche gratis a tu casa ${m.en} (o donde nos digas dentro de Fuerteventura), el día y a la hora que acordemos.`],
-    [`¿Puedo probar el coche antes de comprarlo?`, `Sí. Reserva día y hora en la ficha del coche y te lo tenemos preparado en nuestra nave de Antigua, ${m.km <= 5 ? "a pocos minutos de ti" : `a ${m.km} km aproximadamente ${m.de}`}. La visita no te obliga a nada.`],
+    [`¿Puedo probar el coche antes de comprarlo?`, `Sí. Reserva día y hora en la ficha del coche y te lo tenemos preparado en nuestra nave de Costa de Antigua, ${m.km <= 5 ? "a pocos minutos de ti" : `a ${m.km} km aproximadamente ${m.de}`}. La visita no te obliga a nada.`],
     [`¿Qué garantía tienen los coches?`, `Los coches que vendemos a particulares tienen 12 meses de garantía legal desde la entrega, según nuestras <a href="/condiciones">condiciones</a>. Todos pasan antes por nuestro taller.`],
     [`¿Se puede financiar?`, `Sí. En cada coche tienes una calculadora con la cuota y puedes pedir un pre-estudio sin compromiso. La financiación está sujeta a la aprobación de la entidad financiera.`],
   ];
@@ -162,8 +162,8 @@ ${ld({
       </div>
       <ol class="pasos">
         <li><div><b>Eliges en la web</b><span>Fotos reales, precio final y, si quieres, la cuota de financiación.</span></div></li>
-        <li><div><b>Lo pruebas si quieres</b><span>Reservas día y hora y te lo tenemos preparado en Antigua. Sin compromiso.</span></div></li>
-        <li><div><b>Firmamos en Antigua</b><span>Contrato por escrito, y nos encargamos del cambio de nombre en Tráfico.</span></div></li>
+        <li><div><b>Lo pruebas si quieres</b><span>Reservas día y hora y te lo tenemos preparado en Costa de Antigua. Sin compromiso.</span></div></li>
+        <li><div><b>Firmamos en Costa de Antigua</b><span>Contrato por escrito, y nos encargamos del cambio de nombre en Tráfico.</span></div></li>
         <li><div><b>Te lo llevamos ${escH(m.en)}</b><span>Gratis, el día y a la hora que acordemos contigo.</span></div></li>
       </ol>
     </div>
@@ -173,7 +173,7 @@ ${ld({
     <h2 id="h-conf">Por qué comprar en Volcano Cars</h2>
     <div class="grid3">
       <div class="card"><div class="ic">12</div><h3>Meses de garantía</h3><p>Desde la entrega, para particulares. Sin letra pequeña escondida: <a href="/condiciones">lee las condiciones</a>.</p></div>
-      <div class="card"><div class="ic">✓</div><h3>Revisado en taller propio</h3><p>Cada coche pasa por nuestro taller de Antigua antes de publicarse. Si algo no está bien, se arregla antes.</p></div>
+      <div class="card"><div class="ic">✓</div><h3>Revisado en taller propio</h3><p>Cada coche pasa por nuestro taller de Costa de Antigua antes de publicarse. Si algo no está bien, se arregla antes.</p></div>
       <div class="card"><div class="ic">0 €</div><h3>Entrega ${escH(m.en)}</h3><p>${m.km <= 5 ? "Estamos al lado, pero si lo prefieres te lo dejamos en tu puerta." : `Son ${distancia(m)} y ${m.min} minutos aproximados: los hacemos nosotros, sin coste para ti.`}</p></div>
     </div>
     <p style="margin-top:22px">También entregamos gratis en ${m.cerca.map(escH).join(", ")} y en el resto de Fuerteventura.</p>
@@ -207,7 +207,7 @@ function taller(origin: string, m: Municipio) {
   const waTxt = `Hola Volcano Cars, soy ${m.de} y quiero pedir presupuesto en el taller: `;
   const cerca = m.min <= 25 ? `a pocos minutos ${m.de}` : `${tiempo(m)} ${m.de}`;
   const faq: [string, string][] = [
-    [`¿Tengo que ir hasta Antigua desde ${m.nombre}?`, `Sí, el taller está en el Polígono Industrial de Antigua, ${m.km <= 5 ? "en tu mismo municipio" : `a unos ${m.km} km (≈${m.min} min) ${m.de}`}. Para que el viaje merezca la pena te damos cita a una hora concreta y el presupuesto antes de empezar.`],
+    [`¿Tengo que ir hasta Costa de Antigua desde ${m.nombre}?`, `Sí, el taller está en el Polígono Industrial de Costa de Antigua, ${m.km <= 5 ? "en tu mismo municipio" : `a unos ${m.km} km (≈${m.min} min) ${m.de}`}. Para que el viaje merezca la pena te damos cita a una hora concreta y el presupuesto antes de empezar.`],
     [`¿Me dais presupuesto antes de reparar?`, `Siempre. No tocamos nada sin que hayas aceptado el presupuesto. Si durante la reparación aparece algo más, te llamamos antes.`],
     [`¿Trabajáis con todas las marcas?`, `Sí, somos un taller multimarca: mecánica, diagnosis, chapa y pintura para cualquier marca y modelo de turismo.`],
     ...(m.faqTaller || []),
@@ -232,7 +232,7 @@ ${ld({
       <span class="eyebrow">Taller · clientes ${escH(m.de)}</span>
       <h1>Taller mecánico, chapa y pintura para clientes de <span class="r">${escH(m.nombre)}</span></h1>
       <p class="lc-prop"><span class="lc-prop-ic" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></span>
-        <span>Servicio técnico multimarca en Antigua, <b>${escH(cerca)}</b>. <b>Transparencia total</b> y <b>compromiso de plazo</b>.</span></p>
+        <span>Servicio técnico multimarca en Costa de Antigua, <b>${escH(cerca)}</b>. <b>Transparencia total</b> y <b>compromiso de plazo</b>.</span></p>
       <div class="ctas lc-movil"><a class="btn b-rosso" href="#reserva">Reservar hora o pedir presupuesto</a></div>
       <ul class="sello"><li>Presupuesto antes de tocar nada</li><li>Fecha de entrega por escrito</li><li>Seguimiento desde el móvil</li></ul>
       ${ruta(m, `clientes ${m.de}`)}
@@ -304,7 +304,7 @@ function widget(m: Municipio) {
     <label class="lc-ok"><input type="checkbox" id="r-ok" required><span>Acepto que MAILIN Y YERAY SL (Volcano Cars) use estos datos solo para responder a mi solicitud. Puedo acceder a ellos, corregirlos o pedir que los borren cuando quiera. <a href="/privacidad" target="_blank" rel="noopener">Política de privacidad</a>.</span></label>
     <p class="lc-err" id="r-err" role="alert" hidden></p>
     <button class="btn b-rosso" type="submit" id="r-btn">Confirmar cita</button>
-    <p class="lc-nota" id="r-nota">La cita queda confirmada al momento. Te esperamos en Antigua.</p>
+    <p class="lc-nota" id="r-nota">La cita queda confirmada al momento. Te esperamos en Costa de Antigua.</p>
   </form>
   <div class="lc-conf" id="r-conf" role="status" hidden></div>
 </aside>`;
@@ -330,7 +330,7 @@ function pintar(){const box=$("#r-agenda");if(modo()!=="cita"){box.hidden=true;r
  box.innerHTML='<p class="lc-ag-t">Elige día y hora <span>· horas libres en tiempo real</span></p><div class="lc-dias" role="group" aria-label="Día">'+libres.map(d=>'<button type="button" data-f="'+d.fecha+'" aria-pressed="'+(d.fecha===st.fecha)+'">'+esc(corta(d.fecha))+'</button>').join("")+'</div><div class="lc-horas" role="group" aria-label="Hora">'+dia.horas.map(h=>'<button type="button" data-h="'+h.hora+'" '+(h.libre?"":"disabled")+' aria-pressed="'+(h.hora===st.hora)+'">'+h.hora+'</button>').join("")+'</div>';}
 async function cargar(){try{const r=await fetch("/api/citas?agenda=taller",{cache:"no-store"});if(!r.ok)throw 0;const j=await r.json();st.dias=j.dias||[];st.error=false;}catch(_){st.error=true;}pintar();}
 $("#r-agenda").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.f){st.fecha=b.dataset.f;st.hora="";}if(b.dataset.h)st.hora=b.dataset.h;pintar();});
-f.querySelectorAll("input[name=r-modo]").forEach(r=>r.addEventListener("change",()=>{const c=modo()==="cita";$("#r-btn").textContent=c?"Confirmar cita":"Pedir presupuesto";$("#r-nota").textContent=c?"La cita queda confirmada al momento. Te esperamos en Antigua.":"Te enviamos el presupuesto por WhatsApp o te llamamos en horario de apertura.";pintar();}));
+f.querySelectorAll("input[name=r-modo]").forEach(r=>r.addEventListener("change",()=>{const c=modo()==="cita";$("#r-btn").textContent=c?"Confirmar cita":"Pedir presupuesto";$("#r-nota").textContent=c?"La cita queda confirmada al momento. Te esperamos en Costa de Antigua.":"Te enviamos el presupuesto por WhatsApp o te llamamos en horario de apertura.";pintar();}));
 const err=t=>{const e=$("#r-err");e.textContent=t;e.hidden=!t;if(t)e.scrollIntoView({block:"nearest",behavior:"smooth"});};
 f.addEventListener("submit",async e=>{e.preventDefault();err("");
  const srv=[...f.querySelectorAll("input[name=r-srv]:checked")].map(x=>x.value);
@@ -349,7 +349,7 @@ f.addEventListener("submit",async e=>{e.preventDefault();err("");
  try{const r=await fetch("/api/solicitudes",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(datos)});const j=await r.json().catch(()=>({}));
   if(!r.ok){if(j.ocupada){err("Esa hora se acaba de ocupar. Elige otra, por favor.");st.hora="";cargar();return;}throw new Error(j.error||"");}
   const resumen=(cita?"Cita en el taller el "+bonita(st.fecha)+" a las "+st.hora:"Solicitud de presupuesto")+" · "+coche;
-  const c=$("#r-conf");c.innerHTML='<b>'+(cita?"¡Cita confirmada!":"¡Solicitud recibida!")+'</b><p>'+esc(resumen)+'</p><p>'+(cita?"Te esperamos en el Polígono Industrial de Antigua. Si no puedes venir, avísanos por WhatsApp.":"Te enviamos el presupuesto por WhatsApp o te llamamos en horario de apertura.")+'</p><a class="btn b-wa" target="_blank" rel="noopener" href="'+wa("Hola Volcano Cars, "+(cita?"tengo cita en el taller el "+bonita(st.fecha)+" a las "+st.hora:"acabo de pedir presupuesto")+" ("+coche+"). ")+'">Escribir por WhatsApp</a>';
+  const c=$("#r-conf");c.innerHTML='<b>'+(cita?"¡Cita confirmada!":"¡Solicitud recibida!")+'</b><p>'+esc(resumen)+'</p><p>'+(cita?"Te esperamos en el Polígono Industrial de Costa de Antigua. Si no puedes venir, avísanos por WhatsApp.":"Te enviamos el presupuesto por WhatsApp o te llamamos en horario de apertura.")+'</p><a class="btn b-wa" target="_blank" rel="noopener" href="'+wa("Hola Volcano Cars, "+(cita?"tengo cita en el taller el "+bonita(st.fecha)+" a las "+st.hora:"acabo de pedir presupuesto")+" ("+coche+"). ")+'">Escribir por WhatsApp</a>';
   try{document.dispatchEvent(new Event("vc:solicitud"));}catch(_){}
   f.hidden=true;c.hidden=false;c.scrollIntoView({block:"center",behavior:"smooth"});
  }catch(x){err((x&&x.message)||"No hemos podido enviarlo. Escríbenos por WhatsApp o llámanos al "+C.tel+".");}

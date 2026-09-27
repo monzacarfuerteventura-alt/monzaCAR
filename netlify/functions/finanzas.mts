@@ -195,7 +195,7 @@ export default async (req: Request) => {
   const url = new URL(req.url), p = url.pathname.split("/").filter(Boolean), accion = p[2] || "", id = p[3] || "", id2 = p[4] || "";
   if (req.method !== "GET" && !mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
   const q = await quien(req);
-  if (!q) return json({ error: "No autorizado" }, 401);
+  if (!q) return json({ error: "Tu sesión ha caducado. Vuelve a entrar." }, 401);
   if (!q.admin) return json({ error: "Las finanzas solo las ve el gerente." }, 403);
   const body = req.method === "POST" ? ((await req.json().catch(() => ({}))) as any) : {};
   const origin = url.origin;

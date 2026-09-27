@@ -159,7 +159,7 @@
   // Tarjeta de contacto (.vcf) para guardar el número: WhatsApp solo entrega las listas de difusión a quien lo tiene guardado
   function vcard() {
     const tel = "+" + String(EMP.whatsapp || "34643566098").replace(/[^\d]/g, "");
-    const v = ["BEGIN:VCARD", "VERSION:3.0", "N:;Volcano Cars;;;", "FN:Volcano Cars", "ORG:Volcano Cars", `TEL;TYPE=CELL,VOICE:${tel}`, EMP.email ? `EMAIL:${EMP.email}` : "", `URL:${location.origin}/`, "NOTE:Coches de ocasión y taller en Antigua (Fuerteventura). Avisos de coches nuevos por WhatsApp.", "END:VCARD"].filter(Boolean).join("\r\n");
+    const v = ["BEGIN:VCARD", "VERSION:3.0", "N:;Volcano Cars;;;", "FN:Volcano Cars", "ORG:Volcano Cars", `TEL;TYPE=CELL,VOICE:${tel}`, EMP.email ? `EMAIL:${EMP.email}` : "", `URL:${location.origin}/`, "NOTE:Coches de ocasión y taller en Costa de Antigua (Fuerteventura). Avisos de coches nuevos por WhatsApp.", "END:VCARD"].filter(Boolean).join("\r\n");
     return URL.createObjectURL(new Blob([v], { type: "text/vcard;charset=utf-8" }));
   }
   function exito(card, nombre, telefono, zona) {
@@ -202,7 +202,7 @@
     box.innerHTML = `<a class="hist-btn" href="${url}" download>
         <span class="hist-ic">${ICO.doc}</span>
         <span class="hist-tx"><b>📄 ${L("Descargar Historial Sin Sorpresas (PDF)", "Download the No-Surprises History (PDF)")}</b>
-        <small>${L("Inspección 360° de 80 puntos (FORM-02) y control de calidad pre-entrega FORM-04 firmado por el taller.", "80-point 360° inspection (FORM-02) and FORM-04 pre-delivery quality check signed by the workshop.")}</small></span>
+        <small>${L("Inspección 360° de 80 puntos (FORM-02) y control de calidad pre-entrega de 30 puntos (FORM-04) firmado por el taller.", "80-point 360° inspection (FORM-02) and 30-point pre-delivery quality check (FORM-04) signed by the workshop.")}</small></span>
         <span class="hist-dl" aria-hidden="true">${ICO.dl}</span></a>
       <p class="hist-sub"><span class="hist-seal">${ICO.ok}${L("Firmado por el taller", "Signed by the workshop")}</span>${L("Cero sorpresas, cero engaños: el estado mecánico y estético exacto del coche tras revisar los 80 puntos clave, incluidos los pequeños detalles de pintura si los tiene.", "No surprises, no tricks: the car's exact mechanical and cosmetic condition after checking all 80 key points, including small paint marks if it has any.")}
       <a href="${url}?ver=1" target="_blank" rel="noopener">${L("Verlo sin descargar", "View without downloading")}</a>${inf.fecha ? ` · <span>${L("publicado el", "published")} ${esc(fechaTxt(inf.fecha))}</span>` : ""}</p>`;
@@ -235,4 +235,20 @@
     if (precio) new MutationObserver(mira).observe(precio, { childList: true, characterData: true, subtree: true });
     if (modal.open) mira();
   }
+})();
+
+/* ---------- 27-09-2026 · Etiqueta «Powered by Netlify»: si aparece abajo a la derecha,
+   el asistente y las barras flotantes suben para que no queden tapados (variable --badge) ---------- */
+(() => {
+  const esN = (e) => { if (!e || e.nodeType !== 1) return false; const t = ((e.id || "") + " " + (typeof e.className === "string" ? e.className : "") + " " + e.tagName + " " + (e.getAttribute("src") || "") + " " + (e.getAttribute("href") || "")).toLowerCase(); return t.includes("netlify") || (e.textContent || "").slice(0, 200).toLowerCase().includes("powered by netlify"); };
+  function medir() {
+    try {
+      const W = innerWidth, H = innerHeight; let alto = 0;
+      for (const [x, y] of [[W - 30, H - 26], [W - 100, H - 26], [W - 160, H - 30], [W - 60, H - 50]])
+        for (const el of document.elementsFromPoint(x, y)) { let e = el; while (e && e !== document.documentElement) { if (esN(e)) { alto = Math.max(alto, Math.ceil(H - e.getBoundingClientRect().top + 10)); break; } if (getComputedStyle(e).position === "fixed") break; e = e.parentElement; } }
+      document.documentElement.style.setProperty("--badge", alto + "px");
+    } catch (_) { }
+  }
+  setTimeout(medir, 1500); setTimeout(medir, 5000);
+  addEventListener("resize", () => { clearTimeout(medir.t); medir.t = setTimeout(medir, 300); });
 })();

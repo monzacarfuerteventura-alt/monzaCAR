@@ -4,7 +4,7 @@ TITULAR = "MAILIN Y YERAY SL"
 NIF = "B93975647"
 REGISTRO = ""  # PENDIENTE: «Inscrita en el Registro Mercantil de …, tomo …, folio …, hoja …» (sale en la escritura o en la nota simple)
 REG_TALLER = ""  # PENDIENTE: nº de inscripción del taller en el Registro Industrial de Canarias
-DIRECCION = "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua, Las Palmas"
+DIRECCION = "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Costa de Antigua, Las Palmas"
 EMAIL = "volcanocars2026@gmail.com"
 TEL = "643 56 60 98"
 ACTUALIZADO = "26 de septiembre de 2026"
@@ -68,7 +68,7 @@ aviso = HEAD.format(title="Aviso legal", upd=ACTUALIZADO) + f"""
 {TITULAR_BOX}
 
 <h2>Objeto</h2>
-<p>Esta web informa sobre los servicios de taller (chapa y pintura, mecánica rápida) y sobre los vehículos de ocasión que vende Volcano Cars en Antigua, Fuerteventura, y permite pedir presupuesto, cita o tasación.</p>
+<p>Esta web informa sobre los servicios de taller (chapa y pintura, mecánica rápida) y sobre los vehículos de ocasión que vende Volcano Cars en Costa de Antigua, Fuerteventura, y permite pedir presupuesto, cita o tasación.</p>
 
 <h2>Precios y vehículos</h2>
 <p>La información de cada vehículo (fotos, kilómetros, equipamiento y precio) se publica con la mayor exactitud posible. Los precios mostrados son precios finales para el comprador, con todos los impuestos incluidos (IGIC). Si hubiera un error tipográfico evidente, se avisará antes de firmar y prevalecerá lo firmado en el contrato de compraventa. La publicación de un vehículo no supone una reserva: la disponibilidad se confirma en el momento del contacto. Los coches y las reparaciones se contratan en nuestras instalaciones, con contrato o presupuesto por escrito. Por la web solo se puede pedir cita, presupuesto o información, y hacer la reserva online de 50 € de un coche, que es siempre reembolsable (ver <a href="/condiciones#reserva">Condiciones</a>).</p>
@@ -183,7 +183,7 @@ cook = HEAD.format(title="Política de cookies", upd=ACTUALIZADO) + f"""
 """ + FOOT
 
 cond = HEAD.format(title="Condiciones de venta, taller y garantía", upd=ACTUALIZADO) + f"""
-<p class="en" id="en" lang="en"><b>In English:</b> the used cars we sell to consumers come with a 12-month legal warranty from delivery. Workshop repairs are guaranteed for 3 months or 2,000 km. You are entitled to a written quote before any repair. If your car is not ready on the agreed date, we discount 10 % of the labour cost per working day of delay, up to 50 % (see section 4 for exceptions). Online appointments are confirmed instantly; please tell us on WhatsApp if you cannot come. Prices shown are final, taxes included. Once the sale is signed, we deliver the car free of charge to any address on Fuerteventura. Nothing is sold online: contracts are signed at our premises in Antigua.</p>
+<p class="en" id="en" lang="en"><b>In English:</b> the used cars we sell to consumers come with a 12-month legal warranty from delivery. Workshop repairs are guaranteed for 3 months or 2,000 km. You are entitled to a written quote before any repair. If your car is not ready on the agreed date, we discount 10 % of the labour cost per working day of delay, up to 50 % (see section 4 for exceptions). Online appointments are confirmed instantly; please tell us on WhatsApp if you cannot come. Prices shown are final, taxes included. Once the sale is signed, we deliver the car free of charge to any address on Fuerteventura. Nothing is sold online: contracts are signed at our premises in Costa de Antigua.</p>
 
 <p>Estas condiciones resumen tus derechos al comprar un coche o reparar el tuyo en Volcano Cars. No sustituyen al contrato ni a la factura, que son los documentos que se firman.</p>
 {TITULAR_BOX}
@@ -194,7 +194,7 @@ cond = HEAD.format(title="Condiciones de venta, taller y garantía", upd=ACTUALI
 <li><b>Reservas:</b> reservar una visita en la web no te obliga a nada ni aparta el coche. Para apartarlo puedes hacer la <a href="#reserva">reserva online de 50 €</a> (reembolsable) o acordarlo con nosotros en el taller.</li>
 <li><b>Dónde se compra:</b> la compraventa se firma en nuestras instalaciones, con contrato por escrito. Por eso no hay derecho de desistimiento de 14 días, que solo existe en compras a distancia o fuera del establecimiento.</li>
 <li><b>Documentación:</b> te entregamos el permiso de circulación, la ficha técnica con la ITV en vigor, las llaves y el historial que tengamos. Nos encargamos del cambio de titularidad en Tráfico.</li>
-<li><b>Entrega a domicilio gratis:</b> una vez firmada la compraventa, te llevamos el coche sin coste a la dirección que nos digas dentro de la isla de Fuerteventura, el día y a la hora que acordemos contigo. Si lo prefieres, puedes recogerlo en nuestro taller de Antigua. La entrega a domicilio no cambia dónde se firma el contrato, y la garantía empieza a contar el día que recibes el coche.</li>
+<li><b>Entrega a domicilio gratis:</b> una vez firmada la compraventa, te llevamos el coche sin coste a la dirección que nos digas dentro de la isla de Fuerteventura, el día y a la hora que acordemos contigo. Si lo prefieres, puedes recogerlo en nuestro taller de Costa de Antigua. La entrega a domicilio no cambia dónde se firma el contrato, y la garantía empieza a contar el día que recibes el coche.</li>
 </ul>
 
 <h2>2. Garantía de los coches</h2>

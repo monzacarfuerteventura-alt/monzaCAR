@@ -1,10 +1,11 @@
 import type { Config, Context } from "@netlify/functions";
 import { json, isAdmin, cerrarTodasLasSesiones, crearSesion, minIat, mismoOrigen, store, enviarEmail, destinoAvisos, ultimoEmail } from "../lib/shared.mts";
 import { leerRegistro, listaBloqueos, desbloquear, registrar, dosFactoresActivo, iniciar2FA, confirmar2FA, desactivar2FA, verificarTotp, pais } from "../lib/seguridad.mts";
+import { permiso, esRespuesta } from "../lib/acceso.mts";
 
 // Centro de seguridad del panel (solo con sesión): estado del muro, registro, bloqueos y 2FA.
 export default async (req: Request, context: Context) => {
-  if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
+  { const _q = await permiso(req, "gerente"); if (esRespuesta(_q)) return _q; }
   const env = (k: string) => (globalThis as any).Netlify?.env?.get(k) || "";
   const ip = context.ip || "", ua = req.headers.get("user-agent") || "", p = pais(req, context);
 
@@ -24,6 +25,10 @@ export default async (req: Request, context: Context) => {
   }
   if (req.method !== "POST" || !mismoOrigen(req)) return json({ error: "Método no permitido" }, 405);
   const b = (await req.json().catch(() => ({}))) as any;
+  // Cerrar todas las sesiones y la verificación en dos pasos de la CONTRASEÑA del panel: solo con esa contraseña
+  // (el gerente que entra con usuario + PIN ve el muro, desbloquea y prueba los avisos).
+  if ((b.accion === "cerrar-sesiones" || String(b.accion || "").startsWith("2fa")) && !(await isAdmin(req)))
+    return json({ error: "Esto se hace entrando con la contraseña del panel (no con usuario y PIN)." }, 403);
 
   if (b.accion === "cerrar-sesiones") {
     await cerrarTodasLasSesiones();

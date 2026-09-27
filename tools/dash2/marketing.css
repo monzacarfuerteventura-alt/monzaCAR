@@ -1,5 +1,5 @@
 /* MARKETING EN VIVO · panel lateral flotante (tools/dash2/marketing.js) */
-.mk-fab{position:fixed;right:18px;bottom:18px;z-index:40;display:inline-flex;gap:9px;align-items:center;border:1px solid rgba(229,86,42,.6);background:linear-gradient(135deg,#2A1A14,#1B1B1A);color:#F2EFEA;font:800 14px/1 var(--body);padding:13px 16px;border-radius:999px;cursor:pointer;box-shadow:0 14px 34px -10px rgba(229,86,42,.55),0 6px 18px rgba(0,0,0,.45);transition:transform .2s var(--d2-ease),box-shadow .2s}
+.mk-fab{position:fixed;right:18px;bottom:calc(78px + env(safe-area-inset-bottom,0px) + var(--badge-x,0px));z-index:40;display:inline-flex;gap:9px;align-items:center;border:1px solid rgba(229,86,42,.6);background:linear-gradient(135deg,#2A1A14,#1B1B1A);color:#F2EFEA;font:800 14px/1 var(--body);padding:13px 16px;border-radius:999px;cursor:pointer;box-shadow:0 14px 34px -10px rgba(229,86,42,.55),0 6px 18px rgba(0,0,0,.45);transition:transform .2s var(--d2-ease),box-shadow .2s}
 .mk-fab:hover{transform:translateY(-2px)}.mk-fab:focus-visible{outline:3px solid var(--d2-a);outline-offset:3px}
 .mk-fab[aria-expanded="true"]{opacity:0;pointer-events:none}
 .mk-dot{width:9px;height:9px;border-radius:50%;background:var(--d2-ok);animation:d2pulse 1.8s infinite}

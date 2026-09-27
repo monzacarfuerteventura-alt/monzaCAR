@@ -10,7 +10,7 @@ export const EMPRESA = {
   calle: "Calle Valle Largo, Nave 8, Polígono Industrial",
   cp: "35610",
   localidad: "Antigua",
-  direccion: "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua, Las Palmas",
+  direccion: "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Costa de Antigua, Las Palmas",
   horario: "Lunes a viernes, de 8:00 a 16:00",
   mapa: "https://maps.app.goo.gl/dz8icDhkUkB4oznd8", // ficha de Volcano Cars en Google Maps
   mapaCid: "https://www.google.com/maps?cid=5551544135827693991",
@@ -79,7 +79,7 @@ ${extraHead}
 export function pie(waTxt = "Hola Volcano Cars, tengo una consulta: ") {
   return `</main>
 <footer class="pg-foot"><div class="wrap">
-  <div><img src="/marca/logo-claro.svg" alt="Volcano Cars" width="180" height="44" loading="lazy"><p>Coches de ocasión revisados con 12 meses de garantía legal, taller mecánico y chapa y pintura en Antigua, Fuerteventura.</p></div>
+  <div><img src="/marca/logo-claro.svg" alt="Volcano Cars" width="180" height="44" loading="lazy"><p>Coches de ocasión revisados con 12 meses de garantía legal, taller mecánico y chapa y pintura en Costa de Antigua, Fuerteventura.</p></div>
   <div><h4>Coches</h4><a href="/comprar">Coches disponibles</a><a href="/coches-segunda-mano-fuerteventura/">Segunda mano en Fuerteventura</a><a href="/financiacion-coches-fuerteventura/">Financiación</a><a href="/coches-vendidos">Coches vendidos y entregas</a></div>
   <div><h4>Taller</h4><a href="/taller-mecanico-fuerteventura/">Taller mecánico</a><a href="/chapa-y-pintura-fuerteventura/">Chapa y pintura</a><a href="/pre-itv-fuerteventura/">Pre-ITV</a><a href="/taller">Pedir cita</a></div>
   <div><h4>Visítanos</h4><a href="${EMPRESA.mapa}" target="_blank" rel="noopener">${escH(EMPRESA.calle)}<br>${EMPRESA.cp} ${EMPRESA.localidad}</a><a href="tel:${EMPRESA.telLink}">${EMPRESA.tel}</a><a href="/contacto">${escH(EMPRESA.horario)}</a></div>

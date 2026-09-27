@@ -16,7 +16,10 @@
 .ay-body{display:grid;gap:22px;min-width:0}
 .ay-mod{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;display:grid;gap:22px}
 .ay-mh{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
-.ay-mh>div{flex:1;min-width:0}
+.ay-mh>div{flex:1 1 200px;min-width:0}
+.ay-mh>.btn{flex:0 0 auto;margin-left:auto}
+.ay-mh h2{overflow-wrap:anywhere;hyphens:auto}
+@media (max-width:640px){.ay-mh{gap:10px}.ay-mh h2{font-size:clamp(20px,6.2vw,26px)}.ay-ico{width:44px;height:44px;font-size:22px}.ay-mh>.btn{flex:1 1 100%;width:100%;margin-left:0;justify-content:center;order:3}}
 .ay-mh small{color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:12px}
 .ay-mh h2{margin:0;font-family:var(--display);font-stretch:85%;text-transform:uppercase;font-size:28px;line-height:1.05}
 .ay-ico{width:54px;height:54px;border-radius:14px;background:var(--surface-2);display:grid;place-items:center;font-size:28px}

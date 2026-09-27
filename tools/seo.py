@@ -98,7 +98,7 @@ def pie(p):
 </div>
 </main>
 <footer class="pg-foot"><div class="wrap">
-  <div><img src="/marca/logo-claro.svg" alt="Volcano Cars" width="180" height="44" loading="lazy"><p>Coches de ocasión revisados con 12 meses de garantía legal, taller mecánico y chapa y pintura en Antigua, Fuerteventura.</p></div>
+  <div><img src="/marca/logo-claro.svg" alt="Volcano Cars" width="180" height="44" loading="lazy"><p>Coches de ocasión revisados con 12 meses de garantía legal, taller mecánico y chapa y pintura en Costa de Antigua, Fuerteventura.</p></div>
   <div><h4>Coches</h4><a href="/comprar">Coches disponibles</a><a href="/coches-segunda-mano-fuerteventura/">Segunda mano en Fuerteventura</a><a href="/financiacion-coches-fuerteventura/">Financiación</a><a href="/coches-vendidos">Coches vendidos y entregas</a></div>
   <div><h4>Taller</h4><a href="/taller-mecanico-fuerteventura/">Taller mecánico</a><a href="/chapa-y-pintura-fuerteventura/">Chapa y pintura</a><a href="/pre-itv-fuerteventura/">Pre-ITV</a><a href="/taller">Pedir cita</a></div>
   <div><h4>Visítanos</h4><a href="{MAPA}" target="_blank" rel="noopener">{e(CALLE)}<br>{CP} {LOC}</a><a href="tel:{TEL_LINK}">{TEL}</a><a href="/contacto">{HORARIO}</a></div>
@@ -152,10 +152,10 @@ PAGINAS.append(dict(
     url="/coches-segunda-mano-fuerteventura/", miga="Coches de segunda mano",
     title="Coches de segunda mano en Fuerteventura con 12 meses de garantía legal · Volcano Cars",
     og="Coches de segunda mano en Fuerteventura · Volcano Cars",
-    desc="Coches de segunda mano en Fuerteventura revisados en nuestro taller de Antigua, con 12 meses de garantía legal, financiación y entrega a domicilio gratis en toda la isla.",
+    desc="Coches de segunda mano en Fuerteventura revisados en nuestro taller de Costa de Antigua, con 12 meses de garantía legal, financiación y entrega a domicilio gratis en toda la isla.",
     eyebrow="Coches de ocasión en Fuerteventura",
     h1='Coches de segunda mano en Fuerteventura <span class="r">con 12 meses de garantía legal</span>',
-    lead="Cada coche que vendemos pasa antes por nuestro taller de Antigua. Precio final con impuestos, garantía de 12 meses, cambio de nombre incluido y te lo llevamos gratis a casa, de Corralejo a Morro Jable.",
+    lead="Cada coche que vendemos pasa antes por nuestro taller de Costa de Antigua. Precio final con impuestos, garantía de 12 meses, cambio de nombre incluido y te lo llevamos gratis a casa, de Corralejo a Morro Jable.",
     ctas=B_COCHES + B_WA("Hola Volcano Cars, busco un coche: ", "Dinos qué buscas") + B_TEL,
     sellos=["12 meses de garantía legal", "Revisados en nuestro taller", "Entrega gratis en la isla", "Financiación a tu medida"],
     wa="Hola Volcano Cars, busco un coche: ",
@@ -163,7 +163,7 @@ PAGINAS.append(dict(
   <!--STOCK-->
   <section class="sec"><h2>Por qué comprar tu coche aquí</h2>
     {tarjetas([("1", "Revisado por mecánicos", "No somos un escaparate: tenemos taller propio. Revisamos cada coche y te contamos qué se le ha hecho."),
-               ("12", "12 meses de garantía legal", "Garantía legal de 12 meses desde la entrega, con el taller a tu disposición en Antigua si notas cualquier fallo."),
+               ("12", "12 meses de garantía legal", "Garantía legal de 12 meses desde la entrega, con el taller a tu disposición en Costa de Antigua si notas cualquier fallo."),
                ("0 €", "Entrega a domicilio gratis", "Una vez firmada la compra, te lo llevamos sin coste a cualquier punto de Fuerteventura, el día que elijas."),
                ("€", "Precio final, sin sorpresas", "El precio publicado incluye impuestos. El cambio de nombre en Tráfico corre de nuestra cuenta."),
                ("%", "Financiación", "Calcula tu cuota en la ficha de cada coche y pide un pre-estudio gratis, sin compromiso."),
@@ -190,31 +190,31 @@ PAGINAS.append(dict(
   <section class="sec"><h2>Cómo es la compra</h2>
     {pasos([("Elige en la web", "Mira fotos, datos y precio final. Si quieres, calcula la cuota de financiación."),
             ("Reserva día y hora", "Elige cuándo venir a verlo y probarlo. Te lo tenemos preparado, sin compromiso."),
-            ("Firma en Antigua", "La compraventa se firma en nuestras instalaciones, con contrato por escrito y toda la documentación."),
+            ("Firma en Costa de Antigua", "La compraventa se firma en nuestras instalaciones, con contrato por escrito y toda la documentación."),
             ("Te lo llevamos gratis", "Lo recoges en el taller o te lo llevamos a casa en cualquier punto de la isla.")])}
   </section>
   <section class="sec"><h2>Entrega gratis en toda la isla</h2><p>Llevamos tu coche sin coste a cualquier municipio de Fuerteventura, por ejemplo:</p>
     <ul class="zonas">{''.join(f'<li><a href="/coches-segunda-mano-{LOCAL_SLUG[z]}">{z}</a></li>' if LOCAL_SLUG.get(z) in IDX_VENTA else f'<li>{z}</li>' for z in ZONAS)}</ul></section>""",
     faq=[("¿Los coches tienen garantía?", "Sí. Los coches que vendemos a particulares tienen 12 meses de garantía legal desde la entrega. Cubre los defectos que el coche ya tuviera al entregártelo; no cubre el desgaste normal por uso (pastillas, neumáticos, embrague, batería…). <a href='/condiciones'>Ver condiciones</a>."),
-         ("¿Puedo probar el coche antes de comprarlo?", "Claro. En la ficha de cada coche puedes elegir día y hora para venir a verlo y probarlo en Antigua. La visita no te obliga a nada."),
+         ("¿Puedo probar el coche antes de comprarlo?", "Claro. En la ficha de cada coche puedes elegir día y hora para venir a verlo y probarlo en Costa de Antigua. La visita no te obliga a nada."),
          ("¿Me lo lleváis a casa?", "Sí, una vez firmada la compra te lo llevamos gratis a cualquier punto de Fuerteventura, el día y a la hora que acordemos. También puedes recogerlo en el taller."),
          ("¿Se puede financiar?", "Sí. En cada coche tienes una calculadora con la cuota, la TAE y el ejemplo completo, y puedes pedir un pre-estudio sin compromiso. La financiación está sujeta a la aprobación de la entidad financiera. <a href='/financiacion-coches-fuerteventura/'>Cómo funciona</a>."),
          ("¿Qué documentación me dais?", "Permiso de circulación, ficha técnica con la ITV en vigor, las llaves y el historial que tengamos. Nos encargamos del cambio de titularidad en Tráfico."),
          ("¿Compráis coches usados?", "Ahora mismo no compramos coches: solo vendemos coches revisados en nuestro taller."),
          ("¿Atendéis en inglés?", "Sí, atendemos en español y en inglés. Toda la web está también en inglés: <a href='/en/'>English version</a>.")],
-    banda=("Ven a verlos a Antigua", B_COCHES + B_WA("Hola Volcano Cars, quiero ver un coche: ")),
+    banda=("Ven a verlos a Costa de Antigua", B_COCHES + B_WA("Hola Volcano Cars, quiero ver un coche: ")),
 ))
 
 # ---------------------------------------------------------------- taller mecánico
 LISTA_MEC = ["Cambio de aceite y filtros", "Frenos: pastillas y discos", "Neumáticos: cambio y alineado", "Diagnosis electrónica", "Pre-ITV", "Aire acondicionado", "Correa de distribución", "Batería y arranque"]
 PAGINAS.append(dict(
     url="/taller-mecanico-fuerteventura/", miga="Taller mecánico", servicio="Taller mecánico", lista=LISTA_MEC,
-    title="Taller mecánico en Antigua, Fuerteventura · Cita online · Volcano Cars",
-    og="Taller mecánico en Antigua, Fuerteventura · Volcano Cars",
-    desc="Taller mecánico en Antigua (Fuerteventura) para todas las marcas: aceite, frenos, diagnosis, distribución, aire acondicionado y pre-ITV. Presupuesto por escrito y cita online al momento.",
-    eyebrow="Taller mecánico en Antigua",
+    title="Taller mecánico en Costa de Antigua, Fuerteventura · Cita online · Volcano Cars",
+    og="Taller mecánico en Costa de Antigua, Fuerteventura · Volcano Cars",
+    desc="Taller mecánico en Costa de Antigua (Fuerteventura) para todas las marcas: aceite, frenos, diagnosis, distribución, aire acondicionado y pre-ITV. Presupuesto por escrito y cita online al momento.",
+    eyebrow="Taller mecánico en Costa de Antigua",
     h1='Taller mecánico en Fuerteventura, <span class="r">con cita al momento</span>',
-    lead="Mecánica rápida para todas las marcas en el polígono de Antigua, en el centro de la isla. Eliges el servicio, el día y la hora en la web y tu cita queda confirmada al momento. Presupuesto por escrito antes de empezar.",
+    lead="Mecánica rápida para todas las marcas en el polígono de Costa de Antigua, en el centro de la isla. Eliges el servicio, el día y la hora en la web y tu cita queda confirmada al momento. Presupuesto por escrito antes de empezar.",
     ctas=B_CITA + B_WA("Hola Volcano Cars, quiero pedir cita en el taller: ") + B_TEL,
     sellos=["Todas las marcas", "Presupuesto por escrito", "Seguimiento desde el móvil", "Atendemos en inglés"],
     wa="Hola Volcano Cars, quiero pedir cita en el taller: ",
@@ -250,10 +250,10 @@ PAGINAS.append(dict(
 LISTA_CHAPA = ["Golpes y abolladuras", "Pintura parcial o completa", "Arañazos y rozaduras", "Pulido y retoque"]
 PAGINAS.append(dict(
     url="/chapa-y-pintura-fuerteventura/", miga="Chapa y pintura", servicio="Chapa y pintura", lista=LISTA_CHAPA,
-    title="Chapa y pintura en Fuerteventura (Antigua) · Presupuesto por escrito · Volcano Cars",
+    title="Chapa y pintura en Fuerteventura (Costa de Antigua) · Presupuesto por escrito · Volcano Cars",
     og="Chapa y pintura en Fuerteventura · Volcano Cars",
-    desc="Taller de chapa y pintura en Antigua, Fuerteventura: golpes, abolladuras, arañazos y pintura parcial o completa. Presupuesto por escrito, fecha de entrega por escrito y cita online.",
-    eyebrow="Carrocería en Antigua",
+    desc="Taller de chapa y pintura en Costa de Antigua, Fuerteventura: golpes, abolladuras, arañazos y pintura parcial o completa. Presupuesto por escrito, fecha de entrega por escrito y cita online.",
+    eyebrow="Carrocería en Costa de Antigua",
     h1='Chapa y pintura en Fuerteventura, <span class="r">como el primer día</span>',
     lead="Reparamos golpes, abolladuras y arañazos y pintamos piezas sueltas o el coche entero. Mándanos fotos por WhatsApp para una primera orientación y te damos el presupuesto por escrito al ver el coche.",
     ctas=B_WA("Hola Volcano Cars, os mando fotos de un golpe para presupuesto: ", "Mandar fotos por WhatsApp") + B_CITA + B_TEL,
@@ -284,10 +284,10 @@ PAGINAS.append(dict(
     url="/pre-itv-fuerteventura/", miga="Pre-ITV", servicio="Pre-ITV", lista=["Revisión pre-ITV", "Reparación de defectos antes de la ITV"],
     title="Pre-ITV en Fuerteventura: deja tu coche listo para la ITV · Volcano Cars",
     og="Pre-ITV en Fuerteventura · Volcano Cars",
-    desc="Revisión pre-ITV en Antigua, Fuerteventura: revisamos tu coche antes de la inspección y reparamos lo necesario con presupuesto por escrito. Cita online al momento.",
-    eyebrow="Pre-ITV en Antigua",
+    desc="Revisión pre-ITV en Costa de Antigua, Fuerteventura: revisamos tu coche antes de la inspección y reparamos lo necesario con presupuesto por escrito. Cita online al momento.",
+    eyebrow="Pre-ITV en Costa de Antigua",
     h1='Pre-ITV: llega a la ITV <span class="r">con todo revisado</span>',
-    lead="Antes de ir a la estación de ITV, revisamos tu coche en nuestro taller de Antigua. Si algo no está bien, te damos presupuesto por escrito para dejarlo listo y te evitas la segunda visita.",
+    lead="Antes de ir a la estación de ITV, revisamos tu coche en nuestro taller de Costa de Antigua. Si algo no está bien, te damos presupuesto por escrito para dejarlo listo y te evitas la segunda visita.",
     ctas=B_CITA + B_WA("Hola Volcano Cars, quiero hacer la pre-ITV: ") + B_TEL,
     sellos=["Cita online al momento", "Presupuesto por escrito", "Todas las marcas"],
     wa="Hola Volcano Cars, quiero hacer la pre-ITV: ",
@@ -317,7 +317,7 @@ PAGINAS.append(dict(
     url="/financiacion-coches-fuerteventura/", miga="Financiación",
     title="Financiación de coches de segunda mano en Fuerteventura · Volcano Cars",
     og="Financia tu coche en Fuerteventura · Volcano Cars",
-    desc="Financia tu coche de segunda mano en Volcano Cars (Antigua, Fuerteventura): calcula la cuota de cada coche, pide un pre-estudio gratis y sin compromiso y te llamamos con la respuesta.",
+    desc="Financia tu coche de segunda mano en Volcano Cars (Costa de Antigua, Fuerteventura): calcula la cuota de cada coche, pide un pre-estudio gratis y sin compromiso y te llamamos con la respuesta.",
     eyebrow="Financiación",
     h1='Financia tu coche <span class="r">a tu medida</span>',
     lead='Elige entrada y plazo en la ficha de cada coche y verás al momento la cuota, la TAE y el precio total. Si te encaja, pide un pre-estudio gratis: lo tramitamos con la entidad financiera y te llamamos con la respuesta.',
@@ -329,7 +329,7 @@ PAGINAS.append(dict(
     {pasos([("Calcula tu cuota", "En la ficha de cada coche, mueve la entrada y elige el plazo. Verás la cuota, el TIN, la TAE y el importe total."),
             ("Pide el pre-estudio", "Con tu situación laboral y tus ingresos aproximados. No pedimos DNI ni nóminas por la web."),
             ("Te llamamos", "Estudiamos la operación con la entidad financiera y te llamamos con la respuesta y los documentos que hacen falta."),
-            ("Firmas y te lo llevas", "Firmas en Antigua y te llevamos el coche gratis a cualquier punto de Fuerteventura.")])}
+            ("Firmas y te lo llevas", "Firmas en Costa de Antigua y te llevamos el coche gratis a cualquier punto de Fuerteventura.")])}
   </section>
   <section class="sec"><h2>Documentos que suelen pedir</h2>
     {tarjetas([("ID", "DNI o NIE", "Por las dos caras y en vigor."),
@@ -352,11 +352,11 @@ RUTAS_LLEGAR = [  # distancias y tiempos APROXIMADOS por carretera hasta la nave
     ("La Oliva", 42, 35), ("Corralejo", 55, 45), ("Costa Calma", 60, 45), ("Morro Jable", 80, 65)]
 PAGINAS.append(dict(
     url="/contacto", miga="Contacto y cómo llegar", sin_zonas=True,
-    title="Contacto y cómo llegar · Volcano Cars, Polígono Industrial de Antigua (Fuerteventura)",
+    title="Contacto y cómo llegar · Volcano Cars, Polígono Industrial de Costa de Antigua (Fuerteventura)",
     og="Volcano Cars · Contacto y cómo llegar",
-    desc="Teléfono, WhatsApp, email, horario y cómo llegar a Volcano Cars: Calle Valle Largo, Nave 8, Polígono Industrial de Antigua, Fuerteventura. Lunes a viernes de 8:00 a 16:00.",
+    desc="Teléfono, WhatsApp, email, horario y cómo llegar a Volcano Cars: Calle Valle Largo, Nave 8, Polígono Industrial de Costa de Antigua, Fuerteventura. Lunes a viernes de 8:00 a 16:00.",
     eyebrow="Contacto",
-    h1='Volcano Cars, <span class="r">en el Polígono de Antigua</span>',
+    h1='Volcano Cars, <span class="r">en el Polígono de Costa de Antigua</span>',
     lead=f"Taller mecánico, chapa y pintura y venta de coches de ocasión en {e(DIRECCION)}. {HORARIO}, en horario continuado. Te atendemos en español y en inglés.",
     ctas=B_TEL + B_WA("Hola Volcano Cars, ") + f'<a class="btn b-ghost" href="{MAPA}" target="_blank" rel="noopener">Abrir en Google Maps</a>',
     sellos=["Cita online al momento", "WhatsApp", "Atendemos en inglés"],
@@ -371,7 +371,7 @@ PAGINAS.append(dict(
                ("ES·EN", "Idiomas", "Atendemos en español y en inglés.")])}
   </section>
   <section class="sec"><h2>Cómo llegar desde cada zona</h2>
-    <p>Estamos en la <b>Calle Valle Largo, Nave 8</b>, dentro del Polígono Industrial de Antigua. Tiempos aproximados en coche hasta la nave:</p>
+    <p>Estamos en la <b>Calle Valle Largo, Nave 8</b>, dentro del Polígono Industrial de Costa de Antigua. Tiempos aproximados en coche hasta la nave:</p>
     <div class="tabla-wrap"><table class="tabla"><thead><tr><th>Desde</th><th>Distancia</th><th>Tiempo</th></tr></thead><tbody>
     {''.join(f'<tr><td>{e(n)}</td><td>≈ {km} km</td><td>≈ {mi} min</td></tr>' for n, km, mi in RUTAS_LLEGAR)}
     </tbody></table></div>
@@ -387,7 +387,7 @@ PAGINAS.append(dict(
          ("¿Abrís los sábados?", f"No. Abrimos {HORARIO.lower()}, en horario continuado."),
          ("¿Se puede aparcar?", "Estamos en una nave del polígono industrial: al llegar, llámanos o escríbenos por WhatsApp y te indicamos dónde dejar el coche."),
          ("¿Habláis inglés?", "Sí, te atendemos en español y en inglés. <a href='/en/'>English version</a>.")],
-    banda=("Te esperamos en Antigua", B_CITA + B_WA("Hola Volcano Cars, ")),
+    banda=("Te esperamos en Costa de Antigua", B_CITA + B_WA("Hola Volcano Cars, ")),
 ))
 
 # ---------------------------------------------------------------- guía de la ITV en Fuerteventura (contenido útil que busca mucha gente de la isla)
@@ -400,7 +400,7 @@ PAGINAS.append(dict(
     h1='La ITV en Fuerteventura, <span class="r">sin sorpresas</span>',
     lead="Cada cuánto toca, qué revisan en la estación, los defectos que más suspenden en la isla y qué hacer si te la dan desfavorable. Explicado por mecánicos, sin letra pequeña.",
     ctas='<a class="btn b-rosso" href="/pre-itv-fuerteventura/">Reservar pre-ITV</a>' + B_WA("Hola Volcano Cars, tengo que pasar la ITV: ") + B_TEL,
-    sellos=["Actualizada en 2026", "Escrita por nuestro taller", "Pre-ITV en Antigua"],
+    sellos=["Actualizada en 2026", "Escrita por nuestro taller", "Pre-ITV en Costa de Antigua"],
     wa="Hola Volcano Cars, tengo que pasar la ITV: ",
     body=lambda: f"""
   <section class="sec"><h2>¿Cada cuánto hay que pasar la ITV?</h2>

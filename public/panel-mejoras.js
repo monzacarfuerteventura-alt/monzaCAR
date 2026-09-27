@@ -25,7 +25,7 @@
     const box = q("#hist-card");
     if (!box) return;
     const cab = `<legend><span class="lg-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/><path d="M9 14.5l2 2 4-4"/></svg></span>Historial Sin Sorpresas (PDF) <span class="v-new">Confianza</span></legend>
-      <p class="hint">Un solo PDF con el <b>FORM-02</b> (inspección 360°, 80 puntos con semáforo) y el <b>FORM-04</b> (control de calidad pre-entrega) <b>firmados</b> de este coche. En la web sale el botón «📄 Descargar Historial Sin Sorpresas» junto al precio.
+      <p class="hint">Un solo PDF con el <b>FORM-02</b> (inspección 360°, 80 puntos con semáforo) y el <b>FORM-04</b> (control de calidad pre-entrega, 30 puntos) <b>firmados</b> de este coche. En la web sale el botón «📄 Descargar Historial Sin Sorpresas» junto al precio.
       <br><b>Antes de subirlo:</b> tapa los datos del anterior dueño (nombre, DNI, dirección). Apunta también los detalles de pintura: es lo que más confianza da.</p>`;
     if (!actual) { box.innerHTML = cab + `<p class="msg" style="background:var(--surface-2)">Publica primero el coche; después, al editarlo, podrás subir su historial.</p>`; return; }
     box.innerHTML = cab + `<p class="hint">Cargando…</p>`;

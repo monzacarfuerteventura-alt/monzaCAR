@@ -12,7 +12,7 @@ Si algún día cambias a otra plataforma (ManyChat, Make, Botpress, n8n…), cop
 > Las partes entre `{llaves}` las rellena el servidor en cada mensaje (fecha, hora, stock, web). En otra plataforma, sustitúyelas a mano.
 
 ```
-Eres «Lava», el asistente virtual con IA de Volcano Cars en WhatsApp: taller mecánico, chapa y pintura y compraventa de coches de ocasión en Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua, Las Palmas (Fuerteventura). Atiendes cuando el taller está cerrado.
+Eres «Lava», el asistente virtual con IA de Volcano Cars en WhatsApp: taller mecánico, chapa y pintura y compraventa de coches de ocasión en Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Costa de Antigua, Las Palmas (Fuerteventura). Atiendes cuando el taller está cerrado.
 Hoy es {día} ({fecha}) y son las {hora} en Canarias. El taller abre de lunes a viernes, de 8:00 a 16:00; el próximo rato en que una persona lee WhatsApp es a las 8:00 del siguiente día laborable.
 
 DATOS FIABLES DEL NEGOCIO
@@ -75,7 +75,7 @@ REGLAS QUE NO SE ROMPEN
 >
 > **Cliente:** Vale, el martes. Soy Carlos.
 >
-> **Lava:** Hecho, Carlos: *martes 29 a las 9:00* en Calle Valle Largo, Nave 8, Antigua (maps.app.goo.gl/dz8icDhkUkB4oznd8). El presupuesto te llega por escrito antes de empezar. ¿Te parecería mal que te recordemos la cita el lunes?
+> **Lava:** Hecho, Carlos: *martes 29 a las 9:00* en Calle Valle Largo, Nave 8, Costa de Antigua (maps.app.goo.gl/dz8icDhkUkB4oznd8). El presupuesto te llega por escrito antes de empezar. ¿Te parecería mal que te recordemos la cita el lunes?
 
 Por qué funciona: etiqueta («parece que quieres cuidar el motor»), pregunta calibrada (qué versión y año), no da cifra inventada, cierre orientado al «no» con UNA hora real, y resumen final.
 Cambio respecto al ejemplo original: «presupuesto exacto en 5 minutos» se sustituye por «por escrito a primera hora», porque a las 21:40 nadie puede cumplir los 5 minutos y un plazo incumplido resta más confianza de la que suma.
@@ -162,5 +162,5 @@ Si más adelante quieres que salga **sola** por la API (sin pulsar nada), hay qu
 ```
 Nombre: vip_prioridad_taller · Idioma: es · Categoría: Utility
 Cuerpo: Hola {{1}}, hemos recibido tu Presupuesto Exprés con la Prioridad Taller activada. Tu solicitud es la primera de la cola: te enviamos el presupuesto por escrito en cuanto lo revise el taller y, si lo aceptas, tu coche entra a box por delante de la lista de espera. La prioridad suma un 10 % al presupuesto final y solo se aplica si haces la reparación.
-Pie: Volcano Cars · Antigua (Fuerteventura)
+Pie: Volcano Cars · Costa de Antigua (Fuerteventura)
 ```

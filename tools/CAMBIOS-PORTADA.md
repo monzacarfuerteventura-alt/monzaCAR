@@ -11,7 +11,7 @@ Estos cambios ya están aplicados en el paquete. El código completo, línea a l
 5. Vendidos recientemente. Solo aparece si hay coches vendidos en los últimos 2 meses; es prueba social y se ha quedado donde estaba.
 6. Nuestro taller: chapa y pintura y mecánica rápida.
 7. Cifras: 12 meses, +40 puntos, 8–16 h, 0 €.
-8. Ven a vernos a Antigua.
+8. Ven a vernos a Costa de Antigua.
 9. **Reseñas de Google Maps**, justo antes del pie, como cierre de prueba social.
 
 **Eliminado:** el bloque «Coches disponibles · Recién llegados» (`#home-sec` / `#home-grid`) y su código:

@@ -93,6 +93,9 @@
   #j-print .jp-firmas{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:26px}
   #j-print .jp-firmas span{display:block;height:48px;border-bottom:1px solid #111;margin-bottom:4px}
   #j-print .jp-gen{color:#666}
+  @page cartel{size:A4;margin:0}
+  body.print-jornada #j-print:has(.vcp){page:cartel;padding:0;margin:0}
+  #j-print .vcp{break-inside:avoid}
   #j-print .jp-cartel{text-align:center;padding-top:10mm}
   #j-print .jp-cartel h1{font-size:54pt;margin:4mm 0}
   #j-print .jp-cartel p{font-size:15pt}

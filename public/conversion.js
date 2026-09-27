@@ -26,7 +26,7 @@
   const LOC = EN ? "en-GB" : "es-ES";
   const EMP = typeof EMPRESA !== "undefined" ? EMPRESA : {
     telefono: "643 56 60 98", telefonoLlamar: "+34643566098", whatsapp: "34643566098", email: "volcanocars2026@gmail.com",
-    direccion: "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Antigua, Las Palmas", mapaEnlace: "https://maps.app.goo.gl/dz8icDhkUkB4oznd8",
+    direccion: "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Costa de Antigua, Las Palmas", mapaEnlace: "https://maps.app.goo.gl/dz8icDhkUkB4oznd8",
   };
   const $ = (s, r = document) => r.querySelector(s);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -90,8 +90,8 @@
     confirmacion(r, enlace) {
       const n = r.nombre.split(" ")[0];
       const cuando = r.entrega ? L(` Te lo llevamos gratis a ${r.entrega.municipio} el ${fechaLarga(r.entrega.fecha)} por la ${r.entrega.franja.toLowerCase()}; te llamamos para confirmar la hora.`, ` We'll bring it to you in ${r.entrega.municipio} on ${fechaLarga(r.entrega.fecha)} (${r.entrega.franja === "Mañana" ? "morning" : "afternoon"}), free of charge; we'll call you to confirm the time.`)
-        : r.cita ? L(` Nos vemos el ${fechaLarga(r.cita.fecha)} a las ${r.cita.hora} en nuestra exposición de Antigua para probarlo.`, ` See you on ${fechaLarga(r.cita.fecha)} at ${r.cita.hora} at our showroom in Antigua to test drive it.`)
-        : L(" Ven a probarlo a nuestra exposición de Antigua cuando te venga bien.", " Come and test drive it at our showroom in Antigua whenever suits you.");
+        : r.cita ? L(` Nos vemos el ${fechaLarga(r.cita.fecha)} a las ${r.cita.hora} en nuestra exposición de Costa de Antigua para probarlo.`, ` See you on ${fechaLarga(r.cita.fecha)} at ${r.cita.hora} at our showroom in Costa de Antigua to test drive it.`)
+        : L(" Ven a probarlo a nuestra exposición de Costa de Antigua cuando te venga bien.", " Come and test drive it at our showroom in Costa de Antigua whenever suits you.");
       return L(`¡Enhorabuena, ${n}! Tu ${r.coche.titulo} ha sido bloqueado con éxito en Volcano Cars. Tienes 48 horas de reserva exclusiva.${cuando} Tu comprobante: ${enlace}`,
         `Congratulations, ${n}! Your ${r.coche.titulo} has been successfully reserved at Volcano Cars. You have 48 hours of exclusive reservation.${cuando} Your receipt: ${enlace}`);
     },

@@ -11,6 +11,32 @@
   status = 301
   force = true
 
+# Una sola versión del dominio (checklist de lanzamiento, 27-09-2026): www y http → https://volcanocars.com
+[[redirects]]
+  from = "https://www.volcanocars.com/*"
+  to = "https://volcanocars.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.volcanocars.com/*"
+  to = "https://volcanocars.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://volcanocars.com/*"
+  to = "https://volcanocars.com/:splat"
+  status = 301
+  force = true
+
+# Direcciones antiguas con .html → dirección limpia (301)
+[[redirects]]
+  from = "/index.html"
+  to = "/"
+  status = 301
+  force = true
+
 # Secciones de la web con dirección propia (se generan con tools/build-en.py)
 [[redirects]]
   from = "/comprar"
@@ -140,3 +166,20 @@
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
     Cache-Control = "public, max-age=604800"
+
+# Caché (checklist de lanzamiento, 27-09-2026): fuentes, logos y fotos fijas de los coches se guardan en el
+# navegador; las páginas y los scripts siguen revalidándose en cada visita (Netlify usa ETag).
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/marca/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/coches/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, stale-while-revalidate=86400"

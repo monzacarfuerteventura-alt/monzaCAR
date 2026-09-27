@@ -2,6 +2,7 @@ import type { Config, Context } from "@netlify/functions";
 import { createHash } from "node:crypto";
 import { store, json, isAdmin, mismoOrigen } from "../lib/shared.mts";
 import { FOTOS_CLIENTE, esFotoCliente } from "../lib/solicitud.mts";
+import { permiso, esRespuesta } from "../lib/acceso.mts";
 
 /*
   FOTOS DEL CLIENTE · «Presupuesto por foto» del taller
@@ -29,7 +30,7 @@ export default async (req: Request, context: Context) => {
   const s = store(FOTOS_CLIENTE);
 
   if (req.method === "GET" && key) {
-    if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
+    { const _q = await permiso(req, "equipo"); if (esRespuesta(_q)) return _q; }
     if (!esFotoCliente(key)) return new Response("No encontrada", { status: 404 });
     const data = await s.get(key, { type: "arrayBuffer" });
     if (!data) return new Response("No encontrada", { status: 404 });

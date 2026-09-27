@@ -221,8 +221,8 @@ export function msgVuelveDisponible(e: { nombre: string; idioma?: string }, titu
 export function msgConfirmacion(r: Reserva, enlace: string) {
   const n = r.nombre.split(" ")[0], en = r.idioma === "en";
   const cuando = r.entrega ? (en ? ` We'll bring it to you in ${r.entrega.municipio} on ${fechaLarga(r.entrega.fecha, true)} (${r.entrega.franja === "Mañana" ? "morning" : "afternoon"}), free of charge; we'll call you to confirm the time.` : ` Te lo llevamos gratis a ${r.entrega.municipio} el ${fechaLarga(r.entrega.fecha)} por la ${r.entrega.franja.toLowerCase()}; te llamamos para confirmar la hora.`)
-    : r.cita ? (en ? ` See you on ${fechaLarga(r.cita.fecha, true)} at ${r.cita.hora} at our showroom in Antigua to test drive it.` : ` Nos vemos el ${fechaLarga(r.cita.fecha)} a las ${r.cita.hora} en nuestra exposición de Antigua para probarlo.`)
-    : (en ? " Come and test drive it at our showroom in Antigua whenever suits you." : " Ven a probarlo a nuestra exposición de Antigua cuando te venga bien.");
+    : r.cita ? (en ? ` See you on ${fechaLarga(r.cita.fecha, true)} at ${r.cita.hora} at our showroom in Costa de Antigua to test drive it.` : ` Nos vemos el ${fechaLarga(r.cita.fecha)} a las ${r.cita.hora} en nuestra exposición de Costa de Antigua para probarlo.`)
+    : (en ? " Come and test drive it at our showroom in Costa de Antigua whenever suits you." : " Ven a probarlo a nuestra exposición de Costa de Antigua cuando te venga bien.");
   return en
     ? `Congratulations, ${n}! Your ${r.coche.titulo} has been successfully reserved at Volcano Cars. You have ${HORAS_RESERVA} hours of exclusive reservation.${cuando} Your receipt: ${enlace}`
     : `¡Enhorabuena, ${n}! Tu ${r.coche.titulo} ha sido bloqueado con éxito en Volcano Cars. Tienes ${HORAS_RESERVA} horas de reserva exclusiva.${cuando} Tu comprobante: ${enlace}`;

@@ -116,7 +116,7 @@ function alPedido(){
 }
 function alTextoPedido(prov){
   const l=AL.piezas.filter(p=>p.stock<=p.minimo&&(p.proveedor||"Sin proveedor")===prov);
-  return `Hola, somos Volcano Cars (Antigua, Fuerteventura). Queremos pedir:\n${l.map(p=>`- ${alN(AL_PED[p.id]??alSugerido(p))} ${p.unidad} · ${p.nombre}${p.ref?" (ref. "+p.ref+")":""}`).join("\n")}\n¿Nos confirmas precio y plazo? Gracias.`;
+  return `Hola, somos Volcano Cars (Costa de Antigua, Fuerteventura). Queremos pedir:\n${l.map(p=>`- ${alN(AL_PED[p.id]??alSugerido(p))} ${p.unidad} · ${p.nombre}${p.ref?" (ref. "+p.ref+")":""}`).join("\n")}\n¿Nos confirmas precio y plazo? Gracias.`;
 }
 function alMovimientos(){
   if(!AL_MOVS){ alCargarMovs(); return '<div class="empty">Cargando movimientos…</div>'; }

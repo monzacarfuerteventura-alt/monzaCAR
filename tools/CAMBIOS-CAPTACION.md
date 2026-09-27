@@ -19,7 +19,7 @@ Lo nuevo va en archivos propios y en añadidos pequeños y marcados. Si se quita
 
 ## Cómo se usa cada cosa
 
-**Alertas por pueblo.** El cliente elige pueblo (Morro Jable, Tuineje, Antigua, Puerto del Rosario, La Oliva, Pájara u otro), presupuesto y tipo de coche (opcional; se rellena solo con lo que tenía en el buscador), nombre y WhatsApp, y marca la casilla de avisos (nunca va marcada de serie). Llega al CRM como **Alerta** (filtro «Alertas de coches»), por email y por Telegram, con dos plantillas de WhatsApp: «🔔 Confirmar alta en avisos» y «🚗 Aviso: coche nuevo».
+**Alertas por pueblo.** El cliente elige pueblo (Morro Jable, Tuineje, Costa de Antigua, Puerto del Rosario, La Oliva, Pájara u otro), presupuesto y tipo de coche (opcional; se rellena solo con lo que tenía en el buscador), nombre y WhatsApp, y marca la casilla de avisos (nunca va marcada de serie). Llega al CRM como **Alerta** (filtro «Alertas de coches»), por email y por Telegram, con dos plantillas de WhatsApp: «🔔 Confirmar alta en avisos» y «🚗 Aviso: coche nuevo».
 Al terminar, la web le ofrece **Guardar contacto** (.vcf): WhatsApp solo entrega las listas de difusión a quien tiene vuestro número guardado.
 Cuando entra un coche: Panel → Coches → Añadir → rellena marca, modelo, año, km y precio → abajo, **Alertas que encajan** te enseña quién encaja (presupuesto hasta un 10 % por encima y mismo cambio) con el botón **WhatsApp** ya escrito. Mándalo **antes de pulsar «Publicar coche»**: es lo que promete la web. Cada aviso queda anotado en el CRM.
 Si alguien responde **BAJA**, dale de baja (si tenéis el agente de WhatsApp lo hace solo: queda «Perdida · Baja de avisos»).

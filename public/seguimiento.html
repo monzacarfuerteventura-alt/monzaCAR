@@ -258,7 +258,7 @@ function pintar(){
   if(d.mensaje) h+=`<section class="card"><h2 class="sec-t">${L("Mensaje del taller","Message from the workshop")}</h2><p class="msg" style="margin:0">${esc(d.mensaje)}</p></section>`;
   if(d.fotos&&d.fotos.length) h+=`<section class="card"><h2 class="sec-t">${L("Fotos de tu coche","Photos of your car")}</h2><div class="fotos">${d.fotos.map((f,i)=>`<button type="button" data-f="${i}"><img src="/api/fotos/${encodeURIComponent(f.k)}" alt="${esc(f.txt)}" loading="lazy">${f.txt?`<span>${esc(f.txt)}</span>`:""}</button>`).join("")}</div></section>`;
   h+=`<section class="card"><h2 class="sec-t">${L("¿Alguna duda?","Any questions?")}</h2><div class="btns"><a class="btn b-wa" href="https://wa.me/${WA}?text=${wtxt}" target="_blank" rel="noopener">WhatsApp</a><a class="btn b-ink" href="tel:${TEL}">${L("Llamar","Call")}</a></div></section>
-  <p class="foot">Volcano Cars · Calle Valle Largo, Nave 8, Antigua · ${L("Esta página se actualiza sola.","This page updates automatically.")}<br>${L("Última actualización","Last update")}: ${esc(cuando(d.actualizado))}</p>`;
+  <p class="foot">Volcano Cars · Calle Valle Largo, Nave 8, Costa de Antigua · ${L("Esta página se actualiza sola.","This page updates automatically.")}<br>${L("Última actualización","Last update")}: ${esc(cuando(d.actualizado))}</p>`;
   $("#app").innerHTML=h;
 }
 document.addEventListener("click",async e=>{

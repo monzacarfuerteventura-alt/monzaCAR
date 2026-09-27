@@ -1,5 +1,6 @@
 import type { Config } from "@netlify/functions";
 import { store, json, isAdmin, mismoOrigen } from "../lib/shared.mts";
+import { permiso, esRespuesta } from "../lib/acceso.mts";
 
 /*
   FINANCIACIÓN (calculadora de cuotas de la web)
@@ -75,7 +76,7 @@ export default async (req: Request) => {
   }
   if (req.method !== "PUT") return json({ error: "Método no permitido" }, 405);
   if (!mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
-  if (!(await isAdmin(req))) return json({ error: "No autorizado" }, 401);
+  { const _q = await permiso(req, "gerente"); if (esRespuesta(_q)) return _q; }
   const input = await req.json().catch(() => null);
   if (!input || typeof input !== "object") return json({ error: "Datos no válidos." }, 400);
   const f = limpiarFin(input);

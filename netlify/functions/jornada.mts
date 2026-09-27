@@ -30,7 +30,7 @@ export default async (req: Request, context: Context) => {
   const url = new URL(req.url), p = url.pathname.split("/").filter(Boolean), r = p[2] || "";
   if (req.method !== "GET" && !mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
   const q = await quien(req);
-  if (!q) return json({ error: "No autorizado" }, 401);
+  if (!q) return json({ error: "Tu sesión ha caducado. Vuelve a entrar." }, 401);
   const body = req.method === "GET" ? {} : ((await req.json().catch(() => ({}))) as any);
   const ctx = { ip: context.ip || "", ua: req.headers.get("user-agent") || "", via: "boton" };
   const equipo = await leerEquipo();
