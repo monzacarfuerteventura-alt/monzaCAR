@@ -79,3 +79,29 @@ window.VC_MED = {
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", poner);
   else poner();
 })();
+/* Botón "Reservar este coche" (señal 50 €, Stripe) */
+(function () {
+  var URL_SENAL = "https://buy.stripe.com/5kQcN68IJ67N1ZWeno0x201";
+  var p = location.pathname;
+  if (p.indexOf("/coches/") !== 0 || p.replace(/\/+$/, "") === "/coches") return;
+  function poner() {
+    if (document.getElementById("vc-reservar")) return;
+    var h = document.querySelector("main h1") || document.querySelector("h1");
+    if (!h) return;
+    var ref = p.replace(/^\/coches\//, "").replace(/[^A-Za-z0-9_-]/g, "-").slice(0, 190);
+    var a = document.createElement("a");
+    a.id = "vc-reservar";
+    a.href = URL_SENAL + "?client_reference_id=" + encodeURIComponent(ref);
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.textContent = "🔒 Reservar este coche con 50 € de señal";
+    a.style.cssText = "display:inline-block;margin:12px 0;padding:12px 20px;background:#e8501f;color:#fff;border-radius:8px;font-weight:700;text-decoration:none";
+    var nota = document.createElement("div");
+    nota.textContent = "La señal se descuenta del precio final. Pago seguro con tarjeta, Apple Pay o Google Pay.";
+    nota.style.cssText = "font-size:13px;opacity:.75;margin-bottom:12px";
+    h.insertAdjacentElement("afterend", nota);
+    h.insertAdjacentElement("afterend", a);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", poner);
+  else poner();
+})();
