@@ -72,17 +72,21 @@ async function confirmar(token: string, sesion: any, origen: string) {
   const t = new Date().toISOString();
   const importe = Math.round(Number(sesion.amount_total || 0)) / 100;
   const nombre = str(p.pago?.nombre || sesion.customer_details?.name || o.cliente?.nombre, 80);
+  // Si el presupuesto se cambió en el panel después de que el cliente abriera el pago, el importe cobrado
+  // ya no coincide: se acepta el pago (el dinero ya está cobrado) pero se avisa para cobrar o devolver la diferencia.
+  const esperado = totales(p).total, diferencia = Math.round((importe - esperado) * 100) / 100;
+  const avisoDif = Math.abs(diferencia) >= 0.01 ? `OJO: el presupuesto actual es de ${eur(esperado)} y se han cobrado ${eur(importe)} (diferencia ${eur(diferencia)}). Revisa y cobra o devuelve la diferencia.` : "";
   p.estado = "aceptado";
   p.respuesta = { t, nombre, comentario: str(p.pago?.comentario, 800) };
   p.pago = { estado: "pagado", importe, sesion: sesion.id, pi: String(sesion.payment_intent || ""), t, nombre, comentario: p.pago?.comentario || "" };
-  o.pasos.push({ estado: "presupuesto-aceptado", t, nota: `Pagado con tarjeta: ${eur(importe)}` });
+  o.pasos.push({ estado: "presupuesto-aceptado", t, nota: `Pagado con tarjeta: ${eur(importe)}` + (avisoDif ? " · " + avisoDif : "") });
   if (PREVIOS.includes(o.estado)) { o.estado = "reparacion"; o.pasos.push({ estado: "reparacion", t, nota: "" }); }
   o.actualizado = t;
   await s.setJSON("o/" + token, o);
   await anotarEnLead(o.lead, { estado: "ganada", importe }, { tipo: "presupuesto", txt: `Presupuesto aprobado y PAGADO por el cliente (${eur(importe)})` }).catch(() => {});
   await enviarAviso(`Presupuesto PAGADO: ${o.cliente.nombre} · ${eur(importe)}`, [
     ["Cliente", o.cliente.nombre], ["Teléfono", o.cliente.telefono], ["Coche", [o.vehiculo.coche, o.vehiculo.matricula].filter(Boolean).join(" · ")],
-    ["Pagado", eur(importe)], ["Firmado como", nombre], ["Comentario", p.respuesta.comentario], ["Estado", "Pasa a «En reparación»"],
+    ["Pagado", eur(importe)], ["Firmado como", nombre], ["Comentario", p.respuesta.comentario], ["Estado", "Pasa a «En reparación»"], ...(avisoDif ? [["Importe distinto", avisoDif] as [string, string]] : []),
   ], [
     { txt: "WhatsApp al cliente", url: `https://wa.me/${waNum(o.cliente.telefono)}`, color: "#1F8B4C" },
     { txt: "Abrir la orden", url: `${origen}/admin#ordenes` },
@@ -174,4 +178,6 @@ export default async (req: Request) => {
 
 export const config: Config = {
   path: ["/api/seguimiento/:token/pagar", "/api/seguimiento/:token/pago", "/api/stripe/webhook"],
+  // Sin límite, alguien podía crear cientos de pagos en Stripe seguidos con un enlace de seguimiento
+  rateLimit: { windowLimit: 30, windowSize: 60, aggregateBy: ["ip", "domain"] },
 };

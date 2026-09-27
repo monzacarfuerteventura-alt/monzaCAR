@@ -1,5 +1,5 @@
 import type { Config } from "@netlify/functions";
-import { store, json, isAdmin, enviarAviso, waNum, mismoOrigen } from "../lib/shared.mts";
+import { store, json, isAdmin, enviarAviso, waNum, mismoOrigen, esVideo, borrarVideo } from "../lib/shared.mts";
 import { quien } from "../lib/taller.mts";
 import { exigirJornada } from "../lib/jornada.mts";
 
@@ -31,9 +31,12 @@ type Orden = {
   vehiculo: { coche: string; matricula: string; km: string };
   estado: Paso; pasos: { estado: string; t: string; nota: string }[];
   entrega: string; fotos: { k: string; txt: string; t: string }[];
+  // Vídeos explicativos del mecánico (30-90 s): «esto es lo que le pasa a tu coche». Se ven en el enlace del cliente.
+  videos?: VideoOrden[];
   mensaje: string; interno: string; presupuesto: Presupuesto | null;
 };
 
+type VideoOrden = { key: string; poster: string; txt: string; dur: number; t: string; visto?: string };
 const str = (v: unknown, max = 200) => String(v ?? "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").trim().slice(0, max);
 const fechaISO = (v: unknown) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v ?? "")) ? String(v) : "");
 const num = (v: unknown) => { const n = typeof v === "number" ? v : Number(String(v ?? "").replace(/\s/g, "").replace(/\.(?=\d{3}(\D|$))/g, "").replace(",", ".")); return Number.isFinite(n) ? Math.round(n * 100) / 100 : 0; };
@@ -67,7 +70,7 @@ function publica(o: Orden) {
   return {
     token: o.token, nombre: o.cliente.nombre.split(" ")[0], idioma: o.cliente.idioma,
     vehiculo: o.vehiculo, estado: o.estado, pasos: o.pasos.map(({ estado, t, nota }) => ({ estado, t, nota })),
-    entrega: o.entrega, fotos: o.fotos, mensaje: o.mensaje, actualizado: o.actualizado,
+    entrega: o.entrega, fotos: o.fotos, videos: (o.videos || []).map(({ key, poster, txt, dur, t }) => ({ key, poster, txt, dur, t })), mensaje: o.mensaje, actualizado: o.actualizado,
     presupuesto: p ? { lineas: p.lineas, igic: p.igic, nota: p.nota, validez: p.validez, estado: p.estado, respuesta: p.respuesta ? { t: p.respuesta.t, nombre: p.respuesta.nombre } : null, base: totales(p).base, igicImporte: totales(p).igic, total: totales(p).total, pagado: p.pago?.estado === "pagado" ? { importe: p.pago.importe, t: p.pago.t } : null, pagoPendiente: p.pago?.estado === "pendiente" } : null,
   };
 }
@@ -95,6 +98,14 @@ export default async (req: Request) => {
     const o = (await s.get("o/" + token, { type: "json" })) as Orden | null;
     if (!o) return json({ error: "Enlace no válido o caducado" }, 404);
     if (req.method === "GET" && !partes[3]) return json(publica(o));
+    // El cliente ha reproducido un vídeo: se apunta la primera vez (el panel enseña «Visto por el cliente»)
+    if (req.method === "POST" && partes[3] === "video-visto") {
+      if (!mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
+      const key = str(((await req.json().catch(() => ({}))) as any).key, 60);
+      const v = (o.videos || []).find((x) => x.key === key);
+      if (v && !v.visto) { v.visto = new Date().toISOString(); await s.setJSON("o/" + token, o); }
+      return json({ ok: true });
+    }
     if (req.method === "POST" && partes[3] === "respuesta") {
       if (!mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
       const input = (await req.json().catch(() => ({}))) as any;
@@ -184,6 +195,20 @@ export default async (req: Request) => {
     if (input.interno !== undefined) o.interno = str(input.interno, 3000);
     if (input.cliente && typeof input.cliente === "object") for (const k of ["nombre", "telefono", "email"] as const) if (input.cliente[k] !== undefined) o.cliente[k] = str(input.cliente[k], 120);
     if (input.vehiculo && typeof input.vehiculo === "object") for (const k of ["coche", "matricula", "km"] as const) if (input.vehiculo[k] !== undefined) o.vehiculo[k] = str(input.vehiculo[k], 120);
+    if (Array.isArray(input.videos)) {
+      const antes = o.videos || [];
+      const nuevos: VideoOrden[] = input.videos.map((v: any) => {
+        const prev = antes.find((a) => a.key === v?.key);
+        const dur = Number(v?.dur);
+        return { key: str(v?.key, 60), poster: esFoto(str(v?.poster, 60)) ? str(v?.poster, 60) : "", txt: str(v?.txt, 200),
+          dur: Number.isFinite(dur) && dur > 0 ? Math.min(Math.round(dur * 10) / 10, 600) : 0, t: prev?.t || str(v?.t, 30) || t, ...(prev?.visto ? { visto: prev.visto } : {}) };
+      }).filter((v: VideoOrden) => esVideo(v.key)).slice(0, 5);
+      // los que se quitan de la orden se borran de verdad (no quedan vídeos sueltos ocupando espacio)
+      for (const v of antes) if (!nuevos.some((n) => n.key === v.key)) await borrarVideo({ key: v.key, poster: v.poster }).catch(() => {});
+      const anadidos = nuevos.filter((n) => !antes.some((a) => a.key === n.key));
+      if (anadidos.length) o.pasos.push({ estado: "video", t, nota: anadidos[0].txt || "" });
+      o.videos = nuevos;
+    }
     if (Array.isArray(input.fotos)) o.fotos = input.fotos.map((f: any) => ({ k: str(f?.k, 60), txt: str(f?.txt, 160), t: str(f?.t, 30) || t })).filter((f: any) => esFoto(f.k)).slice(0, 40);
     if (input.presupuesto && typeof input.presupuesto === "object") {
       if (o.presupuesto && ["aceptado"].includes(o.presupuesto.estado) && !input.presupuesto.reabrir) return json({ error: "El cliente ya aceptó este presupuesto. Para cambiarlo, reábrelo." }, 409);
@@ -202,6 +227,7 @@ export default async (req: Request) => {
   }
 
   if (req.method === "DELETE") {
+    for (const v of o.videos || []) await borrarVideo({ key: v.key, poster: v.poster }).catch(() => {});
     await s.delete("o/" + token);
     return json({ ok: true });
   }
@@ -209,6 +235,6 @@ export default async (req: Request) => {
 };
 
 export const config: Config = {
-  path: ["/api/ordenes", "/api/ordenes/:token", "/api/seguimiento/:token", "/api/seguimiento/:token/respuesta"],
+  path: ["/api/ordenes", "/api/ordenes/:token", "/api/seguimiento/:token", "/api/seguimiento/:token/respuesta", "/api/seguimiento/:token/video-visto"],
   rateLimit: { windowLimit: 60, windowSize: 60, aggregateBy: ["ip", "domain"] },
 };

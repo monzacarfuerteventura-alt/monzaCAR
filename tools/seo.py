@@ -19,7 +19,7 @@ wa = lambda t: f"https://wa.me/{WA}?text={quote(t)}"
 
 NEGOCIO = {"@type": ["AutoDealer", "AutoRepair", "AutoBodyShop"], "@id": BASE + "/#negocio", "name": "Volcano Cars", "legalName": "MAILIN Y YERAY SL", "taxID": "B93975647", "url": BASE + "/",
            "sameAs": ["https://www.google.com/maps?cid=5551544135827693991", "https://www.instagram.com/volcanocars_antigua/", "https://www.facebook.com/share/1KYczmU7be/"],  # añade aquí Facebook, Instagram… cuando existan
-           "telephone": "+34643566098", "email": "volcanocars2026@gmail.com", "image": BASE + "/coches/opel-astra-2010/anuncio.jpg",
+           "telephone": "+34643566098", "email": "volcanocars2026@gmail.com", "image": BASE + "/og-volcano-cars.jpg",
            "logo": BASE + "/marca/logo-oscuro.svg", "priceRange": "€€",
            "address": {"@type": "PostalAddress", "streetAddress": CALLE, "postalCode": CP, "addressLocality": LOC, "addressRegion": "Las Palmas", "addressCountry": "ES"},
            "hasMap": "https://www.google.com/maps?cid=5551544135827693991", "geo": {"@type": "GeoCoordinates", "latitude": 28.420871, "longitude": -13.8621004},
@@ -53,7 +53,7 @@ def cabecera(p):
 <meta property="og:title" content="{e(p['og'])}">
 <meta property="og:description" content="{e(p['desc'])}">
 <meta property="og:url" content="{BASE}{p['url']}">
-<meta property="og:image" content="{BASE}/coches/opel-astra-2010/anuncio.jpg">
+<meta property="og:image" content="{BASE}/og-volcano-cars.jpg">
 <script type="application/ld+json">{ldj}</script>
 <script src="/medicion.js" defer></script>
 </head>
@@ -99,7 +99,7 @@ def pie(p):
 </main>
 <footer class="pg-foot"><div class="wrap">
   <div><img src="/marca/logo-claro.svg" alt="Volcano Cars" width="180" height="44" loading="lazy"><p>Coches de ocasión revisados con 12 meses de garantía legal, taller mecánico y chapa y pintura en Antigua, Fuerteventura.</p></div>
-  <div><h4>Coches</h4><a href="/comprar">Coches disponibles</a><a href="/coches-segunda-mano-fuerteventura/">Segunda mano en Fuerteventura</a><a href="/financiacion-coches-fuerteventura/">Financiación</a></div>
+  <div><h4>Coches</h4><a href="/comprar">Coches disponibles</a><a href="/coches-segunda-mano-fuerteventura/">Segunda mano en Fuerteventura</a><a href="/financiacion-coches-fuerteventura/">Financiación</a><a href="/coches-vendidos">Coches vendidos y entregas</a></div>
   <div><h4>Taller</h4><a href="/taller-mecanico-fuerteventura/">Taller mecánico</a><a href="/chapa-y-pintura-fuerteventura/">Chapa y pintura</a><a href="/pre-itv-fuerteventura/">Pre-ITV</a><a href="/taller">Pedir cita</a></div>
   <div><h4>Visítanos</h4><a href="{MAPA}" target="_blank" rel="noopener">{e(CALLE)}<br>{CP} {LOC}</a><a href="tel:{TEL_LINK}">{TEL}</a><a href="/contacto">{HORARIO}</a></div>
   <div class="pg-legal"><span>© {datetime.date.today().year} Volcano Cars</span><a href="/aviso-legal">Aviso legal</a><a href="/condiciones">Condiciones y garantía</a><a href="/privacidad">Privacidad</a><a href="/cookies">Cookies</a><a href="/cookies" data-ck-open>Configurar cookies</a><a href="https://www.instagram.com/volcanocars_antigua/" target="_blank" rel="noopener me">Instagram</a><a href="https://www.facebook.com/share/1KYczmU7be/" target="_blank" rel="noopener me">Facebook</a><a href="/en/">English</a></div>

@@ -29,7 +29,8 @@ export default async (req: Request) => {
     `<url><loc>${o}/</loc>${alt}<lastmod>${home}</lastmod></url>`,
     `<url><loc>${o}/en/</loc>${alt}<lastmod>${home}</lastmod></url>`,
     ...PAGINAS.map((p) => `<url><loc>${o}${p}</loc><lastmod>${p.startsWith("/coches") ? home : HOY_WEB}</lastmod></url>`),
-    `<url><loc>${o}/contacto</loc><lastmod>${HOY_WEB}</lastmod></url>`, // /comprar y /taller van fuera: son la web con «noindex»
+    `<url><loc>${o}/contacto</loc><lastmod>${HOY_WEB}</lastmod></url>`,
+    `<url><loc>${o}/coches-vendidos</loc><lastmod>${l.filter((c) => c.estado === "vendido" && c.vendidoEn).map((c) => String(c.vendidoEn).slice(0, 10)).sort().pop() || HOY_WEB}</lastmod></url>`, // /comprar y /taller van fuera: son la web con «noindex»
     ...RUTAS_VENTA_IDX.map((p) => `<url><loc>${o}${p}</loc><lastmod>${home}</lastmod></url>`),
     ...RUTAS_TALLER_IDX.map((p) => `<url><loc>${o}${p}</loc><lastmod>${HOY_WEB}</lastmod></url>`),
     ...coches.map((c) => `<url><loc>${o}/coche/${escH(slugDe(c))}</loc><lastmod>${String(c.actualizado || c.creado).slice(0, 10)}</lastmod>${c.fotos.slice(0, 10).map((f) => `<image:image><image:loc>${escH(o + foto(f))}</image:loc></image:image>`).join("")}</url>`),

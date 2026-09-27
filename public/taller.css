@@ -386,7 +386,11 @@
   #v-taller .tx-kpis li { min-height: 0; padding: 10px 11px; font-size: 12px; }
   #v-taller .tx-kpis b { font-size: 13px; }
   /* servicios en 2 columnas, tipo app: se ven todos casi sin hacer scroll */
-  #v-taller .services { grid-template-columns: 1fr 1fr; gap: 7px; }
+  /* minmax(0,1fr): sin esto, «Diagnosis electrónica» ensanchaba la columna y la tarjeta se salía por la derecha en móviles de 360 px */
+  #v-taller .services { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  #v-taller .split.shop { grid-template-columns: minmax(0, 1fr); }
+  #v-taller .tx-col, #v-taller .svc, #v-taller .svc label { min-width: 0; }
+  #v-taller .svc b { overflow-wrap: anywhere; hyphens: auto; }
   #v-taller .svc label { min-height: 54px; padding: 8px 28px 8px 8px; gap: 8px; border-radius: 13px; }
   #v-taller .svc .ic { width: 32px; height: 32px; border-radius: 9px; }
   #v-taller .svc .ic svg { width: 18px; height: 18px; }

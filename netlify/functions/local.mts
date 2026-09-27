@@ -31,7 +31,7 @@ function negocio(origin: string, tipo: "AutoDealer" | "AutoRepair", m: Municipio
     url: origin + "/",
     telephone: EMPRESA.telLink,
     email: EMPRESA.email,
-    image: origin + "/coches/opel-astra-2010/anuncio.jpg",
+    image: origin + "/og-volcano-cars.jpg",
     logo: origin + "/marca/logo-oscuro.svg",
     priceRange: "€€",
     hasMap: EMPRESA.mapaCid,
@@ -110,7 +110,7 @@ async function venta(origin: string, m: Municipio) {
     [`¿Se puede financiar?`, `Sí. En cada coche tienes una calculadora con la cuota y puedes pedir un pre-estudio sin compromiso. La financiación está sujeta a la aprobación de la entidad financiera.`],
   ];
   const head = `<meta property="og:type" content="website"><meta property="og:title" content="${escH(titulo)}"><meta property="og:description" content="${escH(desc)}"><meta property="og:url" content="${escH(canonical)}">
-<meta property="og:image" content="${escH(origin + (disp[0]?.fotos[0] ? foto(disp[0].fotos[0]) : "/coches/opel-astra-2010/anuncio.jpg"))}">
+<meta property="og:image" content="${escH(origin + (disp[0]?.fotos[0] ? foto(disp[0].fotos[0]) : "/og-volcano-cars.jpg"))}">
 ${ld({
     "@context": "https://schema.org",
     "@graph": [
@@ -213,7 +213,7 @@ function taller(origin: string, m: Municipio) {
     ...(m.faqTaller || []),
   ];
   const head = `<meta property="og:type" content="website"><meta property="og:title" content="${escH(titulo)}"><meta property="og:description" content="${escH(desc)}"><meta property="og:url" content="${escH(canonical)}">
-<meta property="og:image" content="${origin}/coches/opel-astra-2010/anuncio.jpg">
+<meta property="og:image" content="${origin}/og-volcano-cars.jpg">
 ${ld({
     "@context": "https://schema.org",
     "@graph": [

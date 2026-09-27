@@ -102,7 +102,7 @@ export default async (req: Request) => {
 <meta property="og:title" content="${escH(`${completo} (${c.anio}) · ${eur(c.precio)}`)}">
 <meta property="og:description" content="${escH(desc)}">
 <meta property="og:url" content="${escH(canonical)}">
-${fotos[0] ? `<meta property="og:image" content="${escH(origin + fotos[0])}">` : `<meta property="og:image" content="${origin}/coches/opel-astra-2010/anuncio.jpg">`}
+${fotos[0] ? `<meta property="og:image" content="${escH(origin + fotos[0])}">` : `<meta property="og:image" content="${origin}/og-volcano-cars.jpg">`}
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, "\\u003c")}</script>`;
 

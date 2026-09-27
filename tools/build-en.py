@@ -109,6 +109,8 @@ TEXT = {
     "Combustible": "Fuel",
     "Comprar": "Buy",
     "Comprar coche": "Buy a car",
+    "Coches vendidos y entregas": "Cars sold and delivered",
+    "Ver todas las entregas y opiniones de clientes": "See all deliveries and customer reviews",
     "Comprar en": "Buying at",
     "Con algún detalle": "A few small marks",
     "Configurar cookies": "Cookie settings",
@@ -286,11 +288,12 @@ ATTR = {
 
 # ---------- 3. Cambios exactos en cabecera y código ----------
 RAW = [
-    ('<title>Volcano Cars · Coches de ocasión con 12 meses de garantía legal, chapa y pintura y mecánica en Fuerteventura</title>',
-     '<title>Volcano Cars · Used cars with a 12-month legal warranty, body repair and servicing in Fuerteventura</title>'),
-    ('content="Volcano Cars: coches de ocasión en Fuerteventura revisados en nuestro taller, con 12 meses de garantía legal. Entrega a domicilio gratis en toda la isla. Chapa y pintura y mecánica rápida en Antigua con cita online al momento."',
-     'content="Volcano Cars: used cars in Fuerteventura checked in our own workshop, with a 12-month legal warranty and free home delivery anywhere on the island. Body repair, paint and quick servicing in Antigua, near Caleta de Fuste, with instant online booking. We speak English."'),
+    ('<title>Coches de ocasión y taller en Fuerteventura | Volcano Cars</title>',
+     '<title>Used cars and car workshop in Fuerteventura | Volcano Cars</title>'),
+    ('content="Coches de ocasión revisados con 12 meses de garantía legal y entrega gratis en Fuerteventura. Taller, chapa y pintura en Antigua con cita online al momento."',
+     'content="Used cars checked in our workshop, 12-month legal warranty, free delivery across Fuerteventura. Servicing, body repair and paint in Antigua. We speak English."'),
     ('<html lang="es">', '<html lang="en">'),
+    ('<meta property="og:image" content="https://volcanocars.com/og-volcano-cars.jpg">', '<meta property="og:image" content="https://volcanocars.com/og-volcano-cars-en.jpg">'),
     ('content="Volcano Cars · Chapa y pintura, mecánica rápida y coches de ocasión"', 'content="Volcano Cars · Body repair, paint, servicing and used cars in Fuerteventura"'),
     ('content="Coches de ocasión revisados con 12 meses de garantía legal y entrega gratis en toda Fuerteventura. Taller mecánico y chapa y pintura en Antigua con cita online."',
      'content="Used cars checked in our own workshop with a 12-month legal warranty and free delivery anywhere on Fuerteventura. Mechanical workshop, body repair and paint in Antigua with instant online booking."'),

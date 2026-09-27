@@ -15,7 +15,10 @@ window.VC_MED = {
 (function () {
   var M = window.VC_MED, CK = "mz_cookies";
   if (!M.ga4 && !M.ads) return;
-  if (document.getElementById("ck")) return; // la portada lo gestiona ella misma
+  // La portada (y /comprar, /taller, /en) tiene su propio aviso (#ck). Este archivo se carga en el <head>,
+  // antes de que exista el <body>: por eso se comprueba al terminar de leer la página y no aquí
+  // (antes salían DOS avisos de cookies a la vez en la portada).
+  var esPortada = function () { return !!document.getElementById("ck"); };
   var leer = function () { try { return localStorage.getItem(CK) || ""; } catch (_) { return ""; } };
   function cargar() {
     if (window.gtag) return;
@@ -44,6 +47,7 @@ window.VC_MED = {
   }, true);
   document.addEventListener("vc:solicitud", function () { window.vcMedir("solicitud"); });
   function aviso() {
+    if (esPortada() || document.querySelector(".vc-ck")) return;
     var d = document.createElement("div"); d.className = "vc-ck"; d.setAttribute("role", "dialog"); d.setAttribute("aria-label", "Cookies");
     d.innerHTML = '<p>Usamos cookies de Google (Analytics y Ads) solo para contar visitas y saber qué anuncios funcionan. <a href="/cookies">Más información</a></p><div><button type="button" data-no>Rechazar</button><button type="button" data-si>Aceptar</button></div>';
     d.style.cssText = "position:fixed;left:12px;right:12px;bottom:12px;z-index:999;max-width:560px;margin:0 auto;background:#1B1B1A;color:#F2EFEA;border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;font:14px/1.4 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.35)";
@@ -55,53 +59,41 @@ window.VC_MED = {
     document.body.appendChild(d);
   }
   // «Configurar cookies» en el pie de cualquier página: vuelve a enseñar el aviso para cambiar la decisión
-  document.addEventListener("click", function (e) { var a = e.target.closest && e.target.closest("[data-ck-open]"); if (!a) return; e.preventDefault(); if (!document.querySelector(".vc-ck")) aviso(); });
-  var dec = leer();
-  if (dec === "si") cargar(); else if (!dec) (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", aviso) : aviso());
-})();/* Botón "Pagar mi reparación" (Stripe) */
+  document.addEventListener("click", function (e) { var a = e.target.closest && e.target.closest("[data-ck-open]"); if (!a) return; if (esPortada()) return; e.preventDefault(); aviso(); });
+  function arrancar() {
+    if (esPortada()) return; // la portada carga Google y enseña su aviso ella misma
+    var dec = leer();
+    if (dec === "si") cargar(); else if (!dec) aviso();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", arrancar); else arrancar();
+})();/* =====================================================================
+   Botón «Pagar mi reparación» (enlace de pago de Stripe) en el pie de las páginas
+   OJO: este enlace NO está unido a ninguna orden. Lo correcto es que el cliente pague desde su enlace
+   de seguimiento (/s/…), donde el importe sale del presupuesto y la orden pasa sola a «En reparación».
+   Aquí solo se deja como segunda vía, con el estilo de la marca y explicando qué hacer.
+   ===================================================================== */
 (function () {
   var URL_PAGO = "https://buy.stripe.com/8x2bJ26ABao37kg3IK0x200";
   function poner() {
     var f = document.querySelector("footer");
     if (!f || document.getElementById("vc-pagar")) return;
     var d = document.createElement("div");
-    d.style.textAlign = "center";
+    d.style.cssText = "text-align:center;margin:16px auto 4px;max-width:520px;padding:0 16px";
     var a = document.createElement("a");
-    a.id = "vc-pagar";
-    a.href = URL_PAGO;
-    a.target = "_blank";
-    a.rel = "noopener";
-    a.textContent = "💳 Pagar mi reparación online";
-    a.style.cssText = "display:inline-block;margin:16px auto;padding:12px 20px;background:#e8501f;color:#fff;border-radius:8px;font-weight:700;text-decoration:none";
-    d.appendChild(a);
+    a.id = "vc-pagar"; a.href = URL_PAGO; a.target = "_blank"; a.rel = "noopener";
+    var en = document.documentElement.lang === "en";
+    a.textContent = en ? "Pay for my repair online" : "Pagar mi reparación online";
+    a.style.cssText = "display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 22px;background:#D9481C;color:#fff;border-radius:999px;font-weight:800;text-decoration:none;font-size:15px";
+    var nota = document.createElement("p");
+    nota.textContent = en ? "Got your tracking link? Pay from there: the amount comes straight from your quote." : "¿Tienes tu enlace de seguimiento? Paga desde ahí: el importe ya viene del presupuesto.";
+    nota.style.cssText = "margin:8px 0 0;font-size:12.5px;opacity:.7;line-height:1.4";
+    d.appendChild(a); d.appendChild(nota);
     f.insertBefore(d, f.firstChild);
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", poner);
   else poner();
 })();
-/* Botón "Reservar este coche" (señal 50 €, Stripe) */
-(function () {
-  var URL_SENAL = "https://buy.stripe.com/5kQcN68IJ67N1ZWeno0x201";
-  var p = location.pathname;
-  if (p.indexOf("/coches/") !== 0 || p.replace(/\/+$/, "") === "/coches") return;
-  function poner() {
-    if (document.getElementById("vc-reservar")) return;
-    var h = document.querySelector("main h1") || document.querySelector("h1");
-    if (!h) return;
-    var ref = p.replace(/^\/coches\//, "").replace(/[^A-Za-z0-9_-]/g, "-").slice(0, 190);
-    var a = document.createElement("a");
-    a.id = "vc-reservar";
-    a.href = URL_SENAL + "?client_reference_id=" + encodeURIComponent(ref);
-    a.target = "_blank";
-    a.rel = "noopener";
-    a.textContent = "🔒 Reservar este coche con 50 € de señal";
-    a.style.cssText = "display:inline-block;margin:12px 0;padding:12px 20px;background:#e8501f;color:#fff;border-radius:8px;font-weight:700;text-decoration:none";
-    var nota = document.createElement("div");
-    nota.textContent = "La señal se descuenta del precio final. Pago seguro con tarjeta, Apple Pay o Google Pay.";
-    nota.style.cssText = "font-size:13px;opacity:.75;margin-bottom:12px";
-    h.insertAdjacentElement("afterend", nota);
-    h.insertAdjacentElement("afterend", a);
-  }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", poner);
-  else poner();
-})();
+/* El antiguo botón «Reservar este coche con 50 € de señal» (enlace de pago suelto) se ha quitado:
+   buscaba páginas /coches/… que no existen (las fichas son /coche/…), así que nunca salía, y además se
+   saltaba la reserva online de 50 € que ya tiene la web (aparta el coche, evita que dos personas paguen
+   el mismo y lo marca «Reservado»: netlify/functions/reservas.mts). */

@@ -97,6 +97,13 @@ label.chk input{width:20px;height:20px;accent-color:var(--magma);flex-shrink:0;m
 .b-wa{background:#16794A;color:#fff;flex:1 1 180px}
 .b-ink{background:var(--ink);color:var(--ground);flex:1 1 140px}
 .err{color:var(--bad);font-weight:600;font-size:14.5px}
+/* vídeos del mecánico */
+.videos{display:grid;gap:14px}
+.vid{border-radius:16px;overflow:hidden;background:#000;position:relative}
+.vid video{display:block;width:100%;max-height:70vh;aspect-ratio:16/9;background:#000;object-fit:contain}
+.vid-tx{display:flex;justify-content:space-between;gap:10px;align-items:baseline;padding:10px 2px 0;font-size:14.5px;line-height:1.45}
+.vid-tx b{font-weight:700}.vid-tx small{color:var(--muted);white-space:nowrap;font-size:12.5px}
+.vid-intro{margin:0 0 12px;color:var(--muted);font-size:14.5px}
 /* fotos */
 .fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .fotos button{padding:0;border:0;border-radius:14px;overflow:hidden;cursor:zoom-in;background:var(--surface-2);aspect-ratio:4/3;position:relative}
@@ -135,7 +142,7 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const TOKEN=(location.pathname.match(/\/s\/([A-Za-z0-9]{16})/)||[])[1]||new URLSearchParams(location.search).get("t")||"";
 const TEL="+34643566098", WA="34643566098";
-let D=null, EN=false;
+let D=null, EN=false, PEND=false;
 const L=(es,en)=>EN?en:es;
 const eur=n=>Number(n||0).toLocaleString(EN?"en-GB":"es-ES",{minimumFractionDigits:2,maximumFractionDigits:2})+" €";
 const fechaL=f=>{ if(!f) return ""; const t=new Date(f+"T12:00:00Z").toLocaleDateString(EN?"en-GB":"es-ES",{weekday:"long",day:"numeric",month:"long",timeZone:"UTC"}); return t[0].toUpperCase()+t.slice(1); };
@@ -188,7 +195,10 @@ async function cargar(silencioso){
     const cambio=JSON.stringify(d)!==JSON.stringify(D);
     D=d; EN=d.idioma==="en"; document.documentElement.lang=EN?"en":"es";
     if(d.presupuesto&&d.presupuesto.pagoPendiente&&!CHEQ){ CHEQ=true; fetch("/api/seguimiento/"+TOKEN+"/pago",{cache:"no-store"}).then(x=>x.json()).then(j=>{ if(j.pagado){ AVISO="ok"; D=null; cargar(); } }).catch(()=>{}); }
-    if(cambio){ const foco=document.activeElement; if(!(silencioso && foco && foco.closest && foco.closest(".resp"))) pintar(); }
+    if(cambio){ const foco=document.activeElement;
+      // si el cliente está viendo un vídeo, no se repinta la página (se cortaría): se repinta al pausarlo o al terminar
+      if(silencioso && [...document.querySelectorAll("#app video")].some(v=>!v.paused&&!v.ended)){ PEND=true; return; }
+      if(!(silencioso && foco && foco.closest && foco.closest(".resp"))) pintar(); }
   }catch(_){ if(!D) pintarError(); }
 }
 function pintarError(){
@@ -213,6 +223,10 @@ function pintar(){
     ${d.entrega&&idx<5?`<div class="entrega"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="5.5" width="16" height="14" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/></svg><span>${L("Entrega prevista:","Expected ready:")} <b>${esc(fechaL(d.entrega))}</b></span></div>`:""}
   </section>`;
   h+=avisoPago();
+  if(d.videos&&d.videos.length) h+=`<section class="card" id="videos"><h2 class="sec-t">${L("Tu mecánico te lo explica","Your mechanic explains")}</h2>
+    <p class="vid-intro">${L("Hemos grabado tu coche para que veas con tus propios ojos lo que hemos encontrado.","We've filmed your car so you can see for yourself what we found.")}</p>
+    <div class="videos">${d.videos.map(v=>`<div><div class="vid"><video controls playsinline preload="none" data-vk="${esc(v.key)}"${v.poster?` poster="/api/fotos/${encodeURIComponent(v.poster)}"`:""}><source src="/api/videos/${encodeURIComponent(v.key)}" type="${/\.webm$/.test(v.key)?"video/webm":"video/mp4"}">${L("Tu navegador no puede reproducir este vídeo.","Your browser can't play this video.")}</video></div>
+      <div class="vid-tx"><b>${esc(v.txt||L("Vídeo del taller","Workshop video"))}</b><small>${v.dur?Math.floor(v.dur/60)+":"+String(Math.round(v.dur%60)).padStart(2,"0")+" · ":""}${esc(cuando(v.t))}</small></div></div>`).join("")}</div></section>`;
   if(d.estado==="entregado") h+=`<section class="card" style="text-align:center"><h2 class="sec-t" style="margin:0 0 6px">${L("¿Qué tal te hemos tratado?","How did we do?")}</h2><p style="margin:0 0 14px;opacity:.8">${L("Tu opinión ayuda a otros conductores de Fuerteventura a elegir taller. Es menos de un minuto.","Your review helps other drivers in Fuerteventura choose a garage. It takes less than a minute.")}</p><a class="btn" style="display:inline-flex;gap:8px;align-items:center;justify-content:center;background:#D94A26;color:#fff;border-radius:999px;padding:13px 22px;font-weight:700;text-decoration:none" href="https://g.page/r/Caeh6Wr6CwtNEBM/review" target="_blank" rel="noopener">★★★★★ ${L("Dejar mi reseña en Google","Leave a Google review")}</a></section>`;
   // presupuesto
   const p=d.presupuesto;
@@ -274,6 +288,11 @@ $("#lb-x").onclick=()=>$("#lb").close();
 $("#lb").addEventListener("click",e=>{ if(e.target.id==="lb") $("#lb").close(); });
 volverDePago().finally(()=>cargar());
 setInterval(()=>{ if(!document.hidden) cargar(true); },30000);
+// Vídeos: se apunta que el cliente lo ha visto (el taller lo ve en el panel) y se repinta lo pendiente al pausar
+const VISTOS=new Set();
+document.addEventListener("play",e=>{ const k=e.target&&e.target.dataset&&e.target.dataset.vk; if(!k||VISTOS.has(k)) return; VISTOS.add(k);
+  fetch("/api/seguimiento/"+TOKEN+"/video-visto",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({key:k})}).catch(()=>{}); },true);
+["pause","ended"].forEach(ev=>document.addEventListener(ev,()=>{ if(PEND){ PEND=false; setTimeout(()=>{ if(![...document.querySelectorAll("#app video")].some(v=>!v.paused&&!v.ended)) pintar(); },400); } },true));
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden) cargar(true); });
 </script>
 </body>

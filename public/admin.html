@@ -87,6 +87,21 @@ legend{font-family:var(--display);font-stretch:112%;font-weight:800;font-size:18
 .drop:hover,.drop.over{border-color:var(--brand);background:var(--brand-soft)}
 .drop b{font-size:16px}
 .drop small{color:var(--muted)}
+/* vídeos de la orden (el mecánico lo explica) */
+.ov-dos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (max-width:520px){.ov-dos{grid-template-columns:1fr}}
+.ovids{display:grid;gap:12px;margin-top:12px}
+.ovid{border:1px solid var(--line);border-radius:14px;padding:8px;display:grid;gap:8px;background:var(--surface)}
+.ovid video{width:100%;max-height:320px;border-radius:10px;background:#000;display:block}
+.ovid-m{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.ov-up{margin-top:10px}.ov-bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}.ov-bar i{display:block;height:100%;width:2%;background:var(--brand,#D9481C);transition:width .3s}
+.ov-up small{display:block;margin-top:6px;color:var(--muted)}
+/* entregas y opiniones */
+.en-foto{display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center}
+.en-foto img{width:120px;height:90px;object-fit:cover;border-radius:10px;background:var(--line)}
+.en-est{display:flex;gap:4px}.en-est label{cursor:pointer;font-size:26px;line-height:1;color:var(--line)}.en-est input{position:absolute;opacity:0;pointer-events:none}
+.en-est label.on{color:#F2A33A}
+.en-ok{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;line-height:1.4}.en-ok input{margin-top:2px;width:18px;height:18px;flex-shrink:0}
 .photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
 .ph{position:relative;border-radius:12px;overflow:hidden;background:var(--surface-2);aspect-ratio:4/3}
 .ph img{width:100%;height:100%;object-fit:cover;display:block}
@@ -2354,9 +2369,12 @@ async function loadList(quieto){
   $("#list").innerHTML='<div class="empty">Cargando…</div>';
   fetch("/api/interes",{cache:"no-store"}).then(r=>r.ok?r.json():{}).then(m=>{ INTERES=m||{}; if(CARS.length) renderList(); }).catch(()=>{});
   fetch("/api/viendo").then(r=>r.ok?r.json():{}).then(m=>{ VIENDO=m||{}; if(CARS.length) renderList(); }).catch(()=>{});
+  cargarEntregas();
   try{ CARS = await api("/api/coches?todos=1"); renderList(); }
   catch(err){ $("#list").innerHTML=`<div class="empty">${esc(err.message)}</div>`; }
 }
+let ENTREGAS={};
+function cargarEntregas(){ fetch("/api/entregas",{headers:{authorization:"Bearer "+PW},cache:"no-store"}).then(r=>r.ok?r.json():{}).then(m=>{ ENTREGAS=m||{}; if(CARS.length) renderList(); }).catch(()=>{}); }
 function renderList(){
   const n = k => CARS.filter(c=>c.estado===k).length;
   $("#stats").innerHTML = `<span class="pill disponible">${n("disponible")} disponibles</span><span class="pill reservado">${n("reservado")} reservados</span><span class="pill vendido">${n("vendido")} vendidos</span>`;
@@ -2370,6 +2388,7 @@ function renderList(){
         <div class="seg" role="group" aria-label="Estado de ${esc(c.marca+" "+c.modelo)}">
           ${["disponible","reservado","vendido"].map(s=>`<button type="button" class="seg-${s}" data-set="${s}" data-id="${esc(c.id)}" aria-pressed="${s===c.estado}">${s[0].toUpperCase()+s.slice(1)}</button>`).join("")}
         </div>
+        ${c.estado==="vendido"?`<button class="btn ${ENTREGAS[c.id]&&ENTREGAS[c.id].publicar?"b-ghost":"b-acc"} b-sm" type="button" data-entrega="${esc(c.id)}">${ENTREGAS[c.id]?(ENTREGAS[c.id].publicar?"Entrega publicada ✓":"Entrega (sin publicar)"):"Foto de entrega y opinión"}</button>`:""}
         <button class="btn b-brand b-sm" type="button" data-edit="${esc(c.id)}">Editar</button>
       </div>
     </div>`).join("");
@@ -2383,6 +2402,63 @@ $("#list").addEventListener("click", async e=>{
   catch(err){ c.estado=prev; renderList(); toast(err.message); }
 });
 $("#list").addEventListener("click", e=>{ const id=e.target.dataset.edit; if(id) openForm(CARS.find(x=>x.id===id)); });
+$("#list").addEventListener("click", e=>{ const b=e.target.closest("[data-entrega]"); if(b) abrirEntrega(b.dataset.entrega); });
+
+/* =====================================================================
+   ENTREGA Y OPINIÓN de un coche vendido → página pública /coches-vendidos
+   Nada se publica sin la autorización del cliente. Se guarda aparte del coche (no sale en /api/coches).
+   ===================================================================== */
+const PUEBLOS=["Antigua","Caleta de Fuste","Corralejo","Costa Calma","El Cotillo","Gran Tarajal","La Lajita","La Oliva","Lajares","Morro Jable","Pájara","Puerto del Rosario","Tarajalejo","Tuineje","Villaverde"];
+function dlgEntrega(){
+  let d=$("#dlg-entrega"); if(d) return d;
+  document.body.insertAdjacentHTML("beforeend",`<dialog class="dlg" id="dlg-entrega"><form id="f-entrega" novalidate>
+    <h3 style="margin:0 0 4px">Entrega y opinión del cliente</h3><p id="en-coche" style="margin:0 0 14px;color:var(--muted)"></p>
+    <div class="field"><label>Foto de la entrega</label><div class="en-foto"><img id="en-img" alt=""><div style="display:grid;gap:6px"><div class="ov-dos"><label class="btn b-ghost b-sm" for="en-cam">Hacer foto</label><label class="btn b-ghost b-sm" for="en-file">Elegir foto</label></div><small style="color:var(--muted)">Con el cliente y su coche (si quiere salir) o solo el coche con el lazo. En horizontal y con buena luz.</small></div></div>
+      <input id="en-cam" type="file" accept="image/*" capture="environment" hidden><input id="en-file" type="file" accept="image/*" hidden></div>
+    <label class="en-ok" style="margin:6px 0 12px"><input type="checkbox" id="en-cc"><span>El cliente sale en la foto</span></label>
+    <div class="g2"><div class="field"><label for="en-nom">Nombre como se publicará</label><input class="in" id="en-nom" maxlength="40" placeholder="Marta G."><small style="color:var(--muted)">Solo nombre e inicial del apellido.</small></div>
+      <div class="field"><label for="en-pue">Dónde se entregó</label><input class="in" id="en-pue" maxlength="60" list="en-pueblos" placeholder="Corralejo"><datalist id="en-pueblos">${PUEBLOS.map(x=>`<option value="${esc(x)}">`).join("")}</datalist></div></div>
+    <div class="g2"><div class="field"><label for="en-fecha">Fecha de entrega</label><input class="in" type="date" id="en-fecha"></div>
+      <div class="field"><label>Valoración que da el cliente</label><div class="en-est" id="en-est">${[1,2,3,4,5].map(n=>`<label title="${n} de 5"><input type="radio" name="en-e" value="${n}">★</label>`).join("")}</div></div></div>
+    <div class="field"><label for="en-op">Qué nos ha dicho (sus palabras, sin retocar)</label><textarea class="in" id="en-op" rows="3" maxlength="700" placeholder="«Todo muy claro desde el principio y me lo trajeron a casa el mismo día.»"></textarea></div>
+    <label class="en-ok" style="margin-top:12px"><input type="checkbox" id="en-aut"><span><b>El cliente autoriza</b> a publicar en volcanocars.com la foto, su nombre tal como aparece arriba y su opinión. Puede pedir que se quite cuando quiera. <i style="color:var(--muted)">(Mejor por escrito: pídeselo por WhatsApp y guarda su «sí».)</i></span></label>
+    <label class="en-ok" style="margin-top:10px"><input type="checkbox" id="en-pub"><span><b>Publicar</b> en la página «Coches vendidos y entregas»</span></label>
+    <p class="msg bad" id="en-err" hidden style="margin-top:12px"></p>
+    <div class="quick" style="margin-top:16px;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn b-wa b-sm" id="en-wa" target="_blank" rel="noopener">${IC.wa}Pedir autorización por WhatsApp</a><a class="btn b-ghost b-sm" href="/coches-vendidos" target="_blank" rel="noopener">Ver la página</a></div>
+      <div style="display:flex;gap:8px"><button type="button" class="btn b-bad b-sm" id="en-del">Borrar</button><button type="button" class="btn b-ghost b-sm" id="en-cancel">Cerrar</button><button type="submit" class="btn b-acc b-sm" id="en-save">Guardar</button></div>
+    </div></form></dialog>`);
+  d=$("#dlg-entrega");
+  const pintarEst=()=>{ const v=+(d.querySelector('input[name="en-e"]:checked')||{}).value||0; d.querySelectorAll("#en-est label").forEach((l,i)=>l.classList.toggle("on",i<v)); };
+  $("#en-est").addEventListener("change",pintarEst);
+  $("#en-cancel").onclick=()=>d.close();
+  const subir=async e=>{ const f=e.target.files[0]; e.target.value=""; if(!f) return; $("#en-save").disabled=true; toast("Subiendo foto…");
+    try{ const b=await shrink(f); const r=await api("/api/fotos",{method:"POST",headers:{"content-type":b.type},body:b}); d.dataset.foto=r.key; $("#en-img").src=FOTO(r.key); toast("Foto lista. Pulsa «Guardar»."); }catch(err){ toast(err.message); }
+    $("#en-save").disabled=false; };
+  $("#en-cam").onchange=subir; $("#en-file").onchange=subir;
+  $("#f-entrega").addEventListener("submit",async ev=>{ ev.preventDefault(); const err=$("#en-err"); err.hidden=true;
+    const id=d.dataset.id, body={ foto:d.dataset.foto||"", conCliente:$("#en-cc").checked, nombre:$("#en-nom").value.trim(), pueblo:$("#en-pue").value.trim(), fecha:$("#en-fecha").value,
+      estrellas:+(d.querySelector('input[name="en-e"]:checked')||{}).value||0, opinion:$("#en-op").value.trim(), autoriza:$("#en-aut").checked, publicar:$("#en-pub").checked };
+    try{ ENTREGAS[id]=await api("/api/entregas/"+encodeURIComponent(id),{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(body)}); d.close(); renderList();
+      toast(body.publicar?"Publicado en «Coches vendidos y entregas»":"Guardado (sin publicar)"); }
+    catch(e){ err.textContent=e.message; err.hidden=false; } });
+  $("#en-del").onclick=async()=>{ const id=d.dataset.id; if(!ENTREGAS[id]){ d.close(); return; } if(!confirm("¿Borrar la entrega y la opinión? Deja de salir en la web.")) return;
+    try{ await api("/api/entregas/"+encodeURIComponent(id),{method:"DELETE"}); delete ENTREGAS[id]; d.close(); renderList(); toast("Entrega borrada"); }catch(e){ toast(e.message); } };
+  return d;
+}
+function abrirEntrega(id){
+  const c=CARS.find(x=>x.id===id); if(!c) return;
+  const d=dlgEntrega(), e=ENTREGAS[id]||{};
+  d.dataset.id=id; d.dataset.foto=e.foto||"";
+  $("#en-coche").textContent=`${c.marca} ${c.modelo} ${c.anio}`+(c.vendidoEn?` · vendido el ${new Date(c.vendidoEn).toLocaleDateString("es-ES")}`:"");
+  $("#en-img").src=e.foto?FOTO(e.foto):(c.fotos[0]?FOTO(c.fotos[0]):""); $("#en-img").style.opacity=e.foto?1:.35;
+  $("#en-cc").checked=!!e.conCliente; $("#en-nom").value=e.nombre||""; $("#en-pue").value=e.pueblo||"";
+  $("#en-fecha").value=e.fecha||(c.vendidoEn||new Date().toISOString()).slice(0,10);
+  d.querySelectorAll('input[name="en-e"]').forEach(r=>r.checked=+r.value===(e.estrellas||0)); d.querySelectorAll("#en-est label").forEach((l,i)=>l.classList.toggle("on",i<(e.estrellas||0)));
+  $("#en-op").value=e.opinion||""; $("#en-aut").checked=!!e.autoriza; $("#en-pub").checked=!!e.publicar; $("#en-err").hidden=true;
+  $("#en-wa").href="https://wa.me/?text="+encodeURIComponent(`¡Gracias por confiar en Volcano Cars! Nos haría mucha ilusión publicar la foto de la entrega de tu ${c.marca} ${c.modelo} y lo que nos dijiste en nuestra web (volcanocars.com/coches-vendidos), con tu nombre y la inicial del apellido. ¿Nos das permiso? Puedes pedirnos que la quitemos cuando quieras. Y si te apetece, tu reseña en Google nos ayuda muchísimo: ${REVIEW}`);
+  d.showModal();
+}
 $("#add").onclick=()=>openForm(null);
 document.querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>{
   if((uploading || vSubiendo) && !confirm("Hay fotos o un vídeo subiéndose. ¿Salir igualmente?")) return;
@@ -2980,6 +3056,7 @@ function htmlOrden(o){
   const wEnlace=en?`Hi ${n}, this is Volcano Cars. You can follow your car live here (and approve the quote when it's ready): ${linkOrden(o)}`:`Hola ${n}, te escribimos de Volcano Cars. Aquí puedes seguir en vivo cómo va tu coche (y aprobar el presupuesto cuando esté): ${linkOrden(o)}`;
   const wListo=en?`Hi ${n}, your car is ready! You can pick it up Monday to Friday, 8:00 to 16:00. Details: ${linkOrden(o)}`:`Hola ${n}, ¡tu coche ya está listo! Puedes recogerlo de lunes a viernes, de 8:00 a 16:00. Detalles: ${linkOrden(o)}`;
   const wResena=en?`Hi ${n}, thanks for trusting Volcano Cars! If you're happy with the work, would you leave us a quick Google review? It takes less than a minute: ${REVIEW}`:`Hola ${n}, ¡gracias por confiar en Volcano Cars! Si has quedado contento con el trabajo, ¿nos dejas una reseña en Google? Es menos de un minuto: ${REVIEW}`;
+  const wVideo=en?`Hi ${n}, we've filmed your car so you can see exactly what we found and what we recommend. Watch it here (it takes a minute): ${linkOrden(o)}`:`Hola ${n}, te hemos grabado un vídeo de tu coche para que veas con tus propios ojos lo que hemos encontrado y lo que te recomendamos. Lo tienes aquí (es un minuto): ${linkOrden(o)}`;
   const wPresu=en?`Hi ${n}, your quote is ready. You can review and approve it here: ${linkOrden(o)}`:`Hola ${n}, ya tienes el presupuesto. Puedes revisarlo y aprobarlo aquí: ${linkOrden(o)}`;
   const lineas=(p&&p.lineas.length?p.lineas:[{c:"",n:1,p:0}]);
   return `<div class="dw-head"><div><span class="tipo taller">Orden de taller</span><input class="dw-nombre" data-ov="coche" value="${esc(o.vehiculo.coche)}" placeholder="Coche" aria-label="Coche"></div><button class="x" type="button" data-cerrar aria-label="Cerrar">✕</button></div>
@@ -3011,6 +3088,14 @@ function htmlOrden(o){
       <input id="of-files" type="file" accept="image/*" multiple hidden>
       <div class="ofotos">${o.fotos.map((f,i)=>`<div class="ofoto"><img src="/api/fotos/${encodeURIComponent(f.k)}" alt=""><input class="in" data-ftxt="${i}" value="${esc(f.txt)}" placeholder="Pie de foto"><button type="button" class="x" data-fx="${i}" aria-label="Quitar foto">✕</button></div>`).join("")}</div>
     </section>
+    <section class="dw-box"><h3>Vídeo: el mecánico te lo explica</h3>
+      <p style="margin:0 0 10px;color:var(--muted);font-size:13.5px">Graba 30–90 segundos con el móvil enseñando la avería o la pieza (en horizontal, con buena luz y explicando en voz alta qué pasa y qué proponéis). El cliente lo ve en su enlace, justo encima del presupuesto.</p>
+      <div class="ov-dos"><label class="drop" for="ov-cam" style="padding:14px"><b>Grabar ahora</b><small>Abre la cámara del móvil</small></label><label class="drop" for="ov-file" style="padding:14px"><b>Subir un vídeo</b><small>MP4 o MOV · máx. 300 MB</small></label></div>
+      <input id="ov-cam" type="file" accept="video/*" capture="environment" hidden><input id="ov-file" type="file" accept="video/mp4,video/quicktime,video/webm" hidden>
+      <div class="ov-up" id="ov-up" hidden><div class="ov-bar"><i id="ov-bar"></i></div><small id="ov-t"></small></div>
+      <div class="ovids">${(o.videos||[]).map((v,i)=>`<div class="ovid"><video controls playsinline preload="none" src="${VSRC(v.key)}"${v.poster?` poster="${FOTO(v.poster)}"`:""}></video><input class="in" data-vtxt="${i}" value="${esc(v.txt)}" placeholder="Qué se ve (p. ej. «Pastillas delanteras al límite»)" maxlength="200"><div class="ovid-m"><span>${v.dur?dur(v.dur)+" · ":""}${esc(fechaHora(v.t))} · ${v.visto?`<b style="color:var(--ok,#1F8B4C)">Visto por el cliente (${esc(fechaHora(v.visto))})</b>`:"El cliente aún no lo ha visto"}</span><button type="button" class="btn b-ghost b-sm" data-vx="${i}">Quitar vídeo</button></div></div>`).join("")}</div>
+      ${(o.videos||[]).length?`<div class="quick" style="margin-top:10px"><a class="btn b-wa b-sm" target="_blank" rel="noopener" data-wa-orden="Vídeo explicativo enviado" href="https://wa.me/${waNum(o.cliente.telefono)}?text=${encodeURIComponent(wVideo)}">${IC.wa}Avisar: te hemos grabado un vídeo</a></div>`:""}
+    </section>
     <section class="dw-box"><h3>Mensaje para el cliente</h3><textarea class="in" data-omsg rows="3" placeholder="Se ve en su página de seguimiento. P. ej.: «Hemos encontrado también el filtro de aire muy sucio, te lo cambiamos sin coste.»">${esc(o.mensaje)}</textarea></section>
     <section class="dw-box"><h3>Notas internas</h3><textarea class="in" data-oint rows="3" placeholder="Solo las ves tú. No salen al cliente.">${esc(o.interno)}</textarea></section>
     ${lead?`<p><button type="button" class="chipb" data-abrir-lead-o="${esc(lead.id)}">Ver ficha del cliente en el CRM →</button></p>`:""}
@@ -3029,6 +3114,7 @@ async function clickOrden(e){
   if(t.closest("[data-epresu]")){ const p=leerPresupuesto(); if(!p.lineas.length) return toast("Añade al menos una línea");
     const no=await patchOrden(o.token,{presupuesto:{...p,enviar:true}}); repintarOrden(no); toast("Presupuesto publicado en su enlace. Avísale por WhatsApp."); if(o.lead) loadLeads(false); return; }
   if(t.closest("[data-reabrir]")){ if(!confirm("El cliente ya aceptó este presupuesto. ¿Reabrirlo para cambiarlo? Tendrá que aceptarlo otra vez.")) return; repintarOrden(await patchOrden(o.token,{presupuesto:{reabrir:true}})); return; }
+  const vx=t.closest("[data-vx]"); if(vx){ if(!confirm("¿Quitar este vídeo? Se borra y el cliente deja de verlo.")) return; const v=(o.videos||[]).slice(); v.splice(+vx.dataset.vx,1); repintarOrden(await patchOrden(o.token,{videos:v})); toast("Vídeo quitado"); return; }
   const fx=t.closest("[data-fx]"); if(fx){ const f=o.fotos.slice(); f.splice(+fx.dataset.fx,1); repintarOrden(await patchOrden(o.token,{fotos:f})); return; }
   const al=t.closest("[data-abrir-lead-o]"); if(al){ abrirLead(al.dataset.abrirLeadO); return; }
   if(t.closest("[data-borrar-orden]")){ if(!confirm("¿Borrar esta orden? El enlace del cliente dejará de funcionar.")) return; await api("/api/ordenes/"+o.token,{method:"DELETE"}); ORDENES=ORDENES.filter(z=>z.token!==o.token); cerrarDrawer(); renderOrdenes(); toast("Orden borrada"); }
@@ -3041,10 +3127,44 @@ async function changeOrden(e){
   if(t.matches("[data-oint]")){ await patchOrden(o.token,{interno:t.value}); toast("Nota guardada"); return; }
   if(t.matches("[data-ov]")){ await patchOrden(o.token,{vehiculo:{[t.dataset.ov]:t.value}}); renderOrdenes(); toast("Guardado"); return; }
   if(t.matches("[data-oc]")){ await patchOrden(o.token,{cliente:{[t.dataset.oc]:t.value}}); renderOrdenes(); toast("Guardado"); return; }
+  if(t.matches("[data-vtxt]")){ const v=(o.videos||[]).slice(); v[+t.dataset.vtxt]={...v[+t.dataset.vtxt],txt:t.value}; await patchOrden(o.token,{videos:v}); toast("Texto del vídeo guardado"); return; }
+  if(t.id==="ov-file"||t.id==="ov-cam"){ const f=t.files[0]; t.value=""; if(f) subirVideoOrden(o.token,f); return; }
   if(t.matches("[data-ftxt]")){ const f=o.fotos.slice(); f[+t.dataset.ftxt]={...f[+t.dataset.ftxt],txt:t.value}; await patchOrden(o.token,{fotos:f}); toast("Pie de foto guardado"); return; }
   if(t.id==="of-files"){ const files=[...t.files]; t.value=""; if(!files.length) return; toast(`Subiendo ${files.length} foto${files.length>1?"s":""}…`);
     const nuevas=[]; for(const f of files){ try{ const b=await shrink(f); const r=await api("/api/fotos",{method:"POST",headers:{"content-type":b.type},body:b}); nuevas.push({k:r.key,txt:"",t:new Date().toISOString()}); }catch(err){ toast(err.message); } }
     const oo=ORDENES.find(z=>z.token===DW.id); repintarOrden(await patchOrden(oo.token,{fotos:[...oo.fotos,...nuevas]})); toast("Fotos publicadas en su enlace"); }
+}
+// Sube el vídeo explicativo de una orden (mismo sistema por trozos que el vídeo 360° de los coches)
+let OV_SUBIENDO=false;
+async function subirVideoOrden(token,file){
+  if(OV_SUBIENDO) return toast("Espera a que termine el vídeo anterior");
+  const up=()=>$("#ov-up"), barra=p=>{ const b=$("#ov-bar"); if(b) b.style.width=Math.max(2,Math.round(p*100))+"%"; }, txt=m=>{ const e=$("#ov-t"); if(e) e.textContent=m; };
+  const ext=(file.name.split(".").pop()||"").toLowerCase();
+  const mime=file.type||{mp4:"video/mp4",m4v:"video/mp4",mov:"video/quicktime",webm:"video/webm"}[ext]||"";
+  if(!/^video\/(mp4|quicktime|webm)$/.test(mime)) return toast("Formato no admitido. Graba o sube un vídeo MP4 o MOV.");
+  if(file.size>VMAX) return toast(`El vídeo pesa ${MB(file.size)}: el máximo son 300 MB. Grábalo en 1080p o más corto.`);
+  OV_SUBIENDO=true; if(up()) up().hidden=false; txt("Comprobando el vídeo…"); barra(.02);
+  let key=null;
+  try{
+    const c=await codec(file);
+    if(c==="hvc1"||c==="hev1") throw new Error("Este vídeo está en HEVC y en Android o Windows no se vería. En el iPhone: Ajustes → Cámara → Formatos → «Más compatible», y vuelve a grabarlo.");
+    const info=await leerVideo(file);
+    if(info.dur>240 && !confirm(`El vídeo dura ${dur(info.dur)}. Lo ideal son 30–90 segundos: el cliente lo verá entero. ¿Subirlo igualmente?`)) throw new DOMException("","AbortError");
+    let poster=""; if(info.poster){ try{ poster=(await api("/api/fotos",{method:"POST",headers:{"content-type":"image/jpeg"},body:info.poster})).key; }catch(_){ } }
+    const ini=await api("/api/videos",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({size:file.size,mime})});
+    key=ini.key; const T=ini.trozo, n=ini.n; let sig=0, bytes=0; const ac=new AbortController();
+    await Promise.all([0,1].map(async()=>{ while(sig<n){ const i=sig++; const b=file.slice(i*T,Math.min(file.size,(i+1)*T)); await subirTrozo(key,i,b,ac.signal); bytes+=b.size; barra(bytes/file.size); txt(`${Math.round(bytes/file.size*100)} % · ${MB(bytes)} de ${MB(file.size)}`); } }));
+    txt("Comprobando que ha llegado entero…");
+    await api(`/api/videos/${encodeURIComponent(key)}/fin`,{method:"POST"});
+    const o=ORDENES.find(z=>z.token===token);
+    const no=await patchOrden(token,{videos:[...((o&&o.videos)||[]),{key,poster,txt:"",dur:Math.round(info.dur*10)/10,t:new Date().toISOString()}]});
+    OV_SUBIENDO=false; if(DW&&DW.id===token) repintarOrden(no);
+    toast("Vídeo publicado en su enlace. Escribe qué se ve y avísale por WhatsApp.");
+  }catch(e){
+    OV_SUBIENDO=false; if(up()) up().hidden=true;
+    if(key) api("/api/videos/"+encodeURIComponent(key),{method:"DELETE"}).catch(()=>{});
+    if(e.name!=="AbortError") toast(e.message||"No se ha podido subir el vídeo.");
+  }
 }
 $("#dw-body").addEventListener("input",e=>{ if(DW&&DW.tipo==="orden"&&e.target.matches("[data-lc],[data-ln],[data-lp],[data-igic]")) pintarTotales(); });
 const _abrirOrden=abrirOrden; abrirOrden=function(t){ _abrirOrden(t); pintarTotales(); };

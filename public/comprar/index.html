@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#121212">
 <meta property="og:title" content="Coches de ocasión en Fuerteventura con 12 meses de garantía legal | Volcano Cars">
 <meta property="og:description" content="Coches de segunda mano revisados en nuestro taller de Antigua, con 12 meses de garantía legal y entrega gratis en toda Fuerteventura. Precios desde 2.500 €.">
-<meta property="og:image" content="https://volcanocars.com/coches/opel-astra-2010/anuncio.jpg">
+<meta property="og:image" content="https://volcanocars.com/og-volcano-cars.jpg">
 <meta property="og:url" content="https://volcanocars.com/comprar">
 <meta property="og:type" content="website">
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -22,7 +22,7 @@
 <link rel="canonical" href="https://volcanocars.com/comprar">
 <meta name="robots" content="noindex, follow">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":["AutoRepair","AutoDealer","AutoBodyShop"],"@id":"https://volcanocars.com/#negocio","name":"Volcano Cars","legalName":"MAILIN Y YERAY SL","taxID":"B93975647","sameAs":["https://www.google.com/maps?cid=5551544135827693991","https://www.instagram.com/volcanocars_antigua/","https://www.facebook.com/share/1KYczmU7be/"],"logo":"https://volcanocars.com/marca/logo-oscuro.svg","hasMap":"https://www.google.com/maps?cid=5551544135827693991","geo":{"@type":"GeoCoordinates","latitude":28.420871,"longitude":-13.8621004},"description":"Chapa y pintura, mecánica rápida y venta de coches de ocasión revisados con 12 meses de garantía legal y entrega a domicilio gratis en toda Fuerteventura.","telephone":"+34643566098","email":"volcanocars2026@gmail.com","url":"https://volcanocars.com/","image":"https://volcanocars.com/coches/opel-astra-2010/anuncio.jpg","priceRange":"€€",
+{"@context":"https://schema.org","@type":["AutoRepair","AutoDealer","AutoBodyShop"],"@id":"https://volcanocars.com/#negocio","name":"Volcano Cars","legalName":"MAILIN Y YERAY SL","taxID":"B93975647","sameAs":["https://www.google.com/maps?cid=5551544135827693991","https://www.instagram.com/volcanocars_antigua/","https://www.facebook.com/share/1KYczmU7be/"],"logo":"https://volcanocars.com/marca/logo-oscuro.svg","hasMap":"https://www.google.com/maps?cid=5551544135827693991","geo":{"@type":"GeoCoordinates","latitude":28.420871,"longitude":-13.8621004},"description":"Chapa y pintura, mecánica rápida y venta de coches de ocasión revisados con 12 meses de garantía legal y entrega a domicilio gratis en toda Fuerteventura.","telephone":"+34643566098","email":"volcanocars2026@gmail.com","url":"https://volcanocars.com/","image":"https://volcanocars.com/og-volcano-cars.jpg","priceRange":"€€",
  "address":{"@type":"PostalAddress","streetAddress":"Calle Valle Largo, Nave 8, Polígono Industrial","postalCode":"35610","addressLocality":"Antigua","addressRegion":"Las Palmas","addressCountry":"ES"},
  "areaServed":[{"@type":"Island","name":"Fuerteventura"},"Antigua","Caleta de Fuste","Puerto del Rosario","La Oliva","Corralejo","Tuineje","Gran Tarajal","Pájara","Costa Calma","Morro Jable"],
  "availableLanguage":["es","en"],
@@ -1474,6 +1474,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
     <div class="wrap">
       <div class="sec-head rv"><div><div class="eyebrow">Ya tienen dueño</div><h2>Vendidos <span class="serif">recientemente</span></h2><p>Coches que hemos vendido en los últimos dos meses. Si ves uno que te encaja, no esperes demasiado.</p></div></div>
       <div class="grid" id="sold-grid"></div>
+      <p class="rv" style="margin-top:26px;text-align:center"><a class="btn btn-ghost" href="/coches-vendidos">Ver todas las entregas y opiniones de clientes</a></p>
     </div>
   </section>
 
@@ -1701,7 +1702,7 @@ dialog.fx-dlg::backdrop{background:rgba(15,15,14,.5);backdrop-filter:blur(3px)}
       <a class="logo" href="/" data-go="inicio" aria-label="Volcano Cars, inicio"><svg class="vc-logo" viewBox="0 0 662 162" aria-hidden="true" style="color:#F2EFEA"><use href="#vc-logo"/></svg></a>
       <p>Taller de chapa y pintura, mecánica rápida y venta de coches de ocasión revisados en Antigua, Fuerteventura.</p>
     </div>
-    <div><h4>Coches</h4><a href="/comprar" data-go="comprar">Comprar coche</a><a href="/coches-segunda-mano-fuerteventura/">Coches de segunda mano</a><a href="/financiacion-coches-fuerteventura/">Financiación</a><a href="/contacto" data-go="contacto">Pedir información</a></div>
+    <div><h4>Coches</h4><a href="/comprar" data-go="comprar">Comprar coche</a><a href="/coches-segunda-mano-fuerteventura/">Coches de segunda mano</a><a href="/financiacion-coches-fuerteventura/">Financiación</a><a href="/coches-vendidos">Coches vendidos y entregas</a><a href="/contacto" data-go="contacto">Pedir información</a></div>
     <div><h4>Taller</h4><a href="/chapa-y-pintura-fuerteventura/">Chapa y pintura</a><a href="/taller-mecanico-fuerteventura/">Taller mecánico</a><a href="/pre-itv-fuerteventura/">Pre-ITV</a><a href="/taller" data-go="taller">Pedir presupuesto</a></div>
     <div><h4>Visítanos</h4><a data-map target="_blank" rel="noopener" data-addr-link></a><a href="/contacto" data-go="contacto" data-hours-short></a></div>
   </div>
@@ -2560,7 +2561,7 @@ const VIEWS=["inicio","comprar","taller","contacto"];
 const RUTAS = IDIOMA!=="en";
 const rutaDe = v => v==="inicio" ? "/" : "/"+v;
 const META_VISTA = {
-  inicio:["Volcano Cars · Coches de ocasión con 12 meses de garantía legal, chapa y pintura y mecánica en Fuerteventura"],
+  inicio:["Coches de ocasión y taller en Fuerteventura | Volcano Cars"],
   comprar:["Coches de ocasión en Fuerteventura con 12 meses de garantía legal | Volcano Cars","Coches de segunda mano revisados en nuestro taller de Antigua, con 12 meses de garantía legal y entrega gratis en toda Fuerteventura. Precios desde 2.500 €."],
   taller:["Taller mecánico, chapa y pintura en Antigua, Fuerteventura | Volcano Cars","Pide cita o presupuesto sin compromiso en nuestro taller de Antigua: mecánica, chapa y pintura, pre-ITV. Presupuesto y fecha de entrega por escrito."],
   contacto:["Contacto y cómo llegar | Volcano Cars, Antigua (Fuerteventura)","Teléfono, WhatsApp, horario y mapa de Volcano Cars en el Polígono Industrial de Antigua, Fuerteventura."]
@@ -2952,7 +2953,7 @@ const BOT=(()=>{
   const fab=document.createElement("button"); fab.type="button"; fab.className="bot-fab"; fab.setAttribute("aria-label",L("Abrir el asistente de Volcano Cars","Open the Volcano Cars assistant"));
   fab.innerHTML=ICO_CHAT+'<span class="dot" aria-hidden="true"></span>';
   const box=document.createElement("section"); box.className="bot"; box.hidden=true; box.setAttribute("role","dialog"); box.setAttribute("aria-label",L("Asistente de Volcano Cars","Volcano Cars assistant"));
-  box.innerHTML=`<div class="bot-h"><span class="bot-av">${ISO}</span><div><b>${L("Asistente Volcano Cars","Volcano Cars assistant")}</b><small><i id="bot-dot"></i><span id="bot-st"></span></small></div><button type="button" class="x" id="bot-x" aria-label="${L("Cerrar","Close")}">×</button></div>
+  box.innerHTML=`<div class="bot-h"><span class="bot-av">${ISO}</span><div><b>${L("Asistente Lestter Volcano Cars","Lestter · Volcano Cars assistant")}</b><small><i id="bot-dot"></i><span id="bot-st"></span></small></div><button type="button" class="x" id="bot-x" aria-label="${L("Cerrar","Close")}">×</button></div>
     <div class="bot-m" id="bot-m" aria-live="polite"></div>
     <div class="bot-f"><form id="bot-form" autocomplete="off"><input id="bot-in" maxlength="300" enterkeyhint="send" placeholder="${L("Escribe tu pregunta…","Type your question…")}" aria-label="${L("Tu pregunta","Your question")}"><button type="submit" aria-label="${L("Enviar","Send")}">${ICO_SEND}</button></form>
       <a class="bot-asesor" id="bot-asesor" target="_blank" rel="noopener"><svg width="16" height="16"><use href="#i-wa"/></svg>${L("Hablar con un asesor por WhatsApp","Talk to an adviser on WhatsApp")}</a></div>`;
