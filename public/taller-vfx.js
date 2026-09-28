@@ -28,7 +28,7 @@
   "use strict";
   const VFX = {
     base: "/vfx/taller/",
-    ver: "1",          // ← súbelo (2, 3…) cada vez que cambies algún vídeo
+    ver: "2",          // ← súbelo (2, 3…) cada vez que cambies algún vídeo
     webm: false,       // true si también subes <servicio>-<v|h>.webm (VP9)
     fundido: 650,      // ms del fundido cruzado
     maxMemoria: 6,     // clips guardados en memoria a la vez
