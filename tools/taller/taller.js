@@ -139,6 +139,7 @@ function tBarra(){
   const n=k=>ORDENES.filter(o=>T_FASES[tFase(o.estado)][0]===k).length, al=tAlertasLocal();
   const vistas=[["mios",ES_EQ()?"Mis trabajos":"En marcha"],["tabla","Órdenes"],["tablero","Tablero"]];
   if(T_ITV_OK()){ const p=tItvPendientes(); vistas.push(["itv",`Avisos de ITV${p?` <b class="num t-itv-n">${p}</b>`:""}`]); }
+  if(typeof vpBadge==="function"){ const n=vpBadge(); vistas.push(["propios",`Coches propios${n?` <b class="num">${n}</b>`:""}`]); } // control interno de coches para vender (tools/vehiculos)
   return `<div class="t-bar">
     <div class="segv" role="group" aria-label="Vista">${vistas.map(([k,t])=>`<button type="button" data-tvista="${k}" aria-pressed="${TVISTA===k}">${t}</button>`).join("")}</div>
     <input class="in" id="t-busq" type="search" placeholder="Buscar matrícula, cliente o Nº de orden" value="${esc(TBUSQ)}" aria-label="Buscar orden">
@@ -189,6 +190,7 @@ renderOrdenes=function(){
   if(enBusq){ const b=$("#t-busq"); b.focus(); try{ b.setSelectionRange(pos,pos); }catch(_){} }
   if(TVISTA==="tablero") return _kanbanOrdenes();
   if(TVISTA==="itv"){ tItvPintar(); if(!TITV||Date.now()-TITV_T>60000) tItvCargar(); return; }
+  if(TVISTA==="propios"&&typeof vpPintar==="function"){ vpPintar(); return; }
   if(!ORDENES.length){ $("#ordenes").innerHTML='<div class="empty"><b style="color:var(--ink)">No hay coches en el taller.</b><br>Pulsa «+ Nueva recepción» cuando entre un coche: se crea la orden con su Nº y la ficha de recepción (FORM-01).</div>'; return; }
   $("#ordenes").innerHTML=TVISTA==="mios"?tMios():tTabla();
 };

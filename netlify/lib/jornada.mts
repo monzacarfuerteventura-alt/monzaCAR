@@ -14,6 +14,7 @@
 //   config/qr              → código del cartel QR / pegatina NFC del taller
 // =====================================================================
 import { store, json } from "./shared.mts";
+import { tareaAutoPausar, tareaAutoReanudar } from "./vehiculos.mts";
 import { tstore, estadoTiempo, guardarOrden, hoyCanarias, leerEquipo, type Quien, type Fichas, type Persona } from "./taller.mts";
 import { anotar } from "./libro.mts";
 import { ipCorta, huella, dispositivo } from "./seguridad.mts";
@@ -88,6 +89,11 @@ async function cargarOrden(token: string) {
 }
 export async function autoPausar(q: Quien, salida: boolean) {
   const token = (await tstore().get("activo/" + q.uid).catch(() => null)) as string | null; if (!token) return "";
+  if (token.startsWith("T:")) { // tarea de un coche propio (Taller → Coches propios)
+    const r = await tareaAutoPausar(q, token.slice(2), salida);
+    if (r) { await tstore().delete("activo/" + q.uid).catch(() => {}); await jstore().set("auto/" + q.uid, token); }
+    return r;
+  }
   const { f, o } = await cargarOrden(token);
   if (!f?.f3 || !o || estadoTiempo(f.f3.eventos) !== "trabajando") return "";
   const t = new Date().toISOString(), motivo = salida ? "Fin de jornada" : "Comida / descanso";
@@ -101,6 +107,13 @@ export async function autoPausar(q: Quien, salida: boolean) {
 export async function autoReanudar(q: Quien) {
   const token = (await jstore().get("auto/" + q.uid).catch(() => null)) as string | null; if (!token) return "";
   await jstore().delete("auto/" + q.uid).catch(() => {});
+  if (token.startsWith("T:")) {
+    const act = (await tstore().get("activo/" + q.uid).catch(() => null)) as string | null;
+    if (act && act !== token) return "";
+    const r = await tareaAutoReanudar(q, token.slice(2));
+    if (r) await tstore().set("activo/" + q.uid, token);
+    return r;
+  }
   const { f, o } = await cargarOrden(token);
   if (!f?.f3 || !o || estadoTiempo(f.f3.eventos) !== "pausa") return "";
   const ult = [...f.f3.eventos].sort((a, b) => a.t.localeCompare(b.t)).pop();

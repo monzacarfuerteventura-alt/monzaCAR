@@ -1,10 +1,11 @@
 import type { Config } from "@netlify/functions";
 import { store, json, mismoOrigen, type Car } from "../lib/shared.mts";
-import { quien, hoyCanarias } from "../lib/taller.mts";
+import { quien, hoyCanarias, tstore, estadoTiempo, leerEquipo, pinOk, MOTIVOS_PAUSA } from "../lib/taller.mts";
 import { exigirJornada } from "../lib/jornada.mts";
 import { anotar, leerLibro } from "../lib/libro.mts";
 import {
   FASES, FASE_TXT, rid, ahora, leerCfg, leerFicha, guardarFicha, listarFichas, siguienteRef, desglose, minTotal, v,
+  TIPOS_TAREA, leerTarea, guardarTarea, listarTareas, calculoTarea, etiquetaTarea, type Tarea, type TipoTarea,
   type Ficha, type Fase,
 } from "../lib/vehiculos.mts";
 
@@ -21,6 +22,11 @@ import {
   POST /api/vehiculos/decidir/:id/:c    → aprobar o rechazar un coste (gerente)
   POST /api/vehiculos/anular/:id/:tipo/:x → anular horas o coste con motivo (gerente). Nada se borra.
   POST /api/vehiculos/config            → coste interno por hora (gerente)
+  GET  /api/vehiculos/tareas            → mi tarea en marcha y las últimas (el gerente ve además las que esperan su visto bueno)
+  POST /api/vehiculos/tarea-iniciar     → empieza una tarea (reparación, mantenimiento, limpieza/preparación) en un coche propio
+  POST /api/vehiculos/tarea-evento/:id  → pausar (con motivo) · reanudar · terminar (con causas A-I si se pasa del umbral y PIN)
+  POST /api/vehiculos/tarea-visto/:id   → visto bueno del gerente
+  POST /api/vehiculos/verificar-pin     → comprueba el PIN del operario (firma al cerrar un trabajo)
   GET  /api/vehiculos/libro             → libro encadenado (gerente)
   Las piezas se cargan desde el Inventario (POST /api/almacen/imputar con «vehiculo»): descuenta stock al momento.
 */
@@ -54,6 +60,22 @@ const txtCoche = (c?: Car) => (c ? `${c.marca} ${c.modelo} ${c.version || ""}`.t
 const act = (q: { uid: string; nombre: string; rol: string }, tipo: "nota" | "tecnica" | "foto" | "fase" | "sistema", txt: string, fotos: string[] = []) =>
   ({ id: rid(), t: ahora(), uid: q.uid, nombre: q.nombre, rol: q.rol, tipo, txt, fotos });
 
+
+const CAUSAS_OK = /^[A-I]$/;
+async function vistaTarea(t: Tarea) {
+  const c = await calculoTarea(t);
+  return { id: t.id, vehiculo: t.vehiculo, ref: t.ref, matricula: t.matricula, coche: t.coche, tipo: t.tipo, tipoTxt: TIPOS_TAREA[t.tipo], nombre: t.nombre, uid: t.uid, estMin: t.estMin, creada: t.creada,
+    estado: c.estado, eventos: t.eventos.map((e) => ({ tipo: e.tipo, t: e.t, motivo: e.motivo, auto: e.auto || "" })), calc: { netoMin: c.netoMin, pausasMin: c.pausasMin, desvPct: c.desvPct, desvMin: c.desvMin, exige: c.exigeJustificacion },
+    justificacion: t.justificacion, cierre: t.cierre, vistoBueno: t.vistoBueno };
+}
+// PIN del operario al cerrar: 5 fallos en 10 minutos bloquean 10 minutos (el PIN es de 6 cifras)
+async function pinFallos(uid: string, sumar = false) {
+  const k = "pinfallos/" + uid, x = ((await v().get(k, { type: "json" }).catch(() => null)) as { n: number; t: number } | null) || { n: 0, t: 0 };
+  const vivo = Date.now() - x.t < 10 * 60e3 ? x : { n: 0, t: 0 };
+  if (sumar) { vivo.n++; vivo.t = Date.now(); await v().setJSON(k, vivo); }
+  return vivo.n;
+}
+
 export default async (req: Request) => {
   const url = new URL(req.url), parts = url.pathname.split("/").filter(Boolean), accion = parts[2] || "", id = parts[3] || "", sub = parts[4] || "", sub2 = parts[5] || "";
   if (req.method !== "GET" && !mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
@@ -72,6 +94,15 @@ export default async (req: Request) => {
   if (accion === "ficha" && req.method === "GET") {
     const f = await leerFicha(id); if (!f) return json({ error: "Ficha no encontrada." }, 404);
     return json(vista(f, q.admin, txtCoche((await nombresCoches()).get(f.coche))));
+  }
+  if (accion === "tareas" && req.method === "GET") {
+    const todas = (await listarTareas()).sort((a, b) => b.creada.localeCompare(a.creada));
+    const mias = todas.filter((t) => t.uid === q.uid);
+    const abierta = mias.find((t) => !t.cierre) || null;
+    const out: any = { ahora: new Date().toISOString(), mia: abierta ? await vistaTarea(abierta) : null, recientes: await Promise.all(mias.filter((t) => t.cierre).slice(0, 6).map(vistaTarea)), tipos: Object.entries(TIPOS_TAREA), motivos: MOTIVOS_PAUSA,
+      coches: (await listarFichas()).filter((f) => f.fase !== "vendido").sort((a, b) => a.ref.localeCompare(b.ref)).map((f) => ({ id: f.id, ref: f.ref, matricula: f.matricula, txt: [f.marca, f.modelo].filter(Boolean).join(" "), fase: f.faseTxt })) };
+    if (q.admin) out.pendientes = await Promise.all(todas.filter((t) => t.cierre && !t.vistoBueno && t.cierre.desvPct !== undefined && t.justificacion).slice(0, 30).map(vistaTarea));
+    return json(out);
   }
   if (accion === "libro" && req.method === "GET") {
     if (!q.admin) return json({ error: "El libro es solo para el gerente." }, 403);
@@ -105,6 +136,87 @@ export default async (req: Request) => {
     await anotar("vehiculos", q, "config", { costeHora: c });
     return json({ ok: true, cfg: { costeHora: c } });
   }
+  if (accion === "verificar-pin") { // firma con PIN al cerrar cualquier trabajo (también órdenes de clientes)
+    if (q.uid === "gerente") return json({ ok: true, pin: false });
+    if ((await pinFallos(q.uid)) >= 5) return json({ error: "Demasiados PIN erróneos. Espera 10 minutos o pídeselo al gerente." }, 429);
+    const persona = (await leerEquipo()).find((x) => x.id === q.uid);
+    if (!body.pin || !pinOk(String(body.pin), persona?.pin)) { await pinFallos(q.uid, true); return json({ error: "PIN incorrecto. Es el mismo con el que entras al panel.", pin: true }, 403); }
+    return json({ ok: true, pin: true });
+  }
+  // ================= FICHAJE DE TAREAS (FORM-03 de coches propios) =================
+  if (accion === "tarea-iniciar") {
+    const fv = await leerFicha(String(body.vehiculo || "")); if (!fv) return json({ error: "Elige el coche." }, 404);
+    if (fv.fase === "vendido") return json({ error: "Ese coche ya está vendido." }, 409);
+    const tipo = String(body.tipo || "") as TipoTarea; if (!(tipo in TIPOS_TAREA)) return json({ error: "Elige qué vas a hacer: reparación, mantenimiento o limpieza." }, 400);
+    const estMin = Math.round(Number(body.estMin)); if (!Number.isFinite(estMin) || estMin < 5 || estMin > 1440) return json({ error: "Pon cuánto tiempo calculas que tardarás (entre 5 minutos y 24 horas)." }, 400);
+    if ((await listarTareas()).some((t) => t.uid === q.uid && !t.cierre)) return json({ error: "Ya tienes una tarea abierta. Termínala antes de empezar otra." }, 409);
+    const activo = (await tstore().get("activo/" + q.uid).catch(() => null)) as string | null;
+    if (activo && !activo.startsWith("T:")) { const otro = (await tstore().get("f/" + activo, { type: "json" }).catch(() => null)) as any; if (otro?.f3 && estadoTiempo(otro.f3.eventos) === "trabajando") return json({ error: `Tienes en marcha la orden ${otro.num}. Ponla en pausa o termínala antes de empezar otra.` }, 409); }
+    const t: Tarea = { id: rid(), vehiculo: fv.id, ref: fv.ref, matricula: fv.matricula, coche: [fv.marca, fv.modelo].filter(Boolean).join(" "), tipo, uid: q.uid, nombre: q.nombre, estMin, eventos: [{ tipo: "inicio", t: ahora(), por: q.uid, motivo: "", nota: "" }], creada: ahora(), justificacion: null, cierre: null, vistoBueno: null };
+    await guardarTarea(t); await tstore().set("activo/" + q.uid, "T:" + t.id);
+    if (fv.fase === "entrada" && tipo === "reparacion") { fv.fase = "reparacion"; fv.actualizaciones.push(act({ uid: q.uid, nombre: q.nombre, rol: q.rol }, "fase", `${FASE_TXT.entrada} → ${FASE_TXT.reparacion} (tarea iniciada)`)); await guardarFicha(fv); }
+    await anotar("vehiculos", q, "tarea-inicio", { ref: fv.ref, tipo, estMin });
+    return json({ ok: true, ahora: ahora(), tarea: await vistaTarea(t) }, 201);
+  }
+  if (accion === "tarea-evento" || accion === "tarea-visto") {
+    const t = await leerTarea(id); if (!t) return json({ error: "Tarea no encontrada." }, 404);
+    if (accion === "tarea-visto") {
+      if (!q.admin) return json({ error: "El visto bueno es solo del gerente." }, 403);
+      if (!t.cierre) return json({ error: "La tarea aún no está terminada." }, 409);
+      if (t.vistoBueno) return json({ error: "Ya tenía el visto bueno." }, 409);
+      t.vistoBueno = { t: ahora(), por: q.nombre, nota: str(body.nota, 200) }; await guardarTarea(t);
+      await anotar("vehiculos", q, "tarea-visto-bueno", { ref: t.ref, tipo: t.tipo, desvPct: t.cierre.desvPct });
+      return json({ ok: true, tarea: await vistaTarea(t) });
+    }
+    if (!q.admin && q.uid !== t.uid) return json({ error: "Esta tarea es de otra persona. Solo ella o el gerente pueden tocarla." }, 403);
+    if (t.cierre) return json({ error: "La tarea ya está terminada." }, 409);
+    const tipo = String(body.tipo || ""), est = estadoTiempo(t.eventos);
+    if (!["pausa", "reanudar", "fin"].includes(tipo)) return json({ error: "Acción no válida." }, 400);
+    if (!((tipo === "pausa" && est === "trabajando") || (tipo === "reanudar" && est === "pausa") || (tipo === "fin" && (est === "trabajando" || est === "pausa")))) return json({ error: { sin: "Aún no ha empezado.", trabajando: "Ya está en marcha.", pausa: "Está en pausa: reanúdala o termínala.", fin: "Ya está terminada." }[est] }, 409);
+    const motivo = tipo === "pausa" ? (MOTIVOS_PAUSA.includes(body.motivo) ? String(body.motivo) : "") : "";
+    if (tipo === "pausa" && !motivo) return json({ error: "Elige el motivo de la pausa." }, 400);
+    if (tipo === "reanudar") {
+      const activo = (await tstore().get("activo/" + t.uid).catch(() => null)) as string | null;
+      if (activo && activo !== "T:" + t.id) { const otro = activo.startsWith("T:") ? null : ((await tstore().get("f/" + activo, { type: "json" }).catch(() => null)) as any); if (otro?.f3 && estadoTiempo(otro.f3.eventos) === "trabajando") return json({ error: `Tienes en marcha la orden ${otro.num}. Ponla en pausa antes de reanudar esta.` }, 409); }
+    }
+    const evento = { tipo: tipo as "pausa" | "reanudar" | "fin", t: ahora(), por: q.uid, motivo, nota: str(body.nota, 200) };
+    if (tipo !== "fin") {
+      t.eventos.push(evento); await guardarTarea(t);
+      if (tipo === "reanudar") await tstore().set("activo/" + t.uid, "T:" + t.id); else { const a = await tstore().get("activo/" + t.uid).catch(() => null); if (a === "T:" + t.id) await tstore().delete("activo/" + t.uid); }
+      return json({ ok: true, ahora: ahora(), tarea: await vistaTarea(t) });
+    }
+    // ----- terminar: desviación, causas A-I y firma con PIN -----
+    const simulada: Tarea = { ...t, eventos: [...t.eventos, evento] };
+    const c = await calculoTarea(simulada);
+    let just: Tarea["justificacion"] = null;
+    if (c.exigeJustificacion) {
+      const codigos = (Array.isArray(body.codigos) ? body.codigos : []).map(String).filter((x: string) => CAUSAS_OK.test(x)).slice(0, 9), explicacion = str(body.explicacion, 600);
+      if (!codigos.length || explicacion.length < 5 || (codigos.includes("I") && explicacion.length < 5)) return json({ error: `Te has pasado ${c.desvPct > 0 ? "+" : ""}${c.desvPct} % (${c.desvMin > 0 ? "+" : ""}${c.desvMin} min) del tiempo calculado: marca la causa (A a I) y escribe una explicación para poder cerrar.`, exige: true, calc: { netoMin: c.netoMin, desvPct: c.desvPct, desvMin: c.desvMin } }, 409);
+      just = { codigos, explicacion, t: ahora(), por: q.uid };
+    }
+    let pin = false;
+    if (q.uid !== "gerente") { // el gerente que entra con la contraseña del panel ya se ha identificado; el equipo firma con su PIN
+      if ((await pinFallos(q.uid)) >= 5) return json({ error: "Demasiados PIN erróneos. Espera 10 minutos o pídeselo al gerente." }, 429);
+      const persona = (await leerEquipo()).find((x) => x.id === q.uid);
+      if (!body.pin || !pinOk(String(body.pin), persona?.pin)) { await pinFallos(q.uid, true); return json({ error: "PIN incorrecto. Es el mismo con el que entras al panel.", pin: true }, 403); }
+      pin = true;
+    }
+    t.eventos.push(evento); t.justificacion = just;
+    t.cierre = { t: evento.t, por: q.nombre, pin, netoMin: c.netoMin, desvPct: c.desvPct, desvMin: c.desvMin };
+    await guardarTarea(t);
+    const a = await tstore().get("activo/" + t.uid).catch(() => null); if (a === "T:" + t.id) await tstore().delete("activo/" + t.uid);
+    // El tiempo neto pasa solo a las horas de la ficha del coche
+    const fv = await leerFicha(t.vehiculo);
+    if (fv && c.netoMin >= 1) {
+      const cfg = await leerCfg();
+      fv.horas.push({ id: rid(), t: ahora(), fecha: hoyCanarias(), uid: t.uid, nombre: t.nombre, min: c.netoMin, nota: `${TIPOS_TAREA[t.tipo]} (fichaje de tarea)`, costeHora: cfg.costeHora, anulada: null });
+      fv.actualizaciones.push(act({ uid: q.uid, nombre: q.nombre, rol: q.rol }, "sistema", `Tarea terminada: ${TIPOS_TAREA[t.tipo]}, ${c.netoMin} min netos (${c.desvPct > 0 ? "+" : ""}${c.desvPct} % sobre lo calculado)`));
+      await guardarFicha(fv);
+    }
+    await anotar("vehiculos", q, "tarea-fin", { ref: t.ref, tipo: t.tipo, netoMin: c.netoMin, desvPct: c.desvPct, causas: just?.codigos || [], pin });
+    return json({ ok: true, ahora: ahora(), tarea: await vistaTarea(t), pendienteVisto: !!just });
+  }
+
   const f = await leerFicha(id); if (!f) return json({ error: "Ficha no encontrada." }, 404);
   const yo = { uid: q.uid, nombre: q.nombre, rol: q.rol };
 

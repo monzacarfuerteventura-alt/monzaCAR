@@ -183,3 +183,10 @@ Para cambiar un PDF: sustitúyelo con el mismo nombre y sube `V = "?v=1"` en `pa
 
 ## Coches propios (Taller)
 Panel -> Taller -> **Coches propios**: control interno de cada coche que compras para arreglar y vender. Fases: Entrada/danado -> En reparacion -> Control de calidad -> Listo para venta (solo interno) -> Vendido. Horas, notas, fotos, costes (el equipo propone, el gerente aprueba) y piezas del Inventario (descuentan stock). Finanzas suma piezas, horas y costes al beneficio del coche cuando la ficha se enlaza con un coche de la web. Todo es privado: datos en el almacen `vehiculos` (entra en la copia diaria). Codigo: `tools/vehiculos` + `python3 tools/vehiculos/inyectar.py`; servidor: `netlify/functions/vehiculos.mts`. Pruebas: `tools/pruebas/e2e-vehiculos.mjs`.
+
+
+## Fichaje de tareas, agente de ventas y voz de la Ayuda
+- **Fichaje de tareas**: bajo el fichaje de jornada (`tools/tareas`): reparacion, mantenimiento o limpieza de un coche propio o una orden, con pausas con motivo, desviacion, causas A-I y PIN.
+- **Ventas** (`netlify/lib/ventas.mts`, `meta.mts`, `netlify/functions/whatsapp.mts`): filtro de frases prohibidas, llamadas y pruebas de conduccion a las 8:30 del siguiente dia laborable, y los mismos avisos por Facebook Messenger e Instagram Direct (variables FB_PAGE_TOKEN / IG_TOKEN / META_APP_SECRET; webhook /api/whatsapp o /api/meta).
+- **Voz DAN** (`netlify/lib/guiones.mts`, `netlify/functions/voz.mts`, `tools/voz`): guiones de los 9 videos y voz de ElevenLabs (variable ELEVENLABS_API_KEY, y ELEVENLABS_VOICE_ID si no encuentra la voz por nombre). Se genera desde Ayuda con el boton del gerente.
+- Documentos: `tools/docs/MODELO-DE-DATOS.md`, `tools/docs/QA-MATRIZ.md`, `tools/ayuda/GUIONES-VIDEOS.md`. Pruebas: `tools/pruebas/e2e-*`.

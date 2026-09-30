@@ -152,6 +152,44 @@ r = await llamar("POST", "/api/almacen/devolver-pieza/" + mv2, M, { motivo: "Era
 r = await llamar("GET", "/api/vehiculos/ficha/" + id2, L); esperar("la ficha 2 no suma la pieza devuelta", r.data.eco.piezas === 0 && r.data.piezas[0].devuelto === 1, JSON.stringify(r.data.eco));
 const mv = await llamar("GET", "/api/almacen/movimientos?desde=2020-01-01&hasta=2099-12-31", L); esperar("Inventario · movimientos muestran los del coche", mv.status === 200 && JSON.stringify(mv.data).includes("VP-"), est(mv));
 
+console.log("\nI) Fichaje de tareas (FORM-03 de coches propios)");
+r = await llamar("POST", "/api/vehiculos/crear", R, { marca: "Renault", modelo: "Clio", matricula: "7777tar" }); const v3 = r.data.ficha.id;
+r = await llamar("POST", "/api/vehiculos/tarea-iniciar", M, { vehiculo: v3, tipo: "reparacion" }); esperar("sin tiempo estimado: rechazado", r.status === 400, est(r));
+r = await llamar("POST", "/api/vehiculos/tarea-iniciar", M, { vehiculo: v3, tipo: "volar", estMin: 60 }); esperar("tipo inválido rechazado", r.status === 400, est(r));
+r = await llamar("POST", "/api/vehiculos/tarea-iniciar", M, { vehiculo: v3, tipo: "reparacion", estMin: 60 }); esperar("mecánico inicia una tarea (1 toque)", r.status === 201 && r.data.tarea.estado === "trabajando", est(r));
+const tid = r.data.tarea.id;
+r = await llamar("POST", "/api/vehiculos/tarea-iniciar", M, { vehiculo: v3, tipo: "limpieza", estMin: 30 }); esperar("no dos tareas a la vez", r.status === 409, est(r));
+r = await llamar("GET", "/api/vehiculos/tareas", M); esperar("mi tarea en marcha aparece", r.status === 200 && r.data.mia?.id === tid && r.data.coches.length >= 1, est(r));
+r = await llamar("POST", "/api/vehiculos/tarea-evento/" + tid, C, { tipo: "pausa", motivo: "Recambio pendiente" }); esperar("otra persona no toca mi tarea", r.status === 403, est(r));
+r = await llamar("POST", "/api/vehiculos/tarea-evento/" + tid, M, { tipo: "pausa" }); esperar("pausa sin motivo rechazada", r.status === 400, est(r));
+r = await llamar("POST", "/api/vehiculos/tarea-evento/" + tid, M, { tipo: "pausa", motivo: "Recambio pendiente" }); esperar("pausa con motivo", r.status === 200 && r.data.tarea.estado === "pausa", est(r));
+r = await llamar("POST", "/api/vehiculos/tarea-evento/" + tid, M, { tipo: "pausa", motivo: "Recambio pendiente" }); esperar("doble pausa: 409 sin duplicar", r.status === 409, est(r));
+r = await llamar("POST", "/api/vehiculos/tarea-evento/" + tid, M, { tipo: "reanudar" }); esperar("reanudar", r.status === 200 && r.data.tarea.estado === "trabajando", est(r));
+// Jornada en segundo plano: la pausa de jornada pausa sola la tarea y volver la reanuda
+r = await llamar("POST", "/api/jornada/fichar", M, { accion: "pausa" }); esperar("pausa de jornada", r.status === 200, est(r));
+r = await llamar("GET", "/api/vehiculos/tareas", M); esperar("en pausa de jornada el panel está bloqueado (423), como siempre", r.status === 423, est(r));
+{ const x = JSON.parse(await store("vehiculos").get("t/" + tid)); const u = x.eventos.at(-1); esperar("la tarea se pausó sola con la jornada", u.tipo === "pausa" && u.auto === "jornada", JSON.stringify(u)); }
+r = await llamar("POST", "/api/jornada/fichar", M, { accion: "reanudar" }); esperar("vuelta de jornada", r.status === 200, est(r));
+r = await llamar("GET", "/api/vehiculos/tareas", M); esperar("la tarea se reanudó sola", r.data.mia?.estado === "trabajando", est(r));
+// Simular que llevaba 100 min con 60 calculados (+66 %): hay que justificar
+const bl = store("vehiculos"); const tt = JSON.parse(await bl.get("t/" + tid)); tt.eventos[0].t = new Date(Date.now() - 100 * 60e3).toISOString(); tt.eventos = tt.eventos.filter((e) => !e.auto && e.tipo !== "pausa" && e.tipo !== "reanudar"); await bl.setJSON("t/" + tid, tt);
+r = await llamar("POST", "/api/vehiculos/tarea-evento/" + tid, M, { tipo: "fin", pin: "445566" }); esperar("desviación > 15 %: no deja cerrar sin causa", r.status === 409 && r.data.exige === true, est(r));
+r = await llamar("POST", "/api/vehiculos/tarea-evento/" + tid, M, { tipo: "fin", pin: "445566", codigos: ["Z"], explicacion: "xx" }); esperar("causa inválida rechazada", r.status === 409, est(r));
+r = await llamar("POST", "/api/vehiculos/tarea-evento/" + tid, M, { tipo: "fin", pin: "000000", codigos: ["B"], explicacion: "Pieza oxidada al desmontar" }); esperar("PIN incorrecto: no firma", r.status === 403, est(r));
+r = await llamar("POST", "/api/vehiculos/tarea-evento/" + tid, M, { tipo: "fin", pin: "445566", codigos: ["B"], explicacion: "Pieza oxidada al desmontar" }); esperar("con causa y PIN correcto: cierra", r.status === 200 && r.data.tarea.cierre && r.data.pendienteVisto === true, est(r));
+esperar("tiempo neto ≈ 100 min", r.data.tarea.cierre.netoMin >= 99 && r.data.tarea.cierre.netoMin <= 101, JSON.stringify(r.data.tarea.cierre));
+r = await llamar("GET", "/api/vehiculos/ficha/" + v3, L); esperar("las horas pasan solas a la ficha (y su coste)", r.data.horas.some((h) => h.nota.includes("fichaje de tarea") && h.min >= 99) && r.data.eco.horas > 0, JSON.stringify(r.data.eco));
+r = await llamar("GET", "/api/vehiculos/tareas", L); esperar("el gerente ve la tarea pendiente de visto bueno", r.data.pendientes?.some((x) => x.id === tid), est(r));
+r = await llamar("POST", "/api/vehiculos/tarea-visto/" + tid, M, {}); esperar("el mecánico no da el visto bueno", r.status === 403, est(r));
+r = await llamar("POST", "/api/vehiculos/tarea-visto/" + tid, L, { nota: "Correcto" }); esperar("el gerente da el visto bueno", r.status === 200 && r.data.tarea.vistoBueno, est(r));
+// Tarea dentro de lo previsto: cierra sin justificar
+r = await llamar("POST", "/api/vehiculos/tarea-iniciar", M, { vehiculo: v3, tipo: "limpieza", estMin: 30 }); const tid2 = r.data.tarea.id;
+r = await llamar("POST", "/api/vehiculos/tarea-evento/" + tid2, M, { tipo: "fin" }); esperar("sin PIN no se firma el cierre", r.status === 403, est(r));
+r = await llamar("POST", "/api/vehiculos/tarea-evento/" + tid2, M, { tipo: "fin", pin: "445566" }); esperar("dentro de lo previsto: cierra con PIN, sin justificar", r.status === 200 && !r.data.pendienteVisto, est(r));
+// Gerente con contraseña: no necesita PIN
+r = await llamar("POST", "/api/vehiculos/tarea-iniciar", G, { vehiculo: v3, tipo: "mantenimiento", estMin: 30 }); const tid3 = r.data.tarea.id;
+r = await llamar("POST", "/api/vehiculos/tarea-evento/" + tid3, G, { tipo: "fin" }); esperar("gerente (contraseña) cierra sin PIN", r.status === 200, est(r));
+
 console.log("\nH) Libro encadenado y aislamiento público");
 const lb = await llamar("GET", "/api/vehiculos/libro", L); esperar("libro íntegro con anotaciones", lb.status === 200 && lb.data.integro && lb.data.total > 10, est(lb));
 const lm = await llamar("GET", "/api/vehiculos/libro", M); esperar("libro solo gerente", lm.status === 403, est(lm));

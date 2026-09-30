@@ -1,0 +1,30 @@
+/* FICHAJE DE TAREAS (pantalla de fichaje) · modo taller: botones táctiles grandes */
+#tk{width:100%;max-width:640px;margin:14px auto 0}
+.tk-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px;display:grid;gap:12px}
+.tk-card h2{margin:0;font-size:20px}
+.tk-off{opacity:.55;pointer-events:none}
+.tk-cola{background:var(--bad-soft);color:var(--bad);border-radius:12px;padding:10px 12px;font-weight:700;font-size:14px}
+.tk-tarea{border:1.5px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:10px;background:var(--surface-2)}
+.tk-tarea.trabajando{border-color:var(--ok)} .tk-tarea.pausa{border-color:#d9a11c}
+.tk-cab{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.tk-cab b{font-size:18px}.tk-cab small{display:block;color:var(--muted);font-size:13.5px}
+.tk-tiempo{font-variant-numeric:tabular-nums;font-size:34px;font-weight:800;line-height:1}
+.tk-desv{font-size:14px;font-weight:700}.tk-desv.mal{color:var(--bad)}.tk-desv.ok{color:var(--ok)}
+.tk-btn{min-height:64px;width:100%;border:0;border-radius:16px;font:inherit;font-size:19px;font-weight:800;cursor:pointer;color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 16px;touch-action:manipulation}
+.tk-btn[disabled]{opacity:.5}
+.tk-go{background:var(--ok)}.tk-pa{background:#d9a11c;color:#1b1b1a}.tk-fin{background:var(--bad)}.tk-ac{background:var(--accent)}
+.tk-fila{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tk-sel,.tk-in{min-height:60px;font-size:18px;width:100%}
+.tk-tipos{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tk-tipos button,.tk-chips button{min-height:60px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;font:inherit;font-size:16px;font-weight:700;cursor:pointer;padding:8px;touch-action:manipulation}
+.tk-tipos button[aria-pressed="true"],.tk-chips button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tk-chips{display:flex;gap:8px;flex-wrap:wrap}.tk-chips button{flex:1 1 70px}
+.tk-motivos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tk-motivos button{min-height:72px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:17px;font-weight:700;cursor:pointer;touch-action:manipulation}
+.tk-cau{display:grid;gap:8px;max-height:38vh;overflow:auto}
+.tk-cau label{display:flex;gap:12px;align-items:center;min-height:56px;border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;font-size:16px;cursor:pointer}
+.tk-cau input{width:26px;height:26px;flex:none}
+.tk-pin{font-size:30px;letter-spacing:.4em;text-align:center;min-height:64px}
+.tk-vb{border:1.5px dashed var(--line);border-radius:14px;padding:10px 12px;font-size:14px}
+dialog.tk-dlg{width:min(560px,96vw);max-height:94vh;overflow:auto}
+@media(max-width:480px){.tk-tipos{grid-template-columns:1fr}.tk-tiempo{font-size:30px}}

@@ -83,3 +83,47 @@ export async function devolverPieza(f: Ficha, mov: string, n: number, quien: { u
   f.actualizaciones.push({ id: rid(), t: ahora(), uid: quien.uid, nombre: quien.nombre, rol: quien.rol, tipo: "sistema", txt: `Devuelto al inventario: ${n} × ${p.nombre}. ${motivo}`, fotos: [] });
   await guardarFicha(f);
 }
+
+// =====================================================================
+// FICHAJE DE TAREAS POR COCHE (FORM-03 para coches propios: reparación, mantenimiento, limpieza/preparación)
+// Mismas reglas que el FORM-03 de las órdenes de clientes: hora del servidor, pausas con motivo, un solo trabajo
+// a la vez por persona, desviación (% y minutos), causas A a I y visto bueno del gerente. Al terminar, el tiempo
+// neto pasa solo a las horas de la ficha del coche (y de ahí a Finanzas).
+// =====================================================================
+import { tstore, estadoTiempo, calculo, leerConfig, type Evento } from "./taller.mts";
+
+export const TIPOS_TAREA = { reparacion: "Reparación", mantenimiento: "Mantenimiento", limpieza: "Limpieza / preparación" } as const;
+export type TipoTarea = keyof typeof TIPOS_TAREA;
+export type Tarea = {
+  id: string; vehiculo: string; ref: string; matricula: string; coche: string; tipo: TipoTarea; uid: string; nombre: string; estMin: number;
+  eventos: Evento[]; creada: string;
+  justificacion: null | { codigos: string[]; explicacion: string; t: string; por: string };
+  cierre: null | { t: string; por: string; pin: boolean; netoMin: number; desvPct: number; desvMin: number };
+  vistoBueno: null | { t: string; por: string; nota: string };
+};
+export const leerTarea = async (id: string) => (/^[a-z0-9]{12}$/.test(id) ? (((await v().get("t/" + id, { type: "json" }).catch(() => null)) as Tarea | null) || null) : null);
+export const guardarTarea = (t: Tarea) => v().setJSON("t/" + t.id, t);
+export async function listarTareas(): Promise<Tarea[]> {
+  const { blobs } = await v().list({ prefix: "t/" });
+  return ((await Promise.all(blobs.map((b) => v().get(b.key, { type: "json" }).catch(() => null)))).filter(Boolean) as Tarea[]);
+}
+export const calculoTarea = async (t: Tarea, ahora = Date.now()) => calculo({ mecanico: t.uid, tarifa: 0, estMin: t.estMin, tipo: t.tipo, hoja: "", eventos: t.eventos } as any, await leerConfig(), ahora)!;
+export const etiquetaTarea = (t: Tarea) => `${TIPOS_TAREA[t.tipo]} · ${t.matricula || t.ref}`;
+
+/** ¿Tiene esa persona una tarea de coche propio trabajando ahora? Devuelve su etiqueta (lo usa el FORM-03 de las órdenes para no fichar dos a la vez). */
+export async function tareaEnMarcha(id: string): Promise<string> {
+  const t = await leerTarea(id);
+  return t && estadoTiempo(t.eventos) === "trabajando" ? etiquetaTarea(t) : "";
+}
+/** Fichaje de jornada (pausa o salida): pone en pausa sola la tarea que estaba en marcha. Devuelve su etiqueta. */
+export async function tareaAutoPausar(q: { uid: string; nombre: string; rol: string }, id: string, salida: boolean): Promise<string> {
+  const t = await leerTarea(id); if (!t || estadoTiempo(t.eventos) !== "trabajando") return "";
+  t.eventos.push({ tipo: "pausa", t: ahora(), por: q.uid, motivo: salida ? "Otro" : "Comida / descanso", nota: `Automática al fichar la ${salida ? "salida" : "pausa"} de jornada`, auto: "jornada" });
+  await guardarTarea(t); return etiquetaTarea(t);
+}
+export async function tareaAutoReanudar(q: { uid: string }, id: string): Promise<string> {
+  const t = await leerTarea(id); if (!t || estadoTiempo(t.eventos) !== "pausa") return "";
+  const ult = t.eventos[t.eventos.length - 1]; if (!ult || ult.auto !== "jornada") return "";
+  t.eventos.push({ tipo: "reanudar", t: ahora(), por: q.uid, motivo: "", nota: "Automática al volver a fichar", auto: "jornada" });
+  await guardarTarea(t); return etiquetaTarea(t);
+}

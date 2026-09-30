@@ -6,7 +6,9 @@ import { fileURLToPath } from "node:url";
 
 const RAIZ = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const PUB = join(RAIZ, "public");
-const ENV = { ADMIN_PASSWORD: process.env.CLAVE || "clave-de-pruebas-larga-2026", SESSION_SECRET: "secreto-de-pruebas" };
+const ENV = { ADMIN_PASSWORD: process.env.CLAVE || "clave-de-pruebas-larga-2026", SESSION_SECRET: "secreto-de-pruebas",
+  // opcional: voz de la Ayuda contra un ElevenLabs de mentira (tools/pruebas/e2e-voz-panel.py)
+  ...(process.env.ELEVENLABS_API_BASE ? { ELEVENLABS_API_KEY: "xi-prueba", ELEVENLABS_API_BASE: process.env.ELEVENLABS_API_BASE } : {}) };
 globalThis.Netlify = { env: { get: (k) => ENV[k] || "" }, context: { deploy: { context: "production" } } };
 const PUERTO = Number(process.env.PUERTO || 8888);
 

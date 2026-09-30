@@ -1,4 +1,5 @@
 import type { Config as NConfig, Context } from "@netlify/functions";
+import { tareaEnMarcha } from "../lib/vehiculos.mts";
 import { store, json, mismoOrigen } from "../lib/shared.mts";
 import {
   quien, tstore, leerConfig, leerEquipo, hashPin, CONFIG_DEFECTO, ROLES, F2_IDS, F4_A, F4_B, F4_C, F4_D, MOTIVOS_PAUSA,
@@ -385,7 +386,8 @@ export default async (req: Request, context: Context) => {
       // Un mecánico no puede estar trabajando en dos coches a la vez
       if (tipo === "inicio" || tipo === "reanudar") {
         const activo = (await tstore().get("activo/" + f3.mecanico).catch(() => null)) as string | null;
-        if (activo && activo !== token) {
+        if (activo && activo.startsWith("T:")) { const etq = await tareaEnMarcha(activo.slice(2)); if (etq) return json({ error: `Tienes en marcha ${etq} (coche propio). Ponla en pausa o termínala antes de empezar otra.` }, 409); }
+        if (activo && activo !== token && !activo.startsWith("T:")) {
           const otro = (await tstore().get("f/" + activo, { type: "json" }).catch(() => null)) as Fichas | null;
           if (otro?.f3 && estadoTiempo(otro.f3.eventos) === "trabajando") return json({ error: `Tienes en marcha la orden ${otro.num}. Ponla en pausa o termínala antes de empezar otra.` }, 409);
         }
