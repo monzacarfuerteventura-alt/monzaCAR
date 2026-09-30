@@ -2,6 +2,7 @@ import type { Config } from "@netlify/functions";
 import { createHash } from "node:crypto";
 import { store, json, mismoOrigen, type Car } from "../lib/shared.mts";
 import { quien, hoyCanarias, leerConfig, type Quien } from "../lib/taller.mts";
+import { costesPorCoche } from "../lib/vehiculos.mts";
 import { str, cent, eur, esFoto, rid, ahora, listar as listarCaja, movsDe, turnoAbierto, crearMovimiento, leerMov, libro as libroCaja, s as sCaja, teorico, type Turno, type Mov } from "../lib/caja.mts";
 
 /*
@@ -78,10 +79,10 @@ async function porCaja(q: Quien, datos: any, origin: string) {
 }
 
 async function resumen(desde: string, hasta: string) {
-  const [ords, cars, gastos, ingresosM, ventas, costes, clasif, cobrosT, cfg] = await Promise.all([
+  const [ords, cars, gastos, ingresosM, ventas, costes, clasif, cobrosT, cfg, propios] = await Promise.all([
     (async () => { const s = store("ordenes"); const { blobs } = await s.list({ prefix: "o/" }); return (await Promise.all(blobs.map((b) => s.get(b.key, { type: "json" })))).filter(Boolean) as any[]; })(),
     (async () => ((await store("monzacar").get("coches", { type: "json" }).catch(() => null)) as Car[] | null) || [])(),
-    lista<Gasto>("gasto/"), lista<Ingreso>("ingreso/"), lista<Venta>("venta/"), lista<any>("coste/"), lista<any>("clasif/"), lista<{ token: string; cobros: Cobro[] }>("cobro-taller/"), leerConfig(),
+    lista<Gasto>("gasto/"), lista<Ingreso>("ingreso/"), lista<Venta>("venta/"), lista<any>("coste/"), lista<any>("clasif/"), lista<{ token: string; cobros: Cobro[] }>("cobro-taller/"), leerConfig(), costesPorCoche(),
   ]);
   const turnos = await listarCaja<Turno>("t/");
   const movs = (await Promise.all(turnos.map((t) => movsDe(t.id)))).flat().filter((m) => !m.anulado);
@@ -115,8 +116,9 @@ async function resumen(desde: string, hasta: string) {
     const c = carDe.get(id), v = ventas.find((x) => x.coche === id), co = costeDe.get(id);
     const caja = movs.filter((m) => m.tipo === "ingreso" && m.coche === id && !usadosCaja.has(m.id));
     const total = v ? v.importe : Math.round((c?.precio || 0) * 100), igic = v ? v.igicPct : 0, base = Math.round(total / (1 + igic / 100));
-    const compra = v?.costeCompra ?? co?.compra ?? 0;
-    const reac = gastos.filter((g) => !g.anulado && g.coche === id).reduce((a, g) => a + g.base, 0);
+    const compra = v?.costeCompra ?? co?.compra ?? propios.get(id)?.compra ?? 0;
+    // Reacondicionamiento = gastos apuntados a este coche + piezas, horas y costes aprobados de su ficha en Taller → Coches propios
+    const reac = gastos.filter((g) => !g.anulado && g.coche === id).reduce((a, g) => a + g.base, 0) + (propios.get(id)?.reac || 0);
     const cobrado = [...(v?.cobros || []).map((x) => ({ ...x, origen: "finanzas" })), ...caja.map((m) => ({ id: m.id, fecha: diaDe(m.t), metodo: "efectivo", importe: m.importe, cajaMov: m.id, nota: "Cobrado en caja por " + m.porNombre, origen: "caja" }))];
     const fechaDoc = v?.fecha || (c?.vendidoEn ? diaDe(c.vendidoEn) : diaDe(c?.actualizado || ahora()));
     const nombre = c ? `${c.marca} ${c.modelo} ${c.version || ""}`.trim() + (c.anio ? ` (${c.anio})` : "") : "Coche borrado del inventario";
@@ -178,7 +180,7 @@ async function resumen(desde: string, hasta: string) {
   else { const u = (await sCaja().get("ultimo-cierre", { type: "json" }).catch(() => null)) as any; efectivo = { abierta: false, teorico: u?.contado || 0, desde: u?.t || "", nombre: u?.nombre || "" }; }
   // Pendientes (de siempre, no solo del periodo)
   const porCobrar = emitidas.filter((d) => d.total - d.cobrado > 0).map((d) => ({ id: d.id, tipo: d.tipo, ref: d.ref, fecha: d.fecha, num: d.num, cliente: d.cliente, concepto: d.concepto, total: d.total, pendiente: d.total - d.cobrado, estimado: d.estimado }));
-  const stock = cars.filter((c) => c.estado !== "vendido").map((c) => ({ coche: c.id, nombre: `${c.marca} ${c.modelo} ${c.version || ""}`.trim(), precio: Math.round(c.precio * 100), compra: costeDe.get(c.id)?.compra || 0, reacondicionamiento: gastos.filter((g) => !g.anulado && g.coche === c.id).reduce((a, g) => a + g.base, 0) }));
+  const stock = cars.filter((c) => c.estado !== "vendido").map((c) => ({ coche: c.id, nombre: `${c.marca} ${c.modelo} ${c.version || ""}`.trim(), precio: Math.round(c.precio * 100), compra: costeDe.get(c.id)?.compra || propios.get(c.id)?.compra || 0, reacondicionamiento: gastos.filter((g) => !g.anulado && g.coche === c.id).reduce((a, g) => a + g.base, 0) + (propios.get(c.id)?.reac || 0) }));
   const dias = [...new Set([...E.map((d) => d.fecha), ...C.map((c) => c.fecha), ...R.map((g) => g.fecha)])].sort();
   const serie = dias.map((d) => ({ fecha: d, cobrado: sum(C.filter((c) => c.fecha === d), "importe"), pagado: sum(R.filter((g) => g.fecha === d)) }));
   return {

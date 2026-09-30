@@ -2,6 +2,7 @@ import type { Config } from "@netlify/functions";
 import { store, json, mismoOrigen, enviarAviso } from "../lib/shared.mts";
 import { quien, hoyCanarias, type Quien } from "../lib/taller.mts";
 import { anotar, leerLibro } from "../lib/libro.mts";
+import { leerFicha, anotarPieza, devolverPieza } from "../lib/vehiculos.mts";
 import { a, listarA, herramientasPendientes, redondeo, CAT_PIEZA, CAT_HERR, UNIDADES, type Pieza, type MovPieza, type Herramienta } from "../lib/almacen.mts";
 import { exigirJornada } from "../lib/jornada.mts";
 
@@ -13,7 +14,7 @@ import { exigirJornada } from "../lib/jornada.mts";
   GET  /api/almacen/pendientes-cierre          → herramientas fuera sin localizar hoy (cierre de caja)
   POST /api/almacen/pieza[/:id]                → alta / edición de la ficha (gerente o recepción)
   POST /api/almacen/entrada                    → llegada de material con albarán o factura
-  POST /api/almacen/imputar                    → recambio usado en una orden: descuenta stock al momento
+  POST /api/almacen/imputar                    → recambio usado en una orden (o en un coche propio con «vehiculo»): descuenta stock al momento
   POST /api/almacen/devolver-pieza/:mov        → devolución al almacén de lo imputado (con motivo)
   POST /api/almacen/ajuste/:id                 → recuento: stock real con motivo (queda como merma o sobrante)
   POST /api/almacen/herramienta[/:id]          → alta / edición
@@ -155,23 +156,31 @@ export default async (req: Request) => {
 
   // ================= RECAMBIO USADO EN UNA ORDEN (descuento automático) =================
   if (accion === "imputar" && req.method === "POST") {
-    const o = await leerOrden(String(body.orden || "")); if (!o) return json({ error: "Orden no encontrada." }, 404);
-    if (o.estado === "entregado") return json({ error: "La orden ya está entregada: no se le pueden cargar más recambios." }, 409);
+    // Destino: una orden de cliente (FORM-03) o un coche propio del stock (Taller → Coches propios)
+    const vid = String(body.vehiculo || "");
+    const o = vid ? null : await leerOrden(String(body.orden || ""));
+    const fv = vid ? await leerFicha(vid) : null;
+    if (vid && !fv) return json({ error: "Coche propio no encontrado." }, 404);
+    if (!vid && !o) return json({ error: "Orden no encontrada." }, 404);
+    if (o && o.estado === "entregado") return json({ error: "La orden ya está entregada: no se le pueden cargar más recambios." }, 409);
+    if (fv && fv.fase === "vendido") return json({ error: "Ese coche ya está vendido: no se le pueden cargar más piezas." }, 409);
     const p = await leerPieza(String(body.pieza || "")); if (!p || !p.activo) return json({ error: "Pieza no encontrada." }, 404);
     const n = cant(body.cantidad); if (!Number.isFinite(n) || n <= 0 || n > 10000) return json({ error: "Pon cuántas unidades has usado." }, 400);
     if (n > p.stock) return json({ error: `No hay stock suficiente: el sistema dice que quedan ${String(p.stock).replace(".", ",")} ${p.unidad}. Si hay más en la estantería, avisa para registrar la entrada o hacer un recuento.` }, 409);
-    const m = await mover(q, p, "salida", -n, { orden: o.token, num: o.num || "", motivo: str(body.nota, 200), origen: "FORM-03" });
+    const m = await mover(q, p, "salida", -n, fv ? { vehiculo: fv.id, num: fv.ref, motivo: str(body.nota, 200), origen: "COCHE-PROPIO" } : { orden: o!.token, num: o!.num || "", motivo: str(body.nota, 200), origen: "FORM-03" });
+    if (fv) await anotarPieza(fv, { mov: m.id, t: m.t, pieza: p.id, sku: p.sku, nombre: p.nombre, cantidad: n, coste: p.coste, uid: q.uid, nombre_por: q.nombre }, q);
     if (m.antes > p.minimo && m.despues <= p.minimo) await alerta(m.despues <= 0 ? "rojo" : "ambar", "minimo", `${p.nombre} ${m.despues <= 0 ? "AGOTADO" : "por debajo del mínimo"} (quedan ${String(m.despues).replace(".", ",")} ${p.unidad})`, [["Pieza", `${p.sku} · ${p.nombre}`], ["Quedan", `${m.despues} ${p.unidad}`], ["Mínimo", `${p.minimo} ${p.unidad}`], ["Proveedor", p.proveedor]], origin, m.despues <= 0);
     return json({ ok: true, movimiento: { ...m, coste: q.admin ? m.coste : undefined }, stock: m.despues, bajoMinimo: m.despues <= p.minimo });
   }
   if (accion === "devolver-pieza" && req.method === "POST") {
     const { blobs } = await a().list({ prefix: "m/" }); const k = blobs.find((b) => b.key.endsWith("-" + id)); if (!k) return json({ error: "Movimiento no encontrado." }, 404);
-    const orig = (await a().get(k.key, { type: "json" })) as MovPieza; if (orig.tipo !== "salida") return json({ error: "Solo se devuelve lo que salió para una orden." }, 400);
+    const orig = (await a().get(k.key, { type: "json" })) as MovPieza; if (orig.tipo !== "salida") return json({ error: "Solo se devuelve lo que salió para una orden o un coche propio." }, 400);
     const yaDev = orig.devuelto || 0, max = redondeo(-orig.cantidad - yaDev);
     const n = String(body.cantidad ?? "").trim() ? cant(body.cantidad) : max; if (!Number.isFinite(n) || n <= 0 || n > max) return json({ error: `Puedes devolver como mucho ${String(max).replace(".", ",")}.` }, 400);
     const motivo = str(body.motivo, 200); if (motivo.length < 4) return json({ error: "Escribe por qué vuelve al almacén (p. ej. «sobró», «era la medida equivocada»)." }, 400);
     const p = await leerPieza(orig.pieza); if (!p) return json({ error: "La pieza ya no existe." }, 404);
-    await mover(q, p, "devolucion", n, { orden: orig.orden, num: orig.num, motivo, origen: orig.id });
+    await mover(q, p, "devolucion", n, { orden: orig.orden, vehiculo: orig.vehiculo || "", num: orig.num, motivo, origen: orig.id });
+    if (orig.vehiculo) { const fv = await leerFicha(orig.vehiculo); if (fv) await devolverPieza(fv, orig.id, n, q, motivo); }
     orig.devuelto = redondeo(yaDev + n); await a().setJSON(k.key, orig);
     return json({ ok: true, stock: p.stock });
   }

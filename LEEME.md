@@ -179,3 +179,7 @@ Nombres nuevos: «Manual SOP-01» = Sistema 01 · «SOP-02» = Sistema 05 · Gu�
 Archivos: `public/panel-sistemas.js` (tarjeta y formularios), `netlify/functions/sistemas.mts` (guarda en el almacén
 «sistemas» de Netlify Blobs, incluido en las copias de seguridad) y `public/sistemas/*.pdf` (no salen en Google).
 Para cambiar un PDF: sustitúyelo con el mismo nombre y sube `V = "?v=1"` en `panel-sistemas.js`.
+
+
+## Coches propios (Taller)
+Panel -> Taller -> **Coches propios**: control interno de cada coche que compras para arreglar y vender. Fases: Entrada/danado -> En reparacion -> Control de calidad -> Listo para venta (solo interno) -> Vendido. Horas, notas, fotos, costes (el equipo propone, el gerente aprueba) y piezas del Inventario (descuentan stock). Finanzas suma piezas, horas y costes al beneficio del coche cuando la ficha se enlaza con un coche de la web. Todo es privado: datos en el almacen `vehiculos` (entra en la copia diaria). Codigo: `tools/vehiculos` + `python3 tools/vehiculos/inyectar.py`; servidor: `netlify/functions/vehiculos.mts`. Pruebas: `tools/pruebas/e2e-vehiculos.mjs`.

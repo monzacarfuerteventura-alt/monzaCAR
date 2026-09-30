@@ -1,0 +1,55 @@
+# Prueba del panel en Chromium: Taller → Coches propios (escritorio y móvil). Uso: bun tools/pruebas/servidor-local.mjs  y luego  python3 tools/pruebas/e2e-vehiculos-panel.py
+import sys, pathlib
+from playwright.sync_api import sync_playwright
+BASE = "http://localhost:8888"; CLAVE = "clave-de-pruebas-larga-2026"
+OUT = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "/tmp/e2e-vp"); OUT.mkdir(parents=True, exist_ok=True)
+ok = 0; mal = []
+def check(n, c, x=""):
+    global ok
+    if c: ok += 1; print("  ✔", n)
+    else: mal.append(n + " " + x); print("  ✘", n, x)
+with sync_playwright() as p:
+    b = p.chromium.launch()
+    for nombre, vp in [("escritorio", {"width": 1366, "height": 900}), ("movil", {"width": 390, "height": 800})]:
+        print("\n==", nombre)
+        ctx = b.new_context(viewport=vp); page = ctx.new_page(); errores = []
+        page.on("pageerror", lambda e: errores.append(str(e)))
+        page.on("console", lambda m: errores.append(m.text) if m.type == "error" and "favicon" not in m.text and "ERR_TUNNEL" not in m.text else None)
+        page.goto(BASE + "/admin"); page.wait_for_selector("#login-form")
+        if page.is_visible("#f-eq"): page.click("#login-modo")
+        page.fill("#pw", CLAVE); page.click("#login-btn"); page.wait_for_selector("#s-dash:not([hidden])", timeout=15000)
+        page.click('#tabs [data-tab="ordenes"]'); page.wait_for_selector('[data-tvista="propios"]')
+        check("la barra de Taller tiene «Coches propios»", True)
+        check("siguen las vistas de siempre", page.is_visible('[data-tvista="tabla"]') and page.is_visible('[data-tvista="tablero"]'))
+        base_ancho = page.evaluate("document.documentElement.scrollWidth")
+        page.click('[data-tvista="propios"]'); page.wait_for_selector("[data-vpnuevo]")
+        page.screenshot(path=str(OUT / f"{nombre}-1-vacio.png"))
+        page.click("[data-vpnuevo]"); page.wait_for_selector("#f-vp")
+        page.fill("#vp-mar", "Seat"); page.fill("#vp-mod", "Ibiza"); page.fill("#vp-mat", "1234abc" if nombre=="escritorio" else "5678def"); page.fill("#vp-anio", "2015"); page.fill("#vp-km", "140000")
+        page.fill("#vp-dan", "Golpe trasero"); page.fill("#vp-com", "3000"); page.fill("#vp-pre", "6000")
+        page.click("#vp-ok"); page.wait_for_selector(".vp-pasos")
+        check("alta: abre la ficha del coche", "Ibiza" in page.inner_text("#ordenes"))
+        page.click("[data-vphoras]"); page.wait_for_selector("#vp-h"); page.fill("#vp-h", "2,5"); page.click("#vp-ok")
+        page.wait_for_function("document.querySelector('#ordenes').innerText.includes('2 h 30 min')")
+        check("anota horas", True)
+        page.click("[data-vpcoste]"); page.wait_for_selector("#vp-cc"); page.fill("#vp-cc", "Pintura del paragolpes"); page.fill("#vp-ci", "150"); page.click("#vp-ok")
+        page.wait_for_function("document.querySelector('#ordenes').innerText.includes('Pintura del paragolpes')")
+        check("propone coste", True)
+        page.wait_for_function("document.querySelector('#ordenes').innerText.includes('Aprobado')")
+        check("el coste del gerente queda aprobado directamente", True)
+        page.click("[data-vpnota]"); page.wait_for_selector("#vp-t"); page.fill("#vp-t", "Paragolpes cambiado"); page.click("#vp-ok")
+        page.wait_for_function("document.querySelector('#ordenes').innerText.includes('Paragolpes cambiado')")
+        check("nota de avance", True)
+        page.click('[data-vpfase="calidad"]'); page.click("#vp-ok"); page.wait_for_function("document.querySelector('.vp-pasos li.ahora').innerText.includes('calidad')")
+        check("pasa a control de calidad", True)
+        page.screenshot(path=str(OUT / f"{nombre}-2-ficha.png"), full_page=True)
+        ancho = page.evaluate("document.documentElement.scrollWidth"); check("no añade scroll horizontal (igual que el Taller de siempre)", ancho <= base_ancho, f"{ancho} vs {base_ancho}")
+        page.click("[data-vpvolver]"); page.wait_for_selector(".vp-card")
+        check("la tarjeta muestra beneficio previsto", "Beneficio previsto" in page.inner_text(".vp-card"))
+        page.screenshot(path=str(OUT / f"{nombre}-3-lista.png"))
+        page.click('[data-tvista="tabla"]'); check("volver a Órdenes funciona", page.is_visible("#ordenes"))
+        page.click('#tabs [data-tab="coches"]'); page.wait_for_selector("#s-list:not([hidden])")
+        check("la pestaña Coches (pública) sigue igual y sin datos internos", "Ibiza" not in page.inner_text("#s-list") or "1234ABC" not in page.inner_text("#s-list"))
+        check("sin errores de consola", not errores, str(errores[:3])); ctx.close()
+    b.close()
+print(f"\nRESULTADO: {ok} correctas · {len(mal)} fallidas"); sys.exit(1 if mal else 0)

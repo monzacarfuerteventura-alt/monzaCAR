@@ -11,7 +11,7 @@ export type Pieza = {
 };
 export type MovPieza = {
   id: string; t: string; pieza: string; sku: string; nombre: string; tipo: "inicial" | "entrada" | "salida" | "devolucion" | "ajuste";
-  cantidad: number; antes: number; despues: number; coste: number; orden: string; num: string; albaran: string; proveedor: string; motivo: string;
+  cantidad: number; antes: number; despues: number; coste: number; orden: string; vehiculo?: string; num: string; albaran: string; proveedor: string; motivo: string;
   origen: string; por: string; porNombre: string; devuelto?: number;
 };
 export type Herramienta = {

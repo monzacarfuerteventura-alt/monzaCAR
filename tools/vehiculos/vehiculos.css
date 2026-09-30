@@ -1,0 +1,38 @@
+/* COCHES PROPIOS (Taller) · mismo diseño que el resto del panel */
+.vp-lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px;margin-top:6px}
+.vp-card{display:grid;gap:6px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;font:inherit;color:var(--ink);width:100%}
+.vp-card:hover{border-color:var(--accent)}
+.vp-card .mat{font-weight:800;letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.vp-card b.tit{font-size:16px}
+.vp-card .fila{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;color:var(--muted);font-size:13.5px}
+.vp-card .eco{display:flex;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:8px;font-size:13.5px}
+.vp-fase{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--surface-2);color:var(--ink)}
+.vp-fase.f-entrada{background:var(--bad-soft);color:var(--bad)}
+.vp-fase.f-reparacion{background:color-mix(in srgb,var(--accent) 16%,var(--surface));color:var(--ink)}
+.vp-fase.f-calidad{background:color-mix(in srgb,#d9a11c 22%,var(--surface));color:var(--ink)}
+.vp-fase.f-listo,.vp-fase.f-vendido{background:var(--ok-soft);color:var(--ok)}
+.vp-pasos{display:flex;gap:4px;flex-wrap:wrap;margin:10px 0 4px;padding:0;list-style:none}
+.vp-pasos li{flex:1 1 110px;text-align:center;font-size:12.5px;font-weight:700;padding:7px 6px;border-radius:9px;background:var(--surface-2);color:var(--muted)}
+.vp-pasos li.hecho{background:var(--ok-soft);color:var(--ok)}
+.vp-pasos li.ahora{background:var(--accent);color:#fff}
+.vp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start;margin-top:12px}
+.vp-grid .ancho{grid-column:1/-1}
+.vp-eco{width:100%;border-collapse:collapse;font-size:14.5px}
+.vp-eco td{padding:6px 0;border-bottom:1px solid var(--line)}
+.vp-eco td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+.vp-eco tr.tot td{border-bottom:0;font-size:16px}
+.vp-pos{color:var(--ok)} .vp-neg{color:var(--bad)}
+.vp-hist{display:grid;gap:8px;margin:8px 0 0;padding:0;list-style:none;max-height:420px;overflow:auto}
+.vp-hist li{border-left:3px solid var(--line);padding:2px 0 2px 10px;font-size:14px}
+.vp-hist li.tecnica{border-color:var(--accent)} .vp-hist li.fase{border-color:var(--ok)}
+.vp-hist small{color:var(--muted);display:block}
+.vp-fotos{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.vp-fotos a img{width:84px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--line);display:block}
+.vp-anulado{text-decoration:line-through;color:var(--muted)}
+.vp-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+@media(max-width:720px){.vp-grid{grid-template-columns:1fr}}
+.vp-grid>*,.vp-lista>*{min-width:0}
+.vp-grid .card{overflow:hidden}
+.vp-grid .tabla td{overflow-wrap:anywhere}
+.vp-pasos li{flex:1 1 90px;min-width:0}
+@media(max-width:720px){.vp-grid .tabla td:last-child{white-space:normal}.vp-card{min-width:0}.vp-grid .tabla{font-size:13.5px}}
