@@ -168,3 +168,14 @@ cruzado y capa oscura para que se lea todo. Código: `public/taller-vfx.js` y `.
 Vídeos: `public/vfx/taller/<servicio>-<v|h>.mp4` + póster `.jpg` (v = móvil vertical, h = ordenador).
 Los que hay ahora son provisionales (generados con `tools/taller-vfx/renderizar.py`). Para poner los definitivos,
 sustituye los archivos con el mismo nombre y sube `ver` en `taller-vfx.js`. Todo en `tools/taller-vfx/GUIA-VIDEOS.md`.
+
+## Sistemas Volcano Cars (MO-00 v3.0, 30-09-2026)
+Panel → **Taller → «Sistemas Volcano Cars»**: los 11 sistemas en su orden estricto (S01 → S11) con su PDF para el equipo,
+el índice MO-00 con el orden de implantación y los formularios digitales que no existían:
+FORM-05 Cascos y abonos (S02) · FORM-06 Ronda 5S (S03) · FORM-07 Hoja de preparación (S04) · FORM-08 Prueba a domicilio con
+fianza de 50 € (S06) · FORM-09 Postventa con reloj de 48 h (S07) · FORM-10 Plan de marketing y FORM-11 Auditoría del viernes
+15:00 (S08 y S09, solo gerente). FORM-01 a 04 siguen en cada orden (S01) y la Guía de venta es el S05.
+Nombres nuevos: «Manual SOP-01» = Sistema 01 · «SOP-02» = Sistema 05 · Guía de WhatsApp = parte del Sistema 06.
+Archivos: `public/panel-sistemas.js` (tarjeta y formularios), `netlify/functions/sistemas.mts` (guarda en el almacén
+«sistemas» de Netlify Blobs, incluido en las copias de seguridad) y `public/sistemas/*.pdf` (no salen en Google).
+Para cambiar un PDF: sustitúyelo con el mismo nombre y sube `V = "?v=1"` en `panel-sistemas.js`.

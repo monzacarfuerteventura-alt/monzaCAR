@@ -2130,7 +2130,7 @@ html body.modo-equipo #tabs #tab-ayuda{display:inline-flex!important}
 
   <section id="s-guia" hidden>
     <div class="guia">
-      <div class="g-top"><div><small>Guía interna · SOP-02 v2.0</small><h1>El Método de Venta</h1></div>
+      <div class="g-top"><div><small>Guía interna · Sistema 05 · v2.0</small><h1>El Método de Venta</h1></div>
         <div class="acts"><button class="btn b-ghost b-sm" type="button" id="guia-volver">← Volver</button><button class="btn b-acc b-sm" type="button" id="guia-pdf">Descargar PDF completo</button><small>Se abre «Imprimir»: elige «Guardar como PDF».</small></div></div>
       <div class="g-nav"><nav id="guia-nav" aria-label="Pasos de la guía"></nav><div class="g-prog" id="guia-prog" aria-hidden="true"></div></div>
       <div id="guia-body"></div>
@@ -3709,7 +3709,7 @@ else show("s-login");
    Fuente: tools/taller/taller.js → se copia dentro de admin.html con
    python3 tools/taller/inyectar.py. Para cambiar textos, edita aquí.
    ===================================================================== */
-const T_VER="Manual SOP-01 · Versión 1.1";
+const T_VER="Sistema 01 · Versión 1.1";
 const T_ROL={gerente:"Gerente",mecanico:"Mecánico",calidad:"Calidad",recepcion:"Recepción"};
 const T_FASES=[["rec","Recepcionado",["recibido"]],["insp","En inspección",["diagnostico","presupuesto"]],["trab","En trabajo",["reparacion"]],["cal","Control calidad",["calidad","listo"]],["ent","Entregado",["entregado"]]];
 const T_SUB={presupuesto:"Esperando presupuesto",listo:"Listo para entregar"};
@@ -3897,7 +3897,7 @@ renderOrdenes=function(){
   if(!ORDENES.length){ $("#ordenes").innerHTML='<div class="empty"><b style="color:var(--ink)">No hay coches en el taller.</b><br>Pulsa «+ Nueva recepción» cuando entre un coche: se crea la orden con su Nº y la ficha de recepción (FORM-01).</div>'; return; }
   $("#ordenes").innerHTML=TVISTA==="mios"?tMios():tTabla();
 };
-function tCabeceraTaller(){ const p=$("#s-ordenes .head p"); if(p) p.textContent=ES_EQ()?`Hola, ${ME.nombre}. Aquí tienes los coches del taller y tus trabajos.`:"Cada coche que entra lleva su orden (VC-año-número) con las 4 fichas del manual SOP-01: recepción, inspección 360°, tiempos y calidad."; }
+function tCabeceraTaller(){ const p=$("#s-ordenes .head p"); if(p) p.textContent=ES_EQ()?`Hola, ${ME.nombre}. Aquí tienes los coches del taller y tus trabajos.`:"Cada coche que entra lleva su orden (VC-año-número) con las 4 fichas del Sistema 01: recepción, inspección 360°, tiempos y calidad."; }
 document.addEventListener("click",async e=>{
   const t=e.target;
   const v=t.closest("[data-tvista]"); if(v){ TVISTA=v.dataset.tvista; renderOrdenes(); return; }
@@ -4352,7 +4352,7 @@ const _tAbrirOrdenDrawer=abrirOrden;
 abrirOrden=function(token){ _tAbrirOrdenDrawer(token); }; // todo el equipo abre la orden completa (presupuesto, cliente, fotos)
 const _tHtmlOrden=htmlOrden;
 htmlOrden=function(o){ const h=_tHtmlOrden(o), f=o.fichas||{};
-  const caja=`<section class="dw-box t-dwbox"><h3>Fichas SOP-01 ${o.num?`<span class="chip num">${esc(o.num)}</span>`:""}</h3><div class="t-dwrow">${tFichasChips(o)}${tPipe(o,true)}</div>
+  const caja=`<section class="dw-box t-dwbox"><h3>Fichas · Sistema 01 ${o.num?`<span class="chip num">${esc(o.num)}</span>`:""}</h3><div class="t-dwrow">${tFichasChips(o)}${tPipe(o,true)}</div>
     <div class="quick" style="margin-top:10px"><button type="button" class="btn b-brand b-sm" data-tabrir="${o.token}">Abrir las fichas</button><button type="button" class="btn b-ghost b-sm" data-tpdf="${o.token}">PDF de la orden</button></div></section>`;
   const i=h.indexOf('<section class="dw-box enlace">'); return i<0?h+caja:h.slice(0,i)+caja+h.slice(i); };
 
@@ -4480,7 +4480,7 @@ function tImprimir(cuales){
   const T={f1:["FORM-01","Ficha de recepción del vehículo"],f2:["FORM-02","Inspección 360°"],f3:["FORM-03","Control de tiempos"],f4:["FORM-04","Control de calidad · 30 puntos"]};
   el.innerHTML=cuales.map(k=>`<article class="tp-pag"><header class="tp-h"><img src="/marca/logo-oscuro.svg" alt="Volcano Cars" height="26"><div><b>${T[k][1]}</b><small>Orden <b>${esc(TF.fichas.num)}</b> · ${esc((TF.orden.vehiculo.matricula||"").toUpperCase())} · ${esc(TF.orden.vehiculo.coche||"")} · ${esc(TF.orden.cliente.nombre)}</small></div><span class="tp-badge">${T[k][0]}</span></header>
     ${({f1:tP1,f2:tP2,f3:tP3,f4:tP4})[k]()}
-    <footer class="tp-f">Volcano Cars · Manual SOP-01 Recepción, inspección y control de tiempos · ${T[k][0]} · Versión 1.1 · Impreso ${esc(tFH(new Date().toISOString()))}</footer></article>`).join("");
+    <footer class="tp-f">Volcano Cars · Sistema 01 Taller: de la recepción a la entrega · ${T[k][0]} · Versión 1.1 · Impreso ${esc(tFH(new Date().toISOString()))}</footer></article>`).join("");
   document.body.classList.add("print-taller");
   const fin=()=>{ document.body.classList.remove("print-taller"); removeEventListener("afterprint",fin); };
   addEventListener("afterprint",fin);
@@ -6593,7 +6593,7 @@ const AY_MODS=[
  cuando:["Entra un coche nuevo para vender.","Un cliente reserva un coche online.","Cambia el precio o se vende un coche."],
  flujo:["Disponible","Reservado","Vendido"],
  mapa:{filas:[[[1,"Tus coches · ¿No sabes cómo publicar? · + Añadir coche",1]],[[2,"Cifras rápidas",1]],[[3,"Financiación en la web (desplegable)",1]],[[4,"Reservas online · listas de espera · cómo te pagan",1]],[[5,"Lista de coches con foto, precio y estado",1]]],
-  zonas:[[1,"Cabecera","«+ Añadir coche» abre el formulario. «¿No sabes cómo publicar y vender?» abre la Guía de Venta (SOP-02)."],
+  zonas:[[1,"Cabecera","«+ Añadir coche» abre el formulario. «¿No sabes cómo publicar y vender?» abre la Guía de Venta (Sistema 05)."],
    [2,"Cifras","Coches en venta, reservados, vendidos e interés de la semana."],
    [3,"Financiación","Entidad, TIN, comisión, plazos, entrada, importe mínimo y antigüedad máxima: con esto la web calcula la cuota y la TAE."],
    [4,"Reservas online","Reservas activas con su justificante, botones para confirmar, alargar, liberar o vender, y listas de espera de coches reservados."],
@@ -6626,7 +6626,7 @@ const AY_MODS=[
   ["Vendido","Sale 60 días en «Vendidos recientemente».","Al firmar la venta."]]}},
 
 /* ------------------------------------------------------------------ */
-{id:"taller",ico:"🛠️",titulo:"Taller (manual SOP-01)",tab:"ordenes",roles:AY_TODOS,
+{id:"taller",ico:"🛠️",titulo:"Taller (Sistema 01)",tab:"ordenes",roles:AY_TODOS,
  objetivo:"Llevar cada coche que entra al taller de principio a fin con su orden VC-año-número y sus 4 fichas: recepción, inspección 360°, tiempos y calidad.",
  cuando:["Entra un coche de un cliente, uno comprado para vender o una retoma.","Vas a empezar, pausar o terminar un trabajo.","Hay que revisar un coche antes de entregarlo."],
  flujo:["Recepcionado · FORM-01","En inspección · FORM-02","Presupuesto aceptado","En trabajo · FORM-03","Control de calidad · FORM-04","Listo → Entregado"],
@@ -7181,7 +7181,7 @@ async function jgXlsx(){ try{ const r=await api(`/api/jornada/registro?mes=${J_M
    Fuente: tools/guia/guia.js → se copia dentro de admin.html con
    python3 tools/guia/inyectar.py. Para cambiar textos, edita aquí.
    ===================================================================== */
-const GUIA_VER="SOP-02 · v2.0";
+const GUIA_VER="Sistema 05 · v2.0";
 const GUIA_PAGS=["inicio","01","02","03","04","05","06","chuleta","anexo"];
 const GUIA_NOMBRE={inicio:"Inicio","01":"Preparar y fotografiar","02":"Publicar el anuncio","03":"Primer contacto","04":"Prueba en carretera","05":"Negociar","06":"Cerrar y seguir",chuleta:"Chuleta rápida",anexo:"Anexo A"};
 const GUIA_CORTO={inicio:"Inicio","01":"Preparar","02":"Publicar","03":"Contacto","04":"Prueba","05":"Negociar","06":"Cerrar",chuleta:"Chuleta",anexo:"Anexo"};
@@ -7413,7 +7413,7 @@ async function guiaPDF(solo){
   box.querySelectorAll("input[type=checkbox]").forEach(i=>i.checked=false);
   box.querySelectorAll(".g-foto").forEach(f=>f.classList.remove("hecha"));
   document.body.classList.add("print-guia");
-  const t=document.title; document.title=solo?"Volcano Cars - Anexo A - Condiciones de la prueba":"Volcano Cars - El Metodo de Venta (SOP-02)";
+  const t=document.title; document.title=solo?"Volcano Cars - Anexo A - Condiciones de la prueba":"Volcano Cars - El Metodo de Venta (Sistema 05)";
   try{ await document.fonts.ready; await Promise.all([...box.querySelectorAll("img")].map(im=>im.complete?0:new Promise(r=>{im.onload=im.onerror=r;}))); }catch(_){}
   const fin=()=>{ document.body.classList.remove("print-guia"); document.title=t; box.innerHTML=""; window.removeEventListener("afterprint",fin); };
   window.addEventListener("afterprint",fin);
@@ -7425,6 +7425,7 @@ async function guiaPDF(solo){
 <!-- Historial Sin Sorpresas (subir PDF) y «Alertas que encajan» al dar de alta un coche -->
 <script src="/panel-mejoras.js" defer></script>
 <script src="/panel-precios.js" defer></script>
+<script src="/panel-sistemas.js" defer></script>
 <script src="/panel-plus.js" defer></script>
 <script src="/cartel-fichaje.js" defer></script>
 </body>

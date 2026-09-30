@@ -132,7 +132,7 @@ const AY_MODS=[
  cuando:["Entra un coche nuevo para vender.","Un cliente reserva un coche online.","Cambia el precio o se vende un coche."],
  flujo:["Disponible","Reservado","Vendido"],
  mapa:{filas:[[[1,"Tus coches · ¿No sabes cómo publicar? · + Añadir coche",1]],[[2,"Cifras rápidas",1]],[[3,"Financiación en la web (desplegable)",1]],[[4,"Reservas online · listas de espera · cómo te pagan",1]],[[5,"Lista de coches con foto, precio y estado",1]]],
-  zonas:[[1,"Cabecera","«+ Añadir coche» abre el formulario. «¿No sabes cómo publicar y vender?» abre la Guía de Venta (SOP-02)."],
+  zonas:[[1,"Cabecera","«+ Añadir coche» abre el formulario. «¿No sabes cómo publicar y vender?» abre la Guía de Venta (Sistema 05)."],
    [2,"Cifras","Coches en venta, reservados, vendidos e interés de la semana."],
    [3,"Financiación","Entidad, TIN, comisión, plazos, entrada, importe mínimo y antigüedad máxima: con esto la web calcula la cuota y la TAE."],
    [4,"Reservas online","Reservas activas con su justificante, botones para confirmar, alargar, liberar o vender, y listas de espera de coches reservados."],
@@ -165,7 +165,7 @@ const AY_MODS=[
   ["Vendido","Sale 60 días en «Vendidos recientemente».","Al firmar la venta."]]}},
 
 /* ------------------------------------------------------------------ */
-{id:"taller",ico:"🛠️",titulo:"Taller (manual SOP-01)",tab:"ordenes",roles:AY_TODOS,
+{id:"taller",ico:"🛠️",titulo:"Taller (Sistema 01)",tab:"ordenes",roles:AY_TODOS,
  objetivo:"Llevar cada coche que entra al taller de principio a fin con su orden VC-año-número y sus 4 fichas: recepción, inspección 360°, tiempos y calidad.",
  cuando:["Entra un coche de un cliente, uno comprado para vender o una retoma.","Vas a empezar, pausar o terminar un trabajo.","Hay que revisar un coche antes de entregarlo."],
  flujo:["Recepcionado · FORM-01","En inspección · FORM-02","Presupuesto aceptado","En trabajo · FORM-03","Control de calidad · FORM-04","Listo → Entregado"],

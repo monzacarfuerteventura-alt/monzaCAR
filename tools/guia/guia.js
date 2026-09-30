@@ -4,7 +4,7 @@
    Fuente: tools/guia/guia.js → se copia dentro de admin.html con
    python3 tools/guia/inyectar.py. Para cambiar textos, edita aquí.
    ===================================================================== */
-const GUIA_VER="SOP-02 · v2.0";
+const GUIA_VER="Sistema 05 · v2.0";
 const GUIA_PAGS=["inicio","01","02","03","04","05","06","chuleta","anexo"];
 const GUIA_NOMBRE={inicio:"Inicio","01":"Preparar y fotografiar","02":"Publicar el anuncio","03":"Primer contacto","04":"Prueba en carretera","05":"Negociar","06":"Cerrar y seguir",chuleta:"Chuleta rápida",anexo:"Anexo A"};
 const GUIA_CORTO={inicio:"Inicio","01":"Preparar","02":"Publicar","03":"Contacto","04":"Prueba","05":"Negociar","06":"Cerrar",chuleta:"Chuleta",anexo:"Anexo"};
@@ -236,7 +236,7 @@ async function guiaPDF(solo){
   box.querySelectorAll("input[type=checkbox]").forEach(i=>i.checked=false);
   box.querySelectorAll(".g-foto").forEach(f=>f.classList.remove("hecha"));
   document.body.classList.add("print-guia");
-  const t=document.title; document.title=solo?"Volcano Cars - Anexo A - Condiciones de la prueba":"Volcano Cars - El Metodo de Venta (SOP-02)";
+  const t=document.title; document.title=solo?"Volcano Cars - Anexo A - Condiciones de la prueba":"Volcano Cars - El Metodo de Venta (Sistema 05)";
   try{ await document.fonts.ready; await Promise.all([...box.querySelectorAll("img")].map(im=>im.complete?0:new Promise(r=>{im.onload=im.onerror=r;}))); }catch(_){}
   const fin=()=>{ document.body.classList.remove("print-guia"); document.title=t; box.innerHTML=""; window.removeEventListener("afterprint",fin); };
   window.addEventListener("afterprint",fin);

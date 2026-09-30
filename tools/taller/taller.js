@@ -4,7 +4,7 @@
    Fuente: tools/taller/taller.js → se copia dentro de admin.html con
    python3 tools/taller/inyectar.py. Para cambiar textos, edita aquí.
    ===================================================================== */
-const T_VER="Manual SOP-01 · Versión 1.1";
+const T_VER="Sistema 01 · Versión 1.1";
 const T_ROL={gerente:"Gerente",mecanico:"Mecánico",calidad:"Calidad",recepcion:"Recepción"};
 const T_FASES=[["rec","Recepcionado",["recibido"]],["insp","En inspección",["diagnostico","presupuesto"]],["trab","En trabajo",["reparacion"]],["cal","Control calidad",["calidad","listo"]],["ent","Entregado",["entregado"]]];
 const T_SUB={presupuesto:"Esperando presupuesto",listo:"Listo para entregar"};
@@ -192,7 +192,7 @@ renderOrdenes=function(){
   if(!ORDENES.length){ $("#ordenes").innerHTML='<div class="empty"><b style="color:var(--ink)">No hay coches en el taller.</b><br>Pulsa «+ Nueva recepción» cuando entre un coche: se crea la orden con su Nº y la ficha de recepción (FORM-01).</div>'; return; }
   $("#ordenes").innerHTML=TVISTA==="mios"?tMios():tTabla();
 };
-function tCabeceraTaller(){ const p=$("#s-ordenes .head p"); if(p) p.textContent=ES_EQ()?`Hola, ${ME.nombre}. Aquí tienes los coches del taller y tus trabajos.`:"Cada coche que entra lleva su orden (VC-año-número) con las 4 fichas del manual SOP-01: recepción, inspección 360°, tiempos y calidad."; }
+function tCabeceraTaller(){ const p=$("#s-ordenes .head p"); if(p) p.textContent=ES_EQ()?`Hola, ${ME.nombre}. Aquí tienes los coches del taller y tus trabajos.`:"Cada coche que entra lleva su orden (VC-año-número) con las 4 fichas del Sistema 01: recepción, inspección 360°, tiempos y calidad."; }
 document.addEventListener("click",async e=>{
   const t=e.target;
   const v=t.closest("[data-tvista]"); if(v){ TVISTA=v.dataset.tvista; renderOrdenes(); return; }
@@ -647,7 +647,7 @@ const _tAbrirOrdenDrawer=abrirOrden;
 abrirOrden=function(token){ _tAbrirOrdenDrawer(token); }; // todo el equipo abre la orden completa (presupuesto, cliente, fotos)
 const _tHtmlOrden=htmlOrden;
 htmlOrden=function(o){ const h=_tHtmlOrden(o), f=o.fichas||{};
-  const caja=`<section class="dw-box t-dwbox"><h3>Fichas SOP-01 ${o.num?`<span class="chip num">${esc(o.num)}</span>`:""}</h3><div class="t-dwrow">${tFichasChips(o)}${tPipe(o,true)}</div>
+  const caja=`<section class="dw-box t-dwbox"><h3>Fichas · Sistema 01 ${o.num?`<span class="chip num">${esc(o.num)}</span>`:""}</h3><div class="t-dwrow">${tFichasChips(o)}${tPipe(o,true)}</div>
     <div class="quick" style="margin-top:10px"><button type="button" class="btn b-brand b-sm" data-tabrir="${o.token}">Abrir las fichas</button><button type="button" class="btn b-ghost b-sm" data-tpdf="${o.token}">PDF de la orden</button></div></section>`;
   const i=h.indexOf('<section class="dw-box enlace">'); return i<0?h+caja:h.slice(0,i)+caja+h.slice(i); };
 
@@ -775,7 +775,7 @@ function tImprimir(cuales){
   const T={f1:["FORM-01","Ficha de recepción del vehículo"],f2:["FORM-02","Inspección 360°"],f3:["FORM-03","Control de tiempos"],f4:["FORM-04","Control de calidad · 30 puntos"]};
   el.innerHTML=cuales.map(k=>`<article class="tp-pag"><header class="tp-h"><img src="/marca/logo-oscuro.svg" alt="Volcano Cars" height="26"><div><b>${T[k][1]}</b><small>Orden <b>${esc(TF.fichas.num)}</b> · ${esc((TF.orden.vehiculo.matricula||"").toUpperCase())} · ${esc(TF.orden.vehiculo.coche||"")} · ${esc(TF.orden.cliente.nombre)}</small></div><span class="tp-badge">${T[k][0]}</span></header>
     ${({f1:tP1,f2:tP2,f3:tP3,f4:tP4})[k]()}
-    <footer class="tp-f">Volcano Cars · Manual SOP-01 Recepción, inspección y control de tiempos · ${T[k][0]} · Versión 1.1 · Impreso ${esc(tFH(new Date().toISOString()))}</footer></article>`).join("");
+    <footer class="tp-f">Volcano Cars · Sistema 01 Taller: de la recepción a la entrega · ${T[k][0]} · Versión 1.1 · Impreso ${esc(tFH(new Date().toISOString()))}</footer></article>`).join("");
   document.body.classList.add("print-taller");
   const fin=()=>{ document.body.classList.remove("print-taller"); removeEventListener("afterprint",fin); };
   addEventListener("afterprint",fin);

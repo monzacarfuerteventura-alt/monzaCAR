@@ -191,3 +191,10 @@
   [headers.values]
     X-Robots-Tag = "noindex"
     Cache-Control = "public, max-age=2592000"
+
+# Manuales de sistemas (public/sistemas): documentos internos del equipo, fuera de Google. Llevan ?v= en el enlace.
+[[headers]]
+  for = "/sistemas/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "public, max-age=86400"
