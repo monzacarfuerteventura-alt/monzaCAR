@@ -1,0 +1,17 @@
+/* COSTE DE PERSONAL EN DIRECTO (tools/costes) */
+.co-card{margin-bottom:16px}
+.co-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:10px 0 12px}
+.co-kpis>div{background:var(--surface-2);border-radius:12px;padding:10px 12px;min-width:0}
+.co-kpis small{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.co-kpis b{display:block;font-size:20px;margin-top:2px;overflow-wrap:anywhere}
+.co-kpis>div:first-child b{font-size:26px;color:var(--accent)}
+@media (max-width:640px){.co-kpis{grid-template-columns:1fr 1fr}.co-kpis b{font-size:17px}.co-kpis>div:first-child b{font-size:22px}}
+.co-aviso{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 10px}
+.co-est{display:inline-flex;gap:6px;align-items:center;font-size:13px;font-weight:700}.co-est i{width:9px;height:9px;border-radius:50%;background:#C62D1F}
+.co-est.trabajando i{background:#1F8B4C}.co-est.pausa i{background:#E3A008}
+.co-tab td,.co-tab th{white-space:nowrap}
+.co-mes{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 12px;border-radius:12px;background:var(--surface-2)}
+.co-lista{display:grid;gap:8px}
+.co-p{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 12px;border:1px solid var(--line);border-radius:12px}
+.co-p small{display:block;color:var(--muted);font-size:12.5px}
+.co-in{display:flex;gap:6px;align-items:center;flex:none}.co-in .in{width:104px;text-align:right}.co-in span{color:var(--muted);font-weight:700}

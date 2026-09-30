@@ -187,10 +187,12 @@ function vpCfgDlg(){
     <div class="msg bad" id="vp-err" hidden></div><div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-vpcancel>Cancelar</button><button type="submit" class="btn b-acc" id="vp-ok">Guardar</button></div></form>`);
   $("#f-vp").onsubmit=async e=>{ e.preventDefault(); if(!(vpNum($("#vp-ch").value)>=0)) return vpErr("Pon un importe válido."); try{ const r=await vpPost("config",{costeHora:$("#vp-ch").value}); VP.cfg=r.cfg; d.close(); toast("Coste por hora guardado"); vpPintar(); }catch(err){ vpErr(err.message); } };
 }
+const VP_ACC={alta:"Coche dado de alta",editar:"Datos editados",fase:"Cambio de fase",horas:"Horas anotadas",nota:"Nota o fotos",coste:"Coste propuesto","coste-aprobado":"Coste aprobado","coste-rechazado":"Coste rechazado","anular-horas":"Horas anuladas","anular-coste":"Coste anulado",config:"Coste por hora cambiado","tarea-inicio":"Tarea iniciada","tarea-fin":"Tarea terminada","tarea-visto-bueno":"Visto bueno de tarea"};
 async function vpLibro(){
   try{ const r=await api("/api/vehiculos/libro");
-    vpDlg(`<div><h2>Registro de Coches propios</h2><p class="hint">${r.integro?`<span class="chip ok">Íntegro</span> ${r.total} anotaciones encadenadas: nadie ha cambiado nada por fuera.`:`<span class="chip rojo">¡Cadena rota!</span> Se ha tocado el registro por fuera del panel.`}</p>
-      <div class="tabla-wrap" style="max-height:52vh;overflow:auto"><table class="tabla"><tbody>${r.entradas.slice(0,150).map(e=>`<tr><td>${vpFecha(e.t)}</td><td>${esc(e.nombre)}</td><td>${esc(e.accion)}</td><td><small>${esc(e.datos&&e.datos.ref||"")}</small></td></tr>`).join("")}</tbody></table></div>
+    vpDlg(`<div class="t-dlg-in"><h2>Registro de Coches propios</h2>
+      <p class="t-dlg-est ${r.integro?"ok":"mal"}">${r.integro?`<span class="chip ok">Íntegro</span> ${r.total} anotaciones encadenadas: nadie ha cambiado nada por fuera.`:`<span class="chip rojo">¡Cadena rota!</span> Se ha tocado el registro por fuera del panel.`}</p>
+      <div class="t-dlg-tab"><table class="tabla"><thead><tr><th>Fecha</th><th>Quién</th><th>Qué se hizo</th><th>Coche</th></tr></thead><tbody>${r.entradas.slice(0,150).map(e=>`<tr><td class="num">${vpFecha(e.t)}</td><td>${esc(e.nombre)}</td><td>${esc(VP_ACC[e.accion]||e.accion)}</td><td><small>${esc(e.datos&&e.datos.ref||"")}</small></td></tr>`).join("")||'<tr><td colspan="4" class="hint">Todavía no hay anotaciones.</td></tr>'}</tbody></table></div>
       <div class="t-dlg-acts"><button type="button" class="btn b-acc" data-vpcancel>Cerrar</button></div></div>`);
   }catch(err){ toast(err.message); }
 }

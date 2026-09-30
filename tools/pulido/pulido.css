@@ -1,0 +1,56 @@
+/* PULIDO DE INTERFAZ (tools/pulido) · menú superior, diálogos y tablas. No cambia la web pública. */
+
+/* ---- Menú principal: se ven TODAS las secciones ---- */
+.tabsrow{display:block}
+#tabs.tabs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;width:100%;max-width:100%;overflow:visible;padding:5px}
+#tabs.tabs button{justify-content:center;padding:10px 8px;font-size:14px;gap:7px;white-space:nowrap;min-width:0}
+#tabs.tabs button svg{width:17px;height:17px}
+@media (min-width:1024px) and (max-width:1179px){#tabs.tabs button svg{display:none}}
+.tabsrow .live{margin-top:8px}
+/* barra superior en tabletas: los botones no ensanchan la página */
+@media (min-width:641px) and (max-width:960px){
+  .top .bar{min-width:0}
+  #topacts{min-width:0;flex:1 1 auto;justify-content:flex-end;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding:2px 0}
+  #topacts::-webkit-scrollbar{display:none}#topacts>*{flex:0 0 auto}
+}
+/* Móvil y tableta estrecha: una sola fila que se desliza, con la sección activa siempre centrada */
+@media (max-width:1023px){
+  #tabs.tabs{display:flex;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 26px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 18px,#000 calc(100% - 26px),transparent 100%);
+    padding-inline:14px 26px}
+  #tabs.tabs::-webkit-scrollbar{display:none}
+  #tabs.tabs button{flex:0 0 auto!important;min-width:auto!important;scroll-snap-align:center;padding:10px 14px!important;font-size:14px!important}
+  #tabs.tabs button svg{display:none}
+}
+@media (max-width:1023px) and (min-width:560px){ #tabs.tabs button svg{display:block} }
+.tabs-flecha{display:none}
+
+/* ---- Diálogos: contenido con margen, ancho y tablas bien encajadas ---- */
+.t-dlg-in{display:grid;gap:14px;padding:22px 22px 20px}
+.t-dlg-in h2{margin:0;font-size:24px;line-height:1.15}
+.t-dlg-in>.hint,.t-dlg-in>p{margin:0}
+.t-dlg-in .t-dlg-acts{margin-top:2px;padding-top:12px;border-top:1px solid var(--line)}
+.t-dlg-est{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0;padding:10px 12px;border-radius:12px;background:var(--surface-2);font-size:14px}
+.t-dlg-est.ok{background:color-mix(in srgb,#1F8B4C 10%,var(--surface))}
+.t-dlg-est.mal{background:color-mix(in srgb,#C62D1F 12%,var(--surface))}
+.t-dlg-tab{overflow:auto;max-height:52vh;border:1px solid var(--line);border-radius:12px;-webkit-overflow-scrolling:touch}
+.t-dlg-tab table{width:100%;border-collapse:collapse;margin:0}
+.t-dlg-tab th{position:sticky;top:0;background:var(--surface-2);font-size:12px;letter-spacing:.04em;text-transform:uppercase;text-align:left;padding:9px 12px;color:var(--muted);white-space:nowrap}
+.t-dlg-tab td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top;font-size:14px}
+.t-dlg-tab td.num,.t-dlg-tab td:first-child{white-space:nowrap}
+#dlg-jdia,#dlg-vp:has(.t-dlg-tab){width:min(760px,calc(100% - 20px))}
+.jg-corr{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:0;border-top:1px solid var(--line)}
+.jg-corr h3{font-size:15px}
+.jg-th{display:grid;grid-template-columns:1fr 112px;gap:8px}
+.jg-th .in{min-width:0}
+.jg-corr .t-g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){
+  .t-dlg-in{padding:18px 16px 16px}
+  .t-dlg-in h2{font-size:21px}
+  .jg-corr .t-g2{grid-template-columns:1fr}
+  .t-dlg-in .t-dlg-acts>.btn{flex:1 1 auto}
+  .t-dlg-tab th:nth-child(4),.t-dlg-tab td:nth-child(4){display:none}
+  #dlg-vp .t-dlg-tab th:nth-child(4),#dlg-vp .t-dlg-tab td:nth-child(4){display:table-cell}
+}
+/* Nueva recepción: solo Reparación (los coches del negocio entran por Coches propios) */
+#rc-tipo{display:flex}#rc-tipo button{flex:0 0 auto;cursor:default;padding:9px 20px}

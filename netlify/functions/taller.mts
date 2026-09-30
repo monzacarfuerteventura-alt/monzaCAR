@@ -4,9 +4,10 @@ import { store, json, mismoOrigen } from "../lib/shared.mts";
 import {
   quien, tstore, leerConfig, leerEquipo, hashPin, CONFIG_DEFECTO, ROLES, F2_IDS, F4_A, F4_B, F4_C, F4_D, MOTIVOS_PAUSA,
   calculo, resumenF2, estadoTiempo, tramos, hoyCanarias, horaCanarias, guardarOrden,
-  type Quien, type Persona, type Fichas, type F1, type F2, type F3, type F4, type Evento,
+  totalesF5, EMISOR, type Quien, type Persona, type Fichas, type F1, type F2, type F3, type F4, type F5, type F5Linea, type Evento,
 } from "../lib/taller.mts";
 import { exigirJornada } from "../lib/jornada.mts";
+import { reservarNumero, emitirFactura, todosLosRegistros, comprobarIntegridad, listado, csv } from "../lib/facturas.mts";
 
 /*
   TALLER · SOP-01 (FORM-01 recepción, FORM-02 inspección 360°, FORM-03 tiempos, FORM-04 calidad)
@@ -35,7 +36,9 @@ const TOKEN = /^[A-Za-z0-9]{16}$/;
 const ordenes = () => store("ordenes");
 
 async function leerFichas(token: string): Promise<Fichas> {
-  return ((await tstore().get("f/" + token, { type: "json" })) as Fichas | null) || { token, num: "", f1: null, f2: null, f3: null, f4: null, audit: [] };
+  const x = ((await tstore().get("f/" + token, { type: "json" })) as Fichas | null) || { token, num: "", f1: null, f2: null, f3: null, f4: null, f5: null, audit: [] };
+  if (x.f5 === undefined) x.f5 = null;
+  return x;
 }
 function auditar(f: Fichas, q: Quien, accion: string, detalle = "") {
   f.audit.push({ t: new Date().toISOString(), por: q.uid, nombre: q.nombre, rol: q.rol, accion, detalle: detalle.slice(0, 400) });
@@ -43,8 +46,7 @@ function auditar(f: Fichas, q: Quien, accion: string, detalle = "") {
 }
 async function nuevoNumero() {
   const y = hoyCanarias().slice(0, 4), s = tstore();
-  const n = (Number(await s.get("contador/" + y).catch(() => 0)) || 0) + 1;
-  await s.set("contador/" + y, String(n));
+  const n = await reservarNumero(s, y); // sin duplicados aunque dos personas recepcionen a la vez
   return `VC-${y}-${String(n).padStart(4, "0")}`;
 }
 function nuevoToken() {
@@ -104,6 +106,30 @@ function faltaF2(f: F2): string {
   if (sinNota.length) return "Todo Ámbar o Rojo lleva nota: faltan " + sinNota.length + ".";
   if (!f.horasEst) return "Escribe las horas estimadas de trabajo.";
   if (!f.recomendacion) return "Elige la recomendación.";
+  return "";
+}
+// ---------- factura de reparación (FORM-14) ----------
+function limpiarF5(x: any, prev: F5 | null): F5 {
+  const c = x?.cliente || {}, v = x?.vehiculo || {};
+  const lineas: F5Linea[] = (Array.isArray(x?.lineas) ? x.lineas : []).slice(0, 30)
+    .map((l: any) => ({ tipo: (uno(l?.tipo, ["MO", "REC", "OTRO"]) || "OTRO") as F5Linea["tipo"], ref: str(l?.ref, 30), desc: str(l?.desc, 200), cant: num(l?.cant, 100000), precio: num(l?.precio, 1e6), dto: num(l?.dto, 100) }))
+    .filter((l: F5Linea) => l.desc || l.ref || l.precio || l.cant);
+  return {
+    fechaOperacion: fechaISO(x?.fechaOperacion),
+    cliente: { nombre: str(c.nombre, 80), doc: str(c.doc, 20).toUpperCase(), direccion: str(c.direccion, 120), cp: str(c.cp, 60), telefono: str(c.telefono, 30), email: str(c.email, 120) },
+    vehiculo: { matricula: str(v.matricula, 12).toUpperCase(), vin: str(v.vin, 17).toUpperCase(), marcaModelo: str(v.marcaModelo, 80), kmEntrada: str(v.kmEntrada, 10).replace(/[^\d]/g, ""), kmSalida: str(v.kmSalida, 10).replace(/[^\d]/g, "") },
+    lineas, descuentoGlobal: num(x?.descuentoGlobal, 1e6), igicTipo: uno(x?.igicTipo, ["7", "0", "otro"]) as F5["igicTipo"], igicOtro: Math.min(30, num(x?.igicOtro, 30)),
+    observaciones: str(x?.observaciones, 800), cerrada: prev?.cerrada || false, rect: prev?.rect || 0, origen: prev?.origen || "", motivoRect: prev?.motivoRect || "", emision: prev?.emision || null,
+  };
+}
+function faltaF5(f: F5): string {
+  if (f.cliente.nombre.length < 2) return "Falta el nombre o la empresa del cliente.";
+  if (!f.vehiculo.matricula) return "Falta la matrícula.";
+  if (!f.lineas.length) return "Añade al menos una línea al detalle de la reparación.";
+  if (f.lineas.some((l) => !l.desc)) return "Todas las líneas necesitan una descripción.";
+  if (f.lineas.some((l) => !(l.cant > 0))) return "Todas las líneas necesitan una cantidad mayor que 0.";
+  if (!f.igicTipo) return "Elige el tipo de IGIC (7 % general, 0 % exento u otro).";
+  if (totalesF5(f).total <= 0) return "El total de la factura es 0 €: revisa los precios.";
   return "";
 }
 function limpiarF4(x: any, prev: F4 | null): F4 {
@@ -292,13 +318,22 @@ export default async (req: Request, context: Context) => {
       vehiculo: { coche: f1.vehiculo.marcaModelo, matricula: f1.vehiculo.matricula, km: f1.vehiculo.km },
       estado: "recibido", pasos: [{ estado: "recibido", t, nota: "" }], entrega: f1.entregaPrometida, fotos: [], mensaje: "", interno: "", presupuesto: null,
     };
-    const f: Fichas = { token, num: await nuevoNumero(), f1, f2: null, f3: null, f4: null, audit: [] };
+    const f: Fichas = { token, num: await nuevoNumero(), f1, f2: null, f3: null, f4: null, f5: null, audit: [] };
     auditar(f, q, "crear", "Recepción del coche " + f1.vehiculo.matricula);
     await guardar(f, o);
     return json({ orden: o, fichas: f }, 201);
   }
 
   // ---------- fichas de una orden ----------
+  if (recurso === "facturas") { // listado y comprobación para la gestoría: gerente y recepción
+    if (!(q.admin || q.rol === "recepcion")) return json({ error: "Solo el gerente y recepción ven las facturas." }, 403);
+    if (req.method !== "GET") return json({ error: "Método no permitido" }, 405);
+    const sub = p[3] || "", desde = fechaISO(url.searchParams.get("desde")), hasta = fechaISO(url.searchParams.get("hasta"));
+    if (sub === "verificar") return json(await comprobarIntegridad());
+    const lst = listado(await todosLosRegistros(), desde, hasta);
+    if (sub === "csv") return new Response(csv(lst), { headers: { "content-type": "text/csv; charset=utf-8", "content-disposition": `attachment; filename="facturas-volcano-cars-${desde || "todas"}${hasta ? "_" + hasta : ""}.csv"`, "cache-control": "no-store" } });
+    return json(lst.map(({ lineas, ...x }) => x));
+  }
   if (recurso !== "fichas") return json({ error: "No encontrado" }, 404);
   const token = p[3] || "", sub = p[4] || "";
   if (!TOKEN.test(token)) return json({ error: "Orden no encontrada" }, 404);
@@ -307,16 +342,20 @@ export default async (req: Request, context: Context) => {
   const f = await leerFichas(token);
   if (!f.num) f.num = await nuevoNumero();
   const cfg = await leerConfig();
-  const salida = () => json({ orden: o, fichas: f, calculo: calculo(f.f3, cfg), config: cfg, ahora: new Date().toISOString() });
+  const veFactura = q.admin || q.rol === "recepcion"; // el mecánico y calidad no ven importes de la factura
+  // El equipo del taller ve que hay factura, pero ningún importe (ni en la auditoría).
+  const fichasVista = () => (veFactura ? f : { ...f, f5: f.f5 ? ({ cerrada: f.f5.cerrada } as any) : null, audit: f.audit.map((x) => (x.accion === "emitir-factura" ? { ...x, detalle: "FORM-14 emitida" } : x)) });
+  const salida = () => json({ orden: o, fichas: fichasVista(), calculo: calculo(f.f3, cfg), config: cfg, ahora: new Date().toISOString() });
 
   if (req.method === "GET" && !sub) return salida();
 
   if (sub === "reabrir" && req.method === "POST") {
     if (!q.admin) return json({ error: "Solo el gerente puede reabrir una ficha firmada." }, 403);
-    const cual = uno(body.ficha, ["f1", "f2", "f4"]), motivo = str(body.motivo, 300);
+    const cual = uno(body.ficha, ["f1", "f2", "f4", "f5"]), motivo = str(body.motivo, 300);
     if (!cual || motivo.length < 4) return json({ error: "Indica la ficha y el motivo." }, 400);
     const x: any = (f as any)[cual]; if (!x) return json({ error: "Esa ficha no existe todavía." }, 404);
     x.cerrada = false; if (cual === "f4") { x.firma = null; x.cierreGerente = null; }
+    if (cual === "f5") { x.origen = x.emision?.numero || x.origen || ""; x.motivoRect = motivo; x.rect = (x.rect || 0) + 1; x.emision = null; } // la factura emitida NO se toca (queda en el registro): la siguiente emisión sale como rectificativa R-AAAA-NNNN
     auditar(f, q, "reabrir", `${cual.toUpperCase()} reabierta: ${motivo}`);
     await guardar(f, o); return salida();
   }
@@ -436,6 +475,26 @@ export default async (req: Request, context: Context) => {
       await guardar(f, o); return salida();
     }
     return json({ error: "Acción no válida." }, 400);
+  }
+
+  if (sub === "f5" && req.method === "PUT") {
+    if (!veFactura) return json({ error: "La factura la prepara el gerente o recepción." }, 403);
+    if (f.f5?.cerrada) return json({ error: "La factura ya está emitida. El gerente puede reabrirla con un motivo: saldrá como factura rectificativa." }, 409);
+    const nf = limpiarF5(body, f.f5 ?? null);
+    if (body.cerrar) {
+      const falta = faltaF5(nf); if (falta) return json({ error: falta }, 400);
+      const tt = totalesF5(nf), hoy = hoyCanarias();
+      let reg;
+      try {
+        reg = await emitirFactura({ token, rect: nf.rect, nif: EMISOR.nif, emisor: EMISOR.razon, fecha: hoy, cliente: nf.cliente, matricula: nf.vehiculo.matricula, orden: token, ordenNum: f.num,
+          rectifica: nf.rect ? (nf.origen || "") : "", motivo: nf.rect ? (nf.motivoRect || "") : "", lineas: nf.lineas, suma: tt.suma, dto: tt.dto, base: tt.base, pct: tt.pct, cuota: tt.igic, total: tt.total, por: q.uid, nombre: q.nombre });
+      } catch (e: any) { return json({ error: String(e?.message || e) }, 503); }
+      nf.cerrada = true; nf.emision = { t: reg.ts, fecha: hoy, por: q.uid, nombre: q.nombre, numero: reg.numero, huella: reg.huella, tipo: reg.tipo };
+      if (!nf.fechaOperacion) nf.fechaOperacion = hoy;
+      auditar(f, q, "emitir-factura", `FORM-14 emitida ${reg.numero}: ${tt.total.toFixed(2)} € (${nf.lineas.length} líneas)`);
+    } else auditar(f, q, "guardar", "FORM-14 guardada");
+    f.f5 = nf;
+    await guardar(f, o); return salida();
   }
 
   if (sub === "f4" && req.method === "PUT") {

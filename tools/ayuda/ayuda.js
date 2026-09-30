@@ -168,13 +168,13 @@ const AY_MODS=[
 {id:"taller",ico:"🛠️",titulo:"Taller (Sistema 01)",tab:"ordenes",roles:AY_TODOS,
  objetivo:"Llevar cada coche que entra al taller de principio a fin con su orden VC-año-número y sus 4 fichas: recepción, inspección 360°, tiempos y calidad.",
  cuando:["Entra un coche de un cliente, uno comprado para vender o una retoma.","Vas a empezar, pausar o terminar un trabajo.","Hay que revisar un coche antes de entregarlo."],
- flujo:["Recepcionado · FORM-01","En inspección · FORM-02","Presupuesto aceptado","En trabajo · FORM-03","Control de calidad · FORM-04","Listo → Entregado"],
+ flujo:["Recepcionado · FORM-01","En inspección · FORM-02","Presupuesto aceptado","Factura · FORM-14","En trabajo · FORM-03","Control de calidad · FORM-04","Listo → Entregado"],
  mapa:{filas:[[[1,"Vistas: En marcha / Mis trabajos · Órdenes · Tablero · Avisos de ITV",2],[2,"Buscar · Equipo y ajustes · + Nueva recepción",1]],[[3,"Avisos del taller (rojo / ámbar)",1]],[[4,"Coches y trabajos según la vista elegida",1]]],
   zonas:[[1,"Vistas","<b>En marcha / Mis trabajos</b>: lo que te toca hacer a ti. <b>Órdenes</b>: tabla con filtros por fase y Excel. <b>Tablero</b>: columnas por estado. <b>Avisos de ITV</b>: clientes a los que caduca la ITV (gerente y recepción)."],
    [2,"Acciones","Busca por matrícula, cliente o Nº de orden. «+ Nueva recepción» crea la orden y abre FORM-01."],
    [3,"Avisos","Lo que no puede esperar: puntos en ROJO sin presupuesto, desviaciones sin justificar, coches esperando calidad. Toca uno para ir a la ficha."],
    [4,"Tarjetas","Cada coche con su matrícula, el Nº de orden, el cliente y el estado de sus 4 fichas."]]},
- extra:{t:"Dentro de una orden",filas:[[[1,"← Taller · Nº orden · coche y cliente · Imprimir · PDF · Presupuesto y cliente",1]],[[2,"Fases: Recepcionado → Inspección → Trabajo → Calidad → Entregado",1]],[[3,"Pestañas: FORM-01 · FORM-02 · FORM-03 · FORM-04 · Auditoría",1]],[[4,"La ficha abierta",1]],[[5,"Barra de guardado: Guardar · Firmar",1]]],
+ extra:{t:"Dentro de una orden",filas:[[[1,"← Taller · Nº orden · coche y cliente · Imprimir · PDF · Presupuesto y cliente",1]],[[2,"Fases: Recepcionado → Inspección → Trabajo → Calidad → Entregado",1]],[[3,"Pestañas: FORM-01 · FORM-02 · FORM-14 Factura · FORM-03 · FORM-04 · Auditoría",1]],[[4,"La ficha abierta",1]],[[5,"Barra de guardado: Guardar · Firmar",1]]],
   zonas:[[1,"Cabecera","«Presupuesto y cliente» (solo gerente) abre el presupuesto, el enlace del cliente, las fotos y los mensajes."],[2,"Fases","Dónde está el coche. Avanza sola al firmar cada ficha."],[3,"Pestañas","Cada una muestra si está sin empezar, en curso o firmada."],[5,"Barra de guardado","Todo se guarda solo mientras escribes. <b>Firmar</b> cierra la ficha: después solo el gerente puede reabrirla."]]},
  pasos:[
   {t:"Recibir un coche (FORM-01 Recepción)",r:["rec","ger","mec"],p:[
@@ -210,6 +210,13 @@ const AY_MODS=[
    "Dentro de la orden, busca el bloque <b>«Recambios y herramientas de esta orden»</b>.",
    "Busca o <b>escanea</b> el recambio y pon la cantidad: se descuenta del almacén al momento.",
    "Para una herramienta de valor, pulsa <b>«+ Coger herramienta para esta orden»</b>."],tip:"Si sobra una pieza, devuélvela desde ahí mismo indicando el motivo."},
+  {t:"Preparar y emitir la factura (FORM-14)",r:["rec","ger"],p:[
+   "Abre la orden → pestaña <b>FORM-14 Factura</b> (está entre FORM-02 y FORM-03).",
+   "Ya viene rellena: cliente y coche de la recepción y las líneas del presupuesto. Revisa nombre, DNI/CIF, matrícula y km de salida.",
+   "Ajusta las líneas (mano de obra, recambio u otro), el descuento y el tipo de <b>IGIC</b> (7 % general, 0 % exento u otro). El total se calcula solo.",
+   "Pulsa <b>«Emitir la factura»</b>: queda bloqueada con su número. Usa <b>«Imprimir esta ficha»</b> para el PDF.",
+   "Si hay un error, solo el gerente la <b>reabre con un motivo</b>: la factura emitida NO se borra (queda en el registro) y la nueva sale como <b>rectificativa</b> R-AAAA-NNNN.",
+   "Abajo, en <b>«Libro de facturas»</b>: elige fechas y pulsa <b>«Descargar listado (Excel)»</b> para tu gestoría, o <b>«Comprobar integridad»</b> para verificar que ninguna factura se ha tocado."],tip:"El mecánico no ve ningún importe de la factura."},
   {t:"Hacer el control de calidad (FORM-04)",r:["cal","mec","ger"],p:[
    "Abre la orden desde <b>«Control de calidad»</b> → pestaña <b>FORM-04</b>.",
    "Elige el destino: <b>Entrega a cliente</b> (secciones A + B + C) o <b>Inventario de venta</b> (A + B + D).",

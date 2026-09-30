@@ -1,0 +1,91 @@
+# Ausencias (RRHH) en el navegador: trabajador sin fichar → comunica con documento → gerente decide → el trabajador lo ve.
+# Escritorio y móvil 390 px. Uso: bun tools/pruebas/servidor-local.mjs  y  python3 tools/pruebas/e2e-ausencias-panel.py [carpeta-capturas]
+import sys, pathlib, tempfile, os, base64
+from playwright.sync_api import sync_playwright
+BASE = "http://localhost:8888"; CLAVE = "clave-de-pruebas-larga-2026"
+OUT = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "/tmp/e2e-aus"); OUT.mkdir(parents=True, exist_ok=True)
+ok = 0; mal = []
+def check(n, c, x=""):
+    global ok
+    if c: ok += 1; print("  ✔", n)
+    else: mal.append(n + " " + x); print("  ✘", n, x)
+def api(page, m, r, t, b=None):
+    return page.evaluate("""async ([m,r,t,b])=>{const x=await fetch(r,{method:m,headers:{'content-type':'application/json',authorization:'Bearer '+t},body:b?JSON.stringify(b):undefined});return {s:x.status,d:await x.json().catch(()=>({}))}}""", [m, r, t, b])
+tmp = pathlib.Path(tempfile.mkdtemp()); pdf = tmp / "parte-de-baja.pdf"; pdf.write_bytes(b"%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF")
+png = tmp / "justificante.png"; png.write_bytes(base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="))
+def login_g(page):
+    page.goto(BASE + "/admin"); page.wait_for_selector("#login-form")
+    if page.is_visible("#f-eq"): page.click("#login-modo")
+    page.fill("#pw", CLAVE); page.click("#login-btn"); page.wait_for_selector("#s-dash:not([hidden])", timeout=15000)
+    return page.evaluate("sessionStorage.getItem('vc_tok')")
+with sync_playwright() as p:
+    b = p.chromium.launch()
+    for i, (nombre, vp) in enumerate([("escritorio", {"width": 1366, "height": 900}), ("movil", {"width": 390, "height": 800})]):
+        print("\n==", nombre)
+        ctx = b.new_context(viewport=vp, has_touch=(nombre == "movil")); page = ctx.new_page(); errores = []
+        page.on("pageerror", lambda e: errores.append(str(e)))
+        page.on("console", lambda m: errores.append(m.text) if m.type == "error" and not any(x in m.text for x in ("ERR_TUNNEL", "favicon", "423", "403", "ERR_INTERNET")) else None)
+        tok = login_g(page); usr = f"luis{i}"
+        r = api(page, "POST", "/api/taller/equipo", tok, {"nombre": "Luis " + nombre, "usuario": usr, "pin": "445566", "rol": "mecanico"}); check("alta del trabajador", r["s"] == 201, str(r))
+        if i == 0: check("gerente: sin nada pendiente no aparece aviso", page.locator("#au-banner:visible").count() == 0)
+        page.click("#logout"); page.wait_for_selector("#login-form")
+        if not page.is_visible("#f-eq"): page.click("#login-modo")
+        page.fill("#eq-u", usr); page.fill("#eq-p", "445566"); page.click("#login-btn")
+        page.wait_for_selector("#j-fichar .j-big", timeout=15000)
+        page.wait_for_selector("[data-auabrir]", timeout=8000); check("botón «Ausencias y permisos» en el fichaje (sin haber fichado)", True)
+        page.screenshot(path=str(OUT / f"{nombre}-1-fichaje.png"), full_page=True)
+        page.click("[data-auabrir]"); page.wait_for_selector("[data-aunueva]"); check("se abre «Ausencias y permisos»", page.is_visible("#dlg-au"))
+        check("lista vacía con mensaje claro", "Todavía no has comunicado" in page.inner_text("#dlg-au"))
+        page.click("[data-aunueva]"); page.wait_for_selector("[data-autipo]")
+        check("8 tipos de ausencia", page.locator("[data-autipo]").count() == 8)
+        page.click("#au-ok"); check("no deja enviar sin tipo", "Elige el tipo" in page.inner_text("#au-err"))
+        page.click('[data-autipo="baja-medica"]'); check("baja médica pide el parte de baja", "parte de baja" in page.inner_text("#au-dochint"))
+        page.click('[data-aurap="sem"]')
+        page.set_input_files("#au-fi", [str(pdf), str(png)]); page.wait_for_function("document.querySelectorAll('#au-docs .au-doc').length===2", timeout=10000); check("sube un PDF y una foto", True)
+        page.fill("#au-mo", "Gripe con fiebre, me han dado la baja")
+        page.screenshot(path=str(OUT / f"{nombre}-2-formulario.png"), full_page=False)
+        check("sin scroll horizontal en el formulario", page.evaluate("document.documentElement.scrollWidth<=innerWidth"))
+        page.click("#au-ok"); page.wait_for_selector(".au-card.pendiente", timeout=8000); check("queda en «Pendiente» en su lista", True)
+        check("muestra sus 2 documentos", page.locator(".au-card .au-doc").count() == 2)
+        page.screenshot(path=str(OUT / f"{nombre}-3-mis-ausencias.png"))
+        page.click('.au-card .au-doc button >> nth=0'); page.wait_for_selector("#dlg-au-doc .au-visor iframe, #dlg-au-doc .au-visor img", timeout=8000); check("visor de documentos (con sesión)", True)
+        page.click("#dlg-au-doc [data-aucerrar]")
+        page.click("#dlg-au [data-aucerrar]")
+        # el gerente a primera hora
+        page.click("#logout"); page.wait_for_selector("#login-form"); tok = login_g(page)
+        page.wait_for_selector("#au-banner:not([hidden])", timeout=15000); check("aviso RRHH arriba en todo el panel", "por revisar" in page.inner_text("#au-banner"))
+        check("aviso dice quién falta hoy", ("Luis " + nombre) in page.inner_text("#au-banner") and "baja médica" in page.inner_text("#au-banner").lower())
+        check("insignia en la pestaña Jornada", page.locator('#tabs [data-tab="jornada"] .au-badge').count() == 1)
+        page.screenshot(path=str(OUT / f"{nombre}-4-gerente-aviso.png"))
+        page.click("[data-aurev]"); page.wait_for_selector(".au-row.nuevo", timeout=8000); check("solicitud nueva en «Por revisar»", True)
+        page.screenshot(path=str(OUT / f"{nombre}-5-gerente-jornada.png"))
+        page.click(".au-row.nuevo"); page.wait_for_selector("#au-dec", timeout=8000); check("ficha con motivo y documentos", "Gripe" in page.inner_text("#dlg-au-g") and page.locator("#dlg-au-g .au-doc").count() == 2)
+        page.screenshot(path=str(OUT / f"{nombre}-6-gerente-ficha.png"))
+        page.click("#dlg-au-g .au-doc button >> nth=1"); page.wait_for_selector("#dlg-au-doc .au-visor", timeout=8000); check("el gerente abre el documento", True); page.click("#dlg-au-doc [data-aucerrar]")
+        page.click('[data-audec="rechazar"]'); page.click("#au-ok"); check("rechazar sin motivo: se avisa", "Explica" in page.inner_text("#au-err"))
+        page.click('[data-audec="pedir-info"]'); page.fill("#au-dm", "Sube también el informe del médico"); page.click("#au-ok")
+        page.wait_for_function("document.querySelector('#dlg-au-g .chip.au-pide-info')", timeout=8000); check("pide más información", True)
+        page.click('[data-audec="aprobar"]'); page.select_option("#au-ret", "si"); page.click("#au-ok")
+        page.wait_for_function("document.querySelector('#dlg-au-g .chip.au-aprobada')", timeout=8000); check("aprueba con sueldo", True)
+        page.click("#dlg-au-g [data-aucerrar]")
+        page.wait_for_function("!document.querySelector('#aus-g .au-row.nuevo')", timeout=8000)
+        page.click('[data-autab="hist"]'); page.wait_for_selector(".au-filtros"); check("historial con filtros", page.locator("#aus-g .au-row", has_text="Luis " + nombre).count() == 1)
+        page.select_option('[data-aufil="estado"]', "rechazada"); page.wait_for_function("!document.querySelector('#aus-g .au-row.aprobada')", timeout=6000); check("filtro por estado funciona", True)
+        page.select_option('[data-aufil="estado"]', ""); page.wait_for_function("document.querySelector('#aus-g .au-row.aprobada')", timeout=6000)
+        page.screenshot(path=str(OUT / f"{nombre}-7-historial.png"))
+        page.click("[data-augnueva]"); page.wait_for_selector("#au-uid"); check("gerente puede registrar una ausencia por otra persona", page.locator("#au-uid option").count() >= 1); page.click("#dlg-au-g [data-auvolver]")
+        # el trabajador ve la respuesta
+        page.click("#logout"); page.wait_for_selector("#login-form")
+        if not page.is_visible("#f-eq"): page.click("#login-modo")
+        page.fill("#eq-u", usr); page.fill("#eq-p", "445566"); page.click("#login-btn"); page.wait_for_selector("[data-auabrir]", timeout=15000)
+        page.wait_for_function("document.querySelector('[data-auabrir] .au-badge')", timeout=8000); check("el trabajador ve un aviso de respuesta nueva", True)
+        page.click("[data-auabrir]"); page.wait_for_selector(".au-resp.aprobada", timeout=8000)
+        txt = page.inner_text("#dlg-au"); check("ve «Aprobada» con sueldo y quién decidió", "con sueldo" in txt and "Gerente" in txt)
+        page.screenshot(path=str(OUT / f"{nombre}-8-respuesta.png"))
+        page.wait_for_function("!document.querySelector('[data-auabrir] .au-badge')", timeout=6000); check("al leerla desaparece el aviso", True)
+        check("sin scroll horizontal", page.evaluate("document.documentElement.scrollWidth<=innerWidth"))
+        check("sin errores de consola", not errores, str(errores[:3]))
+        ctx.close()
+    b.close()
+print(f"\n{ok} bien, {len(mal)} mal"); 
+if mal: print("\n".join(mal)); sys.exit(1)

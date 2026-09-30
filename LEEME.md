@@ -190,3 +190,12 @@ Panel -> Taller -> **Coches propios**: control interno de cada coche que compras
 - **Ventas** (`netlify/lib/ventas.mts`, `meta.mts`, `netlify/functions/whatsapp.mts`): filtro de frases prohibidas, llamadas y pruebas de conduccion a las 8:30 del siguiente dia laborable, y los mismos avisos por Facebook Messenger e Instagram Direct (variables FB_PAGE_TOKEN / IG_TOKEN / META_APP_SECRET; webhook /api/whatsapp o /api/meta).
 - **Voz DAN** (`netlify/lib/guiones.mts`, `netlify/functions/voz.mts`, `tools/voz`): guiones de los 9 videos y voz de ElevenLabs (variable ELEVENLABS_API_KEY, y ELEVENLABS_VOICE_ID si no encuentra la voz por nombre). Se genera desde Ayuda con el boton del gerente.
 - Documentos: `tools/docs/MODELO-DE-DATOS.md`, `tools/docs/QA-MATRIZ.md`, `tools/ayuda/GUIONES-VIDEOS.md`. Pruebas: `tools/pruebas/e2e-*`.
+
+
+## Ausencias y permisos (RRHH) y pulido del panel
+- **Facturas con registro inalterable** (`netlify/lib/facturas.mts`): serie F-AAAA-NNNN y R-AAAA-NNNN correlativas, huella SHA-256 encadenada, listado CSV para la gestoria y comprobacion de integridad. Falta para Verifactu completo: certificado electronico, envio a la AEAT y declaracion responsable (consultar con la gestoria; plazo sociedades 1-1-2027).
+- **Copias**: diarias por almacen; 30 dias + dia 1 de cada mes (24 meses) + 1 de enero para siempre (`netlify/functions/copia-programada.mts`).
+- **Manuales de procedimientos privados**: `netlify/privado/sistemas` + `/api/manual/<nombre>` (piden sesion). **PIN**: 5 fallos bloquean al usuario 15 min.
+- **Factura de reparacion (FORM-14)** (`tools/factura`, ficha `f5` en `netlify/functions/taller.mts`): pestana entre FORM-02 y FORM-03; se rellena desde el presupuesto; IGIC 7/0/otro; al emitir queda bloqueada; el gerente la reabre con motivo y sale como rectificativa (-R1). El mecanico no ve importes. Pruebas: `e2e-factura.mjs` y `e2e-factura-panel.py`.
+- **Ausencias** (`tools/ausencias`, `netlify/functions/ausencias.mts`): el trabajador las comunica desde su pantalla de fichaje (con foto o PDF); el gerente las ve arriba en Jornada y decide. Modelo y permisos: `tools/docs/MODELO-AUSENCIAS.md`.
+- **Pulido** (`tools/pulido`): menu superior con todas las secciones y ventanas con formato.

@@ -4,6 +4,10 @@
   publish = "public"
   functions = "netlify/functions"
 
+# Manuales internos (netlify/privado): los entrega /api/manual/… solo con sesión del panel
+[functions]
+  included_files = ["netlify/privado/**"]
+
 # La dirección antigua de Netlify manda a la definitiva (una sola web para Google)
 [[redirects]]
   from = "https://lestter7th.netlify.app/*"

@@ -41,7 +41,7 @@ with sync_playwright() as p:
         check("aparece el fichaje de jornada de siempre", page.is_visible("#j-fichar .j-big"))
         check("el módulo de tareas aparece debajo", page.is_visible("#tk"))
         check("sin entrada: tareas desactivadas", page.locator("#tk .tk-off").count() == 1)
-        entrar(page); page.evaluate("jAbrir()"); page.wait_for_selector("#j-fichar .j-big.j-b-pau", timeout=10000)
+        entrar(page); page.evaluate("jAbrir()"); page.wait_for_selector("#j-fichar [data-jacc=pausa]", timeout=10000)
         page.wait_for_selector("#tk-v"); check("con jornada: se puede elegir coche", page.locator("#tk .tk-off").count() == 0)
         page.select_option("#tk-v", index=1); page.wait_for_selector("[data-tktipo]")
         page.click('[data-tktipo="limpieza"]'); page.click('[data-tkest="30"]')

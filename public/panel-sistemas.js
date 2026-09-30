@@ -9,7 +9,7 @@
        FORM-07 Hoja de preparación (S04)   FORM-08 Prueba a domicilio · fianza (S06)
        FORM-09 Registro de postventa (S07) FORM-10 Plan semanal de marketing (S08, gerente)
        FORM-11 Auditoría del viernes (S09, gerente)
-   FORM-01 a 04 siguen dentro de cada orden (S01) y la Guía de venta (S05)
+   FORM-01 a 04 y FORM-14 (Factura de reparación) siguen dentro de cada orden (S01) y la Guía de venta (S05)
    en su sitio: aquí solo se enlazan. Guarda en /api/sistemas (Netlify Blobs).
    Usa las funciones del panel: api, toast, ME, PUEDE_TODO, abrirGuia.
    ===================================================================== */
@@ -35,7 +35,7 @@
      ------------------------------------------------------------------ */
   const BLOQ = { A: "Taller", B: "Venta", C: "Cliente", D: "Dirección" };
   const SIS = [
-    ["01", "A", "Taller: de la recepción a la entrega", "Recepción · Inspección · Presupuesto · Tiempos · Calidad · Factura y cobro", "VolcanoCars-S01-Taller-recepcion-a-entrega", ["FORM-01", "FORM-02", "FORM-03", "FORM-04"], "hecho"],
+    ["01", "A", "Taller: de la recepción a la entrega", "Recepción · Inspección · Presupuesto · Factura · Tiempos · Calidad · Cobro", "VolcanoCars-S01-Taller-recepcion-a-entrega", ["FORM-01", "FORM-02", "FORM-14", "FORM-03", "FORM-04"], "hecho"],
     ["02", "A", "Recambios, almacén, cascos y abonos", "Pedir · recibir · dar salida · devolver cascos · cobrar abonos", "VolcanoCars-S02-Recambios-almacen-cascos-abonos", ["FORM-05"], "nuevo"],
     ["03", "A", "Instalaciones, seguridad y 5S", "Taller ordenado, seguro y en regla", "VolcanoCars-S03-Instalaciones-seguridad-5S", ["FORM-06"], "nuevo"],
     ["04", "B", "Preparación y detailing anti-salitre", "Del taller al escaparate: coche impecable y protegido", "VolcanoCars-S04-Preparacion-detailing-anti-salitre", ["FORM-07"], "nuevo"],
@@ -48,7 +48,17 @@
     ["11", "D", "Cuadro de mando y métricas", "Los números que dirigen el negocio", "VolcanoCars-S11-Cuadro-de-mando-metricas", ["FORM-13"], "nuevo"],
   ];
   const INDICE = "VolcanoCars-S00-Indice-MO-00-v3.0";
-  const pdf = (f) => `/sistemas/${f}.pdf${V}`;
+  // Los manuales ya no son públicos: se piden con la sesión y se abren en otra pestaña
+  const pdf = (f) => `#manual-${f}`;
+  document.addEventListener("click", async (e) => {
+    const a = e.target.closest && e.target.closest('a[href^="#manual-"]'); if (!a) return; e.preventDefault();
+    const w = window.open("", "_blank"); if (w) w.document.write("<p style='font:16px sans-serif;padding:24px'>Abriendo el manual…</p>");
+    try {
+      const r = await fetch("/api/manual/" + encodeURIComponent(a.getAttribute("href").slice(8)), { headers: { authorization: "Bearer " + (typeof PW !== "undefined" ? PW : "") } });
+      if (!r.ok) throw new Error(r.status === 401 || r.status === 423 ? "Tu sesión ha caducado o falta fichar." : "No se ha podido abrir el manual.");
+      const url = URL.createObjectURL(await r.blob()); if (w) w.location.href = url; else location.href = url;
+    } catch (err) { if (w) w.close(); alert(err.message); }
+  });
 
   /* ------------------------------------------------------------------
      FORMULARIOS DIGITALES (los que no tenían equivalente en el panel)

@@ -1,0 +1,65 @@
+/*FACTURA*/
+.fc-l{display:grid;grid-template-columns:2fr 1fr 1fr .8fr 1fr .8fr 1fr auto;gap:8px;align-items:end;padding:10px;margin-bottom:8px;border:1px solid var(--line,#e2e5ea);border-radius:10px;background:var(--card,#fff)}
+.fc-l .fc-d{grid-column:1}
+.fc-im{display:flex;flex-direction:column;text-align:right}.fc-im small{color:var(--mut,#6b7280);font-size:11px}.fc-im b{font-variant-numeric:tabular-nums}
+.fc-acc{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.fc-em{display:flex;flex-direction:column;gap:2px;font-size:14px}
+.fc-tot{margin-top:12px;margin-left:auto;max-width:340px}
+.fc-r{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--line,#e2e5ea)}
+.fc-r.fc-t{font-size:18px;font-weight:700;border-bottom:0;padding-top:8px}
+.fc-info{margin-bottom:12px}
+.fc-borr{border:2px dashed #c0392b;color:#c0392b;text-align:center;font-weight:700;padding:6px;margin-bottom:10px;letter-spacing:.06em}
+.fc-cab{align-items:start;margin-bottom:6px}.fc-rz{font-size:15px}
+.fc-nf{text-align:right;display:flex;flex-direction:column;gap:2px}.fc-nf b{font-size:20px}.fc-nf small{letter-spacing:.1em;font-weight:700}
+.fc-ptot{margin-left:auto;width:260px;margin-top:8px}
+.tp-t.fc-tb td,.tp-t.fc-tb th{font-size:11px}
+@media(max-width:760px){
+ .fc-l{grid-template-columns:1fr 1fr 1fr}
+ .fc-l .fc-d{grid-column:1/-1}
+ .fc-l .fc-im{grid-column:1/3;text-align:left}
+ .fc-l .fc-x{justify-self:end}
+ .fc-tot{max-width:none}
+}
+.fc-l label{display:block!important;font-size:11px;opacity:.75;margin-bottom:3px}
+.fc-l .in{min-width:0}
+
+/* réplica del FORM-03 en papel */
+.fc-pag{--d:#3a3a3a;--s:#F0736F;--l:#E7E3DF;--ln:#CFCCC8;color:#1c1c1a;font:9pt/1.25 Carlito,Calibri,"Segoe UI",Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.fc-pag table{width:100%;border-collapse:collapse;table-layout:fixed}
+.fc-pag .fp-h{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:.9mm solid var(--d);padding-bottom:2.2mm}
+.fc-pag .fp-h img{width:54mm;height:auto}
+.fc-pag .fp-h>div{text-align:right}.fc-pag h1{font-size:20pt;margin:0;line-height:1.05;font-weight:700}
+.fc-pag .fp-h p{margin:.6mm 0 1.2mm;color:#8a8a8a;font-size:8.6pt}
+.fc-pag .fp-pill{display:inline-block;background:var(--s);color:#fff;font-weight:700;font-size:8.4pt;letter-spacing:.08em;padding:.5mm 5mm;border-radius:2mm}
+.fc-pag .fp-num{margin-top:3mm}.fc-pag .fp-num th{width:26mm}
+.fc-pag th{background:var(--l);border:.3mm solid var(--ln);text-align:left;font-weight:700;padding:1.4mm 2.4mm;font-size:8.8pt}
+.fc-pag td{border:.3mm solid var(--ln);padding:1.4mm 2.4mm;height:6.4mm;overflow:hidden;white-space:nowrap;text-overflow:clip}
+.fc-pag .fp-nota{margin:1.6mm 0 2mm;font-size:8.2pt;color:#8a8a8a}.fc-pag .fp-nota b{color:#1c1c1a}
+.fc-pag .fp-bar{display:flex;align-items:center;gap:2.6mm;background:var(--d);color:#fff;padding:1.2mm 1.6mm;margin-top:3mm}
+.fc-pag .fp-bar i{font-style:normal;background:var(--s);width:4.2mm;height:4.2mm;text-align:center;font-weight:700;font-size:8pt;line-height:4.2mm}
+.fc-pag .fp-bar b{font-size:10.2pt;letter-spacing:.06em;text-transform:uppercase}.fc-pag .fp-bar small{color:#d7d3ce;font-size:8pt}
+.fc-pag .fp-sal{background:var(--s)}.fc-pag .fp-sal i{background:#fff;color:var(--s)}
+.fc-pag .fp-t th:nth-child(1),.fc-pag .fp-t th:nth-child(3){width:32mm}.fc-pag .fp-t td:nth-child(2){width:62mm}
+.fc-pag .fp-km em{font-style:normal;color:#8a8a8a;font-size:8pt}.fc-pag .fp-km{margin-right:4mm}
+.fc-pag .fp-d th{background:#8c8c8c;color:#fff;border:0;padding:1.2mm 2.2mm}
+.fc-pag .fp-d th:nth-child(1){width:11mm}.fc-pag .fp-d th:nth-child(2){width:24mm}.fc-pag .fp-d th:nth-child(4){width:14mm}.fc-pag .fp-d th:nth-child(5){width:20mm}.fc-pag .fp-d th:nth-child(6){width:13mm}.fc-pag .fp-d th:nth-child(7){width:27mm}
+.fc-pag .fp-d td{height:5.7mm;padding:.6mm 2.2mm;font-size:8.6pt}.fc-pag .fp-d tbody tr:nth-child(odd) td{background:#f4f3f1}
+.fc-pag .r{text-align:right}
+.fc-pag .fp-for{margin:0;border:.3mm solid var(--ln);border-top:0;padding:1.6mm 3mm;font-size:8.8pt}
+.fc-pag .fp-fin{display:flex;gap:2mm;margin-top:1.4mm;align-items:flex-start}
+.fc-pag .fp-izq{flex:0 0 57.5%;border:.3mm solid var(--ln)}
+.fc-pag .fp-ig{display:flex;align-items:center;gap:4mm;border-bottom:.3mm solid var(--ln);padding-right:2mm}.fc-pag .fp-ig b{background:var(--l);width:33mm;padding:1.6mm 2.4mm;border-right:.3mm solid var(--ln)}
+.fc-pag .fp-ig span{white-space:nowrap}.fc-pag .fp-ck{display:inline-block;width:3.2mm;height:3.2mm;border:.3mm solid #8c8c8c;vertical-align:-.5mm;text-align:center;line-height:3mm;font-size:8pt;font-weight:700}
+.fc-pag .fp-ig u{display:inline-block;min-width:8mm;border-bottom:.2mm solid #999;text-decoration:none;text-align:center}
+.fc-pag .fp-ob b{display:block;background:var(--l);padding:1.4mm 2.4mm;border-bottom:.3mm solid var(--ln)}.fc-pag .fp-ob p{margin:0;min-height:15mm;padding:1.6mm 2.4mm;font-size:8.6pt;white-space:pre-wrap}
+.fc-pag .fp-tot{flex:1}.fc-pag .fp-tot th{width:34mm}.fc-pag .fp-tot td{text-align:right;height:5.3mm;padding:.8mm 2.4mm}.fc-pag .fp-tot th{padding:.8mm 2.4mm}
+.fc-pag .fp-tt th{background:var(--d);color:#fff;border-color:var(--d);letter-spacing:.04em}.fc-pag .fp-tt td{background:var(--s);color:#fff;font-weight:700;border-color:var(--s)}
+.fc-pag .fp-borr{margin:3mm 0 0;text-align:center;color:#c0392b;font-weight:700;letter-spacing:.08em;border:.4mm dashed #c0392b;padding:1mm}
+.fc-pag .fp-pie{display:flex;justify-content:space-between;border-top:.3mm solid var(--ln);margin-top:4mm;padding-top:1.6mm;font-size:8.6pt;color:#555}.fc-pag .fp-pie span:last-child{color:#8a8a8a}
+.fc-pag th{letter-spacing:0!important;text-transform:none!important;font-family:inherit!important;font-size:8.8pt!important;line-height:1.15;white-space:nowrap}
+.fc-pag .fp-d th{font-size:8.6pt!important}
+.fc-pag td{height:5.6mm;padding:1mm 2.4mm}.fc-pag th{padding:1mm 2.4mm!important}
+.fc-pag .fp-d td{height:7.6mm;padding:.4mm 2.2mm}
+.fc-pag .fp-bar{margin-top:2.4mm}.fc-pag .fp-h img{width:50mm}
+.fc-pag .fp-ob p{min-height:11mm}
+.fc-pag .fp-rect{margin:2mm 0 0;font-size:8.8pt;color:#555}

@@ -14,10 +14,17 @@ export default async (req: Request) => {
   { const _q = await permiso(req, "gerente"); if (esRespuesta(_q)) return _q; }
   // Copias automáticas diarias (copia-programada.mts): ?auto=lista o ?auto=AAAA-MM-DD
   const auto = new URL(req.url).searchParams.get("auto");
-  if (auto === "lista") { const { blobs } = await store("copias").list({ prefix: "diaria/" }); return json(blobs.map((b) => b.key.slice(7, 17)).sort().reverse()); }
+  if (auto === "lista") { const { blobs } = await store("copias").list({ prefix: "diaria/" }); return json([...new Set(blobs.map((b) => b.key.slice(7, 17)).filter((d) => /^\d{4}-\d{2}-\d{2}$/.test(d)))].sort().reverse()); }
+  if (auto === "estado") return json((await store("copias").get("estado.json", { type: "json" }).catch(() => null)) || { ok: false, fecha: "", fallos: [["copia", "Todavía no se ha hecho ninguna copia automática."]] });
   if (auto && /^\d{4}-\d{2}-\d{2}$/.test(auto)) {
-    const t = await store("copias").get("diaria/" + auto + ".json", { type: "text" });
+    let t = await store("copias").get("diaria/" + auto + ".json", { type: "text" });
     if (!t) return json({ error: "No hay copia de ese día." }, 404);
+    const idx = JSON.parse(t);
+    if (idx.partes) { // copia en varios archivos (uno por almacén): se juntan aquí
+      const datos: Record<string, unknown> = {};
+      for (const n of Object.keys(idx.partes)) datos[n] = await store("copias").get(`diaria/${auto}/${n}.json`, { type: "json" }).catch(() => ({ error: "parte no disponible" }));
+      t = JSON.stringify({ tipo: idx.tipo, version: 2, automatica: true, generado: idx.generado, datos, archivos: idx.archivos });
+    }
     return new Response(t, { headers: { "content-type": "application/json; charset=utf-8", "content-disposition": `attachment; filename="volcano-cars-copia-${auto}.json"`, "cache-control": "no-store" } });
   }
   const datos: Record<string, unknown> = {};

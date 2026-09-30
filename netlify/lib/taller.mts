@@ -78,7 +78,25 @@ export type F4 = {
   destino: string; items: Record<string, "si" | "no" | "na" | "">; notas: Record<string, string>;
   resultado: string; motivo: string; firma: { uid: string; nombre: string; t: string } | null; cierreGerente: { t: string; por: string } | null; intentos: number;
 };
-export type Fichas = { token: string; num: string; f1: F1 | null; f2: F2 | null; f3: F3 | null; f4: F4 | null; audit: { t: string; por: string; nombre: string; rol: string; accion: string; detalle: string }[] };
+// ---------- factura de reparación (FORM-14) ----------
+export const EMISOR = { razon: "MAYLIN Y YERAY S.L.", nif: "B93975647", direccion: "CALLE VALLE LARGO 8", cp: "35610 - Polígono Industrial Costa de Antigua", telefono: "", email: "volcanocars@gmail.com" };
+export type F5Linea = { tipo: "MO" | "REC" | "OTRO"; ref: string; desc: string; cant: number; precio: number; dto: number };
+export type F5 = {
+  fechaOperacion: string;
+  cliente: { nombre: string; doc: string; direccion: string; cp: string; telefono: string; email: string };
+  vehiculo: { matricula: string; vin: string; marcaModelo: string; kmEntrada: string; kmSalida: string };
+  lineas: F5Linea[]; descuentoGlobal: number; igicTipo: "" | "7" | "0" | "otro"; igicOtro: number; observaciones: string;
+  cerrada: boolean; rect: number; origen?: string; motivoRect?: string; emision: { t: string; fecha: string; por: string; nombre: string; numero: string; huella?: string; tipo?: string } | null;
+};
+const r2 = (n: number) => Math.round((n + Number.EPSILON) * 100) / 100;
+// Importe de cada línea, suma, descuento global, base, IGIC y total (euros con 2 decimales). Lo mismo se calcula en el panel.
+export function totalesF5(x: Pick<F5, "lineas" | "descuentoGlobal" | "igicTipo" | "igicOtro">) {
+  const importes = x.lineas.map((l) => r2(l.cant * l.precio * (1 - l.dto / 100)));
+  const suma = r2(importes.reduce((a, b) => a + b, 0)), dto = Math.min(suma, r2(x.descuentoGlobal || 0)), base = r2(suma - dto);
+  const pct = x.igicTipo === "7" ? 7 : x.igicTipo === "otro" ? x.igicOtro : 0, igic = Math.round(base * pct) / 100;
+  return { importes, suma, dto, base, pct, igic, total: r2(base + igic) };
+}
+export type Fichas = { token: string; num: string; f1: F1 | null; f2: F2 | null; f3: F3 | null; f4: F4 | null; f5?: F5 | null; audit: { t: string; por: string; nombre: string; rol: string; accion: string; detalle: string }[] };
 
 // ---------- tiempos (FORM-03) ----------
 export const MOTIVOS_PAUSA = ["Recambio pendiente", "Otro coche urgente", "Comida / descanso", "Espera de autorización del cliente", "Falta de herramienta", "Otro"];
@@ -152,6 +170,8 @@ export async function guardarOrden(f: Fichas, o: any, cambioEstado?: { estado: s
     f2: r2 ? { ...r2, rechazoFirmado: !!f.f2?.rechazoFirmado, mecanico: f.f2?.mecanico || "" } : null,
     f3: f.f3 && c ? { mecanico: f.f3.mecanico, estado: c.estado, netoMin: c.netoMin, estMin: f.f3.estMin, desvPct: c.desvPct, desvMin: c.desvMin, exige: c.exigeJustificacion, justificada: c.justificada, aprobada: c.aprobada, desde: [...f.f3.eventos].sort((a, b) => a.t.localeCompare(b.t)).pop()?.t || "" } : null,
     f4: f.f4 ? { resultado: f.f4.resultado, destino: f.f4.destino, firmada: !!f.f4.firma, cierre: !!f.f4.cierreGerente, intentos: f.f4.intentos } : null,
+    f5: f.f5 ? { emitida: !!f.f5.cerrada } : null, // sin importes: el equipo del taller no los ve
+
   };
   if (cambioEstado && cambioEstado.estado !== o.estado) { o.estado = cambioEstado.estado; o.pasos.push({ estado: cambioEstado.estado, t, nota: cambioEstado.nota }); }
   o.actualizado = t;

@@ -203,22 +203,23 @@ document.addEventListener("change",e=>{ if(e.target.id==="jg-uid"){ J_UID=e.targ
 /* ---------- ver y corregir un día ---------- */
 async function jgDia(uid,f){
   let d=$("#dlg-jdia"); if(!d){ d=document.createElement("dialog"); d.id="dlg-jdia"; d.className="t-dlg fn-dlg"; document.body.appendChild(d); }
-  d.innerHTML='<p class="hint">Cargando…</p>'; d.showModal();
+  d.innerHTML='<div class="t-dlg-in"><p class="hint">Cargando…</p></div>'; d.showModal();
   const pint=r=>{ const anul=new Set(r.dia.eventos.filter(x=>x.tipo==="anulacion").map(x=>x.anula)), nom=(J_REG&&J_REG.personas.find(p=>p.uid===uid)||{}).nombre||"";
-    d.innerHTML=`<h2>${esc(nom)} · ${esc(fecha(f))}</h2><p class="hint">Trabajado ${jH(r.calc.trabajoMin)} · pausas ${jH(r.calc.pausaMin)}${r.calc.extraMin?" · extra "+jH(r.calc.extraMin):""}${r.calc.incidencias.length?" · <b>"+esc(r.calc.incidencias.join(", "))+"</b>":""}</p>
-      <div class="tabla-wrap"><table class="tabla j-tab"><thead><tr><th>#</th><th>Hora</th><th>Fichaje</th><th>Cómo</th><th>Registrado</th></tr></thead><tbody>${r.dia.eventos.map(x=>`<tr class="${anul.has(x.n)?"j-anul":""}"><td class="num">${x.n}</td><td class="num"><b>${jHM(x.t)}</b></td><td>${x.tipo==="anulacion"?`Anula el #${x.anula}`:J_TXT[x.tipo]}${x.motivo?`<br><small>${esc(x.motivo)}</small>`:""}</td><td><small>${esc(J_VIA[x.via]||x.via)}${x.disp?" · "+esc(x.disp):""}${x.ip?" · "+esc(x.ip):""}</small></td><td><small>${esc(x.nombre||"")} · ${esc(fechaHora(x.reg))}</small></td></tr>`).join("")||'<tr><td colspan="5" class="hint">Sin fichajes.</td></tr>'}</tbody></table></div>
+    d.innerHTML=`<div class="t-dlg-in"><h2>${esc(nom)} · ${esc(fecha(f))}</h2><p class="hint">Trabajado ${jH(r.calc.trabajoMin)} · pausas ${jH(r.calc.pausaMin)}${r.calc.extraMin?" · extra "+jH(r.calc.extraMin):""}${r.calc.incidencias.length?" · <b>"+esc(r.calc.incidencias.join(", "))+"</b>":""}</p>
+      <div class="t-dlg-tab"><table class="tabla j-tab"><thead><tr><th>#</th><th>Hora</th><th>Fichaje</th><th>Cómo</th><th>Registrado</th></tr></thead><tbody>${r.dia.eventos.map(x=>`<tr class="${anul.has(x.n)?"j-anul":""}"><td class="num">${x.n}</td><td class="num"><b>${jHM(x.t)}</b></td><td>${x.tipo==="anulacion"?`Anula el #${x.anula}`:J_TXT[x.tipo]}${x.motivo?`<br><small>${esc(x.motivo)}</small>`:""}</td><td><small>${esc(J_VIA[x.via]||x.via)}${x.disp?" · "+esc(x.disp):""}${x.ip?" · "+esc(x.ip):""}</small></td><td><small>${esc(x.nombre||"")} · ${esc(fechaHora(x.reg))}</small></td></tr>`).join("")||'<tr><td colspan="5" class="hint">Sin fichajes.</td></tr>'}</tbody></table></div>
       <form id="jg-corr" class="jg-corr"><h3>Corregir (queda registrado con tu nombre y el motivo)</h3>
-        <div class="t-g2"><div class="field"><label>Qué</label><select class="in" name="que"><option value="add">Añadir un fichaje olvidado</option>${r.dia.eventos.filter(x=>x.tipo!=="anulacion"&&!anul.has(x.n)).map(x=>`<option value="${x.n}">Anular #${x.n} (${J_TXT[x.tipo]} ${jHM(x.t)})</option>`).join("")}</select></div>
-        <div class="field"><label>Tipo y hora</label><div style="display:flex;gap:6px"><select class="in" name="tipo">${["entrada","pausa","reanudar","salida"].map(k=>`<option value="${k}">${J_TXT[k]}</option>`).join("")}</select><input class="in num" type="time" name="hora"></div></div></div>
+        <div class="t-g2"><div class="field"><label>Qué quieres hacer</label><select class="in" name="que"><option value="add">Añadir un fichaje olvidado</option>${r.dia.eventos.filter(x=>x.tipo!=="anulacion"&&!anul.has(x.n)).map(x=>`<option value="${x.n}">Anular #${x.n} (${J_TXT[x.tipo]} ${jHM(x.t)})</option>`).join("")}</select></div>
+        <div class="field" data-jgadd><label>Fichaje y hora</label><div class="jg-th"><select class="in" name="tipo">${["entrada","pausa","reanudar","salida"].map(k=>`<option value="${k}">${J_TXT[k]}</option>`).join("")}</select><input class="in num" type="time" name="hora"></div></div></div>
         <div class="field"><label>Motivo *</label><input class="in" name="motivo" maxlength="300" placeholder="Ej.: olvidó fichar la salida; confirmado con el trabajador" required></div>
         <div class="msg bad" id="jg-err" hidden></div>
-        <div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-jgcerrar>Cerrar</button><button class="btn b-acc">Guardar corrección</button></div></form>`;
+        <div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-jgcerrar>Cerrar</button><button class="btn b-acc">Guardar corrección</button></div></form></div>`;
     d.querySelector("[data-jgcerrar]").onclick=()=>d.close();
+    const q=d.querySelector("[name=que]"), ad=d.querySelector("[data-jgadd]"); q.onchange=()=>{ ad.hidden=q.value!=="add"; }; q.onchange();
     d.querySelector("#jg-corr").onsubmit=async ev=>{ ev.preventDefault(); const fd=Object.fromEntries(new FormData(ev.target));
       const b=fd.que==="add"?{uid,fecha:f,tipo:fd.tipo,hora:fd.hora,motivo:fd.motivo}:{uid,fecha:f,anular:+fd.que,motivo:fd.motivo};
       try{ const r2=await api("/api/jornada/corregir",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(b)}); toast("Corrección guardada"); pint(r2); jgRegistro(); jgPlantilla(); }
       catch(err){ const m=d.querySelector("#jg-err"); m.textContent=err.message; m.hidden=false; } }; };
-  try{ pint(await api(`/api/jornada/dia?uid=${encodeURIComponent(uid)}&fecha=${f}`)); }catch(err){ d.innerHTML=`<p class="msg bad">${esc(err.message)}</p><button class="btn b-ghost" onclick="this.closest('dialog').close()">Cerrar</button>`; }
+  try{ pint(await api(`/api/jornada/dia?uid=${encodeURIComponent(uid)}&fecha=${f}`)); }catch(err){ d.innerHTML=`<div class="t-dlg-in"><p class="msg bad">${esc(err.message)}</p><div class="t-dlg-acts"><button class="btn b-ghost" onclick="this.closest('dialog').close()">Cerrar</button></div></div>`; }
 }
 
 /* ---------- acceso: 2FA del equipo, dispositivos de confianza, accesos raros ---------- */

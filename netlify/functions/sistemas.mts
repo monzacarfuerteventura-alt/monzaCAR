@@ -9,7 +9,7 @@ import { permiso, esRespuesta } from "../lib/acceso.mts";
     FORM-05 Cascos y abonos (S02) · FORM-06 Ronda 5S y seguridad (S03) · FORM-07 Hoja de preparación (S04)
     FORM-08 Prueba a domicilio · fianza 50 € (S06) · FORM-09 Registro de postventa (S07)
     FORM-10 Plan semanal de marketing (S08, solo gerente) · FORM-11 Auditoría del viernes (S09, solo gerente)
-  FORM-01 a 04 siguen en las órdenes del taller; FORM-12 y FORM-13 son de papel (el Dashboard ya da los números).
+  FORM-01 a 04 y FORM-14 (Factura de reparación, entre FORM-02 y FORM-03) siguen en las órdenes del taller; FORM-12 y FORM-13 son de papel (el Dashboard ya da los números).
 
   GET    /api/sistemas?form=FORM-05          → registros (los 300 más recientes)
   POST   /api/sistemas  {form, datos}        → nuevo registro

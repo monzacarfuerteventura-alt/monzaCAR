@@ -224,7 +224,7 @@ function tNuevaRecepcion(){
     ${cand.length?`<div class="field"><label for="rc-lead">¿Viene de una cita o solicitud del CRM?</label><select class="in" id="rc-lead"><option value="">No, cliente nuevo</option>${cand.map(x=>`<option value="${esc(x.id)}">${esc(x.nombre)} · ${esc(queEs(x))}${x.cita?" · cita "+esc(fecha(x.cita.fecha)):""}</option>`).join("")}</select></div>`:""}
     <div id="rc-man" class="t-g2"><div class="field"><label for="rc-nom">Nombre del cliente *</label><input class="in" id="rc-nom" maxlength="80" autocomplete="off"></div><div class="field"><label for="rc-tel">Teléfono</label><input class="in num" id="rc-tel" inputmode="tel" maxlength="30" autocomplete="off"></div>
     <div class="field"><label for="rc-mat">Matrícula *</label><input class="in t-matin" id="rc-mat" maxlength="12" autocomplete="off" placeholder="1234 ABC"></div><div class="field"><label for="rc-coche">Marca y modelo</label><input class="in" id="rc-coche" maxlength="80" list="marcas" autocomplete="off"></div></div>
-    <div class="field"><label>Tipo de entrada</label><div class="t-seg" id="rc-tipo">${[["reparacion","Reparación"],["compra","Compra"],["retoma","Retoma"]].map(([k,t],i)=>`<button type="button" data-v="${k}" aria-pressed="${!i}">${t}</button>`).join("")}</div></div>
+    <div class="field"><label>Tipo de entrada</label><div class="t-seg" id="rc-tipo">${[["reparacion","Reparación"]].map(([k,t])=>`<button type="button" data-v="${k}" aria-pressed="true">${t}</button>`).join("")}</div></div>
     <div class="msg bad" id="rc-err" hidden></div>
     <div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-rc-cancel>Cancelar</button><button type="submit" class="btn b-acc" id="rc-ok">Crear y abrir FORM-01</button></div></form>`;
   const lead=$("#rc-lead"); if(lead) lead.onchange=()=>{ $("#rc-man").hidden=!!lead.value; };
@@ -254,7 +254,7 @@ function tVacias(){
   const f3=tClone(f.f3)||{mecanico:"",tarifa:TF.config.tarifa,estMin:0,tipo:"reparacion",hoja:"1 de 1",eventos:[],justificacion:null,vistoBueno:null,retrabajos:[]};
   let f4=tClone(f.f4)||{destino:f1.tipoEntrada==="compra"||f1.tipoEntrada==="retoma"?"venta":"cliente",items:{},notas:{},resultado:"",motivo:"",firma:null,cierreGerente:null,intentos:0};
   if(f4.firma&&f4.resultado==="rechazado"&&tNuevoIntento()){ f4={...f4,firma:null,resultado:"",motivo:""}; for(const k in f4.items) if(f4.items[k]==="no") f4.items[k]=""; }
-  TW={f1,f2,f3,f4,j:TW.j&&TW.j.token===TF.orden.token?TW.j:{token:TF.orden.token,codigos:[],explicacion:"",avisado:"",mejora:""}};
+  TW={f1,f2,f3,f4,f5:(typeof fcNueva==="function"?fcNueva():null),j:TW.j&&TW.j.token===TF.orden.token?TW.j:{token:TF.orden.token,codigos:[],explicacion:"",avisado:"",mejora:""}};
 }
 function tNuevoIntento(){ const f=TF.fichas; if(!(f.f4&&f.f4.firma&&f.f4.resultado==="rechazado")) return false;
   const fin=(f.f3?f.f3.eventos:[]).filter(e=>e.tipo==="fin").map(e=>e.t).sort().pop()||""; return fin>f.f4.firma.t; }
@@ -276,12 +276,13 @@ function tEstadoFicha(k){ const f=TF.fichas;
   if(k==="f1") return !f.f1?["","Sin empezar"]:f.f1.cerrada?["ok","Firmada"]:["curso","Sin firmar"];
   if(k==="f2"){ if(!f.f2) return ["","Sin empezar"]; const r=tResF2(f.f2); return f.f2.cerrada?[r.rojos?"rojo":r.ambar?"ambar":"ok",`${r.rojos} R · ${r.ambar} Á`]:["curso",`${r.hechos}/${r.total}`]; }
   if(k==="f3"){ const c=tCalc(f.f3,TF.config); if(!c||c.estado==="sin") return ["","Sin fichajes"]; if(c.estado!=="fin") return ["vivo",c.estado==="pausa"?"En pausa":"Trabajando"]; return c.exige&&!c.aprobada?["rojo",tPct(c.desvPct)]:["ok",tPct(c.desvPct)]; }
+  if(k==="f5") return fcEstado();
   if(k==="f4"){ if(!f.f4||!f.f4.firma) return ["","Pendiente"]; return f.f4.resultado==="rechazado"?["rojo","Rechazado"]:["ok",f.f4.cierreGerente?"Cerrada":"Aprobado"]; }
   return ["",String(f.audit.length)];
 }
 function tCabecera(){
   const o=TF.orden, f=TF.fichas, i=tFase(o.estado);
-  const tabs=[["f1","FORM-01","Recepción"],["f2","FORM-02","Inspección 360°"],["f3","FORM-03","Tiempos"],["f4","FORM-04","Calidad · 30 pts"],["audit","","Auditoría"]];
+  const tabs=[["f1","FORM-01","Recepción"],["f2","FORM-02","Inspección 360°"],...(typeof fcTab==="function"?fcTab():[]),["f3","FORM-03","Tiempos"],["f4","FORM-04","Calidad · 30 pts"],["audit","","Auditoría"]];
   return `<div class="t-fhead">
     <button type="button" class="btn b-ghost b-sm" data-tvolver>← Taller</button>
     <div class="t-fid"><small>Orden</small><b class="num">${esc(f.num||"—")}</b></div>
@@ -298,7 +299,7 @@ function tRender(){
 function tRenderHead(){ const h=$("#tf-head"); if(h) h.innerHTML=tCabecera(); }
 function tRenderBody(keep){
   const b=$("#tf-body"); if(!b) return; const y=scrollY;
-  b.innerHTML=({f1:tF1,f2:tF2,f3:tF3,f4:tF4,audit:tAud}[TF_TAB]||tF1)();
+  b.innerHTML=({f1:tF1,f2:tF2,f3:tF3,f4:tF4,f5:typeof fcRender==="function"?fcRender:tF1,audit:tAud}[TF_TAB]||tF1)();
   if(keep) scrollTo(0,y);
   tFirmaInit(); tReloj(); tSaveBar();
 }
@@ -307,15 +308,16 @@ function tEditable(k){ const f=TF.fichas;
   if(k==="f1") return !(f.f1&&f.f1.cerrada);
   if(k==="f2") return !(f.f2&&f.f2.cerrada)&&(ES_GER()||ME.rol!=="recepcion");
   if(k==="f4") return tPuedeF4()[0];
+  if(k==="f5") return fcEditable();
   return true; }
 function tSaveBar(){ const s=$("#tf-save"); if(!s) return; const k=TF_TAB;
-  if(!["f1","f2","f4"].includes(k)||!tEditable(k)){ s.hidden=true; return; }
+  if(!["f1","f2","f4","f5"].includes(k)||!tEditable(k)){ s.hidden=true; return; }
   s.hidden=false;
-  const cerrar={f1:"Firmar y cerrar la recepción",f2:"Firmar la inspección",f4:"Firmar el control de calidad"}[k];
+  const cerrar={f1:"Firmar y cerrar la recepción",f2:"Firmar la inspección",f4:"Firmar el control de calidad",f5:"Emitir la factura"}[k];
   s.innerHTML=`<span class="t-sv ${TDIRTY?"pend":""}">${TSAVING?"Guardando…":TDIRTY?"Cambios sin guardar":TSAVED?"Guardado a las "+TSAVED:"Se guarda solo mientras escribes"}</span><button type="button" class="btn b-ghost b-sm" data-tguardar>Guardar</button><button type="button" class="btn b-acc b-sm" data-tcerrar>${cerrar}</button>`;
 }
 async function tGuardar(cerrar,quieto){
-  const cual=cerrar?TF_TAB:(TDIRTY||(quieto?null:TF_TAB)); if(!["f1","f2","f4"].includes(cual)){ TDIRTY=false; return; }
+  const cual=cerrar?TF_TAB:(TDIRTY||(quieto?null:TF_TAB)); if(!["f1","f2","f4","f5"].includes(cual)){ TDIRTY=false; return; }
   if(!tEditable(cual)){ TDIRTY=false; return; }
   const body=tClone(TW[cual]); if(cerrar) body.cerrar=true;
   if(cual==="f1"&&cerrar){ const falta=tFaltaF1(); if(falta.length){ tFaltan(falta); return; } }
@@ -325,7 +327,7 @@ async function tGuardar(cerrar,quieto){
     if(!TF||TF.orden.token!==token) return;
     tRecibir(r); TSAVED=tHora(new Date().toISOString());
     if(TVER===ver){ TDIRTY=false; }
-    if(cerrar){ TDIRTY=false; tVacias(); tRenderHead(); tRenderBody(); toast(cual==="f1"?"Recepción firmada y cerrada":cual==="f2"?"Inspección firmada. El tiempo estimado ya está en FORM-03":TF.fichas.f4&&TF.fichas.f4.resultado==="rechazado"?"Rechazado: el coche vuelve a taller":"Control de calidad firmado"); scrollTo(0,0); }
+    if(cerrar){ TDIRTY=false; tVacias(); tRenderHead(); tRenderBody(); toast(cual==="f5"?"Factura emitida":cual==="f1"?"Recepción firmada y cerrada":cual==="f2"?"Inspección firmada. El tiempo estimado ya está en FORM-03":TF.fichas.f4&&TF.fichas.f4.resultado==="rechazado"?"Rechazado: el coche vuelve a taller":"Control de calidad firmado"); scrollTo(0,0); }
     else { if(TVER===ver) TW[cual]=Object.assign(tClone(TF.fichas[cual]),cual==="f4"?{firma:null}:{}); tRenderHead(); }
   }catch(err){ toast(err.message); if(cerrar) tFaltan([err.message]); }
   TSAVING=false; tSaveBar();
@@ -393,7 +395,7 @@ function tF1(){
   return `${lock?tBloqueado("f1","Recepción firmada por el cliente"+(f&&f.firmadoCliente?" el "+tFH(f.firmadoCliente):"")):""}
   <fieldset class="t-fs" ${dis}>
   ${tSec(1,"Orden","",`<div class="t-g4"><div class="field"><label>Nº de orden</label><div class="in t-ro num">${esc(TF.fichas.num)}</div></div><div class="field"><label>Entrada</label><div class="in t-ro">${x.fecha?esc(tF(x.fecha))+" · "+esc(x.hora):"Al guardar"}</div></div>${tIn("Recibido por","recibidoPor",{attrs:'maxlength="60"'})}${tIn("Entrega prometida","entregaPrometida",{tipo:"date"})}</div>
-    <div class="field"><label>Tipo de entrada</label>${tSeg("tipoEntrada",[["reparacion","Reparación de cliente"],["compra","Compra (para vender)"],["retoma","Retoma / parte de pago"]])}</div>`)}
+    <div class="field"><label>Tipo de entrada</label>${tSeg("tipoEntrada",[["reparacion","Reparación de cliente"],...(x.tipoEntrada==="compra"?[["compra","Compra (orden antigua)"]]:[]),...(x.tipoEntrada==="retoma"?[["retoma","Retoma (orden antigua)"]]:[])])}</div>`)}
   ${tSec(2,"Cliente","",`<div class="t-g2">${tIn("Nombre y apellidos","cliente.nombre",{req:1,attrs:'maxlength="80" autocomplete="off"'})}${tIn("DNI / NIE","cliente.doc",{attrs:'maxlength="20" autocomplete="off"'})}${tIn("Teléfono","cliente.telefono",{req:1,tipo:"tel",attrs:'maxlength="30" inputmode="tel"'})}${tIn("Email","cliente.email",{tipo:"email",attrs:'maxlength="120"'})}</div>
     <div class="t-g2"><div class="field"><label>¿Es el titular del coche?</label>${tSeg("cliente.titular",[["si","Sí"],["no","No"]])}${x.cliente.titular==="no"?'<small class="t-aviso">Pide la autorización firmada del titular y anótalo en el motivo.</small>':""}</div><div class="field"><label>Cómo prefiere que le avisemos</label>${tSeg("cliente.contacto",[["whatsapp","WhatsApp"],["llamada","Llamada"],["correo","Correo"]])}</div></div>`)}
   ${tSec(3,"Vehículo","",`<div class="t-g4">${tIn("Matrícula","vehiculo.matricula",{req:1,cls:"t-matf",attrs:'maxlength="12" autocomplete="off"'})}${tIn("Marca y modelo","vehiculo.marcaModelo",{req:1,cls:"t-span2",attrs:'maxlength="80" list="marcas"'})}${tIn("Año · color","vehiculo.anioColor",{attrs:'maxlength="40"',ph:"2019 · blanco"})}</div>
@@ -593,6 +595,7 @@ $("#tf").addEventListener("click",async e=>{
   if(q("[data-tguardar]")){ await tGuardar(false); return; }
   if(q("[data-tcerrar]")){ const k=TF_TAB;
     if(k==="f1"&&!confirm("¿Cerrar la recepción con la firma del cliente? Después solo el gerente puede cambiarla.")) return;
+    if(k==="f5"&&!confirm("¿Emitir la factura? Queda bloqueada y con número definitivo. Si hay que corregirla, el gerente la reabre y sale como rectificativa.")) return;
     if(k==="f4"&&TW.f4.resultado!=="rechazado"&&!confirm("¿Firmar el control de calidad como "+(T_RES[TW.f4.resultado]||"").toLowerCase()+"?")) return;
     await tGuardar(true); return; }
   const rb=q("[data-treabrir]"); if(rb){ const m=prompt("Motivo para reabrir la ficha (queda en la auditoría):"); if(!m||m.trim().length<4) return toast("Hace falta un motivo");
@@ -774,9 +777,9 @@ document.addEventListener("click",e=>{ const t=e.target;
 async function tPdfOrden(token){ try{ const [r]=await Promise.all([tApi("fichas/"+token),TEQ.length?null:tCargarEquipo(),typeof alCargarOrden==="function"?alCargarOrden(token):null]); const prev=TF; TF=r; tImprimir(["f1","f2","f3","f4"]); TF=prev; }catch(err){ toast(err.message); } }
 function tImprimir(cuales){
   let el=$("#t-print"); if(!el){ el=document.createElement("div"); el.id="t-print"; document.body.appendChild(el); }
-  const T={f1:["FORM-01","Ficha de recepción del vehículo"],f2:["FORM-02","Inspección 360°"],f3:["FORM-03","Control de tiempos"],f4:["FORM-04","Control de calidad · 30 puntos"]};
-  el.innerHTML=cuales.map(k=>`<article class="tp-pag"><header class="tp-h"><img src="/marca/logo-oscuro.svg" alt="Volcano Cars" height="26"><div><b>${T[k][1]}</b><small>Orden <b>${esc(TF.fichas.num)}</b> · ${esc((TF.orden.vehiculo.matricula||"").toUpperCase())} · ${esc(TF.orden.vehiculo.coche||"")} · ${esc(TF.orden.cliente.nombre)}</small></div><span class="tp-badge">${T[k][0]}</span></header>
-    ${({f1:tP1,f2:tP2,f3:tP3,f4:tP4})[k]()}
+  const T={f1:["FORM-01","Ficha de recepción del vehículo"],f2:["FORM-02","Inspección 360°"],f3:["FORM-03","Control de tiempos"],f4:["FORM-04","Control de calidad · 30 puntos"],f5:["FORM-14","Factura de reparación"]};
+  el.innerHTML=cuales.map(k=>k==="f5"&&typeof fcPagina==="function"?fcPagina():`<article class="tp-pag"><header class="tp-h"><img src="/marca/logo-oscuro.svg" alt="Volcano Cars" height="26"><div><b>${T[k][1]}</b><small>Orden <b>${esc(TF.fichas.num)}</b> · ${esc((TF.orden.vehiculo.matricula||"").toUpperCase())} · ${esc(TF.orden.vehiculo.coche||"")} · ${esc(TF.orden.cliente.nombre)}</small></div><span class="tp-badge">${T[k][0]}</span></header>
+    ${({f1:tP1,f2:tP2,f3:tP3,f4:tP4,f5:typeof fcImprimir==="function"?fcImprimir:tP1})[k]()}
     <footer class="tp-f">Volcano Cars · Sistema 01 Taller: de la recepción a la entrega · ${T[k][0]} · Versión 1.1 · Impreso ${esc(tFH(new Date().toISOString()))}</footer></article>`).join("");
   document.body.classList.add("print-taller");
   const fin=()=>{ document.body.classList.remove("print-taller"); removeEventListener("afterprint",fin); };

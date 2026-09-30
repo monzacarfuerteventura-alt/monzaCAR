@@ -45,11 +45,15 @@ export default async (req: Request, context: Context) => {
   if (body.usuario !== undefined) {
     const usuario = String(body.usuario || "").toLowerCase().trim().slice(0, 20), pin = String(body.pin || "").slice(0, 8);
     const pers = (await leerEquipo()).find((x) => x.usuario === usuario && x.activo);
+    // Bloqueo por USUARIO (además del de la conexión): 5 PIN incorrectos en 15 min → ese usuario queda 15 min bloqueado, cambie de conexión o no
+    const bloqueoU = usuario ? await estaBloqueado("usuario:" + usuario) : 0;
+    if (bloqueoU) { await espera(800); return json({ error: `Este usuario está bloqueado por intentos fallidos hasta las ${hora(bloqueoU)}.`, bloqueado: true }, 429); }
     if (!pers || !pinOk(pin, pers.pin)) {
       await espera(900);
-      const hasta = await fallo(ip);
+      const hasta = await fallo(ip), hastaU = usuario ? await fallo("usuario:" + usuario) : 0;
       await registrar("login-fallo", ip, ua, p, "PIN incorrecto" + (usuario ? " (" + usuario + ")" : ""));
       if (hasta) { await registrar("bloqueo", ip, ua, p, "Bloqueada hasta las " + hora(hasta)); return json({ error: `Usuario o PIN incorrecto. Esta conexión queda bloqueada hasta las ${hora(hasta)}.`, bloqueado: true }, 429); }
+      if (hastaU) { await registrar("bloqueo", ip, ua, p, "Usuario " + usuario + " bloqueado hasta las " + hora(hastaU)); return json({ error: `Demasiados PIN incorrectos para este usuario. Queda bloqueado hasta las ${hora(hastaU)}.`, bloqueado: true }, 429); }
       return json({ error: "Usuario o PIN incorrecto." }, 401);
     }
     // Verificación en dos pasos del equipo: solo la primera vez en cada dispositivo (luego, 30 días de confianza)
@@ -75,7 +79,7 @@ export default async (req: Request, context: Context) => {
         usado2fa = true;
       }
     }
-    await limpiarFallos(ip);
+    await limpiarFallos(ip); await limpiarFallos("usuario:" + usuario);
     const s = crearSesionEquipo(pers.id, 12);
     await registrar("login-ok", ip, ua, p, "Entrada del equipo: " + pers.nombre);
     if (horaInusual()) { await registrar("inusual", ip, ua, p, "Entrada a una hora poco habitual: " + pers.nombre); await avisar("inusual-" + pers.id, `Seguridad: ${pers.nombre} ha entrado al panel a una hora poco habitual`, [["Quién", pers.nombre], ["Dispositivo", dispositivo(ua)], ["Conexión", ipCorta(ip)], ["País", p]], origin); }

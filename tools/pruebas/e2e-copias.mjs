@@ -1,0 +1,33 @@
+// Prueba de las copias de seguridad: reparto por almacén, conservación (30 días · día 1 de cada mes · 1 de enero para siempre) y descarga.
+// Uso: bun tools/pruebas/e2e-copias.mjs   (necesita el @netlify/blobs de pruebas, ver LEEME.md)
+import { join, dirname } from "node:path"; import { fileURLToPath } from "node:url";
+const RAIZ = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+const ENV = { ADMIN_PASSWORD: "clave-de-pruebas-larga-2026", SESSION_SECRET: "secreto-de-pruebas" };
+globalThis.Netlify = { env: { get: (k) => ENV[k] || "" }, context: { deploy: { context: "production" } } };
+let ok = 0, mal = 0; const esperar = (n, c, d = "") => { if (c) { ok++; console.log("  ✔ " + n); } else { mal++; console.log("  ✘ " + n + " " + d); } };
+const { store } = await import(join(RAIZ, "netlify/lib/shared.mts"));
+const { conservar, ALMACENES } = await import(join(RAIZ, "netlify/lib/copia.mts"));
+console.log("\n1) Qué se conserva");
+const hoy = "2026-09-30", f = (d) => new Date(Date.parse(hoy + "T12:00:00Z") - d * 864e5).toISOString().slice(0, 10);
+const fechas = [f(0), f(1), f(29), f(30), f(45), "2026-09-01", "2026-03-01", "2024-08-01", "2025-01-01", "2024-01-01", "2023-06-15"];
+const r = conservar(fechas, hoy);
+esperar("guarda hoy, ayer y los últimos 30 días", [f(0), f(1), f(29)].every((d) => r.guardar.includes(d)));
+esperar("borra un día suelto de hace 45 días y de hace 3 años", r.borrar.includes(f(45)) && r.borrar.includes("2023-06-15"));
+esperar("guarda el día 1 de cada mes durante 24 meses", r.guardar.includes("2026-09-01") && r.guardar.includes("2026-03-01"));
+esperar("borra un día 1 de hace más de 24 meses", r.borrar.includes("2024-08-01"));
+esperar("guarda para siempre el 1 de enero (copia anual)", r.guardar.includes("2025-01-01") && r.guardar.includes("2024-01-01"));
+console.log("\n2) Copia automática y descarga");
+await store("monzacar").set("coche/1", JSON.stringify({ id: "1", marca: "Seat" })); await store("caja").set("mov/1", JSON.stringify({ importe: 10 }));
+const prog = (await import(join(RAIZ, "netlify/functions/copia-programada.mts"))).default; const res = await prog(); esperar("la copia programada termina", (await res.text()) === "ok");
+const dia = new Date().toISOString().slice(0, 10), c = store("copias");
+const idx = await c.get(`diaria/${dia}.json`, { type: "json" });
+esperar("índice con una parte por almacén", idx && idx.version === 2 && ALMACENES.every((n) => idx.partes[n]));
+esperar("cada almacén tiene su archivo", (await c.get(`diaria/${dia}/caja.json`, { type: "json" }))?.["mov/1"]?.importe === 10);
+const est = await c.get("estado.json", { type: "json" }); esperar("estado: ok y sin fallos", est && est.ok && est.fallos.length === 0, JSON.stringify(est));
+const { default: copia } = await import(join(RAIZ, "netlify/functions/copia.mts"));
+const { crearSesion } = await import(join(RAIZ, "netlify/lib/shared.mts")); const tk = crearSesion().token;
+const pedir = (q) => copia(new Request("https://volcanocars.com/api/copia" + q, { headers: { authorization: "Bearer " + tk, origin: "https://volcanocars.com" } }), { ip: "10.0.0.1" });
+let rr = await pedir("?auto=lista"); const lista = await rr.json(); esperar("la lista de copias trae el día una sola vez", Array.isArray(lista) && lista.filter((d) => d === dia).length === 1, JSON.stringify(lista));
+rr = await pedir("?auto=" + dia); const cop = await rr.json(); esperar("la descarga junta todos los almacenes", cop.datos && cop.datos.monzacar["coche/1"].marca === "Seat" && cop.datos.caja["mov/1"].importe === 10);
+rr = await pedir("?auto=estado"); esperar("el panel puede consultar el estado", (await rr.json()).ok === true);
+console.log(`\n${ok} bien, ${mal} mal`); if (mal) process.exit(1);

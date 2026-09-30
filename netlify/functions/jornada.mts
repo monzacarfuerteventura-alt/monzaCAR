@@ -1,7 +1,8 @@
 import type { Config, Context } from "@netlify/functions";
 import { json, mismoOrigen } from "../lib/shared.mts";
 import { quien, leerEquipo, hoyCanarias } from "../lib/taller.mts";
-import { leerLibro } from "../lib/libro.mts";
+import { leerLibro, anotar } from "../lib/libro.mts";
+import { leerCostes, guardarCostes, tarifaEn, costeMin, conCoste } from "../lib/costes.mts";
 import { registrar, pais, listaConfianza, olvidarConfianza, quitar2FAEquipo, totpEquipo, exige2FAEquipo, fijarExige2FAEquipo, leerRegistro } from "../lib/seguridad.mts";
 import { jstore, fichar, deshacer, corregir, resumenYo, leerEstado, efectivo, olvidada, leerDia, calcDia, type Dia, type Accion } from "../lib/jornada.mts";
 
@@ -73,19 +74,22 @@ export default async (req: Request, context: Context) => {
     const uid = url.searchParams.get("uid") || "";
     if (!q.admin && uid !== q.uid) return json({ error: "Solo puedes ver tu propio registro." }, 403);
     const gente = equipo.filter((x) => (uid ? x.id === uid : true) && (x.activo || true));
-    return json({ mes, personas: await registroMes(mes, gente) });
+    const pers = await registroMes(mes, gente);
+    return json({ mes, personas: q.admin ? conCoste(pers, await leerCostes()) : pers });
   }
 
   const no = soloGerente(); if (no) return no;
 
   if (r === "plantilla" && req.method === "GET") {
     const hoy = hoyCanarias();
+    const costes = await leerCostes(), mesAct = await registroMes(hoy.slice(0, 7), equipo.filter((x) => x.activo));
     const filas = await Promise.all(equipo.filter((x) => x.activo).map(async (x) => {
       const bruto = await leerEstado(x.id), e = efectivo(bruto);
       const d = await leerDia(x.id, e.estado !== "fuera" ? e.fecha : hoy);
       const c = calcDia(d, x.jornada);
       const auto = (await jstore().get("auto/" + x.id).catch(() => null)) as string | null;
-      return { uid: x.id, nombre: x.nombre, rol: x.rol, jornadaH: x.jornada, estado: e.estado, desde: e.desde, olvido: olvidada(bruto) ? bruto.fecha : "", hoy: c, ultimo: d.eventos.filter((v) => v.tipo !== "anulacion").pop() || null, ordenAuto: !!auto };
+      const mp = conCoste(mesAct.filter((m) => m.uid === x.id), costes)[0];
+      return { uid: x.id, nombre: x.nombre, rol: x.rol, jornadaH: x.jornada, estado: e.estado, desde: e.desde, olvido: olvidada(bruto) ? bruto.fecha : "", hoy: c, tarifaCent: tarifaEn(costes[x.id], hoy), costeHoyCent: costeMin(c.trabajoMin, tarifaEn(costes[x.id], e.estado !== "fuera" ? e.fecha : hoy)), costeMesCent: mp ? mp.costeCent : 0, ultimo: d.eventos.filter((v) => v.tipo !== "anulacion").pop() || null, ordenAuto: !!auto };
     }));
     return json({ ahora: new Date().toISOString(), personas: filas });
   }
@@ -103,6 +107,20 @@ export default async (req: Request, context: Context) => {
     return json(res, res.error ? 400 : 200);
   }
 
+  if (r === "costes" && req.method === "GET") {
+    const c = await leerCostes();
+    return json({ hoy: hoyCanarias(), personas: equipo.filter((x) => x.activo).map((x) => ({ uid: x.id, nombre: x.nombre, rol: x.rol, tarifaCent: tarifaEn(c[x.id], hoyCanarias()), historial: [...(c[x.id] || [])].sort((a, b) => b.desde.localeCompare(a.desde)) })) });
+  }
+  if (r === "coste" && req.method === "POST") {
+    const pers = equipo.find((x) => x.id === String(body.uid)); if (!pers) return json({ error: "Esa persona no está en el equipo." }, 404);
+    const t = String(body.euroHora ?? "").trim().replace(/\s|€/g, "").replace(",", "."), n = Number(t);
+    if (!t || !Number.isFinite(n) || n < 0 || n > 500) return json({ error: "Pon un importe válido en euros por hora (0 a 500)." }, 400);
+    const cent = Math.round(n * 100), hoy = hoyCanarias(), desde = /^\d{4}-\d{2}-\d{2}$/.test(String(body.desde || "")) ? String(body.desde) : hoy;
+    if (desde > hoy) return json({ error: "La fecha no puede ser futura." }, 400);
+    const c = await leerCostes(), h = (c[pers.id] || []).filter((x) => x.desde !== desde); h.push({ desde, cent }); c[pers.id] = h.sort((a, b) => a.desde.localeCompare(b.desde));
+    await guardarCostes(c); await anotar("jornada", q, "coste-hora", { persona: pers.nombre, uid: pers.id, cent, desde });
+    return json({ ok: true, uid: pers.id, tarifaCent: tarifaEn(c[pers.id], hoy), historial: [...c[pers.id]].reverse() });
+  }
   if (r === "libro" && req.method === "GET") return json(await leerLibro("jornada", 300));
 
   if (r === "qr") {
