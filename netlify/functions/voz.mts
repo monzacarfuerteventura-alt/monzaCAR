@@ -24,10 +24,11 @@ const huella = (txt: string) => createHash("sha256").update([txt, VOZ_AJUSTES.mo
 type Meta = { h: (string | null)[]; voz?: string; generado?: string };
 const leerMeta = async (id: string): Promise<Meta> => ((await S().get(`meta/${id}`, { type: "json" }).catch(() => null)) as Meta | null) || { h: [] };
 
+// Orden: la voz que el gerente elige en el panel → la variable ELEVENLABS_VOICE_ID → una voz llamada «DAN» en la cuenta
 async function vozId(): Promise<{ id?: string; error?: string }> {
-  const fija = env("ELEVENLABS_VOICE_ID"); if (fija) return { id: fija };
   const guardada = (await S().get("config", { type: "json" }).catch(() => null)) as { id?: string } | null;
   if (guardada?.id) return { id: guardada.id };
+  const fija = env("ELEVENLABS_VOICE_ID"); if (fija) return { id: fija };
   const r = await fetch(`${base()}/v1/voices`, { headers: { "xi-api-key": env("ELEVENLABS_API_KEY") }, signal: AbortSignal.timeout(8000) }).catch(() => null);
   if (!r || !r.ok) return { error: r?.status === 401 ? "La clave de ElevenLabs no es válida." : "No he podido consultar las voces de ElevenLabs." };
   const d = (await r.json().catch(() => ({}))) as { voices?: { voice_id: string; name: string }[] };
@@ -48,9 +49,29 @@ export default async (req: Request) => {
     for (const g of GUIONES) {
       const m = await leerMeta(g.id);
       const listas = g.lineas.filter((l, i) => m.h[i] === huella(l.voz || l.txt)).length;
-      modulos[g.id] = { titulo: g.titulo, dur: g.dur, lineas: g.lineas.map((l) => ({ t: l.t, txt: l.txt })), listas, total: g.lineas.length, generado: listas === g.lineas.length ? m.generado || "" : "" };
+      modulos[g.id] = { titulo: g.titulo, dur: g.dur, lineas: g.lineas.map((l) => ({ t: l.t, txt: l.txt, voz: l.voz || "" })), listas, total: g.lineas.length, generado: listas === g.lineas.length ? m.generado || "" : "" };
     }
     return json({ configurado: !!env("ELEVENLABS_API_KEY"), voz: VOZ_AJUSTES.nombre, modelo: VOZ_AJUSTES.modelo, admin: !!q.admin, modulos });
+  }
+
+  // Voces de la cuenta de ElevenLabs (para elegir una en el panel, sin tocar Netlify)
+  if (accion === "voces" && req.method === "GET") {
+    if (!q.admin) return json({ error: "Solo el gerente." }, 403);
+    if (!env("ELEVENLABS_API_KEY")) return json({ error: "Falta la clave ELEVENLABS_API_KEY.", sinClave: true }, 400);
+    const r = await fetch(`${base()}/v1/voices`, { headers: { "xi-api-key": env("ELEVENLABS_API_KEY") }, signal: AbortSignal.timeout(8000) }).catch(() => null);
+    if (!r || !r.ok) return json({ error: r?.status === 401 ? "La clave de ElevenLabs no es válida." : "No he podido consultar las voces de ElevenLabs." }, 502);
+    const d = (await r.json().catch(() => ({}))) as { voices?: { voice_id: string; name: string; labels?: Record<string, string> }[] };
+    const actual = ((await S().get("config", { type: "json" }).catch(() => null)) as { id?: string } | null)?.id || env("ELEVENLABS_VOICE_ID");
+    return json({ actual, voces: (d.voices || []).map((v) => ({ id: v.voice_id, name: String(v.name || "").slice(0, 60), idioma: v.labels?.language || "" })) });
+  }
+  if (accion === "elegir" && req.method === "POST") {
+    if (!q.admin) return json({ error: "Solo el gerente." }, 403);
+    const b = (await req.json().catch(() => ({}))) as { id?: string };
+    const id = String(b.id || "").trim();
+    if (!/^[A-Za-z0-9]{10,40}$/.test(id)) return json({ error: "Voz no válida." }, 400);
+    await S().setJSON("config", { id });
+    for (const g of GUIONES) await S().setJSON(`meta/${g.id}`, { h: [] }); // otra voz: hay que generar de nuevo
+    return json({ ok: true, id });
   }
 
   if (accion === "generar" && req.method === "POST") {
@@ -68,8 +89,8 @@ export default async (req: Request) => {
     }).catch(() => null);
     if (!r) return json({ error: "ElevenLabs no ha respondido. Prueba otra vez en un minuto." }, 504);
     if (!r.ok) {
-      const msg = r.status === 401 ? "La clave de ElevenLabs no es válida." : r.status === 402 || r.status === 429 ? "Tu cuenta de ElevenLabs se ha quedado sin caracteres o va demasiado rápido. Espera un poco o revisa tu plan." : r.status === 404 ? "Esa voz no existe en tu cuenta: revisa ELEVENLABS_VOICE_ID." : `ElevenLabs respondió ${r.status}.`;
-      return json({ error: msg }, 502);
+      const msg = r.status === 401 ? "La clave de ElevenLabs no es válida." : r.status === 402 || r.status === 429 ? "Tu cuenta de ElevenLabs se ha quedado sin caracteres o va demasiado rápido. Espera un poco o revisa tu plan." : r.status === 404 ? "Esa voz no existe en tu cuenta. Elige una de la lista de abajo." : `ElevenLabs respondió ${r.status}.`;
+      return json({ error: msg, eligeVoz: r.status === 404 }, 502);
     }
     const mp3 = new Uint8Array(await r.arrayBuffer());
     if (mp3.length < 200) return json({ error: "ElevenLabs devolvió un audio vacío." }, 502);

@@ -81,7 +81,13 @@ async function jDeshacer(){ try{ const r=await api("/api/jornada/deshacer",{meth
 // Aviso pequeño de 2 s (5 s si trae «Deshacer»): no hay que cerrar nada
 function jToast(txt,deshacer){ let t=$("#j-toast"); if(!t){ t=document.createElement("div"); t.id="j-toast"; t.setAttribute("role","status"); document.body.appendChild(t); }
   t.innerHTML=`<span>${esc(txt)}</span>${deshacer?'<button type="button" data-jdeshacer>Deshacer</button>':""}`; t.className="on";
-  clearTimeout(jToast.t); jToast.t=setTimeout(()=>t.className="",deshacer?6000:2200); }
+  t.style.display=""; clearTimeout(jToast.t); clearTimeout(jToast.t2); jToast.fin=Date.now()+(deshacer?5000:2200);
+  // Se esconde SIEMPRE: a los 5 s (2,2 s si no trae «Deshacer») se quita de la pantalla del todo, también en el móvil y en la pantalla de entrada
+  const ocultar=()=>{ t.className=""; jToast.t2=setTimeout(()=>{ t.style.display="none"; },400); };
+  jToast.ocultar=ocultar; jToast.t=setTimeout(ocultar,deshacer?5000:2200); t.onclick=e=>{ if(!e.target.closest("[data-jdeshacer]")) ocultar(); }; }
+// Por si el navegador del móvil congela el temporizador (pantalla apagada, otra app): al volver, el aviso caducado se quita
+document.addEventListener("visibilitychange",()=>{ if(jToast.fin&&Date.now()>jToast.fin&&jToast.ocultar) jToast.ocultar(); });
+setInterval(()=>{ if(jToast.fin&&Date.now()>jToast.fin+800&&jToast.ocultar){ jToast.fin=0; jToast.ocultar(); } },1500);
 
 /* ---------- chip en la barra de arriba: estado + horas; 1 toque para pausa/salida ---------- */
 function jChip(){ if(!ME||!ME.equipo){ const c=$("#j-chip"); if(c) c.hidden=true; return; }

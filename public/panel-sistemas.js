@@ -268,6 +268,8 @@
         { k: "igic", l: "IGIC apartado esta semana (€)", type: "num" },
         { k: "h_f", type: "info", html: "<h4>F · Semáforo de los sistemas</h4>" },
         ...SIS.map((s) => ({ k: "s" + s[0], l: `S${s[0]} ${s[2]}`, type: "radio", opts: [["v", "Verde"], ["a", "Ámbar"], ["r", "Rojo"], ["-", "Aún no"]] })),
+        { k: "h_g", type: "info", html: "<h4>G · Datos y facturas</h4>" },
+        OKNO("g", ["Libro de facturas: «Comprobar integridad» dice Todo correcto", "Copia automática de anoche: /api/salud-web dice ok", "Copia externa de la semana guardada y verificada", "Total del listado de facturas = ingreso de taller en Finanzas (o la diferencia está explicada)", "Coste de personal de la semana revisado frente a las horas facturadas"]),
         { k: "acciones", l: "Acciones de la semana (máximo 3: qué · quién · cuándo · sistema)", type: "area" },
       ],
       titulo: (d) => `Auditoría del ${fd(d.semana)}`,

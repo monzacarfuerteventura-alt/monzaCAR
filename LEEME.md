@@ -211,3 +211,16 @@ Panel -> Taller -> **Coches propios**: control interno de cada coche que compras
 - **Ausencias**: la referencia AUS-AAAA-NNN se reserva con «solo si no existe»; cada solicitud lleva `rev` y un cambio simultaneo ya no pisa al otro (409 «recarga y reintenta»).
 - **Salud**: `/api/salud-web` (netlify/functions/salud-web.mts) devuelve ok, version y estado de la copia; sirve para el vigilante de caidas.
 - Herramientas fuera del repo: VOLVER-ATRAS.ps1 y ARCHIVAR-COPIA-EXTERNA.ps1 (carpeta Documentos\VolcanoCars-herramientas).
+
+
+## Actualizacion 10 (ayuda en video y voz)
+- **Ayuda**: 14 videos largos paso a paso en `public/ayuda/videos` (se graban con el panel real: `tools/ayuda/grabar`). Textos de cada paso en `netlify/lib/guiones.mts`.
+- **Voz**: sin configurar nada se oye la voz del navegador; con ElevenLabs (`ELEVENLABS_API_KEY` en Netlify) hay selector de voz en Ayuda (`/api/voz/voces`).
+- Taller: `Compra` pasa a `Coche de stock (nuestro)`. Jornada: el aviso de salida se esconde solo.
+
+
+## Actualizacion 9 (manuales v3.1)
+- **Manuales**: los 11 PDF de `netlify/privado/sistemas` llevan la hoja *Actualizacion v3.1* (+ hoja suelta del Sistema 05). Portada con la razon social MAYLIN Y YERAY S.L.
+- **FORM-11**: bloque G *Datos y facturas* en `public/panel-sistemas.js`.
+- **Factura impresa**: etiqueta FORM-14 y numero correlativo F-AAAA-NNNN (`tools/factura/factura.js`).
+- Aviso conocido: Finanzas cuenta presupuestos aceptados, el libro cuenta facturas emitidas; se comparan cada viernes (G4).

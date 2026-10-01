@@ -1,6 +1,6 @@
 // Datos de PRUEBA para ver el dashboard con vida (solo en el banco de pruebas local).
 export async function sembrarDemo(){
-  const { store } = await import("./netlify/lib/shared.mts");
+  const { store } = await import("../../../netlify/lib/shared.mts");
   const hoy=new Intl.DateTimeFormat("en-CA",{timeZone:"Atlantic/Canary"}).format(new Date());
   const dia=n=>new Date(Date.parse(hoy+"T12:00:00Z")-n*864e5).toISOString().slice(0,10);
   let seed=7; const r=()=>{ seed=(seed*16807)%2147483647; return seed/2147483647; };

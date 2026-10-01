@@ -117,7 +117,7 @@
     [/nombre del cliente|^nombre$/i, "Escribe el nombre y el primer apellido del cliente, como quiere que le llamemos."],
     [/tel[eé]fono/i, "El móvil del cliente, con WhatsApp si es posible: por ahí le mandamos avisos, presupuesto y el enlace de seguimiento."],
     [/marca y modelo|^coche$/i, "La marca y el modelo del coche, por ejemplo Seat Ibiza. Si lo sabes, añade la versión."],
-    [/tipo de entrada/i, "Elige por qué entra el coche: reparación de un cliente, compra para vender, o retoma."],
+    [/tipo de entrada/i, "Aquí solo entran reparaciones de clientes. Los coches del negocio se registran en Coches propios."],
     [/km|kil[oó]metros/i, "Los kilómetros que marca el cuadro al recibir el coche. Haz también la foto del cuentakilómetros."],
     [/bastidor|vin/i, "El número de bastidor de 17 caracteres. Está en la ficha técnica y en la base del parabrisas."],
     [/itv/i, "La fecha en que caduca la ITV, según la tarjeta o la pegatina del parabrisas."],
