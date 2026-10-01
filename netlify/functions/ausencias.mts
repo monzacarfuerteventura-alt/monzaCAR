@@ -2,7 +2,7 @@ import type { Config } from "@netlify/functions";
 import { json, mismoOrigen, enviarAviso } from "../lib/shared.mts";
 import { quien, hoyCanarias, leerEquipo } from "../lib/taller.mts";
 import { anotar, leerLibro } from "../lib/libro.mts";
-import { astore, TIPOS, ESTADOS, rid, ahora, str, esFecha, sumarDias, contarDias, leerSol, guardarSol, listarSol, siguienteRef, activa, cubre, type Sol, type Doc } from "../lib/ausencias.mts";
+import { CONFLICTO, astore, TIPOS, ESTADOS, rid, ahora, str, esFecha, sumarDias, contarDias, leerSol, guardarSol, listarSol, siguienteRef, activa, cubre, type Sol, type Doc } from "../lib/ausencias.mts";
 
 /*
   AUSENCIAS · RRHH (solo panel; nada de esto es público). No exige haber fichado: quien está de baja no puede fichar.
@@ -50,7 +50,7 @@ async function docsDe(q: { uid: string; nombre: string; admin: boolean }, keys: 
   return out;
 }
 
-export default async (req: Request) => {
+const manejar = async (req: Request): Promise<Response> => {
   const url = new URL(req.url), parts = url.pathname.split("/").filter(Boolean), accion = parts[2] || "", id = parts[3] || "";
   if (req.method !== "GET" && !mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
   const q = await quien(req);
@@ -160,6 +160,15 @@ export default async (req: Request) => {
   }
   if (accion === "libro" && req.method === "GET") return json(await leerLibro("ausencias"));
   return json({ error: "No existe esa acción." }, 404);
+};
+
+// Si dos personas tocan la misma solicitud a la vez, la segunda recibe este aviso en vez de pisar el cambio de la primera
+export default async (req: Request) => {
+  try { return await manejar(req); }
+  catch (e: any) {
+    if (String(e?.message) === CONFLICTO) return json({ error: "Otra persona acaba de modificar esta solicitud. Recarga la pantalla y vuelve a intentarlo." }, 409);
+    throw e;
+  }
 };
 
 export const config: Config = {

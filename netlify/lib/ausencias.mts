@@ -24,6 +24,7 @@ export type Sol = {
   id: string; ref: string; uid: string; nombre: string; tipo: string; desde: string; hasta: string; horaDesde: string; horaHasta: string;
   dias: number; laborables: number; motivo: string; docs: Doc[]; estado: keyof typeof ESTADOS; creada: string; creadaPor: string;
   decision: { t: string; por: string; motivo: string; retribuida: "" | "si" | "no" } | null; historial: Paso[]; leidaGerente: boolean; vistaTrabajador: boolean;
+  rev?: number; // nº de versión: sirve para no pisar un cambio hecho a la vez por otra persona
 };
 
 export const rid = () => crypto.randomUUID().replace(/-/g, "").slice(0, 12);
@@ -36,14 +37,37 @@ export function contarDias(desde: string, hasta: string) {
   return { nat, lab };
 }
 export async function leerSol(id: string): Promise<Sol | null> { return /^[a-f0-9]{12}$/.test(id) ? (((await astore().get("sol/" + id, { type: "json" }).catch(() => null)) as Sol | null)) : null; }
-export async function guardarSol(s: Sol) { await astore().setJSON("sol/" + s.id, s); }
+export const CONFLICTO = "CONFLICTO_AUSENCIA";
+// Si alguien modificó la solicitud mientras tanto (otra pestaña, el gerente y el trabajador a la vez), NO se pisa su cambio: se avisa y se vuelve a cargar.
+export async function guardarSol(s: Sol) {
+  const act = await leerSol(s.id);
+  if (act && (act.rev || 0) !== (s.rev || 0)) throw new Error(CONFLICTO);
+  s.rev = (s.rev || 0) + 1;
+  await astore().setJSON("sol/" + s.id, s);
+}
 export async function listarSol(): Promise<Sol[]> {
   const st = astore(), { blobs } = await st.list({ prefix: "sol/" });
-  return ((await Promise.all(blobs.map((b) => st.get(b.key, { type: "json" }).catch(() => null)))).filter((x: any) => x && x.id) as Sol[]).sort((a, b) => b.creada.localeCompare(a.creada));
+  const todas: any[] = [];
+  for (let i = 0; i < blobs.length; i += 25) todas.push(...(await Promise.all(blobs.slice(i, i + 25).map((b: { key: string }) => st.get(b.key, { type: "json" }).catch(() => null)))));
+  return (todas.filter((x: any) => x && x.id) as Sol[]).sort((a, b) => b.creada.localeCompare(a.creada));
 }
+// Referencia AUS-AAAA-NNN sin repetidos aunque dos personas comuniquen a la vez: se reserva con «solo si no existe».
+// Arranca desde el contador antiguo (cont/AAAA), así que no repite las referencias ya emitidas.
 export async function siguienteRef(anio: string) {
-  const st = astore(), k = "cont/" + anio, n = (((await st.get(k, { type: "json" }).catch(() => null)) as number | null) || 0) + 1;
-  await st.setJSON(k, n); return `AUS-${anio}-${String(n).padStart(3, "0")}`;
+  const st = astore(), pad = (n: number) => String(n).padStart(3, "0");
+  const viejo = Number(await st.get("cont/" + anio, { type: "json" }).catch(() => 0)) || 0, pista = Number(await st.get("contador/" + anio).catch(() => 0)) || 0;
+  let n = Math.max(viejo, pista);
+  for (let i = 0; i < 60; i++) {
+    n++;
+    const nonce = crypto.randomUUID(), clave = `reserva/${anio}/${pad(n)}`;
+    const r: any = await st.set(clave, nonce, { onlyIfNew: true }).catch(() => null);
+    if (r && r.modified === false) continue;
+    if ((await st.get(clave).catch(() => null)) !== nonce) continue;
+    await st.set("contador/" + anio, String(n)).catch(() => {});
+    await st.setJSON("cont/" + anio, n).catch(() => {}); // se mantiene por compatibilidad con la copia y las pruebas
+    return `AUS-${anio}-${pad(n)}`;
+  }
+  throw new Error("No se ha podido reservar la referencia; vuelve a intentarlo.");
 }
 // Activa = cuenta para saber si alguien falta (no está rechazada ni cancelada)
 export const activa = (s: Sol) => s.estado === "pendiente" || s.estado === "aprobada" || s.estado === "pide-info";

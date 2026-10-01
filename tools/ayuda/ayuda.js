@@ -217,6 +217,12 @@ const AY_MODS=[
    "Pulsa <b>«Emitir la factura»</b>: queda bloqueada con su número. Usa <b>«Imprimir esta ficha»</b> para el PDF.",
    "Si hay un error, solo el gerente la <b>reabre con un motivo</b>: la factura emitida NO se borra (queda en el registro) y la nueva sale como <b>rectificativa</b> R-AAAA-NNNN.",
    "Abajo, en <b>«Libro de facturas»</b>: elige fechas y pulsa <b>«Descargar listado (Excel)»</b> para tu gestoría, o <b>«Comprobar integridad»</b> para verificar que ninguna factura se ha tocado."],tip:"El mecánico no ve ningún importe de la factura."},
+  {t:"Preparar y emitir la factura (FORM-14)",r:["rec","ger"],p:[
+   "Abre la orden → pestaña <b>FORM-14 Factura</b> (está entre FORM-02 y FORM-03).",
+   "Ya viene rellena: cliente y coche de la recepción y las líneas del presupuesto. Revisa nombre, DNI/CIF, matrícula y km de salida.",
+   "Ajusta las líneas (mano de obra, recambio u otro), el descuento y el tipo de <b>IGIC</b> (7 % general, 0 % exento u otro). El total se calcula solo.",
+   "Pulsa <b>«Emitir la factura»</b>: queda bloqueada con su número. Usa <b>«Imprimir esta ficha»</b> para el PDF.",
+   "Si hay un error, solo el gerente la <b>reabre con un motivo</b>; la nueva emisión sale como rectificativa (-R1, -R2…)."],tip:"El mecánico no ve ningún importe de la factura."},
   {t:"Hacer el control de calidad (FORM-04)",r:["cal","mec","ger"],p:[
    "Abre la orden desde <b>«Control de calidad»</b> → pestaña <b>FORM-04</b>.",
    "Elige el destino: <b>Entrega a cliente</b> (secciones A + B + C) o <b>Inventario de venta</b> (A + B + D).",

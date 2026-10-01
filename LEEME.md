@@ -199,3 +199,15 @@ Panel -> Taller -> **Coches propios**: control interno de cada coche que compras
 - **Factura de reparacion (FORM-14)** (`tools/factura`, ficha `f5` en `netlify/functions/taller.mts`): pestana entre FORM-02 y FORM-03; se rellena desde el presupuesto; IGIC 7/0/otro; al emitir queda bloqueada; el gerente la reabre con motivo y sale como rectificativa (-R1). El mecanico no ve importes. Pruebas: `e2e-factura.mjs` y `e2e-factura-panel.py`.
 - **Ausencias** (`tools/ausencias`, `netlify/functions/ausencias.mts`): el trabajador las comunica desde su pantalla de fichaje (con foto o PDF); el gerente las ve arriba en Jornada y decide. Modelo y permisos: `tools/docs/MODELO-AUSENCIAS.md`.
 - **Pulido** (`tools/pulido`): menu superior con todas las secciones y ventanas con formato.
+
+
+## Actualizacion 8 (datos de factura y orden de S01)
+- **Factura**: telefono 643 56 60 98 y correo volcanocars2026@gmail.com en la ficha impresa (`tools/factura/factura.js`).
+- **Panel > Sistemas**: S01 en el orden del manual v3.0 y con FORM-14.
+- Herramienta nueva: EXPORTAR-WEB-COMPLETA.ps1.
+
+## Actualizacion 7 (seguridad y estabilidad)
+- **Facturas**: si un fallo deja un registro reservado sin escribir, el siguiente Emitir lo sella con un registro «H» encadenado (`sellarHuecos` en `netlify/lib/facturas.mts`); Comprobar integridad lo muestra en «avisos». Lecturas por lotes de 25.
+- **Ausencias**: la referencia AUS-AAAA-NNN se reserva con «solo si no existe»; cada solicitud lleva `rev` y un cambio simultaneo ya no pisa al otro (409 «recarga y reintenta»).
+- **Salud**: `/api/salud-web` (netlify/functions/salud-web.mts) devuelve ok, version y estado de la copia; sirve para el vigilante de caidas.
+- Herramientas fuera del repo: VOLVER-ATRAS.ps1 y ARCHIVAR-COPIA-EXTERNA.ps1 (carpeta Documentos\VolcanoCars-herramientas).

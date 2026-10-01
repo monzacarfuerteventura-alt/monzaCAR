@@ -35,7 +35,7 @@
      ------------------------------------------------------------------ */
   const BLOQ = { A: "Taller", B: "Venta", C: "Cliente", D: "Dirección" };
   const SIS = [
-    ["01", "A", "Taller: de la recepción a la entrega", "Recepción · Inspección · Presupuesto · Factura · Tiempos · Calidad · Cobro", "VolcanoCars-S01-Taller-recepcion-a-entrega", ["FORM-01", "FORM-02", "FORM-14", "FORM-03", "FORM-04"], "hecho"],
+    ["01", "A", "Taller: de la recepción a la entrega", "Recepción · Inspección · Presupuesto · Tiempos · Calidad · Factura y cobro", "VolcanoCars-S01-Taller-recepcion-a-entrega", ["FORM-01", "FORM-02", "FORM-03", "FORM-04", "FORM-14"], "hecho"],
     ["02", "A", "Recambios, almacén, cascos y abonos", "Pedir · recibir · dar salida · devolver cascos · cobrar abonos", "VolcanoCars-S02-Recambios-almacen-cascos-abonos", ["FORM-05"], "nuevo"],
     ["03", "A", "Instalaciones, seguridad y 5S", "Taller ordenado, seguro y en regla", "VolcanoCars-S03-Instalaciones-seguridad-5S", ["FORM-06"], "nuevo"],
     ["04", "B", "Preparación y detailing anti-salitre", "Del taller al escaparate: coche impecable y protegido", "VolcanoCars-S04-Preparacion-detailing-anti-salitre", ["FORM-07"], "nuevo"],

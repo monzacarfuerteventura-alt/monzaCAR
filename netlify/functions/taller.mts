@@ -132,6 +132,30 @@ function faltaF5(f: F5): string {
   if (totalesF5(f).total <= 0) return "El total de la factura es 0 €: revisa los precios.";
   return "";
 }
+// ---------- factura de reparación (FORM-14) ----------
+function limpiarF5(x: any, prev: F5 | null): F5 {
+  const c = x?.cliente || {}, v = x?.vehiculo || {};
+  const lineas: F5Linea[] = (Array.isArray(x?.lineas) ? x.lineas : []).slice(0, 30)
+    .map((l: any) => ({ tipo: (uno(l?.tipo, ["MO", "REC", "OTRO"]) || "OTRO") as F5Linea["tipo"], ref: str(l?.ref, 30), desc: str(l?.desc, 200), cant: num(l?.cant, 100000), precio: num(l?.precio, 1e6), dto: num(l?.dto, 100) }))
+    .filter((l: F5Linea) => l.desc || l.ref || l.precio || l.cant);
+  return {
+    fechaOperacion: fechaISO(x?.fechaOperacion),
+    cliente: { nombre: str(c.nombre, 80), doc: str(c.doc, 20).toUpperCase(), direccion: str(c.direccion, 120), cp: str(c.cp, 60), telefono: str(c.telefono, 30), email: str(c.email, 120) },
+    vehiculo: { matricula: str(v.matricula, 12).toUpperCase(), vin: str(v.vin, 17).toUpperCase(), marcaModelo: str(v.marcaModelo, 80), kmEntrada: str(v.kmEntrada, 10).replace(/[^\d]/g, ""), kmSalida: str(v.kmSalida, 10).replace(/[^\d]/g, "") },
+    lineas, descuentoGlobal: num(x?.descuentoGlobal, 1e6), igicTipo: uno(x?.igicTipo, ["7", "0", "otro"]) as F5["igicTipo"], igicOtro: Math.min(30, num(x?.igicOtro, 30)),
+    observaciones: str(x?.observaciones, 800), cerrada: prev?.cerrada || false, rect: prev?.rect || 0, emision: prev?.emision || null,
+  };
+}
+function faltaF5(f: F5): string {
+  if (f.cliente.nombre.length < 2) return "Falta el nombre o la empresa del cliente.";
+  if (!f.vehiculo.matricula) return "Falta la matrícula.";
+  if (!f.lineas.length) return "Añade al menos una línea al detalle de la reparación.";
+  if (f.lineas.some((l) => !l.desc)) return "Todas las líneas necesitan una descripción.";
+  if (f.lineas.some((l) => !(l.cant > 0))) return "Todas las líneas necesitan una cantidad mayor que 0.";
+  if (!f.igicTipo) return "Elige el tipo de IGIC (7 % general, 0 % exento u otro).";
+  if (totalesF5(f).total <= 0) return "El total de la factura es 0 €: revisa los precios.";
+  return "";
+}
 function limpiarF4(x: any, prev: F4 | null): F4 {
   const items: F4["items"] = {}, notas: Record<string, string> = {};
   for (const [id] of [...F4_A, ...F4_B, ...F4_C, ...F4_D]) { items[id] = uno(x?.items?.[id], ["si", "no", "na"]) as any; const n = str(x?.notas?.[id], 160); if (n) notas[id] = n; }
@@ -355,6 +379,7 @@ export default async (req: Request, context: Context) => {
     if (!cual || motivo.length < 4) return json({ error: "Indica la ficha y el motivo." }, 400);
     const x: any = (f as any)[cual]; if (!x) return json({ error: "Esa ficha no existe todavía." }, 404);
     x.cerrada = false; if (cual === "f4") { x.firma = null; x.cierreGerente = null; }
+    if (cual === "f5") { x.rect = (x.rect || 0) + 1; x.emision = null; } // la siguiente emisión sale como factura rectificativa (-R1, -R2…)
     if (cual === "f5") { x.origen = x.emision?.numero || x.origen || ""; x.motivoRect = motivo; x.rect = (x.rect || 0) + 1; x.emision = null; } // la factura emitida NO se toca (queda en el registro): la siguiente emisión sale como rectificativa R-AAAA-NNNN
     auditar(f, q, "reabrir", `${cual.toUpperCase()} reabierta: ${motivo}`);
     await guardar(f, o); return salida();
@@ -492,6 +517,21 @@ export default async (req: Request, context: Context) => {
       nf.cerrada = true; nf.emision = { t: reg.ts, fecha: hoy, por: q.uid, nombre: q.nombre, numero: reg.numero, huella: reg.huella, tipo: reg.tipo };
       if (!nf.fechaOperacion) nf.fechaOperacion = hoy;
       auditar(f, q, "emitir-factura", `FORM-14 emitida ${reg.numero}: ${tt.total.toFixed(2)} € (${nf.lineas.length} líneas)`);
+    } else auditar(f, q, "guardar", "FORM-14 guardada");
+    f.f5 = nf;
+    await guardar(f, o); return salida();
+  }
+
+  if (sub === "f5" && req.method === "PUT") {
+    if (!veFactura) return json({ error: "La factura la prepara el gerente o recepción." }, 403);
+    if (f.f5?.cerrada) return json({ error: "La factura ya está emitida. El gerente puede reabrirla con un motivo: saldrá como factura rectificativa." }, 409);
+    const nf = limpiarF5(body, f.f5 ?? null);
+    if (body.cerrar) {
+      const falta = faltaF5(nf); if (falta) return json({ error: falta }, 400);
+      const numero = nf.rect ? `${f.num}-R${nf.rect}` : f.num;
+      nf.cerrada = true; nf.emision = { t: new Date().toISOString(), fecha: hoyCanarias(), por: q.uid, nombre: q.nombre, numero };
+      if (!nf.fechaOperacion) nf.fechaOperacion = nf.emision.fecha;
+      auditar(f, q, "emitir-factura", `FORM-14 emitida ${numero}: ${totalesF5(nf).total.toFixed(2)} € (${nf.lineas.length} líneas)`);
     } else auditar(f, q, "guardar", "FORM-14 guardada");
     f.f5 = nf;
     await guardar(f, o); return salida();

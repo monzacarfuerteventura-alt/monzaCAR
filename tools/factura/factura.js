@@ -5,7 +5,7 @@
    motivo y la nueva emisión sale como rectificativa (-R1, -R2…). El mecánico no ve importes.
    Este módulo solo AÑADE: engancha con las funciones de taller.js (tCabecera, tRenderBody, etc.).
    ===================================================================== */
-const FC_EMISOR={razon:"MAYLIN Y YERAY S.L.",nif:"B93975647",direccion:"CALLE VALLE LARGO 8",cp:"35610 - Polígono Industrial Costa de Antigua",email:"volcanocars@gmail.com"};
+const FC_EMISOR={razon:"MAYLIN Y YERAY S.L.",nif:"B93975647",direccion:"CALLE VALLE LARGO 8",cp:"35610 - Polígono Industrial Costa de Antigua",telefono:"643 56 60 98",email:"volcanocars2026@gmail.com"};
 const FC_TIPOS={MO:"Mano de obra",REC:"Recambio",OTRO:"Otro"};
 const fcE=n=>Number(n||0).toLocaleString("es-ES",{minimumFractionDigits:2,maximumFractionDigits:2,useGrouping:"always"})+" €";
 const fcR2=n=>Math.round((n+Number.EPSILON)*100)/100;
@@ -86,7 +86,7 @@ function fcPagina(){ const x=TF.fichas.f5&&TF.fichas.f5.lineas?TF.fichas.f5:TW.f
   <header class="fp-h"><img src="${FC_LOGO}" alt="Volcano Cars"><div><h1>${x.rect?"FACTURA RECTIFICATIVA":"FACTURA DE REPARACIÓN"}</h1><p>Documento de cobro al cliente</p><span class="fp-pill">FORM-03</span></div></header>${x.rect&&x.origen?`<p class="fp-rect">Rectifica a la factura <b>${esc(x.origen)}</b>${x.motivoRect?" · Motivo: "+esc(x.motivoRect):""}</p>`:""}
   <table class="fp-num"><tbody><tr><th>Nº de factura</th><td><b>${esc(num)}</b></td><th>Fecha emisión</th><td>${esc(tF(em?em.fecha:""))}</td><th>Fecha operación</th><td>${esc(tF(x.fechaOperacion||(em?em.fecha:"")))}</td></tr></tbody></table>
   <p class="fp-nota"><b>El nº de factura es el mismo que el de la orden de trabajo (FORM-01).</b> Un error no se tacha: se emite factura rectificativa.</p>
-  ${bar(1,"Datos del emisor","quien factura")}<table class="fp-t"><tbody>${P("Razón social",E.razon,"NIF / CIF",E.nif)}${P("Dirección",E.direccion,"CP / localidad",E.cp)}${P("Teléfono","","Correo electrónico",E.email)}</tbody></table>
+  ${bar(1,"Datos del emisor","quien factura")}<table class="fp-t"><tbody>${P("Razón social",E.razon,"NIF / CIF",E.nif)}${P("Dirección",E.direccion,"CP / localidad",E.cp)}${P("Teléfono",E.telefono,"Correo electrónico",E.email)}</tbody></table>
   ${bar(2,"Datos del cliente")}<table class="fp-t"><tbody>${P("Nombre / empresa",esc(c.nombre),"DNI / NIE / CIF",esc(c.doc))}${P("Dirección",esc(c.direccion),"CP / localidad",esc(c.cp))}${P("Teléfono",esc(c.telefono),"Correo electrónico",esc(c.email))}</tbody></table>
   ${bar(3,"Datos del vehículo")}<table class="fp-t"><tbody>${P("Matrícula","<b>"+esc(v.matricula)+"</b>","Marca / modelo",esc(v.marcaModelo))}${P("Bastidor (VIN)",esc(v.vin),"Kilometraje",`<span class="fp-km"><em>entrada</em> ${esc(v.kmEntrada)} <em>km</em></span><span class="fp-km"><em>salida</em> ${esc(v.kmSalida)} <em>km</em></span>`)}</tbody></table>
   ${bar(4,"Detalle de la reparación","una línea por concepto · MO = mano de obra (horas de FORM-04 × tarifa) · REC = recambio")}
