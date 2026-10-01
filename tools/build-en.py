@@ -87,7 +87,7 @@ TEXT = {
     "Aceite y filtros": "Oil and filters",
     "Aceptamos tu coche como parte del pago de otro": "We take your car in part exchange for another",
     "Aceptar": "Accept",
-    "Acepto que MAILIN Y YERAY SL (Volcano Cars) use estos datos solo para responder a mi solicitud. Puedo acceder a ellos, corregirlos o pedir que los borren cuando quiera.": "I agree that MAILIN Y YERAY SL (Volcano Cars) may use these details only to answer my request. I can access, correct or ask for them to be deleted at any time.",
+    "Acepto que MAYLIN Y YERAY S.L. (Volcano Cars) use estos datos solo para responder a mi solicitud. Puedo acceder a ellos, corregirlos o pedir que los borren cuando quiera.": "I agree that MAYLIN Y YERAY S.L. (Volcano Cars) may use these details only to answer my request. I can access, correct or ask for them to be deleted at any time.",
     "Ahora mismo": "Right now",
     "Algo más que debamos saber (opcional)": "Anything else we should know? (optional)",
     "Arañazos": "Scratches",

@@ -129,7 +129,7 @@ h3{font-size:21px;font-weight:800;font-stretch:100%}
 /* pie */
 .pg-foot{margin-top:60px;background:var(--night);color:rgba(242,239,234,.75);padding:44px 0 34px;font-size:15px}
 .pg-foot .wrap{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:28px}
-.pg-foot h4{color:#F2EFEA;margin:0 0 10px;font-size:14px;letter-spacing:.14em;text-transform:uppercase}
+.pg-foot h3,.pg-foot h4{color:#F2EFEA;margin:0 0 10px;font-size:14px;letter-spacing:.14em;text-transform:uppercase}
 .pg-foot a{display:block;text-decoration:none;padding:3px 0}
 .pg-foot a:hover{color:#fff}
 .pg-foot img{height:44px;width:auto;margin-bottom:12px}

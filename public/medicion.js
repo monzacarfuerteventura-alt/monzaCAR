@@ -49,7 +49,7 @@ window.VC_MED = {
   function aviso() {
     if (esPortada() || document.querySelector(".vc-ck")) return;
     var d = document.createElement("div"); d.className = "vc-ck"; d.setAttribute("role", "dialog"); d.setAttribute("aria-label", "Cookies");
-    d.innerHTML = '<p>Usamos cookies de Google (Analytics y Ads) solo para contar visitas y saber qué anuncios funcionan. <a href="/cookies">Más información</a></p><div><button type="button" data-no>Rechazar</button><button type="button" data-si>Aceptar</button></div>';
+    d.innerHTML = '<p>Usamos cookies de Google (Analytics y Ads) solo para contar visitas y saber qué anuncios funcionan. <a href="/cookies">Más información sobre cookies</a></p><div><button type="button" data-no>Rechazar</button><button type="button" data-si>Aceptar</button></div>';
     d.style.cssText = "position:fixed;left:12px;right:12px;bottom:12px;z-index:999;max-width:560px;margin:0 auto;background:#1B1B1A;color:#F2EFEA;border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;font:14px/1.4 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.35)";
     d.querySelector("p").style.margin = "0"; d.querySelector("a").style.color = "#F2EFEA";
     d.querySelectorAll("button").forEach(function (b) { b.style.cssText = "border:0;border-radius:10px;padding:9px 14px;font:inherit;font-weight:700;cursor:pointer;margin-left:6px;" + (b.hasAttribute("data-si") ? "background:#D9481C;color:#fff" : "background:#3a3936;color:#F2EFEA"); });
@@ -83,7 +83,7 @@ window.VC_MED = {
     a.id = "vc-pagar"; a.href = URL_PAGO; a.target = "_blank"; a.rel = "noopener";
     var en = document.documentElement.lang === "en";
     a.textContent = en ? "Pay for my repair online" : "Pagar mi reparación online";
-    a.style.cssText = "display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 22px;background:#D9481C;color:#fff;border-radius:999px;font-weight:800;text-decoration:none;font-size:15px";
+    a.style.cssText = "display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 22px;background:#B83A12;color:#fff;border-radius:999px;font-weight:800;text-decoration:none;font-size:15px";
     var nota = document.createElement("p");
     nota.textContent = en ? "Got your tracking link? Pay from there: the amount comes straight from your quote." : "¿Tienes tu enlace de seguimiento? Paga desde ahí: el importe ya viene del presupuesto.";
     nota.style.cssText = "margin:8px 0 0;font-size:12.5px;opacity:.7;line-height:1.4";

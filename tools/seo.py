@@ -17,7 +17,7 @@ ZONAS = ["Antigua", "Caleta de Fuste", "Puerto del Rosario", "Corralejo", "La Ol
 e = html.escape
 wa = lambda t: f"https://wa.me/{WA}?text={quote(t)}"
 
-NEGOCIO = {"@type": ["AutoDealer", "AutoRepair", "AutoBodyShop"], "@id": BASE + "/#negocio", "name": "Volcano Cars", "legalName": "MAILIN Y YERAY SL", "taxID": "B93975647", "url": BASE + "/",
+NEGOCIO = {"@type": ["AutoDealer", "AutoRepair", "AutoBodyShop"], "@id": BASE + "/#negocio", "name": "Volcano Cars", "legalName": "MAYLIN Y YERAY S.L.", "taxID": "B93975647", "url": BASE + "/",
            "sameAs": ["https://www.google.com/maps?cid=5551544135827693991", "https://www.instagram.com/volcanocars_antigua/", "https://www.facebook.com/share/1KYczmU7be/"],  # añade aquí Facebook, Instagram… cuando existan
            "telephone": "+34643566098", "email": "volcanocars2026@gmail.com", "image": BASE + "/og-volcano-cars.jpg",
            "logo": BASE + "/marca/logo-oscuro.svg", "priceRange": "€€",

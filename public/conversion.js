@@ -668,7 +668,7 @@
           </span>
         </label>
         <input class="hp" type="text" id="pf-web" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <label class="consent"><input type="checkbox" id="pf-ok"><span>${L("Acepto que MAILIN Y YERAY SL (Volcano Cars) use estos datos y fotos solo para darme el presupuesto. Puedo pedir que los borren cuando quiera. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacidad</a>.", "I agree Volcano Cars may use these details and photos only to quote me. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacy</a>.")}</span></label>
+        <label class="consent"><input type="checkbox" id="pf-ok"><span>${L("Acepto que MAYLIN Y YERAY S.L. (Volcano Cars) use estos datos y fotos solo para darme el presupuesto. Puedo pedir que los borren cuando quiera. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacidad</a>.", "I agree Volcano Cars may use these details and photos only to quote me. <a href=\"/privacidad\" target=\"_blank\" rel=\"noopener\">Privacy</a>.")}</span></label>
         <div class="form-err" id="pf-err" role="alert" hidden></div>
         <button class="btn btn-rosso pf-go" type="submit"><span>${L("Enviar fotos y pedir presupuesto", "Send photos and get a quote")}</span></button>
         <div class="pf-ok" hidden></div>

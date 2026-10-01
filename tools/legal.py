@@ -1,6 +1,6 @@
 # Genera las páginas legales (aviso legal, privacidad, cookies).
 # Rellena TITULAR y NIF abajo y vuelve a ejecutar:  python3 tools/legal.py
-TITULAR = "MAILIN Y YERAY SL"
+TITULAR = "MAYLIN Y YERAY S.L."
 NIF = "B93975647"
 REGISTRO = ""  # PENDIENTE: «Inscrita en el Registro Mercantil de …, tomo …, folio …, hoja …» (sale en la escritura o en la nota simple)
 REG_TALLER = ""  # PENDIENTE: nº de inscripción del taller en el Registro Industrial de Canarias

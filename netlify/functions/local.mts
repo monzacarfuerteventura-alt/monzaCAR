@@ -301,7 +301,7 @@ function widget(m: Municipio) {
     </div>
     <div id="r-agenda" class="lc-ag" aria-live="polite"><p class="lc-ag-msg">Cargando horas libres…</p></div>
     <input class="lc-hp" type="text" name="web" id="r-web" tabindex="-1" autocomplete="off" aria-hidden="true">
-    <label class="lc-ok"><input type="checkbox" id="r-ok" required><span>Acepto que MAILIN Y YERAY SL (Volcano Cars) use estos datos solo para responder a mi solicitud. Puedo acceder a ellos, corregirlos o pedir que los borren cuando quiera. <a href="/privacidad" target="_blank" rel="noopener">Política de privacidad</a>.</span></label>
+    <label class="lc-ok"><input type="checkbox" id="r-ok" required><span>Acepto que MAYLIN Y YERAY S.L. (Volcano Cars) use estos datos solo para responder a mi solicitud. Puedo acceder a ellos, corregirlos o pedir que los borren cuando quiera. <a href="/privacidad" target="_blank" rel="noopener">Política de privacidad</a>.</span></label>
     <p class="lc-err" id="r-err" role="alert" hidden></p>
     <button class="btn b-rosso" type="submit" id="r-btn">Confirmar cita</button>
     <p class="lc-nota" id="r-nota">La cita queda confirmada al momento. Te esperamos en Costa de Antigua.</p>

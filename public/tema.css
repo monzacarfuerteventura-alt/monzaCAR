@@ -18,10 +18,10 @@ html:root:not([data-theme="light"]) {
   --tx-card-2: #262628;
   --tx-line: rgba(255, 255, 255, .09);
   --tx-line-2: rgba(255, 255, 255, .16);
-  --tx-acc: #D94A26;
-  --tx-acc-2: #C83E1A;
+  --tx-acc: #C23E14;
+  --tx-acc-2: #B03616;
   --tx-acc-txt: #FF8A5C;
-  --tx-glow: rgba(217, 74, 38, .55);
+  --tx-glow: rgba(194, 62, 20, .55);
   --tx-ok: #3DDC84;
   --tx-muted: rgba(255, 255, 255, .64);
   --tx-tech: "Titillium Web", "Archivo", system-ui, sans-serif;
@@ -84,12 +84,12 @@ header.top::after {
   backdrop-filter: blur(14px); box-shadow: 0 18px 40px -16px rgba(0, 0, 0, .8) !important;
 }
 .mtabs a { color: var(--tx-muted); }
-.mtabs a[aria-current="page"], .mtabs a.on { color: #FFFFFF; background: rgba(217, 74, 38, .18) !important; box-shadow: inset 0 0 0 1px rgba(217, 74, 38, .45); }
+nav.mtabs a[aria-current="page"], .mtabs a.on { color: #FFFFFF; background: rgba(217, 74, 38, .18) !important; box-shadow: inset 0 0 0 1px rgba(217, 74, 38, .45); }
 
 /* ---------------- botones ---------------- */
 .btn { letter-spacing: .01em; }
 .btn-rosso, .b-rosso {
-  background: linear-gradient(180deg, #E4552F, var(--tx-acc) 45%, var(--tx-acc-2)) !important; color: #FFFFFF !important;
+  background: linear-gradient(180deg, #C9431A, var(--tx-acc) 45%, var(--tx-acc-2)) !important; color: #FFFFFF !important;
   box-shadow: 0 14px 30px -12px var(--tx-glow), inset 0 1px 0 rgba(255, 255, 255, .22);
   overflow: hidden;
 }
@@ -168,7 +168,7 @@ dialog::backdrop { background: rgba(5, 5, 6, .74); }
 .bot-f { background: #171718; border-top-color: var(--tx-line); }
 .bot-f input { background: #0E0E0F; border-color: var(--tx-line-2); }
 .bm.b { background: #1E1E1E; border-color: var(--tx-line-2); }
-.bm.u { background: linear-gradient(180deg, #E4552F, var(--tx-acc-2)); color: #FFFFFF; }
+.bm.u { background: linear-gradient(180deg, #C9431A, var(--tx-acc-2)); color: #FFFFFF; }
 .b-acts button, .b-acts a { background: #1B1B1C; border-color: var(--tx-line-2); color: #FFFFFF; }
 .b-acts button:hover, .b-acts a:hover { border-color: var(--tx-acc); box-shadow: 0 0 12px -4px var(--tx-glow); }
 .bot-fab { box-shadow: 0 12px 30px var(--tx-glow), 0 0 0 1px rgba(255, 255, 255, .12) inset; }

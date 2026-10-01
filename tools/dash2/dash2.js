@@ -221,7 +221,7 @@ function d2InfHTML(inf){
     ${tabla("Servicios de taller",["Servicio","Veces"],inf.servicios.map(([s,n])=>[esc(s),nfmt(n)]))}
     ${tabla("Campañas",["Campaña","Visitas","Solicitudes"],inf.campanas.map(([c,v,s])=>[esc(c),nfmt(v),nfmt(s)]))}
     ${tabla("Por qué se pierden",["Motivo","Clientes"],inf.perdidas.map(([m,n])=>[esc(m),nfmt(n)]))}</div>
-    <footer class="d2r-f">Volcano Cars · MAILIN Y YERAY SL · Generado el ${esc(new Date(inf.generado).toLocaleString("es-ES",{dateStyle:"long",timeStyle:"short"}))}. Visitas sin cookies ni datos personales; facturación = importes apuntados en el CRM.</footer>
+    <footer class="d2r-f">Volcano Cars · MAYLIN Y YERAY S.L. · Generado el ${esc(new Date(inf.generado).toLocaleString("es-ES",{dateStyle:"long",timeStyle:"short"}))}. Visitas sin cookies ni datos personales; facturación = importes apuntados en el CRM.</footer>
   </article>`;
 }
 async function d2AbrirInforme(id){

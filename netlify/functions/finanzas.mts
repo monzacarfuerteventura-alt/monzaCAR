@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { store, json, mismoOrigen, type Car } from "../lib/shared.mts";
 import { quien, hoyCanarias, leerConfig, type Quien } from "../lib/taller.mts";
 import { costesPorCoche } from "../lib/vehiculos.mts";
+import { todosLosRegistros } from "../lib/facturas.mts";
 import { str, cent, eur, esFoto, rid, ahora, listar as listarCaja, movsDe, turnoAbierto, crearMovimiento, leerMov, libro as libroCaja, s as sCaja, teorico, type Turno, type Mov } from "../lib/caja.mts";
 
 /*
@@ -84,6 +85,9 @@ async function resumen(desde: string, hasta: string) {
     (async () => ((await store("monzacar").get("coches", { type: "json" }).catch(() => null)) as Car[] | null) || [])(),
     lista<Gasto>("gasto/"), lista<Ingreso>("ingreso/"), lista<Venta>("venta/"), lista<any>("coste/"), lista<any>("clasif/"), lista<{ token: string; cobros: Cobro[] }>("cobro-taller/"), leerConfig(), costesPorCoche(),
   ]);
+  // Actualización 11: presupuesto aceptado -> factura emitida (FORM-14). Cada orden toma el número y el importe de su última factura (F o R).
+  const facDeOrden = new Map<string, any>();
+  for (const r of ((await todosLosRegistros().catch(() => [])) as any[])) if (r.serie !== "H" && r.orden) facDeOrden.set(r.orden, r);
   const turnos = await listarCaja<Turno>("t/");
   const movs = (await Promise.all(turnos.map((t) => movsDe(t.id)))).flat().filter((m) => !m.anulado);
   const usadosCaja = new Set<string>([...gastos.map((g) => g.cajaMov), ...ingresosM.map((i) => i.cajaMov), ...ventas.flatMap((v) => v.cobros.map((c) => c.cajaMov)), ...cobrosT.flatMap((c) => c.cobros.map((x) => x.cajaMov))].filter(Boolean));
@@ -98,14 +102,15 @@ async function resumen(desde: string, hasta: string) {
   for (const o of ords) {
     const p = o.presupuesto, reg = cobrosT.find((c) => c.token === o.token);
     const caja = movs.filter((m) => m.tipo === "ingreso" && m.orden === o.token && !usadosCaja.has(m.id));
-    if (!(p && p.estado === "aceptado") && !reg?.cobros.length && !caja.length) continue;
+    if (!(p && p.estado === "aceptado") && !reg?.cobros.length && !caja.length && !facDeOrden.get(o.token)) continue;
     const lineas = p?.lineas || [], base0 = Math.round(lineas.reduce((a: number, l: any) => a + (Number(l.n) || 0) * (Number(l.p) || 0), 0) * 100), igic = p ? Number(p.igic) || 0 : cfg.igic;
     const cobrado = [...(reg?.cobros || []).map((c) => ({ ...c, origen: "finanzas" })), ...caja.map((m) => ({ id: m.id, fecha: diaDe(m.t), metodo: "efectivo", importe: m.importe, cajaMov: m.id, nota: "Cobrado en caja por " + m.porNombre, origen: "caja" }))];
-    const totalAcept = p && p.estado === "aceptado" ? base0 + Math.round(base0 * igic / 100) : 0;
+    const fac = facDeOrden.get(o.token);
+    const totalAcept = fac ? Math.round(fac.total * 100) : (p && p.estado === "aceptado" ? base0 + Math.round(base0 * igic / 100) : 0);
     const total = totalAcept || cobrado.reduce((a, c) => a + c.importe, 0);
-    const base = totalAcept ? base0 : Math.round(total / (1 + igic / 100));
+    const base = fac ? Math.round(fac.base * 100) : (totalAcept ? base0 : Math.round(total / (1 + igic / 100)));
     const fechaDoc = p?.respuesta?.t && p.estado === "aceptado" ? diaDe(p.respuesta.t) : (cobrado.map((c) => c.fecha).sort()[0] || diaDe(o.creado));
-    const doc = { id: "t-" + o.token, tipo: "taller", area: "taller", ref: o.token, fecha: fechaDoc, num: o.num || "", cliente: o.cliente?.nombre || "", concepto: `Taller · ${o.vehiculo?.coche || ""} ${(o.vehiculo?.matricula || "").toUpperCase()}`.trim(), base, impuestoPct: igic, impuesto: total - base, total, cobrado: cobrado.reduce((a, c) => a + c.importe, 0), cobros: cobrado, sinPresupuesto: !totalAcept };
+    const doc = { id: "t-" + o.token, tipo: "taller", area: "taller", ref: o.token, fecha: fechaDoc, num: fac ? fac.numero : (o.num || ""), facturaEmitida: !!fac, faltaFactura: !fac && !!(p && p.estado === "aceptado"), ordenNum: o.num || "", cliente: o.cliente?.nombre || "", concepto: `Taller · ${o.vehiculo?.coche || ""} ${(o.vehiculo?.matricula || "").toUpperCase()}`.trim(), base, impuestoPct: fac ? Number(fac.pct) || igic : igic, impuesto: total - base, total, cobrado: cobrado.reduce((a, c) => a + c.importe, 0), cobros: cobrado, sinPresupuesto: !totalAcept };
     emitidas.push(doc); cobrado.forEach((c) => addCobro({ ...c, doc: doc.id, area: "taller", concepto: doc.concepto }));
   }
   // Venta de coches

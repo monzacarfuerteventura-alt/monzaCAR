@@ -16,10 +16,10 @@
   --tx-card-2: #262628;
   --tx-line: rgba(255, 255, 255, .09);
   --tx-line-2: rgba(255, 255, 255, .16);
-  --tx-acc: #D94A26;
-  --tx-acc-2: #C83E1A;
+  --tx-acc: #C23E14;
+  --tx-acc-2: #B03616;
   --tx-acc-txt: #FF8A5C;          /* naranja legible sobre negro (contraste AA) */
-  --tx-glow: rgba(217, 74, 38, .55);
+  --tx-glow: rgba(194, 62, 20, .55);
   --tx-ok: #3DDC84;
   --tx-muted: rgba(255, 255, 255, .64);
   --tx-tech: "Titillium Web", "Archivo", system-ui, sans-serif;

@@ -224,3 +224,9 @@ Panel -> Taller -> **Coches propios**: control interno de cada coche que compras
 - **FORM-11**: bloque G *Datos y facturas* en `public/panel-sistemas.js`.
 - **Factura impresa**: etiqueta FORM-14 y numero correlativo F-AAAA-NNNN (`tools/factura/factura.js`).
 - Aviso conocido: Finanzas cuenta presupuestos aceptados, el libro cuenta facturas emitidas; se comparan cada viernes (G4).
+
+## Actualizacion 11 (reglas de la fianza, razon social, Finanzas y PageSpeed)
+- **Condiciones**: nuevo apartado 6 «Prueba a domicilio con fianza de 50 €» con las 4 reglas (cancela ≥24 h → se devuelve; no se presenta → se retiene; prueba y no compra → 50 € − combustible; compra → a cuenta del precio). Liquidación en 48 h.
+- **Razon social**: MAYLIN Y YERAY S.L. en toda la web (antes «MAILIN Y YERAY SL» en las páginas públicas, JSON-LD, funciones y herramientas).
+- **Finanzas ↔ facturas** (`netlify/functions/finanzas.mts`): cada orden toma número e importe de su factura emitida (FORM-14, `netlify/lib/facturas.mts`); si hay presupuesto aceptado sin factura, se avisa «falta emitir la factura».
+- **PageSpeed móvil**: CSS de la portada en línea y minificado (`<!--CSS-INICIO-->…<!--CSS-FIN-->` en index, en/, comprar/ y taller/; si cambias `tema.css`, `taller.css`, `conversion.css` o `mejoras.css` hay que volver a generarlo con `tools/pagespeed/inline-css.py`), contraste del naranja (#C23E14), estrellas con `role="img"`, encabezados del pie `h3`, enlaces «Más información sobre cookies», sin reflow forzado al arrancar.
