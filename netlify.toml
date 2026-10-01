@@ -164,12 +164,13 @@
   status = 200
 
 
-# Vídeos de la ayuda del panel: no se indexan y se guardan en caché una semana
+# Vídeos de la ayuda del panel: no se indexan. Cada vídeo se pide con ?v=<huella de su contenido> (lo pone tools/ayuda/videos.py),
+# así que si se regraba, su dirección cambia y el navegador nunca sirve uno viejo: por eso la caché puede ser larga.
 [[headers]]
   for = "/ayuda/*"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow"
-    Cache-Control = "public, max-age=604800"
+    Cache-Control = "public, max-age=31536000, immutable"
 
 # Caché (checklist de lanzamiento, 27-09-2026): fuentes, logos y fotos fijas de los coches se guardan en el
 # navegador; las páginas y los scripts siguen revalidándose en cada visita (Netlify usa ETag).

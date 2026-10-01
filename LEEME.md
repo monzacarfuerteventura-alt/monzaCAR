@@ -230,3 +230,7 @@ Panel -> Taller -> **Coches propios**: control interno de cada coche que compras
 - **Razon social**: MAYLIN Y YERAY S.L. en toda la web (antes «MAILIN Y YERAY SL» en las páginas públicas, JSON-LD, funciones y herramientas).
 - **Finanzas ↔ facturas** (`netlify/functions/finanzas.mts`): cada orden toma número e importe de su factura emitida (FORM-14, `netlify/lib/facturas.mts`); si hay presupuesto aceptado sin factura, se avisa «falta emitir la factura».
 - **PageSpeed móvil**: CSS de la portada en línea y minificado (`<!--CSS-INICIO-->…<!--CSS-FIN-->` en index, en/, comprar/ y taller/; si cambias `tema.css`, `taller.css`, `conversion.css` o `mejoras.css` hay que volver a generarlo con `tools/pagespeed/inline-css.py`), contraste del naranja (#C23E14), estrellas con `role="img"`, encabezados del pie `h3`, enlaces «Más información sobre cookies», sin reflow forzado al arrancar.
+
+## Actualizacion 12 (videos de la Ayuda sin versiones viejas)
+- Los videos de `/ayuda/` se guardaban una semana en el navegador con el mismo nombre, asi que tras actualizar se veian los videos antiguos (p. ej. 0:21) con la lista nueva (4:14). Ahora cada video se pide con `?v=<huella>` (generada por `tools/ayuda/videos.py`), la cache es larga e inmutable y, al reproducir, el panel compara la duracion real con la esperada: si no cuadra, pide el video otra vez y, si aun asi no cuadra, avisa de pulsar Ctrl+F5.
+- Tras regrabar videos: `python3 tools/ayuda/videos.py && python3 tools/ayuda/inyectar.py`.

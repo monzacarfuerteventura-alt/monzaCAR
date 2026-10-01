@@ -122,3 +122,5 @@ html body.modo-equipo #tabs #tab-ayuda{display:inline-flex!important}
 .ay-mas-in{display:grid;gap:22px;padding:4px 16px 18px}
 @media (max-width:860px){.ay-vid,.ay-vid.vert{grid-template-columns:1fr}.ay-vid.vert .ay-vbox{max-width:min(340px,calc(72vh * .462));margin:0 auto;width:100%}}
 @media print{.ay-vid{display:none}}
+
+.ay-vwarn{margin:8px 0 0;padding:8px 12px;border-radius:10px;background:rgba(242,153,74,.14);border:1px solid rgba(242,153,74,.5);color:#FFD9B0;font-size:13.5px;line-height:1.4}
