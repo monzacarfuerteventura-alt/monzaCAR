@@ -2,12 +2,17 @@
    VOLCANO CARS · FONDO VFX DEL TALLER  (taller-vfx.js)
    ---------------------------------------------------------------------
    Al marcar un servicio del taller, el fondo de la sección pasa a un
-   vídeo en bucle de ese servicio (render CAD / X-Ray), con fundido
-   cruzado entre clips y una capa oscura para que el texto se lea bien.
+   vídeo en CÁMARA LENTA de ese servicio (render 3D de cine: chispas,
+   arcos eléctricos, agua, aceite, pintura...), con fundido cruzado entre
+   clips, un instante de «revelado» para que se vea bien y luego una capa
+   oscura para que el texto se lea.
 
    CÓMO FUNCIONA
    · Dos <video> apilados: el nuevo entra con su póster al instante y
      se funde sobre el anterior (sin saltos ni pantallazo negro).
+   · Formato: AV1 (.webm, ~la mitad de peso) si el aparato lo decodifica
+     con eficiencia (tarjeta gráfica / chip); si no, H.264 (.mp4), que
+     reproduce cualquier navegador. Lo decide solo, una vez.
    · Precarga: los pósters (≈50 KB) cuando la sección aparece; el vídeo
      del servicio en cuanto el dedo toca la tarjeta (pointerdown llega
      antes que el clic) y, con buena conexión, los 3 más pedidos en los
@@ -19,18 +24,19 @@
    · Con «reducir movimiento» del sistema solo se ve la imagen fija.
    · Si falta algún clip, no pasa nada: queda el tinte de color.
 
-   ARCHIVOS: /vfx/taller/<servicio>-<v|h>.mp4 y .jpg (póster)
-     v = vertical (móvil, 720×1280) · h = horizontal (ordenador, 1280×720)
-   Para cambiar un clip por uno definitivo: sustituye el archivo con el
-   mismo nombre y sube VFX.ver (abajo) para que los móviles lo renueven.
+   ARCHIVOS: /vfx/taller/<servicio>-<v|h>.webm (AV1), .mp4 (H.264) y .jpg (póster)
+     v = vertical (móvil, 576×1024) · h = horizontal (ordenador, 1024×576); el navegador los amplía
+   Se generan con tools/taller-vfx/3d/renderizar3d.py. Si cambias un clip,
+   sube VFX.ver (abajo) para que los móviles no usen el viejo.
    ===================================================================== */
 (() => {
   "use strict";
   const VFX = {
     base: "/vfx/taller/",
-    ver: "2",          // ← súbelo (2, 3…) cada vez que cambies algún vídeo
-    webm: false,       // true si también subes <servicio>-<v|h>.webm (VP9)
+    ver: "4",          // ← súbelo (4, 5…) cada vez que cambies algún vídeo
+    av1: true,         // hay versión AV1 (<servicio>-<v|h>.webm): se usa si el aparato la decodifica bien
     fundido: 650,      // ms del fundido cruzado
+    revelado: 2600,    // ms que el vídeo se ve casi sin capa oscura al elegir un servicio
     maxMemoria: 6,     // clips guardados en memoria a la vez
     favoritos: ["itv", "frenos", "pintura"], // se precargan con buena conexión
   };
@@ -54,7 +60,18 @@
   const ahorro = () => !!RED.saveData || /(^|-)2g$/.test(RED.effectiveType || "");
   const buenaRed = () => !ahorro() && (!RED.effectiveType || RED.effectiveType === "4g");
   const orient = () => (innerHeight > innerWidth ? "v" : "h");
-  const EXT = VFX.webm && document.createElement("video").canPlayType('video/webm; codecs="vp9"') ? "webm" : "mp4";
+  // AV1 solo si el navegador lo reproduce Y (en móvil) lo hace con el chip, sin gastar batería; si no, H.264
+  const AV1 = 'video/webm; codecs="av01.0.08M.10"';
+  let EXT = "mp4";
+  if (VFX.av1 && document.createElement("video").canPlayType(AV1)) {
+    EXT = "webm";
+    const movil = matchMedia("(pointer: coarse)").matches;
+    if (navigator.mediaCapabilities && navigator.mediaCapabilities.decodingInfo) {
+      navigator.mediaCapabilities.decodingInfo({ type: "file", video: { contentType: AV1, width: 1024, height: 576, bitrate: 800000, framerate: 24 } })
+        .then((r) => { if (!r.supported || !r.smooth || (movil && !r.powerEfficient)) EXT = "mp4"; })
+        .catch(() => {});
+    } else if (movil) EXT = "mp4";
+  }
   const urlVideo = (k, o = orient()) => `${VFX.base}${k}-${o}.${EXT}?v=${VFX.ver}`;
   const urlPoster = (k, o = orient()) => `${VFX.base}${k}-${o}.jpg?v=${VFX.ver}`;
 
@@ -74,7 +91,7 @@
   const FALTA = new Set();
   let enUso = "";
   function traer(k, o = orient()) {
-    const id = k + "-" + o;
+    const id = k + "-" + o + "." + EXT;
     if (FALTA.has(id)) return Promise.resolve(null);
     if (MEM.has(id)) { const p = MEM.get(id); MEM.delete(id); MEM.set(id, p); return p; } // el más reciente, al final
     const p = fetch(urlVideo(k, o), { credentials: "same-origin" })
@@ -93,7 +110,7 @@
   function prePoster(k) { const u = urlPoster(k); if (posterHecho.has(u)) return; posterHecho.add(u); const i = new Image(); i.decoding = "async"; i.src = u; }
 
   /* ---------------- cambio de clip con fundido cruzado ---------------- */
-  let turno = 0, actual = null, activo = 0, visible = true, tFund = 0;
+  let turno = 0, actual = null, activo = 0, visible = true, tFund = 0, tRevela = 0;
   function cruzar(v) {
     const viejo = V[activo];
     activo = V.indexOf(v);
@@ -113,6 +130,9 @@
     capa.style.setProperty("--vfx-c", COLOR[k] || COLOR.otro);
     sec.classList.add("vfx-on");
     hudTxt.textContent = nombre;
+    // «revelado»: al elegir, el vídeo se ve casi limpio un par de segundos y luego vuelve la capa oscura
+    clearTimeout(tRevela); capa.classList.add("vfx-revela");
+    tRevela = setTimeout(() => capa.classList.remove("vfx-revela"), QUIETO.matches ? 0 : VFX.revelado);
     capa.classList.remove("vfx-barre"); void capa.offsetWidth; capa.classList.add("vfx-barre"); // barrido de escáner al cambiar
 
     // 1) al instante: el póster del servicio entra con el fundido
@@ -123,18 +143,22 @@
     if (QUIETO.matches) return; // «reducir movimiento»: solo la imagen fija
 
     // 2) en cuanto está el vídeo (en memoria suele ser inmediato), empieza a moverse
-    enUso = k + "-" + o;
+    enUso = k + "-" + o + "." + EXT;
     const src = await traer(k, o);
     if (mio !== turno) return;           // mientras tanto se ha pulsado otro servicio
     if (!src) return;                    // no hay clip: se queda el póster/tinte
     v.src = src;
-    v.addEventListener("error", () => { if (mio === turno) v.classList.remove("on"); }, { once: true });
+    v.addEventListener("error", () => {
+      if (v.getAttribute("src") !== src) return; // el error es de haber quitado el clip, no de reproducirlo
+      if (EXT === "webm") { EXT = "mp4"; if (mio === turno) { actual = null; mostrar(k); } return; } // el AV1 no ha ido: H.264 desde ahora
+      if (mio === turno) v.classList.remove("on");
+    }, { once: true });
     reproducir(v);
   }
 
   function ocultar() {
     turno++; actual = null; enUso = "";
-    sec.classList.remove("vfx-on");
+    sec.classList.remove("vfx-on"); clearTimeout(tRevela); capa.classList.remove("vfx-revela");
     V.forEach((x) => x.classList.remove("on"));
     clearTimeout(tFund);
     tFund = setTimeout(() => V.forEach((x) => { x.pause(); x.removeAttribute("src"); x.load(); }), VFX.fundido + 120);

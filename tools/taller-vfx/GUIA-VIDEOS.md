@@ -1,14 +1,17 @@
 # Fondo VFX del taller · Guía de vídeos
 
 Al marcar un servicio en **/taller**, el fondo de la sección pasa a un vídeo en bucle de ese servicio
-(estilo render CAD / X-Ray), con fundido cruzado y una capa oscura para que todo se lea.
+en **cámara lenta de cine** (render 3D propio: chispas con física, arcos eléctricos, agua, aceite, pintura,
+suelo de taller mojado con reflejos, humo, polvo en el haz de luz, desenfoque de movimiento y de lente).
+Al elegir, el vídeo se ve limpio unos 2,6 s («revelado») y después baja una capa oscura para que se lea todo.
 
 - Código: `public/taller-vfx.js` y `public/taller-vfx.css` (los carga solo `public/taller-ui.js`).
-- Vídeos: `public/vfx/taller/<servicio>-<v|h>.mp4` + póster `<servicio>-<v|h>.jpg`.
-  - `v` = vertical 720×1280 (móvil) · `h` = horizontal 1280×720 (ordenador).
-- Los clips que vienen ahora son **provisionales** (animación técnica generada por código,
-  `tools/taller-vfx/escenas.html` + `renderizar.py`). Cuando tengas los renders 3D definitivos,
-  sustitúyelos con **el mismo nombre** y sube `ver` en `taller-vfx.js` (1 → 2) para que los móviles no usen los viejos.
+- Vídeos: `public/vfx/taller/<servicio>-<v|h>.webm` (AV1) + `.mp4` (H.264) + póster `.jpg`.
+  - `v` = vertical 576×1024 (móvil) · `h` = horizontal 1024×576 (ordenador); el navegador los amplía a pantalla completa.
+  - El navegador usa AV1 si lo decodifica bien (en móvil, solo si lo hace el chip, para no gastar batería); si no, H.264.
+- Render: `tools/taller-vfx/3d/` → `motor.js` (motor WebGL2), `escenas3.js` (las 12 escenas de cine),
+  `renderizar3d.py` (8 s, 24 fps, 6 subfotogramas por fotograma, un máster cuadrado 1024 del que salen las dos versiones).
+  `python3 tools/taller-vfx/3d/renderizar3d.py frenos` rehace solo frenos (unos 30 min en un ordenador normal).
 
 ## Nombres de archivo (12 servicios × 2 formatos)
 
@@ -35,7 +38,7 @@ Ejemplo: `frenos-v.mp4`, `frenos-v.jpg`, `frenos-h.mp4`, `frenos-h.jpg`.
 - **Fondo casi negro** (#06080B), el objeto en el **centro-alto** y los bordes oscuros: encima va texto.
 - **Poco contraste en la zona central-baja** del móvil (ahí están las tarjetas).
 - **Peso**: 400 KB – 1,2 MB cada uno. Más de 2 MB = el móvil tarda en arrancarlo.
-- **H.264 (MP4)**, `yuv420p`, `+faststart`. (WebM VP9 opcional: pon `webm: true` en `taller-vfx.js`.)
+- **AV1 (.webm)** + **H.264 (.mp4)**, `+faststart`. Si solo tienes MP4, pon `av1: false` en `taller-vfx.js`.
 - **Póster**: un fotograma representativo en JPG de 30–70 KB (sale al instante mientras llega el vídeo).
 
 ### Convertir tus vídeos con ffmpeg (PowerShell, sin instalar nada)

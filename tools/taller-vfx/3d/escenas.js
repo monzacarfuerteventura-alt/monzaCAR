@@ -167,4 +167,6 @@ ESC.distribucion = (t) => {
 /* ---------------- pruebas ---------------- */
 window.ESCENAS = () => Object.keys(ESC);
 window.preparar = (w, h) => prepararFB(w, h);
-window.fotograma = (k, t, q = 0.92) => { render(ESC[k](t), t); return C.toDataURL("image/jpeg", q); };
+// N subfotogramas por fotograma (desenfoque de movimiento + profundidad de campo); nf = fotogramas por bucle
+window.fotograma = (k, t, q = 0.92, N = 1, nf = 192) => { renderAcum((ts) => (window.ESTILO ? estiloCine(ESC[k](ts), k, ts) : ESC[k](ts)), t, N, 1 / nf, 0.5); return C.toDataURL("image/jpeg", q); };
+window.fotogramaPNG = (k, t, N = 1, nf = 192) => { renderAcum((ts) => ESC[k](ts), t, N, 1 / nf, 0.5); return C.toDataURL("image/png"); };

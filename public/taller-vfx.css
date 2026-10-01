@@ -33,14 +33,16 @@
 }
 #v-taller.vfx-on .vfx-tint { opacity: 1; }
 
-/* capa oscura para que el texto se lea siempre (más fuerte arriba y abajo) + líneas de pantalla */
+/* capa oscura para que el texto se lea siempre (más fuerte arriba y abajo). Sin líneas de pantalla: la imagen es de cine */
 .vfx-overlay {
   position: absolute; inset: 0;
   background:
-    linear-gradient(180deg, rgba(8, 8, 10, .80) 0%, rgba(8, 8, 10, .44) 28%, rgba(8, 8, 10, .50) 62%, rgba(8, 8, 10, .90) 100%),
-    radial-gradient(120% 90% at 50% 45%, transparent 45%, rgba(0, 0, 0, .55) 100%),
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, .022) 0 1px, transparent 1px 4px);
+    linear-gradient(180deg, rgba(8, 8, 10, .78) 0%, rgba(8, 8, 10, .38) 28%, rgba(8, 8, 10, .44) 62%, rgba(8, 8, 10, .88) 100%),
+    radial-gradient(120% 90% at 50% 45%, transparent 45%, rgba(0, 0, 0, .5) 100%);
+  transition: opacity 1.4s cubic-bezier(.4, 0, .2, 1);
 }
+/* «revelado»: al elegir un servicio el vídeo se ve casi limpio un par de segundos */
+.vfx.vfx-revela .vfx-overlay { opacity: .35; transition-duration: .45s; }
 
 /* barrido de escáner cada vez que se cambia de servicio */
 .vfx-scan {
@@ -55,7 +57,7 @@
   100% { transform: translateY(100vh); opacity: 0; }
 }
 
-/* etiqueta técnica «MODO X-RAY · Frenos» (solo en pantallas grandes) */
+/* etiqueta de cine «● CÁMARA LENTA · 1000 FPS  Frenos» (solo en pantallas grandes) */
 .vfx-hud {
   position: absolute; right: 28px; bottom: 28px;
   display: flex; align-items: center; gap: 9px;
@@ -63,7 +65,7 @@
   color: rgba(255, 255, 255, .7);
   opacity: 0; transform: translateY(6px); transition: opacity .4s, transform .4s;
 }
-.vfx-hud::before { content: "X-RAY"; color: rgba(var(--vfx-c), 1); }
+.vfx-hud::before { content: "CÁMARA LENTA · 1000 FPS"; color: rgba(var(--vfx-c), 1); }
 .vfx-hud i { width: 6px; height: 6px; border-radius: 50%; background: rgba(var(--vfx-c), 1); box-shadow: 0 0 10px rgba(var(--vfx-c), 1); animation: vfx-led 1.6s ease-in-out infinite; order: -1; }
 @keyframes vfx-led { 50% { opacity: .35; } }
 #v-taller.vfx-on .vfx-hud { opacity: 1; transform: none; }
@@ -85,13 +87,13 @@
 /* en el móvil la capa oscura es algo más fuerte en el centro: ahí van las tarjetas */
 @media (max-width: 560px) {
   .vfx-overlay {
-    background:
-      linear-gradient(180deg, rgba(8, 8, 10, .78) 0%, rgba(8, 8, 10, .44) 30%, rgba(8, 8, 10, .52) 65%, rgba(8, 8, 10, .92) 100%),
-      repeating-linear-gradient(0deg, rgba(255, 255, 255, .02) 0 1px, transparent 1px 4px);
+    background: linear-gradient(180deg, rgba(8, 8, 10, .76) 0%, rgba(8, 8, 10, .40) 30%, rgba(8, 8, 10, .50) 65%, rgba(8, 8, 10, .92) 100%);
   }
+  .vfx.vfx-revela .vfx-overlay { opacity: .5; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .vfx-v { transition: opacity .3s; transform: none; }
   .vfx.vfx-barre .vfx-scan, .vfx-hud i { animation: none; }
+  .vfx-overlay { transition: none; }
 }
