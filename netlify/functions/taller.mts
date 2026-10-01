@@ -132,30 +132,6 @@ function faltaF5(f: F5): string {
   if (totalesF5(f).total <= 0) return "El total de la factura es 0 €: revisa los precios.";
   return "";
 }
-// ---------- factura de reparación (FORM-14) ----------
-function limpiarF5(x: any, prev: F5 | null): F5 {
-  const c = x?.cliente || {}, v = x?.vehiculo || {};
-  const lineas: F5Linea[] = (Array.isArray(x?.lineas) ? x.lineas : []).slice(0, 30)
-    .map((l: any) => ({ tipo: (uno(l?.tipo, ["MO", "REC", "OTRO"]) || "OTRO") as F5Linea["tipo"], ref: str(l?.ref, 30), desc: str(l?.desc, 200), cant: num(l?.cant, 100000), precio: num(l?.precio, 1e6), dto: num(l?.dto, 100) }))
-    .filter((l: F5Linea) => l.desc || l.ref || l.precio || l.cant);
-  return {
-    fechaOperacion: fechaISO(x?.fechaOperacion),
-    cliente: { nombre: str(c.nombre, 80), doc: str(c.doc, 20).toUpperCase(), direccion: str(c.direccion, 120), cp: str(c.cp, 60), telefono: str(c.telefono, 30), email: str(c.email, 120) },
-    vehiculo: { matricula: str(v.matricula, 12).toUpperCase(), vin: str(v.vin, 17).toUpperCase(), marcaModelo: str(v.marcaModelo, 80), kmEntrada: str(v.kmEntrada, 10).replace(/[^\d]/g, ""), kmSalida: str(v.kmSalida, 10).replace(/[^\d]/g, "") },
-    lineas, descuentoGlobal: num(x?.descuentoGlobal, 1e6), igicTipo: uno(x?.igicTipo, ["7", "0", "otro"]) as F5["igicTipo"], igicOtro: Math.min(30, num(x?.igicOtro, 30)),
-    observaciones: str(x?.observaciones, 800), cerrada: prev?.cerrada || false, rect: prev?.rect || 0, emision: prev?.emision || null,
-  };
-}
-function faltaF5(f: F5): string {
-  if (f.cliente.nombre.length < 2) return "Falta el nombre o la empresa del cliente.";
-  if (!f.vehiculo.matricula) return "Falta la matrícula.";
-  if (!f.lineas.length) return "Añade al menos una línea al detalle de la reparación.";
-  if (f.lineas.some((l) => !l.desc)) return "Todas las líneas necesitan una descripción.";
-  if (f.lineas.some((l) => !(l.cant > 0))) return "Todas las líneas necesitan una cantidad mayor que 0.";
-  if (!f.igicTipo) return "Elige el tipo de IGIC (7 % general, 0 % exento u otro).";
-  if (totalesF5(f).total <= 0) return "El total de la factura es 0 €: revisa los precios.";
-  return "";
-}
 function limpiarF4(x: any, prev: F4 | null): F4 {
   const items: F4["items"] = {}, notas: Record<string, string> = {};
   for (const [id] of [...F4_A, ...F4_B, ...F4_C, ...F4_D]) { items[id] = uno(x?.items?.[id], ["si", "no", "na"]) as any; const n = str(x?.notas?.[id], 160); if (n) notas[id] = n; }
