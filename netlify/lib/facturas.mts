@@ -63,7 +63,7 @@ export type Registro = {
   cliente: { nombre: string; doc: string; direccion: string; cp: string; telefono: string; email: string };
   matricula: string; orden: string; ordenNum: string; rectifica: string; motivo: string;
   lineas: unknown[]; suma: number; dto: number; base: number; pct: number; cuota: number; total: number;
-  prev: string; huella: string; por: string; nombre: string;
+  prev: string; huella: string; por: string; nombre: string; sello?: string; // sello: SHA-256 de TODO el registro (cliente y líneas incluidos)
 };
 
 // Registro «H»: ocupa el lugar de un registro que se reservó pero no llegó a escribirse (fallo de red, función cortada...).
@@ -89,13 +89,27 @@ export async function sellarHuecos(s: any, hasta: number): Promise<Registro> {
   return ult as Registro;
 }
 
+const selloDe = (r: Record<string, any>) => createHash("sha256").update(JSON.stringify({ ...r, sello: undefined })).digest("hex");
 export async function emitirFactura(d: Omit<Registro, "seq" | "numero" | "serie" | "tipo" | "ts" | "prev" | "huella"> & { rect: number; token: string }): Promise<Registro> {
   const s = fs(), llave = `orden/${d.token}~${d.rect}`;
-  const ya = (await s.get(llave, { type: "json" }).catch(() => null)) as { seq: number } | null; // reintento tras un fallo: mismo número
-  if (ya) { const r = (await s.get("reg/" + pad(ya.seq), { type: "json" }).catch(() => null)) as Registro | null; if (r) return r; }
+  const ya = (await s.get(llave, { type: "json" }).catch(() => null)) as { seq: number; numero?: string } | null; // reintento tras un fallo: mismo número
+  let yaHueco = false;
+  if (ya) { const r = (await s.get("reg/" + pad(ya.seq), { type: "json" }).catch(() => null)) as Registro | null; if (r && (r as any).serie !== "H") return r; if (r) yaHueco = true; }
   const serie = d.rect > 0 ? "R" : "F", tipo = d.rect > 0 ? "R1" : "F1", anio = d.fecha.slice(0, 4);
-  const nNum = await reservarNumero(s, `${serie}-${anio}`), numero = `${serie}-${anio}-${pad(nNum, 4)}`;
-  const seq = await reservarNumero(s, "registro");
+  let seq: number, numero: string;
+  if (ya && ya.numero && !yaHueco) { seq = ya.seq; numero = ya.numero; } // se reservó pero no llegó a escribirse: se reutiliza el mismo número (no queda hueco)
+  else {
+    const nNum = await reservarNumero(s, `${serie}-${anio}`); numero = `${serie}-${anio}-${pad(nNum, 4)}`;
+    seq = await reservarNumero(s, "registro");
+    // La llave de la orden se guarda ANTES que el registro: si algo falla a medias, el reintento reutiliza este número
+    const w0: any = yaHueco ? await s.setJSON(llave, { seq, numero }) : await s.setJSON(llave, { seq, numero }, { onlyIfNew: true });
+    if (w0 && w0.modified === false) {
+      const o = (await s.get(llave, { type: "json" }).catch(() => null)) as { seq: number; numero?: string } | null;
+      const r = o ? ((await s.get("reg/" + pad(o.seq), { type: "json" }).catch(() => null)) as Registro | null) : null;
+      if (r && (r as any).serie !== "H") return r;
+      throw new Error("Esta factura se está emitiendo en este momento; espera unos segundos y vuelve a pulsar Emitir.");
+    }
+  }
   let prev = "";
   if (seq > 1) { // la huella del registro anterior (si aún se está escribiendo, se espera un momento)
     for (let i = 0; i < 16 && !prev; i++) { const a = (await s.get("reg/" + pad(seq - 1), { type: "json" }).catch(() => null)) as Registro | null; if (a) prev = a.huella; else await new Promise((ok) => setTimeout(ok, 250)); }
@@ -103,10 +117,10 @@ export async function emitirFactura(d: Omit<Registro, "seq" | "numero" | "serie"
   }
   const ts = ahoraConHuso(), { rect: _r, token: _t, ...resto } = d;
   const reg: Registro = { ...resto, seq, numero, serie, tipo: tipo as "F1" | "R1", ts, prev, huella: huellaAlta({ nif: d.nif, numero, fecha: d.fecha, tipo, cuota: d.cuota, total: d.total, prev, ts }) };
+  reg.sello = selloDe(reg);
   const w: any = await s.setJSON("reg/" + pad(seq), reg, { onlyIfNew: true });
   if (w && w.modified === false) throw new Error("Conflicto al registrar la factura; vuelve a pulsar Emitir.");
   await s.setJSON("num/" + numero, { seq }).catch(() => {});
-  await s.setJSON(llave, { seq, numero }).catch(() => {});
   return reg;
 }
 
@@ -122,6 +136,7 @@ export async function comprobarIntegridad() {
     if (x.seq !== i + 1) fallos.push(`Falta el registro nº ${i + 1} (o está repetido).`);
     if (x.prev !== prev) fallos.push(`${x.numero}: no encadena con la anterior.`);
     if (huellaAlta({ nif: x.nif, numero: x.numero, fecha: x.fecha, tipo: x.tipo, cuota: x.cuota, total: x.total, prev: x.prev, ts: x.ts }) !== x.huella) fallos.push(`${x.numero}: los datos no coinciden con su huella (¿modificada?).`);
+    if (x.sello && selloDe(x) !== x.sello) fallos.push(`${x.numero}: el contenido (cliente, líneas…) ha cambiado desde que se emitió.`);
     prev = x.huella;
   });
   for (const serie of ["F", "R"]) { // numeración correlativa sin huecos dentro de cada serie y año
@@ -135,7 +150,7 @@ export async function comprobarIntegridad() {
 
 // ---------- listado para la gestoría ----------
 const coma = (n: number) => eur2(n).replace(".", ",");
-const cel = (v: unknown) => { const t = String(v ?? ""); return /[;"\n\r]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
+const cel = (v: unknown) => { let t = String(v ?? ""); if (/^[=+\-@\t\r]/.test(t) && !/^-?\d+([.,]\d+)?$/.test(t)) t = "'" + t; return /[;"\n\r]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
 export function listado(r: Registro[], desde = "", hasta = "") {
   const rect = new Set(r.filter((x) => x.rectifica).map((x) => x.rectifica));
   return r.filter((x) => x.serie !== "H" && (!desde || x.fecha >= desde) && (!hasta || x.fecha <= hasta)).map((x) => ({ ...x, estado: rect.has(x.numero) ? "Rectificada" : x.serie === "R" ? "Rectificativa" : "Vigente" }));

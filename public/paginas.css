@@ -19,7 +19,16 @@ a{color:inherit}
 .pg-nav a{text-decoration:none;color:rgba(242,239,234,.82)}
 .pg-nav a:hover{color:#fff}
 .pg-call{display:inline-flex;align-items:center;gap:8px;background:var(--rosso);color:#fff!important;padding:10px 18px;border-radius:999px;font-weight:700}
-@media (max-width:860px){.pg-nav a:not(.pg-call){display:none}.pg-logo img{height:34px}}
+@media (max-width:860px){
+  /* móvil: logo + «Llamar» arriba y, debajo, el menú en una fila deslizable (antes no había menú) */
+  .pg-top .wrap{flex-wrap:wrap;position:relative;min-height:0;row-gap:0}
+  .pg-logo{display:flex;align-items:center;min-height:56px}
+  .pg-logo img{height:34px}
+  .pg-nav{order:3;flex:0 0 100%;gap:2px;overflow-x:auto;scrollbar-width:none;white-space:nowrap;margin:0 -8px;padding:0 8px 2px}
+  .pg-nav::-webkit-scrollbar{display:none}
+  .pg-nav a:not(.pg-call){display:inline-flex;align-items:center;min-height:44px;padding:0 12px;font-size:14.5px}
+  .pg-nav .pg-call{position:absolute;right:16px;top:8px;min-height:40px}
+}
 /* migas */
 .migas{font-size:13.5px;color:var(--muted);padding:18px 0 0}
 .migas ol{list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0}
@@ -98,7 +107,7 @@ h3{font-size:21px;font-weight:800;font-stretch:100%}
 .info{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:24px;position:sticky;top:94px}
 .info h1{font-size:clamp(30px,4vw,44px);margin:0}
 .info .ver{color:var(--muted);margin-top:4px}
-.estado{display:inline-block;margin-bottom:12px;padding:5px 12px;border-radius:999px;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;background:#E3F2E9;color:var(--verde)}
+.estado{display:inline-block;margin-bottom:12px;padding:5px 12px;border-radius:999px;font-weight:800;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;background:#E3F2E9;color:#14532D}
 .estado.res{background:var(--rosso);color:#fff}.estado.ven{background:var(--ink);color:var(--ground)}
 .precio{font-family:var(--display);font-stretch:82%;font-weight:900;font-size:44px;letter-spacing:-.02em;margin:16px 0 0;line-height:1}
 .precio small{display:block;font-family:var(--body);font-size:13.5px;font-weight:600;color:var(--muted);letter-spacing:0;margin-top:6px}
@@ -295,3 +304,11 @@ h3{font-size:21px;font-weight:800;font-stretch:100%}
 .tabla th{text-align:left;font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--line)}
 .tabla td{padding:10px 14px;border-bottom:1px solid var(--line)}
 .tabla tr:last-child td{border-bottom:0}
+
+/* objetivos táctiles de 44 px en móvil (migas, pie, enlaces de correo) */
+@media (max-width:860px){
+  .migas ol{align-items:center}.migas li{display:flex;align-items:center}
+  .migas a{display:inline-flex;align-items:center;min-height:44px;padding-inline:2px}
+  footer a{display:inline-flex;align-items:center;min-height:44px;padding-inline:4px}
+  main p a[href^="mailto:"],.legal a[href^="mailto:"]{display:inline-block;padding-block:12px}
+}

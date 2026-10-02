@@ -49,12 +49,13 @@ window.VC_MED = {
   function aviso() {
     if (esPortada() || document.querySelector(".vc-ck")) return;
     var d = document.createElement("div"); d.className = "vc-ck"; d.setAttribute("role", "dialog"); d.setAttribute("aria-label", "Cookies");
-    d.innerHTML = '<p>Usamos cookies de Google (Analytics y Ads) solo para contar visitas y saber qué anuncios funcionan. <a href="/cookies">Más información sobre cookies</a></p><div><button type="button" data-no>Rechazar</button><button type="button" data-si>Aceptar</button></div>';
+    d.innerHTML = '<p>Usamos cookies de Google Analytics solo para contar visitas y saber qué páginas funcionan. <a href="/cookies">Más información sobre cookies</a></p><div><button type="button" data-no>Rechazar</button><button type="button" data-si>Aceptar</button></div>';
     d.style.cssText = "position:fixed;left:12px;right:12px;bottom:12px;z-index:999;max-width:560px;margin:0 auto;background:#1B1B1A;color:#F2EFEA;border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;font:14px/1.4 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.35)";
     d.querySelector("p").style.margin = "0"; d.querySelector("a").style.color = "#F2EFEA";
-    d.querySelectorAll("button").forEach(function (b) { b.style.cssText = "border:0;border-radius:10px;padding:9px 14px;font:inherit;font-weight:700;cursor:pointer;margin-left:6px;" + (b.hasAttribute("data-si") ? "background:#D9481C;color:#fff" : "background:#3a3936;color:#F2EFEA"); });
+    d.querySelectorAll("button").forEach(function (b) { b.style.cssText = "border:0;border-radius:10px;min-height:44px;padding:10px 16px;font:inherit;font-weight:700;cursor:pointer;margin-left:6px;" + "background:#F2EFEA;color:#1B1B1A"; });
     d.addEventListener("click", function (e) { var si = e.target.hasAttribute("data-si"), no = e.target.hasAttribute("data-no"); if (!si && !no) return;
-      try { localStorage.setItem(CK, si ? "si" : "no"); } catch (_) {} d.remove();
+      var antes = leer(); try { localStorage.setItem(CK, si ? "si" : "no"); } catch (_) {} d.remove();
+      if (no && antes === "si") { document.cookie.split(";").map(function (c) { return c.split("=")[0].trim(); }).filter(function (n) { return /^_(gcl|ga|gac)/.test(n); }).forEach(function (n) { document.cookie = n + "=; Max-Age=0; path=/"; document.cookie = n + "=; Max-Age=0; path=/; domain=" + location.hostname; }); }
       if (si) cargar(); else if (window.gtag) window.gtag("consent", "update", { ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied", analytics_storage: "denied" }); });
     document.body.appendChild(d);
   }
@@ -66,34 +67,32 @@ window.VC_MED = {
     if (dec === "si") cargar(); else if (!dec) aviso();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", arrancar); else arrancar();
-})();/* =====================================================================
-   Botón «Pagar mi reparación» (enlace de pago de Stripe) en el pie de las páginas
-   OJO: este enlace NO está unido a ninguna orden. Lo correcto es que el cliente pague desde su enlace
-   de seguimiento (/s/…), donde el importe sale del presupuesto y la orden pasa sola a «En reparación».
-   Aquí solo se deja como segunda vía, con el estilo de la marca y explicando qué hacer.
-   ===================================================================== */
-(function () {
-  var URL_PAGO = "https://buy.stripe.com/8x2bJ26ABao37kg3IK0x200";
-  function poner() {
-    var f = document.querySelector("footer");
-    if (!f || document.getElementById("vc-pagar")) return;
-    var d = document.createElement("div");
-    d.style.cssText = "text-align:center;margin:16px auto 4px;max-width:520px;padding:0 16px";
-    var a = document.createElement("a");
-    a.id = "vc-pagar"; a.href = URL_PAGO; a.target = "_blank"; a.rel = "noopener";
-    var en = document.documentElement.lang === "en";
-    a.textContent = en ? "Pay for my repair online" : "Pagar mi reparación online";
-    a.style.cssText = "display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 22px;background:#B83A12;color:#fff;border-radius:999px;font-weight:800;text-decoration:none;font-size:15px";
-    var nota = document.createElement("p");
-    nota.textContent = en ? "Got your tracking link? Pay from there: the amount comes straight from your quote." : "¿Tienes tu enlace de seguimiento? Paga desde ahí: el importe ya viene del presupuesto.";
-    nota.style.cssText = "margin:8px 0 0;font-size:12.5px;opacity:.7;line-height:1.4";
-    d.appendChild(a); d.appendChild(nota);
-    f.insertBefore(d, f.firstChild);
-  }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", poner);
-  else poner();
-})();
+})();/* El antiguo botón «Pagar mi reparación online» (enlace de Stripe suelto, sin orden) se ha quitado del pie: el pago se hace desde el enlace de seguimiento /s/… */
 /* El antiguo botón «Reservar este coche con 50 € de señal» (enlace de pago suelto) se ha quitado:
    buscaba páginas /coches/… que no existen (las fichas son /coche/…), así que nunca salía, y además se
    saltaba la reserva online de 50 € que ya tiene la web (aparta el coche, evita que dos personas paguen
    el mismo y lo marca «Reservado»: netlify/functions/reservas.mts). */
+
+/* Horario único de la web (hora de Canarias): L–V 8:00–16:00, salvo festivos. Lo usan «Abierto ahora» y el aviso del presupuesto por foto. */
+window.vcHorario = function () {
+  var FEST = "2026-10-12 2026-12-08 2026-12-25 2027-01-01 2027-01-06 2027-03-25 2027-03-26 2027-10-12 2027-11-01 2027-12-06 2027-12-08".split(" ");
+  var d = "Mon", h = 0, m = 0, f = "";
+  try {
+    var p = {}; new Intl.DateTimeFormat("en-GB", { timeZone: "Atlantic/Canary", weekday: "short", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date()).forEach(function (x) { p[x.type] = x.value; });
+    d = p.weekday; h = +p.hour; m = +p.minute; f = p.year + "-" + p.month + "-" + p.day;
+  } catch (_) { var n = new Date(); d = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][n.getDay()]; h = n.getHours(); m = n.getMinutes(); }
+  var lab = ["Mon", "Tue", "Wed", "Thu", "Fri"].indexOf(d) > -1 && FEST.indexOf(f) < 0, t = h * 60 + m;
+  return { dia: d, laborable: lab, minutos: t, abierto: lab && t >= 480 && t < 960 };
+};
+
+/* Etiquetas de Twitter/X para compartir (se copian de las de Open Graph, que ya están en todas las páginas) */
+(function () {
+  function poner() { try {
+    var og = function (n) { var m = document.querySelector('meta[property="og:' + n + '"]'); return m ? m.getAttribute("content") : ""; };
+    if (document.querySelector('meta[name="twitter:card"]')) return;
+    [["twitter:card", "summary_large_image"], ["twitter:title", og("title") || document.title], ["twitter:description", og("description")], ["twitter:image", og("image")]].forEach(function (p) {
+      if (!p[1]) return; var m = document.createElement("meta"); m.name = p[0]; m.content = p[1]; document.head.appendChild(m);
+    });
+  } catch (_) {} }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", poner); else poner();
+})();

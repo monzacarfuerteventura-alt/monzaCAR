@@ -341,7 +341,7 @@ f.addEventListener("submit",async e=>{e.preventDefault();err("");
  if(cita&&!st.hora){err("Elige el día y la hora de tu cita.");return;}
  if(!$("#r-ok").checked){err("Marca la casilla de privacidad para poder enviarlo.");return;}
  const q=new URLSearchParams(location.search),o={referrer:(document.referrer||"").slice(0,300),landing:(location.pathname+location.search).slice(0,300)};
- ["gclid","utm_source","utm_medium","utm_campaign","utm_term"].forEach(k=>{const v=q.get(k);if(v)o[k]=v.slice(0,200);});
+ ["gclid","utm_source","utm_medium","utm_campaign","utm_term"].forEach(k=>{const v=q.get(k);if(v)o[k]=v.slice(0,200);}); if(!["gclid","utm_source","utm_medium","utm_campaign","utm_term"].some(k=>o[k])&&window.vcOrigenGuardado)Object.assign(o,window.vcOrigenGuardado());
  const coche=car+($("#r-plate").value.trim()?" ("+$("#r-plate").value.trim()+")":"");
  const datos={tipo:"taller",nombre:nom,telefono:tel,mensaje:($("#r-msg").value.trim()+"\\n(Cliente "+C.de+")").trim(),servicios:srv,vehiculo:{coche:car,matricula:$("#r-plate").value.trim()},origen:o,idioma:"es",acepta:true,web:$("#r-web").value};
  if(cita)datos.cita={fecha:st.fecha,hora:st.hora};

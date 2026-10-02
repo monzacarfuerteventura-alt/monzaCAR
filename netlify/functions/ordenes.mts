@@ -1,4 +1,4 @@
-import type { Config } from "@netlify/functions";
+import type { Config, Context } from "@netlify/functions";
 import { store, json, isAdmin, enviarAviso, waNum, mismoOrigen, esVideo, borrarVideo } from "../lib/shared.mts";
 import { quien } from "../lib/taller.mts";
 import { exigirJornada } from "../lib/jornada.mts";
@@ -23,7 +23,7 @@ type Linea = { c: string; n: number; p: number };
 type Presupuesto = {
   lineas: Linea[]; igic: number; nota: string; validez: string;
   estado: "borrador" | "enviado" | "aceptado" | "rechazado"; enviado: string;
-  respuesta: { t: string; nombre: string; comentario: string } | null;
+  respuesta: { t: string; nombre: string; comentario: string; copia?: { lineas: Linea[]; igic: number; total: number; nota: string }; ip?: string } | null;
   pago?: { estado: "pendiente" | "pagado"; importe?: number; sesion: string; t: string; nombre?: string; comentario?: string; pi?: string } | null;
 };
 type Orden = {
@@ -87,7 +87,7 @@ async function anotarEnLead(leadId: string, cambios: Record<string, unknown>, ac
   await s.setJSON("s/" + leadId, l);
 }
 
-export default async (req: Request) => {
+export default async (req: Request, context?: Context) => {
   const url = new URL(req.url);
   const partes = url.pathname.split("/").filter(Boolean); // api, ordenes|seguimiento, token, respuesta
   const s = store("ordenes");
@@ -117,7 +117,8 @@ export default async (req: Request) => {
       const nombre = str(input.nombre, 80);
       if (accion === "aceptado" && (nombre.length < 2 || input.acepta !== true)) return json({ error: "Escribe tu nombre y marca la casilla para aceptar." }, 400);
       const t = new Date().toISOString();
-      p.estado = accion; p.respuesta = { t, nombre, comentario: str(input.comentario, 800) };
+      // Copia de lo que el cliente aceptó (líneas, total y desde dónde): si luego se reabre el presupuesto, queda constancia
+      p.estado = accion; p.respuesta = { t, nombre, comentario: str(input.comentario, 800), copia: { lineas: p.lineas.map((l) => ({ ...l })), igic: p.igic, total: totales(p).total, nota: p.nota }, ip: String(context?.ip || "").includes(":") ? String(context?.ip).split(":").slice(0, 4).join(":") + "::" : String(context?.ip || "").replace(/(\d+\.\d+\.\d+)\.\d+$/, "$1.0").slice(0, 45) };
       o.pasos.push({ estado: "presupuesto-" + accion, t, nota: "" });
       o.actualizado = t;
       await s.setJSON("o/" + token, o);
@@ -205,7 +206,19 @@ export default async (req: Request) => {
     if (Array.isArray(input.fotos)) o.fotos = input.fotos.map((f: any) => ({ k: str(f?.k, 60), txt: str(f?.txt, 160), t: str(f?.t, 30) || t })).filter((f: any) => esFoto(f.k)).slice(0, 40);
     if (input.presupuesto && typeof input.presupuesto === "object") {
       if (o.presupuesto && ["aceptado"].includes(o.presupuesto.estado) && !input.presupuesto.reabrir) return json({ error: "El cliente ya aceptó este presupuesto. Para cambiarlo, reábrelo." }, 409);
+      // límites del presupuesto (como en la factura): cantidades > 0, precios sin negativos, tope por línea y total
+      if (Array.isArray(input.presupuesto.lineas)) {
+        for (const l of input.presupuesto.lineas) {
+          const n = num(l?.n), p = num(l?.p);
+          if (str(l?.c, 160) && (Number(l?.n) <= 0 || n > 10000 || p > 1e5 || Number(String(l?.p ?? 0).replace(",", ".")) < 0))
+            return json({ error: "Hay una línea con precio o cantidad fuera de rango (máximo 100.000 € por línea y 10.000 unidades, sin negativos). Revísala." }, 400);
+        }
+      }
+      const hist = [...(((o.presupuesto as any)?.historial) || [])];
+      if (input.presupuesto.reabrir && o.presupuesto?.respuesta) hist.push({ ...o.presupuesto.respuesta, reabierto: t, estado: o.presupuesto.estado });
       o.presupuesto = limpiarPresupuesto(input.presupuesto, o.presupuesto);
+      if (hist.length) (o.presupuesto as any).historial = hist.slice(-10);
+      if (totales(o.presupuesto).total > 1e6) return json({ error: "El total del presupuesto supera 1.000.000 €: revisa los precios." }, 400);
       if (input.presupuesto.reabrir) { o.presupuesto.estado = "borrador"; o.presupuesto.respuesta = null; }
       if (input.presupuesto.enviar) {
         if (!o.presupuesto.lineas.length) return json({ error: "Añade al menos una línea al presupuesto." }, 400);
@@ -222,6 +235,7 @@ export default async (req: Request) => {
   if (req.method === "DELETE") {
     for (const v of o.videos || []) await borrarVideo({ key: v.key, poster: v.poster }).catch(() => {});
     await s.delete("o/" + token);
+    await store("taller").delete("f/" + token).catch(() => {}); // y la ficha con los datos del cliente (DNI, firma, teléfono): no se queda huérfana
     return json({ ok: true });
   }
   return json({ error: "Método no permitido" }, 405);

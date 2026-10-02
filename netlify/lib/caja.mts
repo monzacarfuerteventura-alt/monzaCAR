@@ -4,6 +4,7 @@
 // =====================================================================
 import { createHash } from "node:crypto";
 import { store, enviarAviso } from "./shared.mts";
+import { anotarSeguro } from "./libro.mts";
 import { leerEquipo, type Quien } from "./taller.mts";
 
 export const s = () => store("caja");
@@ -41,12 +42,7 @@ export function leerDesglose(x: any) {
 
 // ---------- libro de registro encadenado (cada entrada lleva la huella de la anterior) ----------
 export async function libro(q: Quien, accion: string, datos: Record<string, unknown>, turno = "", mov = "") {
-  const head = ((await s().get("libro-cabeza", { type: "json" }).catch(() => null)) as { hash: string; n: number } | null) || { hash: "0".repeat(64), n: 0 };
-  const e: any = { n: head.n + 1, t: ahora(), uid: q.uid, nombre: q.nombre, rol: q.rol, accion, turno, mov, datos, prev: head.hash };
-  e.hash = createHash("sha256").update(JSON.stringify({ ...e, hash: undefined })).digest("hex");
-  await s().setJSON(`log/${e.t}-${rid()}`, e);
-  await s().setJSON("libro-cabeza", { hash: e.hash, n: e.n });
-  return e;
+  return anotarSeguro(s(), (head) => ({ n: head.n + 1, t: ahora(), uid: q.uid, nombre: q.nombre, rol: q.rol, accion, turno, mov, datos, prev: head.hash }));
 }
 export async function alerta(nivel: "rojo" | "ambar" | "info", tipo: string, txt: string, filas: [string, string][], turno = "", mov = "", origin = "") {
   const a = { id: rid(), t: ahora(), nivel, tipo, txt, turno, mov, vista: false };

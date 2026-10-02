@@ -1,7 +1,7 @@
 import { store } from "./shared.mts";
 
 // Qué se guarda en las copias de seguridad (manual /api/copia y automática copia-programada.mts)
-export const ALMACENES = ["monzacar", "solicitudes", "ordenes", "taller", "caja", "finanzas", "almacen", "seguridad", "jornada", "entregas", "reservas", "marketing", "sistemas", "vehiculos"];
+export const ALMACENES = ["monzacar", "solicitudes", "ordenes", "taller", "caja", "finanzas", "almacen", "seguridad", "jornada", "entregas", "reservas", "marketing", "sistemas", "vehiculos", "enlaces"];
 export const SOLO_NOMBRES = ["monzacar-fotos", "monzacar-videos", "monzacar-informes", "reservas-docs"];
 const FUERA = (st: string, k: string) =>
   st === "seguridad" && (k.startsWith("log/") || k.startsWith("bloqueo/") || k.startsWith("fallo") || k.startsWith("aviso/") || /^config\/(totp|min-iat)/.test(k));
@@ -27,8 +27,16 @@ export async function volcar(nombre: string) {
       const t = await s.get(k, { type: "text" }).catch(() => null);
       if (t == null) return;
       try { out[k] = JSON.parse(t); } catch { out[k] = t; }
+      // Los PIN del equipo (aunque estén cifrados) no van a las copias: un PIN de 6 cifras se rompe en minutos si la copia se filtra
+      if (nombre === "taller" && /^equipo/.test(k)) out[k] = sinPines(out[k]);
     }));
   }
   return out;
 }
 
+
+function sinPines(x: any): any {
+  if (Array.isArray(x)) return x.map(sinPines);
+  if (x && typeof x === "object") { const o: Record<string, unknown> = {}; for (const [k, v] of Object.entries(x)) o[k] = k === "pin" ? (v ? { omitido: true } : v) : sinPines(v); return o; }
+  return x;
+}

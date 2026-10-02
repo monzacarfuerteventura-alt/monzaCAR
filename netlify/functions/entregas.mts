@@ -13,7 +13,8 @@ import { permiso, esRespuesta } from "../lib/acceso.mts";
 const ID = /^[A-Za-z0-9-]{3,60}$/;
 
 export default async (req: Request) => {
-  { const _q = await permiso(req, req.method === "DELETE" ? "gerente" : "equipo"); if (esRespuesta(_q)) return _q; }
+  // Ver las entregas: todo el equipo. Guardarlas (fotos y opiniones de clientes que salen en la web) lo hacen Recepción y el Gerente; borrarlas, solo el gerente.
+  { const _q = await permiso(req, req.method === "DELETE" ? "gerente" : req.method === "GET" ? "equipo" : "ventas"); if (esRespuesta(_q)) return _q; }
   const id = new URL(req.url).pathname.split("/").filter(Boolean)[2] || "";
   const s = estore();
 

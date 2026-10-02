@@ -64,15 +64,24 @@ export async function isAdmin(req: Request): Promise<boolean> {
   if (!s) return false;
   return s.iat >= (await minIat());
 }
+// Teléfono creíble: móvil o fijo español (9 cifras que empiezan por 6, 7, 8 o 9, con o sin +34) o internacional con prefijo + / 00
+export function telefonoValido(v: string) {
+  const t = String(v || "").trim(), d = t.replace(/[^\d]/g, "");
+  if (/^(\+|00)/.test(t)) { const n = d.replace(/^00/, ""); return n.length >= 10 && n.length <= 15 && !/^(\d)\1+$/.test(n); }
+  const n = d.length === 11 && d.startsWith("34") ? d.slice(2) : d;
+  if (/^[6789]\d{8}$/.test(n)) return !/^(\d)\1+$/.test(n);
+  return n.length >= 10 && n.length <= 15 && !n.startsWith("0") && !/^(\d)\1+$/.test(n); // extranjeros escritos sin + (turistas)
+}
 // Compara dos textos sin que el tiempo de respuesta dé pistas
 export function igualSeguro(a: string, b: string) {
   const x = createHash("sha256").update(String(a)).digest(), y = createHash("sha256").update(String(b)).digest();
   return timingSafeEqual(x, y);
 }
 // Rechaza envíos que vienen de otra web (el navegador siempre manda Origin en un POST desde JS)
-export function mismoOrigen(req: Request) {
+// exigir=true: en formularios públicos un envío sin Origin (scripts, curl) también se rechaza
+export function mismoOrigen(req: Request, exigir = false) {
   const o = req.headers.get("origin");
-  if (!o) return true;
+  if (!o) return !exigir;
   try { return new URL(o).host === new URL(req.url).host; } catch { return false; }
 }
 
@@ -192,6 +201,22 @@ export const SEMILLA: Car[] = [
     creado: "2026-09-22T12:00:00.000Z", actualizado: "2026-09-22T12:00:00.000Z",
   },
 ];
+// Coches nuevos que se publican desde el código (sin pasar por el panel). Cada uno se mete UNA sola vez
+// en la base de datos del panel (clave «semilla-<id>»): si luego lo borras desde el panel, no vuelve.
+export const SEMILLA_NUEVOS: Car[] = [
+  {
+    id: "ford-tourneo-connect-2007",
+    marca: "Ford", modelo: "Tourneo Connect", version: "GLX 1.8 TDCi",
+    anio: 2007, km: 206330, combustible: "Diésel", cambio: "Manual",
+    cv: 110, puertas: 5, color: "Dorado", etiqueta: "",
+    precio: 3000,
+    descripcion: "Ford Tourneo Connect GLX con motor diésel 1.8 TDCi (81 kW) y cambio manual de 5 marchas.\n\nPara quién: familias o autónomos que necesitan espacio. Tiene 5 plazas, maletero con red de carga, cubre-equipajes y muchos huecos de almacenaje en el techo.\n\nQué incluye: aire acondicionado, radio CD, sensores de aparcamiento traseros, llantas de aleación de 16\", mando a distancia, ficha técnica y permiso de circulación.\n\nLo que debes saber: tiene óxido leve en la junta inferior de una ventanilla (foto 24), el paragolpes delantero tiene zonas negras sin pintar y una de las llantas tiene arañazos. Por fuera tiene polvo de uso diario.\n\nVen a probarlo sin compromiso a Antigua o escríbenos por WhatsApp al 643 66 88 13.",
+    equipamiento: ["Aire acondicionado", "Radio CD", "Sensores de aparcamiento traseros", "Llantas de aleación de 16\"", "Mando a distancia", "5 plazas", "Red de carga en el maletero", "Cubre-equipajes", "Portaobjetos en el techo"],
+    fotos: Array.from({ length: 24 }, (_, i) => `/coches/ford-tourneo-connect-2007/${i + 1}.jpg`),
+    estado: "disponible", destacado: false,
+    creado: "2026-10-01T12:00:00.000Z", actualizado: "2026-10-01T12:00:00.000Z",
+  },
+];
 const str = (v: unknown, max = 200) => String(v ?? "").trim().slice(0, max);
 const int = (v: unknown) => {
   const n = parseInt(String(v ?? "").replace(/[^\d]/g, ""), 10);
@@ -254,6 +279,8 @@ export function cleanCar(input: any, prev?: Car): { car?: Car; error?: string } 
   if (!car.marca || !car.modelo) return { error: "Falta la marca o el modelo." };
   if (car.anio < 1950 || car.anio > new Date().getFullYear() + 1) return { error: "El año no es válido." };
   if (!car.precio) return { error: "Falta el precio." };
+  if (car.precio < 100 || car.precio > 500000) return { error: "El precio no parece correcto (entre 100 € y 500.000 €). Revísalo." };
+  if (Number(input.km) < 0 || car.km > 2000000) return { error: "Los kilómetros no son válidos." };
   // historial de precios y rebaja: se conservan; si el gerente cambia el precio a mano, se apunta
   if (prev) {
     car.precios = prev.precios; car.rebaja = prev.rebaja || null;

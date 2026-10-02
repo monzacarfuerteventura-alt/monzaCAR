@@ -1,6 +1,7 @@
 import type { Config, Context } from "@netlify/functions";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { Buffer } from "node:buffer";
+import { permiso, esRespuesta } from "../lib/acceso.mts";
 import { store, json } from "../lib/shared.mts";
 import { EMPRESA } from "../lib/paginas.mts";
 import { hoyCanarias, horaCanarias } from "../lib/taller.mts";
@@ -402,6 +403,7 @@ export default async (req: Request, context: Context) => {
   }
   // 2) Comprobación rápida desde el navegador
   if (req.method === "GET" && url.searchParams.get("probar") === "1") {
+    { const _q = await permiso(req, "gerente"); if (esRespuesta(_q)) return _q; } // la comprobación ya no es pública: solo con la sesión del gerente
     const falta = ["WA_TOKEN", "WA_PHONE_ID", "WA_APP_SECRET", "WA_VERIFY_TOKEN", "GROQ_API_KEY"].filter((k) => !env(k));
     const abierto = await tallerAbierto();
     return json({ listo: !falta.length, faltan: falta, canales: { whatsapp: !!env("WA_TOKEN"), messenger: !!env("FB_PAGE_TOKEN"), instagram: !!(env("IG_TOKEN") || env("FB_PAGE_TOKEN")) }, modo: modo(), taller_abierto_ahora: abierto, atiende_ahora: modo() === "siempre" || (modo() === "fuera_de_horario" && !abierto), etiqueta_vip: ETIQUETA_VIP });
@@ -441,4 +443,4 @@ export default async (req: Request, context: Context) => {
   return new Response("ok", { status: 200 });
 };
 
-export const config: Config = { path: ["/api/whatsapp", "/api/meta"], rateLimit: { windowLimit: 240, windowSize: 60, aggregateBy: ["domain"] } };
+export const config: Config = { path: ["/api/whatsapp", "/api/meta"], rateLimit: { windowLimit: 240, windowSize: 60, aggregateBy: ["ip", "domain"] } };

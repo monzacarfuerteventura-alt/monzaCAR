@@ -11,7 +11,7 @@ import { store } from "../lib/shared.mts";
   Si la base de datos no responde devuelve 503 y "ok":false.
   La versión (v) se sube a mano en cada actualización; el instalador comprueba que coincide.
 */
-const VERSION = "12";
+const VERSION = "19";
 export default async (req: Request) => {
   if (req.method !== "GET" && req.method !== "HEAD") return new Response("Método no permitido", { status: 405 });
   let bd = false, copia = "sin-datos";

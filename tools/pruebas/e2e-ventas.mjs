@@ -130,6 +130,11 @@ check("WhatsApp sigue funcionando (marca «escribiendo» y responde)", r.status 
 check("WhatsApp también pasa por el filtro", texto.length === 1 && !V.tieneProhibidas(texto[0].body.text.body) && /Te espero mañana/.test(texto[0].body.text.body), texto[0]?.body.text.body);
 enviados.length = 0;
 r = await wa.default(new Request("https://volcanocars.com/api/whatsapp?probar=1"), { ip: "1.1.1.1", geo: {} });
+check("probar=1 ya NO es público (sin sesión: 401)", r.status === 401);
+const lgn = await import("../../netlify/functions/login.mts");
+const lr = await lgn.default(new Request("https://volcanocars.com/api/login", { method: "POST", headers: { "content-type": "application/json", origin: "https://volcanocars.com" }, body: JSON.stringify({ clave: ENV.ADMIN_PASSWORD }) }), { ip: "2.2.2.2", geo: {} });
+const tokG = (await lr.json()).token;
+r = await wa.default(new Request("https://volcanocars.com/api/whatsapp?probar=1", { headers: { authorization: "Bearer " + tokG } }), { ip: "1.1.1.1", geo: {} });
 j = await r.json();
 check("probar=1 informa de los tres canales", j.canales && j.canales.whatsapp === true && j.canales.messenger === true && j.canales.instagram === true, JSON.stringify(j));
 

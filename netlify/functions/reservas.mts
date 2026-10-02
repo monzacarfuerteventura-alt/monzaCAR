@@ -1,6 +1,6 @@
 import type { Config, Context } from "@netlify/functions";
 import { createHash } from "node:crypto";
-import { store, json, isAdmin, mismoOrigen, waNum } from "../lib/shared.mts";
+import { store, json, isAdmin, mismoOrigen, waNum, telefonoValido } from "../lib/shared.mts";
 import { notificarExternos } from "../lib/notificar.mts";
 import { limpiar, huecoValido, bloqueos, ocuparHueco, avisar, str } from "../lib/solicitud.mts";
 import {
@@ -39,7 +39,7 @@ const titulo = (c: { marca: string; modelo: string }) => `${c.marca} ${c.modelo}
 const enlaceCoche = (origin: string, id: string) => `${origin}/comprar?coche=${encodeURIComponent(id)}`;
 
 async function limite(ip: string, ua: string, que: string, max: number) {
-  const key = "rl/" + createHash("sha256").update(ip + "|" + ua + "|" + que).digest("hex").slice(0, 24);
+  const key = "rl/" + createHash("sha256").update(ip + "|" + que).digest("hex").slice(0, 24);
   const hace1h = Date.now() - 3600e3;
   const l = (((await R().get(key, { type: "json" }).catch(() => null)) as number[] | null) || []).filter((t) => t > hace1h);
   if (l.length >= max) return false;
@@ -96,14 +96,15 @@ export default async (req: Request, context: Context) => {
 
   // ---------------- lista de espera (público) ----------------
   if (a === "espera" && !b && req.method === "POST") {
-    if (!mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
-    const i = (await req.json().catch(() => null)) as any;
+    if (!mismoOrigen(req, true)) return json({ error: "Origen no permitido" }, 403);
+    const crudo = await req.text().catch(() => ""); if (crudo.length > 20000) return json({ error: "Solicitud demasiado grande." }, 413);
+    let i: any = null; try { i = JSON.parse(crudo); } catch { i = null; }
     if (!i || typeof i !== "object") return json({ error: "Datos no válidos." }, 400);
     if (str(i.web, 50)) return json({ ok: true });
     const en = i.idioma === "en";
     const nombre = str(i.nombre, 80), telefono = str(i.telefono, 30);
     if (nombre.length < 2) return json({ error: en ? "Please write your name." : "Escribe tu nombre." }, 400);
-    if (digitos(telefono).length < 9) return json({ error: en ? "Please check your phone number." : "Revisa el número de WhatsApp." }, 400);
+    if (!telefonoValido(telefono)) return json({ error: en ? "Please check your phone number." : "Revisa el número de WhatsApp." }, 400);
     if (i.acepta !== true) return json({ error: en ? "Please tick the privacy box." : "Marca la casilla de privacidad." }, 400);
     const coche = (await leerCoches()).find((c) => c.id === str(i.cocheId, 64));
     if (!coche || coche.estado === "vendido") return json({ error: en ? "This car is no longer for sale." : "Este coche ya no está a la venta." }, 404);
@@ -141,7 +142,7 @@ export default async (req: Request, context: Context) => {
 
   // ---------------- empezar una reserva (público) ----------------
   if (!a && req.method === "POST") {
-    if (!mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
+    if (!mismoOrigen(req, true)) return json({ error: "Origen no permitido" }, 403);
     if (Number(req.headers.get("content-length") || 0) > 20000) return json({ error: "Solicitud demasiado grande." }, 413);
     const i = (await req.json().catch(() => null)) as any;
     if (!i || typeof i !== "object") return json({ error: "Datos no válidos." }, 400);
@@ -154,7 +155,7 @@ export default async (req: Request, context: Context) => {
     if (!metodo || (metodo === "tarjeta" && !cfg.tarjeta) || (metodo === "transferencia" && !cfg.transferencia) || (metodo === "bizum" && !cfg.bizum)) return json({ error: T("Elige una forma de pago.", "Choose a payment method.") }, 400);
     const nombre = str(i.nombre, 80), telefono = str(i.telefono, 30), email = str(i.email, 120);
     if (nombre.length < 2) return json({ error: T("Escribe tu nombre.", "Please write your name.") }, 400);
-    if (digitos(telefono).length < 9) return json({ error: T("Revisa el número de WhatsApp.", "Please check your phone number.") }, 400);
+    if (!telefonoValido(telefono)) return json({ error: T("Revisa el número de WhatsApp.", "Please check your phone number.") }, 400);
     if (email && !esEmail(email)) return json({ error: T("Revisa el email.", "Please check your email.") }, 400);
     if (i.acepta !== true) return json({ error: T("Tienes que aceptar las condiciones de la reserva y la política de privacidad.", "Please accept the reservation terms and privacy policy.") }, 400);
     const coche = (await leerCoches()).find((c) => c.id === str(i.cocheId, 64));
@@ -217,7 +218,8 @@ export default async (req: Request, context: Context) => {
 
   // ---------------- panel: lista de reservas ----------------
   if (!a && req.method === "GET") {
-    { const _q = await permiso(req, "equipo"); if (esRespuesta(_q)) return _q; }
+    const _q = await permiso(req, "equipo"); if (esRespuesta(_q)) return _q;
+    const verCobro = _q.admin || _q.rol === "recepcion"; // IBAN, Bizum y justificantes: solo recepción y gerente
     await caducar(origin, true).catch(() => {});
     const s = R();
     const { blobs } = await s.list({ prefix: "r/" });
@@ -229,7 +231,7 @@ export default async (req: Request, context: Context) => {
     const espera: Record<string, Espera[]> = {};
     for (const x of esp) { const l = (await s.get(x.key, { type: "json" }).catch(() => null)) as Espera[] | null; if (l?.length) espera[x.key.slice(7)] = l; }
     const coches = (await leerCoches()).map((c) => ({ id: c.id, titulo: titulo(c), anio: c.anio, estado: c.estado, precio: c.precio }));
-    return json({ reservas: todas, espera, coches, config: await leerConfig(), publica: await configPublica(), stripe: stripeActivo(), horas: HORAS_RESERVA });
+    return json({ reservas: todas, espera, coches, config: verCobro ? await leerConfig() : {}, publica: await configPublica(), stripe: stripeActivo(), horas: HORAS_RESERVA });
   }
 
   // ---------------- a partir de aquí: una reserva concreta ----------------
@@ -239,7 +241,7 @@ export default async (req: Request, context: Context) => {
   // justificante: el cliente lo sube · el panel lo ve
   if (b === "justificante") {
     if (req.method === "GET") {
-      { const _q = await permiso(req, "equipo"); if (esRespuesta(_q)) return _q; }
+      { const _q = await permiso(req, "ventas"); if (esRespuesta(_q)) return _q; }
       if (!r.justificante) return new Response("No hay justificante", { status: 404 });
       const data = await DOCS().get(r.justificante, { type: "arrayBuffer" });
       if (!data) return new Response("No encontrado", { status: 404 });

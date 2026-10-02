@@ -44,7 +44,7 @@ export default async (req: Request, context: Context) => {
     if (!/^[a-z0-9-]{1,64}$/i.test(id)) return json({ error: "Coche no válido" }, 400);
     if (!mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
     if (!(await cocheExiste(id))) return json({ error: "Coche no válido" }, 404);
-    const quien = createHash("sha256").update((context.ip || "") + "|" + (req.headers.get("user-agent") || "") + "|mz").digest("hex").slice(0, 20);
+    const quien = createHash("sha256").update((context.ip || "") + "|mz").digest("hex").slice(0, 20);
     const l = (r[id] ||= []);
     if (!l.some((x) => x.h === quien)) {
       l.push({ t: Date.now(), h: quien });

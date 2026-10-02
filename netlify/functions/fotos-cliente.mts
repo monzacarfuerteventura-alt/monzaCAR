@@ -16,7 +16,7 @@ const LIMITE_HORA = 16;
 
 async function dentroDelLimite(ip: string, ua: string) {
   const s = store(FOTOS_CLIENTE);
-  const key = "rl/" + createHash("sha256").update(ip + "|" + ua + "|vc-fotos").digest("hex").slice(0, 24);
+  const key = "rl/" + createHash("sha256").update(ip + "|vc-fotos").digest("hex").slice(0, 24);
   const hace1h = Date.now() - 3600e3;
   const lista = (((await s.get(key, { type: "json" }).catch(() => null)) as number[] | null) || []).filter((t) => t > hace1h);
   if (lista.length >= LIMITE_HORA) return false;
@@ -38,7 +38,7 @@ export default async (req: Request, context: Context) => {
   }
 
   if (req.method === "POST" && !key) {
-    if (!mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
+    if (!mismoOrigen(req, true)) return json({ error: "Origen no permitido" }, 403);
     if ((req.headers.get("content-type") || "").split(";")[0] !== "image/jpeg") return json({ error: "Sube una foto (JPG)." }, 415);
     if (Number(req.headers.get("content-length") || 0) > MAX) return json({ error: "La foto pesa demasiado." }, 413);
     const buf = await req.arrayBuffer();

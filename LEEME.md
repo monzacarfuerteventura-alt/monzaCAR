@@ -234,3 +234,65 @@ Panel -> Taller -> **Coches propios**: control interno de cada coche que compras
 ## Actualizacion 12 (videos de la Ayuda sin versiones viejas)
 - Los videos de `/ayuda/` se guardaban una semana en el navegador con el mismo nombre, asi que tras actualizar se veian los videos antiguos (p. ej. 0:21) con la lista nueva (4:14). Ahora cada video se pide con `?v=<huella>` (generada por `tools/ayuda/videos.py`), la cache es larga e inmutable y, al reproducir, el panel compara la duracion real con la esperada: si no cuadra, pide el video otra vez y, si aun asi no cuadra, avisa de pulsar Ctrl+F5.
 - Tras regrabar videos: `python3 tools/ayuda/videos.py && python3 tools/ayuda/inyectar.py`.
+
+## Actualizacion 13 (voz de la Ayuda: clave de ElevenLabs desde el panel y voz del navegador)
+- Ayuda → Voz → «Voz más natural (ElevenLabs)» → **Clave de ElevenLabs**: se pega la clave en el propio panel (también desde el móvil), se comprueba contra ElevenLabs y se guarda en el servidor (almacén `ayuda-voz`, clave `clave`; solo la lee `netlify/functions/voz.mts`). Gana sobre la variable `ELEVENLABS_API_KEY` de Netlify. Rutas: `POST /api/voz/clave`, `POST /api/voz/claveborrar` (solo gerente).
+- Voz del navegador (`public/panel-plus.js`, `decir()`): si el aparato no tiene voz en español ya NO lee con la voz por defecto (en algunos móviles suena a chino); avisa y propone instalarla o usar ElevenLabs. Tono más natural (antes bajaba el tono a 0,72).
+
+## Actualización 14 (incluye la 11, 12 y 13)
+- **Voz de la Ayuda · errores claros de ElevenLabs.** ElevenLabs responde «401» tanto si la clave es mala como si te has quedado sin créditos, no tiene permisos o el plan gratuito está bloqueado. Antes el panel decía siempre «clave no válida». Ahora lee el motivo real (`errEleven` en `netlify/functions/voz.mts`) y lo enseña con la frase original de ElevenLabs.
+- **No gasta créditos de más.** `/api/voz/generar` salta las frases que ya tienen voz (salvo «Volver a generar», que manda `forzar`). El panel solo pide las que faltan, no repite tras un error que ya explica el motivo, y si falla a medias dice cuántas frases se guardaron.
+- **Saldo.** `GET /api/voz/saldo` (gerente) lee los créditos de la cuenta; el panel los enseña y avisa si no bastan. Si la clave no tiene permiso «Usuario», se sigue sin ese dato.
+- Con la voz ya hecha también aparece «Generar los N vídeos que faltan», y los avisos y errores de «Descargar MP3» ya se ven.
+- Se instala una sola vez: la 14 contiene la 13, así que solo hay un despliegue en Netlify.
+
+## Actualización 15 (incluye la 11, 12, 13 y 14)
+
+- **Facturas rectificativas.** Al reabrir una factura de taller ya emitida, esa factura NO se toca: queda en el registro y la siguiente emisión sale como rectificativa (R-AAAA-NNNN) citando la original.
+- **Mecánico.** Ya no puede cambiar precios ni datos de coches ni entregas: eso es de Recepción y Gerente (nivel `ventas` en `acceso.mts`).
+- **Anti-spam.** Los límites por persona usan solo la IP (antes también el navegador y se saltaban), hay un tope global por hora, y los formularios públicos exigen cabecera Origin.
+- **Textos.** Se quita la promesa de «presupuesto en menos de 1 hora» y «te contestamos en minutos»; la cláusula del +10 % de Prioridad Taller figura en las condiciones (apartado 3).
+- Se instala una sola vez: la 15 contiene de la 11 a la 14, un único despliegue.
+
+## Actualización 16 (incluye la 11 a la 15)
+
+Arreglos de la auditoría de la web pública (puntos 2 a 14 de la tabla; el 1 ya estaba en la 15):
+- **Privacidad en inglés** ahora dice lo mismo que el texto en español (chat con Groq, analítica solo si aceptas cookies).
+- **Banner de cookies** de las páginas estáticas: «Aceptar» y «Rechazar» con el mismo aspecto y 44 px; al rechazar se borran `_ga`/`_gcl`; texto «Google Analytics» (no «Ads»).
+- **Menú en móvil** en las páginas estáticas (fila deslizable bajo el logo).
+- **Inglés**: «Atrás» funciona entre secciones (`/en/#taller`), cada sección tiene su título, el selector EN/ES conserva la sección y los precios salen como €13,990.
+- **«Abierto ahora»** tiene en cuenta los festivos (lista en `medicion.js`, `vcHorario`) y usa 16:00 en todas partes.
+- **Títulos y descripciones** ≤60 y ≤155 caracteres (también los de fichas y pueblos, recortados automáticamente en `paginas.mts`); se quita «Precios desde 2.500 €».
+- **Botón «Pagar mi reparación»** del pie quitado (se paga desde el enlace de seguimiento).
+- **Táctil**: enlaces de pie, migas y legales de 44 px; contraste de «Disponible · revisado».
+- **Condiciones**: apartado del control de calidad de 30 puntos.
+- **robots.txt** permite `/api/coches` para que Google vea el catálogo.
+- `tools/seo.py` y `tools/build-rutas.py` con los títulos nuevos. OJO: no ejecutes `tools/seo.py` sin revisar: sus plantillas van por detrás de las páginas ya publicadas.
+
+## Actualización 17 (incluye la 11 a la 16) · resto de la auditoría
+
+Servidor y datos
+- **Precios y kilómetros de coches**: precio entre 100 y 500.000 €, km ≥ 0 (antes aceptaba −500 € o 1 billón).
+- **Presupuestos del taller**: líneas con cantidad > 0, sin precios negativos, tope 100.000 €/línea y 1.000.000 € en total. Al aceptar el cliente se guarda una copia de lo aceptado (y si se reabre, queda en `historial`).
+- **Facturas**: no se recorta nada en silencio (error si el precio pasa de 1.000.000 €); con IGIC 0 % hay que escribir el motivo de la exención; sin NIF solo se emite una **factura simplificada** de hasta 400 €; la clave de reintento se guarda antes que el registro (si algo falla a medias, el reintento reutiliza el mismo número, sin facturas dobles); cada registro lleva además un sello SHA-256 de todo su contenido que «Comprobar integridad» verifica.
+- **Cobros**: el importe no puede pasar de lo que vale el trabajo/coche (pide confirmación explícita), tope 1.000.000 €, y la fecha tiene que existir (no 31-02).
+- **Libros encadenados** (caja, finanzas, jornada…): el número de anotación se reserva con «solo si no existe», así dos fichajes a la vez ya no dan «cadena rota».
+- **Reservas de coche y huecos de cita**: también atómicas (`onlyIfNew`), sin doble reserva.
+- **Mecánico**: no ve los datos de financiación de los clientes, ni el IBAN/Bizum, ni los justificantes bancarios.
+- **Seguridad**: `/api/asistente?probar=1` y `/api/whatsapp?probar=1` ahora piden sesión de gerente; los PIN no van en las copias de seguridad y no se admiten PIN tipo 123456 o 111111; CSV del CRM y de la gestoría neutralizan fórmulas (`=…`); contadores «viendo/interesados» sin User-Agent; tamaño real de lo recibido en solicitudes y reservas; rate limit de WhatsApp por IP.
+- **RGPD**: borrar una orden borra su ficha (DNI, firma); tarea diaria borra solicitudes y reservas (con justificante) de más de 2 años aunque nadie abra el CRM.
+- **Teléfonos**: móvil/fijo español (6, 7, 8 o 9 + 8 cifras, con o sin +34) o internacional con + / 00.
+- Matrícula: se guarda en mayúsculas y sin espacios ni guiones.
+
+Panel
+- **Agenda → «+ Apuntar cita»**: para el cliente que llama o viene en persona (día y hora libres de la web, taller o visita de coche). Ocupa el hueco y crea la ficha en el CRM.
+- **Clientes duplicados**: al crear un cliente con un teléfono que ya existe avisa y ofrece abrir su ficha.
+- Móvil: las subpestañas de Taller e Inventario se desplazan (ya no ensanchan la página), textos largos no rompen el diseño, objetivos táctiles de 44 px, degradado que avisa de que hay más pestañas, botón «Marketing en vivo» discreto.
+- Sin conexión sale «Sin conexión. Lo que escribiste NO se ha guardado…» en vez de «Failed to fetch».
+- El Dashboard ya no dice «Facturación» (son importes de trabajos cerrados del CRM; la facturación real está en Finanzas).
+- Accesibilidad: «Saltar al contenido», flechas ← → entre pestañas, nombres para botones sin texto, topes de longitud en campos. Glosario de siglas al final de cada pantalla.
+
+Web pública
+- Página 404 propia, `site.webmanifest` con nombre y colores, `twitter:card`, «Costa de Antigua» unificado, `lastmod` del sitemap, «Pagas (al contado o financiado)», `h1` en Comprar/Taller/Contacto, validación propia en el formulario del taller y tope de texto (1.500), «Aire acondicionado» ya no se parte por la mitad.
+
+Pendiente a propósito: Verifactu y garantía de 12 meses (gestoría/abogado); copias de seguridad de fotos/PDF y restauración; `SESSION_SECRET` obligatorio (hay que ponerlo antes en Netlify); límite de tiempo de la copia cuando crezcan los datos.

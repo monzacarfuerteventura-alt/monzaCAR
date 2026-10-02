@@ -60,7 +60,7 @@ export default async (req: Request, context: Context) => {
     try { body = JSON.parse((await req.text()) || "{}"); } catch { /* sendBeacon puede llegar vacío */ }
     const ses = String(body.s || "");
     if (!/^[a-z0-9-]{8,40}$/i.test(ses)) return json({ error: "Sesión no válida" }, 400);
-    const h = createHash("sha256").update((context.ip || "") + "|vi|" + (req.headers.get("user-agent") || "")).digest("hex").slice(0, 16);
+    const h = createHash("sha256").update((context.ip || "") + "|vi").digest("hex").slice(0, 16);
 
     const r = await leer();
     const l = (r[id] ||= []);

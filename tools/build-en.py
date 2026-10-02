@@ -367,6 +367,7 @@ RAW = [
     ('"Cerrado · abrimos hoy a las 8:00"', '"Closed · we open today at 8:00"'),
     ('"Cerrado · abrimos mañana a las 8:00"', '"Closed · we open tomorrow at 8:00"'),
     ('"Cerrado · abrimos el lunes a las 8:00"', '"Closed · we open on Monday at 8:00"'),
+    ('"Cerrado · abrimos el próximo día laborable a las 8:00"', '"Closed · we open on the next working day at 8:00"'),
 ]
 
 out = src

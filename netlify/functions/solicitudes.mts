@@ -47,6 +47,11 @@ export default async (req: Request, context: Context) => {
     if (input && input.manual === true) {
       const { s: sol, error } = limpiar(input, true);
       if (error || !sol) return json({ error }, 400);
+      // Cita apuntada a mano (el cliente llamó): se comprueba y se ocupa el hueco igual que si la reservara en la web
+      if (sol.cita) {
+        if (!huecoValido(sol.cita.fecha, sol.cita.hora, await bloqueos())) return json({ error: "Esa hora no está disponible (cerrado, pasada o con menos de 2 horas de margen). Elige otra.", ocupada: true }, 409);
+        if (!(await ocuparHueco(sol.cita.agenda, sol.cita.fecha, sol.cita.hora, sol.id))) return json({ error: "Esa hora ya está ocupada. Elige otra.", ocupada: true }, 409);
+      }
       await s.setJSON("s/" + sol.id, sol);
       return json(sol, 201);
     }
@@ -55,10 +60,12 @@ export default async (req: Request, context: Context) => {
 
   // ---------- la web guarda una solicitud ----------
   if (req.method === "POST" && !id) {
-    if (!mismoOrigen(req)) return json({ error: "Origen no permitido" }, 403);
+    if (!mismoOrigen(req, true)) return json({ error: "Origen no permitido" }, 403);
     const len = Number(req.headers.get("content-length") || 0);
     if (len > 20000) return json({ error: "Solicitud demasiado grande." }, 413);
-    const input = await req.json().catch(() => null);
+    const crudo = await req.text().catch(() => ""); // también se mide lo recibido (sin Content-Length, con chunked)
+    if (crudo.length > 20000) return json({ error: "Solicitud demasiado grande." }, 413);
+    let input: any = null; try { input = JSON.parse(crudo); } catch { input = null; }
     if (!input || typeof input !== "object") return json({ error: "Datos no válidos." }, 400);
     // Campo trampa: las personas no lo ven; los robots lo rellenan.
     if (str(input.web, 50)) return json({ ok: true });
@@ -83,7 +90,9 @@ export default async (req: Request, context: Context) => {
   }
 
   // ---------- a partir de aquí, solo el panel ----------
-  { const _q = await permiso(req, req.method === "DELETE" ? "gerente" : "equipo"); if (esRespuesta(_q)) return _q; }
+  const _q = await permiso(req, req.method === "DELETE" ? "gerente" : "equipo"); if (esRespuesta(_q)) return _q;
+  // Mínimo privilegio: el mecánico no necesita los ingresos y la situación laboral de los pre-estudios de financiación
+  const sinFin = (x: any) => { if (_q.admin || _q.rol !== "mecanico" || !x) return x; const { financiacion: _f, ...r } = x; return _f ? { ...r, financiacion: { oculto: true } } : r; };
 
   if (req.method === "GET" && !id) {
     const { blobs } = await s.list({ prefix: "s/" });
@@ -92,7 +101,7 @@ export default async (req: Request, context: Context) => {
     const viejas = todas.filter((x) => Date.parse(x.creado) < limite);
     await Promise.all(viejas.map((x) => s.delete("s/" + x.id).then(() => borrarFotos(x))));
     const vivas = todas.filter((x) => Date.parse(x.creado) >= limite).sort((a, b) => b.creado.localeCompare(a.creado));
-    return json(vivas);
+    return json(vivas.map(sinFin));
   }
 
   if (!/^[0-9]{14,20}-[a-f0-9]{8}$/.test(id)) return json({ error: "Solicitud no encontrada" }, 404);
@@ -127,7 +136,7 @@ export default async (req: Request, context: Context) => {
     }
     if (actual.estado !== "nueva" && !actual.primerContacto) actual.primerContacto = t;
     await s.setJSON("s/" + id, actual);
-    return json(actual);
+    return json(sinFin(actual));
   }
 
   if (req.method === "DELETE") {

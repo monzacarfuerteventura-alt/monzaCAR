@@ -16,7 +16,7 @@ export const PAGINAS = [
   "/financiacion-coches-fuerteventura/",
   "/itv-fuerteventura/",
 ];
-const HOY_WEB = "2026-09-26"; // última vez que cambió el contenido fijo de la web (SEO mejorado: sitemap, schema.org, local pages)
+const HOY_WEB = "2026-10-01"; // última vez que cambió el contenido fijo de la web (SEO mejorado: sitemap, schema.org, local pages)
 
 export default async (req: Request) => {
   const o = new URL(req.url).origin;

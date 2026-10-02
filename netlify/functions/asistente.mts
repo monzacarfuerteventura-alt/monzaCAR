@@ -1,4 +1,5 @@
 import type { Config, Context } from "@netlify/functions";
+import { permiso, esRespuesta } from "../lib/acceso.mts";
 import { store, SEMILLA, json, mismoOrigen, type Car } from "../lib/shared.mts";
 import { EMPRESA, slugDe, eur as eurExacto } from "../lib/paginas.mts";
 import { hoyCanarias, horaCanarias } from "../lib/taller.mts";
@@ -298,6 +299,7 @@ export default async (req: Request, _context: Context) => {
   // Comprobación rápida desde el navegador: https://TU-WEB/api/asistente?probar=1
   // Dice si la clave está puesta y si Groq responde (sin enseñar la clave).
   if (req.method === "GET" && new URL(req.url).searchParams.get("probar") === "1") {
+    { const _q = await permiso(req, "gerente"); if (esRespuesta(_q)) return _q; } // la comprobación ya no es pública: solo con la sesión del gerente
     const k = env("GROQ_API_KEY");
     if (!k) return json({ ia: false, problema: "Falta la variable GROQ_API_KEY en Netlify (o no se ha vuelto a publicar)." });
     const formato = k.startsWith("gsk_") ? "correcto (empieza por gsk_)" : "RARO: una clave de Groq empieza por gsk_";

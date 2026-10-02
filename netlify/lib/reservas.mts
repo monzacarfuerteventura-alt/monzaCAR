@@ -125,8 +125,9 @@ export function activa(r: Reserva) {
 }
 // Aparta el coche para esta reserva (si dos personas pulsan a la vez, gana la última escritura y la otra recibe «ocupado»)
 export async function apartar(r: Reserva): Promise<boolean> {
-  if (await apartadoDe(r.coche.id)) return false;
-  await R().setJSON("coche/" + r.coche.id, { token: r.token });
+  if (await apartadoDe(r.coche.id)) return false; // (también limpia una reserva caducada que siguiera apuntada)
+  const w: any = await R().setJSON("coche/" + r.coche.id, { token: r.token }, { onlyIfNew: true }).catch(() => null);
+  if (w && w.modified === false) return false; // otra persona lo apartó justo antes
   const v = (await R().get("coche/" + r.coche.id, { type: "json" }).catch(() => null)) as { token: string } | null;
   return !!v && v.token === r.token;
 }

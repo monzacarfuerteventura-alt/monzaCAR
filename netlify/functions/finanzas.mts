@@ -4,6 +4,7 @@ import { store, json, mismoOrigen, type Car } from "../lib/shared.mts";
 import { quien, hoyCanarias, leerConfig, type Quien } from "../lib/taller.mts";
 import { costesPorCoche } from "../lib/vehiculos.mts";
 import { todosLosRegistros } from "../lib/facturas.mts";
+import { anotarSeguro } from "../lib/libro.mts";
 import { str, cent, eur, esFoto, rid, ahora, listar as listarCaja, movsDe, turnoAbierto, crearMovimiento, leerMov, libro as libroCaja, s as sCaja, teorico, type Turno, type Mov } from "../lib/caja.mts";
 
 /*
@@ -41,7 +42,8 @@ const AREAS = ["taller", "venta", "general"];
 const PAGOS = ["efectivo", "tarjeta", "transferencia", "domiciliacion"];
 const COBROS = ["efectivo", "tarjeta", "transferencia", "financiacion"];
 const TXT_M: Record<string, string> = { efectivo: "Efectivo (caja)", tarjeta: "Tarjeta / TPV", transferencia: "Transferencia", domiciliacion: "Domiciliación bancaria", financiacion: "Financiación" };
-const fecha = (v: unknown) => (/^\d{4}-\d{2}-\d{2}$/.test(String(v ?? "")) ? String(v) : "");
+// Fecha real del calendario (rechaza 2026-02-31)
+const fecha = (v: unknown) => { const t = String(v ?? ""); if (!/^\d{4}-\d{2}-\d{2}$/.test(t)) return ""; const d = new Date(t + "T12:00:00Z"); return Number.isFinite(d.getTime()) && d.toISOString().slice(0, 10) === t ? t : ""; };
 const diaDe = (iso: string) => hoyCanarias(new Date(iso));
 
 type Adj = { key: string; tipo: "foto" | "pdf" } | null;
@@ -52,10 +54,7 @@ type Ingreso = { id: string; fecha: string; concepto: string; cliente: string; f
 
 // ---------- libro de finanzas (encadenado, igual que el de caja) ----------
 async function libro(q: Quien, accion: string, datos: Record<string, unknown>) {
-  const head = ((await f().get("libro-cabeza", { type: "json" }).catch(() => null)) as { hash: string; n: number } | null) || { hash: "0".repeat(64), n: 0 };
-  const e: any = { n: head.n + 1, t: ahora(), uid: q.uid, nombre: q.nombre, rol: q.rol, accion, datos, prev: head.hash };
-  e.hash = createHash("sha256").update(JSON.stringify({ ...e, hash: undefined })).digest("hex");
-  await f().setJSON(`log/${e.t}-${rid()}`, e); await f().setJSON("libro-cabeza", { hash: e.hash, n: e.n });
+  await anotarSeguro(f(), (head) => ({ n: head.n + 1, t: ahora(), uid: q.uid, nombre: q.nombre, rol: q.rol, accion, datos, prev: head.hash }));
 }
 async function lista<T>(prefix: string) { const { blobs } = await f().list({ prefix }); return (await Promise.all(blobs.map((b) => f().get(b.key, { type: "json" }).catch(() => null)))).filter(Boolean) as T[]; }
 const existeArchivo = async (k: string) => !!(await store("monzacar-fotos").get(k, { type: "arrayBuffer" }).catch(() => null));
@@ -275,12 +274,18 @@ export default async (req: Request) => {
   if (accion === "cobro" && req.method === "POST" && (id === "taller" || id === "venta")) {
     const metodo = COBROS.includes(body.metodo) ? body.metodo : ""; if (!metodo) return json({ error: "Elige cómo ha pagado." }, 400);
     const importe = cent(body.importe); if (!Number.isFinite(importe) || importe <= 0) return json({ error: "Escribe el importe cobrado." }, 400);
+    if (importe > 100000000) return json({ error: "Ese importe es demasiado grande (máximo 1.000.000 €). Revísalo." }, 400);
+    if (body.fecha && !fecha(body.fecha)) return json({ error: "La fecha no es válida." }, 400);
     const d = fecha(body.fecha) || hoyCanarias(); if (d > hoyCanarias()) return json({ error: "La fecha no puede ser futura." }, 400);
     const c: Cobro = { id: rid(), fecha: d, metodo, importe, cajaMov: "", nota: str(body.nota, 200), t: ahora(), por: q.nombre };
     let concepto = "", ref = "";
     if (id === "taller") {
       if (!/^[A-Za-z0-9]{16}$/.test(id2)) return json({ error: "Orden no válida." }, 400);
       const o = (await store("ordenes").get("o/" + id2, { type: "json" })) as any; if (!o) return json({ error: "Orden no encontrada." }, 404);
+      { const p = o.presupuesto; const reg0 = ((await f().get("cobro-taller/" + id2, { type: "json" }).catch(() => null)) as any) || { cobros: [] };
+        const ya = (reg0.cobros || []).reduce((n: number, x: any) => n + (x.importe || 0), 0);
+        const totalC = p && p.lineas ? Math.round(p.lineas.reduce((n: number, l: any) => n + (l.n || 1) * (l.p || 0), 0) * (1 + (p.igic ?? 7) / 100) * 100) : 0;
+        if (totalC > 0 && ya + importe > totalC + 1 && !body.confirmarExceso) return json({ error: `Con este cobro se pasa de lo que vale el trabajo (${eur(totalC)}; ya cobrado ${eur(ya)}). Revisa el importe.`, exceso: true }, 409); }
       concepto = `Cobro taller ${o.num || ""} · ${o.vehiculo?.coche || ""} ${(o.vehiculo?.matricula || "").toUpperCase()}`.trim(); ref = o.num || "";
       if (metodo === "efectivo") { if (d !== hoyCanarias()) return json({ error: "Un cobro en efectivo entra en la caja de hoy: pon la fecha de hoy." }, 400); const r = await porCaja(q, { tipo: "ingreso", importe: String(importe / 100), categoria: "taller", concepto, ref, orden: id2 }, origin); if (r.error) return json({ error: r.error }, 409); c.cajaMov = r.id!; }
       const reg = ((await f().get("cobro-taller/" + id2, { type: "json" }).catch(() => null)) as any) || { token: id2, cobros: [] };
@@ -290,6 +295,8 @@ export default async (req: Request) => {
       const v = (await f().get("venta/" + id2, { type: "json" }).catch(() => null)) as Venta | null;
       if (!v) return json({ error: "Primero registra los datos de la venta de este coche." }, 409);
       concepto = `Cobro venta · ${car ? car.marca + " " + car.modelo : id2}`; ref = v.factura;
+      { const ya = (v.cobros || []).reduce((n: number, x: any) => n + (x.importe || 0), 0);
+        if (v.importe > 0 && ya + importe > v.importe + 1 && !body.confirmarExceso) return json({ error: `Con este cobro se pasa del precio de venta (${eur(v.importe)}; ya cobrado ${eur(ya)}). Revisa el importe.`, exceso: true }, 409); }
       if (metodo === "efectivo") {
         if (d !== hoyCanarias()) return json({ error: "Un cobro en efectivo entra en la caja de hoy: pon la fecha de hoy." }, 400);
         const r = await porCaja(q, { tipo: "ingreso", importe: String(importe / 100), categoria: "venta", concepto, ref, coche: id2 }, origin); if (r.error) return json({ error: r.error }, 409); c.cajaMov = r.id!;

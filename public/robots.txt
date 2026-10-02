@@ -2,10 +2,12 @@ User-agent: *
 Disallow: /admin
 Disallow: /api/
 Disallow: /s/
+Disallow: /q/
 Disallow: /seguimiento.html
 Disallow: /r/
 Disallow: /reserva.html
 Allow: /api/fotos/
+Allow: /api/coches
 Disallow: /api/fotos/*.pdf$
 
 Sitemap: https://volcanocars.com/sitemap.xml

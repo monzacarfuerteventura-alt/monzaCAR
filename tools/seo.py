@@ -151,9 +151,9 @@ PAGINAS = []
 # ---------------------------------------------------------------- coches de segunda mano
 PAGINAS.append(dict(
     url="/coches-segunda-mano-fuerteventura/", miga="Coches de segunda mano",
-    title="Coches de segunda mano en Fuerteventura con 12 meses de garantía legal · Volcano Cars",
+    title="Coches de segunda mano en Fuerteventura | Volcano Cars",
     og="Coches de segunda mano en Fuerteventura · Volcano Cars",
-    desc="Coches de segunda mano en Fuerteventura revisados en nuestro taller de Costa de Antigua, con 12 meses de garantía legal, financiación y entrega a domicilio gratis en toda la isla.",
+    desc="Coches de segunda mano revisados en Costa de Antigua, con garantía, financiación y entrega a domicilio gratis en la isla.",
     eyebrow="Coches de ocasión en Fuerteventura",
     h1='Coches de segunda mano en Fuerteventura <span class="r">con 12 meses de garantía legal</span>',
     lead="Cada coche que vendemos pasa antes por nuestro taller de Costa de Antigua. Precio final con impuestos, garantía de 12 meses, cambio de nombre incluido y te lo llevamos gratis a casa, de Corralejo a Morro Jable.",
@@ -210,9 +210,9 @@ PAGINAS.append(dict(
 LISTA_MEC = ["Cambio de aceite y filtros", "Frenos: pastillas y discos", "Neumáticos: cambio y alineado", "Diagnosis electrónica", "Pre-ITV", "Aire acondicionado", "Correa de distribución", "Batería y arranque"]
 PAGINAS.append(dict(
     url="/taller-mecanico-fuerteventura/", miga="Taller mecánico", servicio="Taller mecánico", lista=LISTA_MEC,
-    title="Taller mecánico en Costa de Antigua, Fuerteventura · Cita online · Volcano Cars",
+    title="Taller mecánico en Fuerteventura | Volcano Cars",
     og="Taller mecánico en Costa de Antigua, Fuerteventura · Volcano Cars",
-    desc="Taller mecánico en Costa de Antigua (Fuerteventura) para todas las marcas: aceite, frenos, diagnosis, distribución, aire acondicionado y pre-ITV. Presupuesto por escrito y cita online al momento.",
+    desc="Taller mecánico en Costa de Antigua para todas las marcas: aceite, frenos, diagnosis, pre-ITV. Presupuesto por escrito y cita online.",
     eyebrow="Taller mecánico en Costa de Antigua",
     h1='Taller mecánico en Fuerteventura, <span class="r">con cita al momento</span>',
     lead="Mecánica rápida para todas las marcas en el polígono de Costa de Antigua, en el centro de la isla. Eliges el servicio, el día y la hora en la web y tu cita queda confirmada al momento. Presupuesto por escrito antes de empezar.",
@@ -251,9 +251,9 @@ PAGINAS.append(dict(
 LISTA_CHAPA = ["Golpes y abolladuras", "Pintura parcial o completa", "Arañazos y rozaduras", "Pulido y retoque"]
 PAGINAS.append(dict(
     url="/chapa-y-pintura-fuerteventura/", miga="Chapa y pintura", servicio="Chapa y pintura", lista=LISTA_CHAPA,
-    title="Chapa y pintura en Fuerteventura (Costa de Antigua) · Presupuesto por escrito · Volcano Cars",
+    title="Chapa y pintura en Fuerteventura | Volcano Cars",
     og="Chapa y pintura en Fuerteventura · Volcano Cars",
-    desc="Taller de chapa y pintura en Costa de Antigua, Fuerteventura: golpes, abolladuras, arañazos y pintura parcial o completa. Presupuesto por escrito, fecha de entrega por escrito y cita online.",
+    desc="Chapa y pintura en Costa de Antigua: golpes, abolladuras, arañazos y pintura. Presupuesto y fecha de entrega por escrito.",
     eyebrow="Carrocería en Costa de Antigua",
     h1='Chapa y pintura en Fuerteventura, <span class="r">como el primer día</span>',
     lead="Reparamos golpes, abolladuras y arañazos y pintamos piezas sueltas o el coche entero. Mándanos fotos por WhatsApp para una primera orientación y te damos el presupuesto por escrito al ver el coche.",
@@ -283,9 +283,9 @@ PAGINAS.append(dict(
 # ---------------------------------------------------------------- pre-ITV
 PAGINAS.append(dict(
     url="/pre-itv-fuerteventura/", miga="Pre-ITV", servicio="Pre-ITV", lista=["Revisión pre-ITV", "Reparación de defectos antes de la ITV"],
-    title="Pre-ITV en Fuerteventura: deja tu coche listo para la ITV · Volcano Cars",
+    title="Pre-ITV en Fuerteventura | Volcano Cars",
     og="Pre-ITV en Fuerteventura · Volcano Cars",
-    desc="Revisión pre-ITV en Costa de Antigua, Fuerteventura: revisamos tu coche antes de la inspección y reparamos lo necesario con presupuesto por escrito. Cita online al momento.",
+    desc="Revisión pre-ITV en Costa de Antigua: revisamos tu coche antes de la inspección y reparamos con presupuesto por escrito.",
     eyebrow="Pre-ITV en Costa de Antigua",
     h1='Pre-ITV: llega a la ITV <span class="r">con todo revisado</span>',
     lead="Antes de ir a la estación de ITV, revisamos tu coche en nuestro taller de Costa de Antigua. Si algo no está bien, te damos presupuesto por escrito para dejarlo listo y te evitas la segunda visita.",
@@ -316,9 +316,9 @@ PAGINAS.append(dict(
 # ---------------------------------------------------------------- financiación
 PAGINAS.append(dict(
     url="/financiacion-coches-fuerteventura/", miga="Financiación",
-    title="Financiación de coches de segunda mano en Fuerteventura · Volcano Cars",
+    title="Financiación de coches en Fuerteventura | Volcano Cars",
     og="Financia tu coche en Fuerteventura · Volcano Cars",
-    desc="Financia tu coche de segunda mano en Volcano Cars (Costa de Antigua, Fuerteventura): calcula la cuota de cada coche, pide un pre-estudio gratis y sin compromiso y te llamamos con la respuesta.",
+    desc="Calcula la cuota de tu coche de segunda mano y pide un pre-estudio gratis y sin compromiso. Te llamamos con la respuesta.",
     eyebrow="Financiación",
     h1='Financia tu coche <span class="r">a tu medida</span>',
     lead='Elige entrada y plazo en la ficha de cada coche y verás al momento la cuota, la TAE y el precio total. Si te encaja, pide un pre-estudio gratis: lo tramitamos con la entidad financiera y te llamamos con la respuesta.',
@@ -353,9 +353,9 @@ RUTAS_LLEGAR = [  # distancias y tiempos APROXIMADOS por carretera hasta la nave
     ("La Oliva", 42, 35), ("Corralejo", 55, 45), ("Costa Calma", 60, 45), ("Morro Jable", 80, 65)]
 PAGINAS.append(dict(
     url="/contacto", miga="Contacto y cómo llegar", sin_zonas=True,
-    title="Contacto y cómo llegar · Volcano Cars, Polígono Industrial de Costa de Antigua (Fuerteventura)",
+    title="Contacto y cómo llegar | Volcano Cars Fuerteventura",
     og="Volcano Cars · Contacto y cómo llegar",
-    desc="Teléfono, WhatsApp, email, horario y cómo llegar a Volcano Cars: Calle Valle Largo, Nave 8, Polígono Industrial de Costa de Antigua, Fuerteventura. Lunes a viernes de 8:00 a 16:00.",
+    desc="Teléfono, WhatsApp, horario y cómo llegar: Calle Valle Largo, Nave 8, Costa de Antigua. Lunes a viernes de 8:00 a 16:00.",
     eyebrow="Contacto",
     h1='Volcano Cars, <span class="r">en el Polígono de Costa de Antigua</span>',
     lead=f"Taller mecánico, chapa y pintura y venta de coches de ocasión en {e(DIRECCION)}. {HORARIO}, en horario continuado. Te atendemos en español y en inglés.",
@@ -394,9 +394,9 @@ PAGINAS.append(dict(
 # ---------------------------------------------------------------- guía de la ITV en Fuerteventura (contenido útil que busca mucha gente de la isla)
 PAGINAS.append(dict(
     url="/itv-fuerteventura/", miga="Guía de la ITV", servicio="Pre-ITV", lista=["Revisión pre-ITV", "Reparación de defectos de la ITV"],
-    title="ITV en Fuerteventura: cada cuánto se pasa, qué revisan y cómo aprobar a la primera · Volcano Cars",
+    title="ITV en Fuerteventura: guía y cómo aprobar | Volcano Cars",
     og="Guía de la ITV en Fuerteventura · Volcano Cars",
-    desc="Todo sobre la ITV en Fuerteventura: cada cuánto hay que pasarla, qué miran, los fallos más habituales, qué pasa si sale desfavorable y cómo prepararla para aprobar a la primera.",
+    desc="ITV en Fuerteventura: cada cuánto se pasa, qué revisan, fallos habituales y cómo prepararla para aprobar a la primera.",
     eyebrow="Guía práctica",
     h1='La ITV en Fuerteventura, <span class="r">sin sorpresas</span>',
     lead="Cada cuánto toca, qué revisan en la estación, los defectos que más suspenden en la isla y qué hacer si te la dan desfavorable. Explicado por mecánicos, sin letra pequeña.",

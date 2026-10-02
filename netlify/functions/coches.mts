@@ -1,5 +1,5 @@
 import type { Config } from "@netlify/functions";
-import { store, json, isAdmin, cleanCar, esFotoSubida, borrarVideo, purgar, SEMILLA, type Car } from "../lib/shared.mts";
+import { store, json, isAdmin, cleanCar, esFotoSubida, borrarVideo, purgar, SEMILLA, SEMILLA_NUEVOS, type Car } from "../lib/shared.mts";
 import { caducar, apartadoDe, cancelar, vender } from "../lib/reservas.mts";
 import { permiso, esRespuesta } from "../lib/acceso.mts";
 
@@ -15,6 +15,15 @@ async function load(): Promise<Car[]> {
     await s.setJSON(KEY, list);
     await s.set("semilla-v1", new Date().toISOString());
   }
+  // Coches nuevos publicados desde el código: cada uno entra una sola vez (si lo borras desde el panel, no vuelve).
+  let cambio = false;
+  for (const c of SEMILLA_NUEVOS) {
+    const k = "semilla-" + c.id;
+    if (await s.get(k)) continue;
+    if (!list.some((x) => x.id === c.id)) { list.push({ ...c, equipamiento: [...c.equipamiento], fotos: [...c.fotos] }); cambio = true; }
+    await s.set(k, new Date().toISOString());
+  }
+  if (cambio) { await s.setJSON(KEY, list); await purgar(["coches"]).catch(() => {}); }
   return list;
 }
 // El vídeo tiene que haber terminado de subirse antes de publicarlo.
@@ -53,8 +62,9 @@ export default async (req: Request) => {
     });
   }
 
-  // Panel: cualquier persona del equipo publica y edita coches; borrar uno de la web, solo el gerente
-  { const _q = await permiso(req, req.method === "DELETE" ? "gerente" : "equipo"); if (esRespuesta(_q)) return _q; }
+  // Panel: publicar y editar coches (precio, estado, fotos) lo hacen Recepción y el Gerente; borrar uno de la web, solo el gerente.
+  // Mecánico y Calidad pueden ver la lista (GET), pero no cambiarla: lo que se guarda aquí se publica al instante.
+  { const _q = await permiso(req, req.method === "DELETE" ? "gerente" : "ventas"); if (esRespuesta(_q)) return _q; }
 
   let body: any = {};
   if (req.method === "POST" || req.method === "PUT") {

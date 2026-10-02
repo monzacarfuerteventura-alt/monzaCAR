@@ -23,6 +23,20 @@ function vzGuionDe(id){ const m=VZ&&VZ.modulos&&VZ.modulos[id]; if(m) return m;
   const v=typeof AY_VID!=="undefined"&&AY_VID[id]; if(!v) return null;
   return { titulo:id, dur:v.dur, listas:0, total:(v.pasos||[]).length, lineas:(v.pasos||[]).map(p=>({t:p.t,txt:String(p.voz||p.txt).replace(/<[^>]+>/g,"")})) }; }
 const vzHayVozNav=()=>"speechSynthesis" in window&&typeof window.vcDecir==="function";
+function vzInfo(){ const e=$("#vz-info"); if(!e||typeof window.vcVozInfo!=="function") return; const v=window.vcVozInfo();
+  e.innerHTML=v?`Voz que se usará: <b>${esc(v.name)}</b> (${esc(v.lang)}).`:`⚠️ Este aparato no tiene voz en español, así que no puede leer los pasos con claridad. Para oírlos bien: instala la voz en español del móvil (Ajustes → Idioma → Salida de texto a voz) o usa la <b>voz de ElevenLabs</b> de más abajo.`;
+  e.style.color=v?"":"#FFB070"; }
+const vzNf=x=>Number(x||0).toLocaleString("es-ES");
+const vzHechas=()=>VZ&&VZ.modulos?Object.values(VZ.modulos).reduce((a,m)=>a+(m.listas||0),0):0;
+const vzFaltan=()=>VZ&&VZ.modulos?Object.values(VZ.modulos).filter(m=>m.listas!==m.total).length:0;
+const vzTotal=()=>VZ&&VZ.modulos?Object.values(VZ.modulos).reduce((a,m)=>a+(m.total||0),0):0;
+// Créditos que le quedan a la cuenta de ElevenLabs (si la clave no deja verlos, no pasa nada: se avisa y se sigue)
+let VZ_SALDO=null;
+async function vzSaldo(){ const e=$("#vz-saldo"); if(!e) return null;
+  try{ const r=await vzFetch("/api/voz/saldo"), d=await r.json().catch(()=>({})); VZ_SALDO=d&&!d.sinDatos&&typeof d.restantes==="number"?d:null;
+    if(!$("#vz-saldo")) return VZ_SALDO;
+    $("#vz-saldo").innerHTML=VZ_SALDO?`Créditos de ElevenLabs: te quedan <b>${vzNf(VZ_SALDO.restantes)}</b> de ${vzNf(VZ_SALDO.limite)}${VZ_SALDO.renueva?" · se renuevan el "+esc(VZ_SALDO.renueva):""}.`:`No puedo ver tu saldo desde aquí; míralo en elevenlabs.io → tu perfil → Suscripción.`;
+  }catch(_){ VZ_SALDO=null; } return VZ_SALDO; }
 function vozMontar(){
   const side=document.querySelector("#s-ayuda .ay-vside"), v=$("#ay-v"); if(!side||!v) return;
   const id=AY_MOD, m=vzGuionDe(id); if(!m) return;
@@ -32,15 +46,23 @@ function vozMontar(){
   const sw=`<label class="vz-sw"><input type="checkbox" id="vz-on" ${vzOn()?"checked":""}><span>Oír la voz mientras veo el vídeo</span></label>`;
   box.innerHTML=lista
    ?`<p class="vz-h"><b>🎙️ Voz de ${esc(nombre)}</b></p>${sw}
-     <div class="vz-acc"><button type="button" class="btn b-ghost b-sm" data-vzdl="${id}">⬇ Descargar MP3</button>${ger&&conf?`<button type="button" class="btn b-ghost b-sm" data-vzgen="${id}">🔁 Volver a generar</button><button type="button" class="btn b-ghost b-sm" data-vzvoces>🎚️ Cambiar de voz</button>`:""}</div>`
+     <div class="vz-acc"><button type="button" class="btn b-ghost b-sm" data-vzdl="${id}">⬇ Descargar MP3</button>${ger&&conf?`<button type="button" class="btn b-ghost b-sm" data-vzgen="${id}">🔁 Volver a generar</button><button type="button" class="btn b-ghost b-sm" data-vzvoces>🎚️ Cambiar de voz</button>`:""}${ger&&conf&&vzFaltan()?`<button type="button" class="btn b-ghost b-sm" data-vzgen="*">Generar los ${vzFaltan()} vídeos que faltan</button>`:""}</div>
+     <p class="vz-est" id="vz-est" role="status" aria-live="polite"></p><div id="vz-voces"></div>${ger&&conf?`<p class="hint" id="vz-saldo" style="margin:4px 0 0"></p>`:""}`
    :`<p class="vz-h"><b>🎙️ Voz</b></p>${vzHayVozNav()?`${sw}<p class="hint" style="margin:0">Suena con la voz de tu ordenador y el vídeo se para solo mientras habla. Funciona sin configurar nada.</p>
-       <div class="vz-acc"><button type="button" class="btn b-ghost b-sm" data-vzprobar>🔊 Probar la voz</button></div>`
+       <div class="vz-acc"><button type="button" class="btn b-ghost b-sm" data-vzprobar>🔊 Probar la voz</button></div><p class="hint" id="vz-info" style="margin:6px 0 0"></p>`
        :`<p class="hint" style="margin:0">Este navegador no tiene voz. Prueba con Chrome o Edge.</p>`}
-     ${ger?(conf?`<details class="vz-g"><summary>Voz más natural (ElevenLabs)</summary><div class="vz-acc" style="margin-top:8px"><button type="button" class="btn b-brand b-sm" data-vzgen="${id}">Generar la voz de este vídeo</button><button type="button" class="btn b-ghost b-sm" data-vzgen="*">Generar los ${VZ?Object.keys(VZ.modulos).length:""} vídeos</button><button type="button" class="btn b-ghost b-sm" data-vzvoces>🎚️ Elegir voz</button></div></details>`
-         :`<details class="vz-g"><summary>Voz más natural (ElevenLabs)</summary><p class="hint" style="margin:8px 0 0">Opcional. Pon la clave <b>ELEVENLABS_API_KEY</b> en Netlify (Project configuration → Environment variables) y aquí saldrá el botón para generarla.</p></details>`):""}
+     ${ger?`<details class="vz-g" ${conf?"":"open"}><summary>Voz más natural (ElevenLabs)</summary>
+       ${conf?`<div class="vz-acc" style="margin-top:8px"><button type="button" class="btn b-brand b-sm" data-vzgen="${id}">Generar la voz de este vídeo</button><button type="button" class="btn b-ghost b-sm" data-vzgen="*">Generar los ${VZ?Object.keys(VZ.modulos).length:""} vídeos</button><button type="button" class="btn b-ghost b-sm" data-vzvoces>🎚️ Elegir voz</button></div>
+       <p class="hint" style="margin:8px 0 0">Frases con voz: <b>${vzHechas()}</b> de ${vzTotal()}. Lo que ya está hecho no se vuelve a pedir ni gasta créditos.</p><p class="hint" id="vz-saldo" style="margin:4px 0 0"></p>`:""}
+       <div class="vz-clave"><p class="hint" style="margin:10px 0 4px"><b>Clave de ElevenLabs</b>${conf?` · ahora hay una ${VZ.claveOrigen==="panel"?"guardada desde el panel":"puesta en Netlify"} (termina en <b>${esc(VZ.claveFin||"")}</b>)`:" · todavía no hay ninguna"}</p>
+         <input id="vz-key" class="inp" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Pega aquí tu clave de ElevenLabs" aria-label="Clave de ElevenLabs">
+         <div class="vz-acc"><button type="button" class="btn b-brand b-sm" data-vzclave>Guardar y comprobar la clave</button>${VZ&&VZ.claveOrigen==="panel"?`<button type="button" class="btn b-ghost b-sm" data-vzclaveborrar>Quitar la guardada</button>`:""}</div>
+         <p class="hint" style="margin:6px 0 0">En elevenlabs.io: tu perfil → <b>API Keys</b> → crear clave (con todos los permisos) → copiar. Se guarda en el servidor y solo la usa el panel.</p></div></details>`:""}
     <p class="vz-est" id="vz-est" role="status" aria-live="polite"></p><div id="vz-voces"></div>
     <details class="vz-g"><summary>Ver el guion que se lee</summary><ol>${m.lineas.map(l=>`<li><small>${ayT(l.t)}</small><span>${esc(l.txt)}</span></li>`).join("")}</ol></details>`;
   side.appendChild(box);
+  vzInfo(); if(window.speechSynthesis) speechSynthesis.addEventListener("voiceschanged",vzInfo,{once:true});
+  if(ger&&conf) vzSaldo();
   if(lista) vzEnlazar(v,m,id); else if(vzHayVozNav()) vzNavEnlazar(v,m,id);
 }
 // Voz del navegador: al llegar a cada paso el vídeo se para, el paso se dice en voz alta y el vídeo sigue solo
@@ -88,26 +110,41 @@ function vzEnlazar(v,m,id){
   v.addEventListener("ended",()=>{ parar(); hechas=new Set(); });
 }
 
+// Vuelve a pintar la caja de voz sin perder el aviso ni el desplegable abierto
+async function vzRemontar(msg){ const abierto=!!document.querySelector("#vz details.vz-g")?.open;
+  await vzCargar(); vozMontar(); const d=document.querySelector("#vz details.vz-g"); if(d&&abierto) d.open=true;
+  const e=$("#vz-est"); if(e&&msg) e.textContent=msg; }
 async function vzGenerar(quien){
   if(!VZ||!VZ.admin) return;
-  const ids=quien==="*"?Object.keys(VZ.modulos).filter(k=>VZ.modulos[k].listas!==VZ.modulos[k].total):[quien];
+  const todos=quien==="*", ids=todos?Object.keys(VZ.modulos).filter(k=>VZ.modulos[k].listas!==VZ.modulos[k].total):[quien];
+  const forzar=!todos&&!!VZ.modulos[quien]&&VZ.modulos[quien].listas===VZ.modulos[quien].total; // «Volver a generar»
   const set=t=>{ const e=$("#vz-est"); if(e) e.textContent=t; };
+  // Solo las frases que aún no tienen voz: las ya hechas no se piden otra vez (cada petición gasta créditos)
+  const pend=[]; for(const id of ids){ const m=VZ.modulos[id]; if(!m) continue; for(let i=0;i<m.total;i++) if(forzar||!(m.hechas&&m.hechas[i])) pend.push([id,i]); }
+  if(!pend.length){ set("✅ Todo tiene ya su voz: no hace falta generar nada."); return; }
+  const chars=pend.reduce((a,[id,i])=>{ const l=VZ.modulos[id].lineas[i]; return a+String(l.voz||l.txt).length; },0);
   const btns=[...document.querySelectorAll("[data-vzgen]")]; btns.forEach(b=>b.disabled=true);
+  set("Mirando tu saldo de ElevenLabs…"); const sal=await vzSaldo();
+  const aviso=sal&&sal.restantes<chars?`Ojo: hacen falta unos ${vzNf(chars)} créditos y te quedan ${vzNf(sal.restantes)}; llegará hasta donde alcance y lo hecho se conserva. `:"";
+  const tocados=new Set(); let hechas=0, fallo=null;
   try{
-    for(const id of ids){ const m=VZ.modulos[id];
-      for(let i=0;i<m.total;i++){
-        set(`Generando «${m.titulo}»: frase ${i+1} de ${m.total}…`);
-        let d={}, r=null;
-        for(let intento=0;intento<2;intento++){ // un reintento por si la red falla un instante
-          try{ r=await vzFetch("/api/voz/generar",{modulo:id,n:i}); d=await r.json().catch(()=>({})); if(r.ok||r.status<500) break; }catch(e){ d={error:e.message}; r=null; }
-          await new Promise(k=>setTimeout(k,1200));
-        }
-        if(!r||!r.ok){ if(d.eligeVoz) vzVoces(); throw new Error(d.error||"No se ha podido generar la voz."); }
+    for(const [id,i] of pend){ const m=VZ.modulos[id];
+      set(`${aviso}Generando «${m.titulo}»: frase ${i+1} de ${m.total} (${hechas+1} de ${pend.length})…`);
+      let d={}, r=null;
+      for(let intento=0;intento<2;intento++){ // un reintento solo si falla la red, nunca si ElevenLabs ya ha dicho el motivo
+        try{ r=await vzFetch("/api/voz/generar",{modulo:id,n:i,forzar}); d=await r.json().catch(()=>({})); if(r.ok||r.status<500||d.fatal||d.codigo) break; }catch(e){ d={error:e.message}; r=null; }
+        await new Promise(k=>setTimeout(k,1200));
       }
-      vzLimpiar(id);
+      tocados.add(id);
+      if(!r||!r.ok){ fallo=d; throw new Error(d.error||"No se ha podido generar la voz."); }
+      hechas++;
     }
-    await vzCargar(); vozMontar(); toast("Voz lista");
-  }catch(e){ set("⚠️ "+e.message); btns.forEach(b=>b.disabled=false); }
+    tocados.forEach(vzLimpiar); await vzRemontar(); toast("Voz lista"); const e=$("#vz-est"); if(e) e.textContent="✅ Voz lista: "+hechas+" frases generadas.";
+  }catch(e){
+    tocados.forEach(vzLimpiar);
+    await vzRemontar(`⚠️ ${e.message}${hechas?` Se habían generado ${hechas} frases antes del fallo y se conservan.`:""}`);
+    if(fallo&&fallo.eligeVoz) vzVoces();
+  }
 }
 async function vzVoces(){
   const box=$("#vz-voces"); if(!box) return; box.innerHTML='<p class="hint">Buscando las voces de tu cuenta…</p>';
@@ -119,6 +156,13 @@ async function vzVoces(){
 async function vzUsar(){ const sel=$("#vz-sel"); if(!sel) return;
   try{ const r=await vzFetch("/api/voz/elegir",{id:sel.value}), d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.error||"No se pudo guardar.");
     await vzCargar(); vozMontar(); toast("Voz elegida: ahora pulsa «Generar los vídeos»"); }catch(e){ const x=$("#vz-est"); if(x) x.textContent="⚠️ "+e.message; } }
+async function vzClave(){ const inp=$("#vz-key"), set=x=>{ const e=$("#vz-est"); if(e) e.textContent=x; }; if(!inp) return;
+  const k=inp.value.trim(); if(!k){ set("⚠️ Pega primero la clave."); inp.focus(); return; }
+  const b=document.querySelector("[data-vzclave]"); if(b) b.disabled=true; set("Comprobando la clave con ElevenLabs…");
+  try{ const r=await vzFetch("/api/voz/clave",{clave:k}), d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.error||"No se ha podido guardar la clave.");
+    inp.value=""; await vzCargar(); vozMontar(); toast("Clave guardada y comprobada"); const e=$("#vz-est"); if(e) e.textContent="✅ Clave buena. Ahora pulsa «Elegir voz» y luego «Generar los vídeos»."; vzVoces();
+  }catch(e){ set("⚠️ "+e.message); if(b) b.disabled=false; } }
+async function vzClaveBorrar(){ try{ await vzFetch("/api/voz/claveborrar",{}); await vzCargar(); vozMontar(); toast("Clave quitada"); }catch(e){ const x=$("#vz-est"); if(x) x.textContent="⚠️ "+e.message; } }
 async function vzDescargar(id){
   const set=t=>{ const e=$("#vz-est"); if(e) e.textContent=t; };
   try{ const r=await vzFetch("/api/voz/mp3/"+id); if(!r.ok){ const d=await r.json().catch(()=>({})); throw new Error(d.error||"No se pudo descargar."); }
@@ -130,6 +174,8 @@ document.addEventListener("click",e=>{ const t=e.target;
   const d=t.closest("[data-vzdl]"); if(d){ vzDescargar(d.dataset.vzdl); return; }
   if(t.closest("[data-vzvoces]")){ vzVoces(); return; }
   if(t.closest("[data-vzusar]")){ vzUsar(); return; }
+  if(t.closest("[data-vzclave]")){ vzClave(); return; }
+  if(t.closest("[data-vzclaveborrar]")){ vzClaveBorrar(); return; }
 });
 
 if(typeof ayVidEnlazar==="function"){

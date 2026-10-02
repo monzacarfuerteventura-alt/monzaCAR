@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { store, canalDe, enviarAviso, waNum } from "./shared.mts";
+import { store, canalDe, enviarAviso, waNum, telefonoValido } from "./shared.mts";
 
 /*
   (Lógica común de las solicitudes: la usan /api/solicitudes y las reservas online)
@@ -110,13 +110,13 @@ export async function ocupados(agenda: string): Promise<Set<string>> {
   const { blobs } = await store("solicitudes").list({ prefix: `slot/${agenda}/` });
   return new Set(blobs.map((b) => b.key.slice(`slot/${agenda}/`.length)));
 }
-// Ocupa un hueco de la agenda. Si dos personas reservan a la vez, gana la última escritura: la otra recibe «ocupada».
+// Ocupa un hueco de la agenda. Escritura «solo si no existe»: si dos personas reservan a la vez, solo una lo consigue.
 export async function ocuparHueco(agenda: string, fecha: string, hora: string, id: string): Promise<boolean> {
   const s = store("solicitudes");
   const key = `slot/${agenda}/${fecha}/${hora}`;
-  if (await s.get(key)) return false;
-  await s.setJSON(key, { id });
-  const v = (await s.get(key, { type: "json" })) as { id: string } | null;
+  const w: any = await s.setJSON(key, { id }, { onlyIfNew: true }).catch(() => null);
+  if (w && w.modified === false) { const v0 = (await s.get(key, { type: "json" }).catch(() => null)) as { id: string } | null; return !!v0 && v0.id === id; }
+  const v = (await s.get(key, { type: "json" })) as { id: string } | null; // segunda barrera por si el almacén no soporta onlyIfNew
   return !!v && v.id === id;
 }
 
@@ -157,7 +157,7 @@ export function limpiar(input: any, manual = false): { s?: Solicitud; error?: st
   const telefono = str(input.telefono, 30);
   const email = str(input.email, 120);
   if (nombre.length < 2) return { error: "Escribe tu nombre." };
-  if (soloDigitos(telefono).replace(/^\+/, "").length < 9) return { error: "Revisa el teléfono." };
+  if (!telefonoValido(telefono)) return { error: "Revisa el teléfono." };
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { error: "Revisa el email." };
   if (!manual && input.acepta !== true) return { error: "Tienes que aceptar la política de privacidad." };
 
@@ -270,9 +270,16 @@ export function limpiar(input: any, manual = false): { s?: Solicitud; error?: st
 
 export async function dentroDelLimite(ip: string, ua: string): Promise<boolean> {
   const s = store("solicitudes");
-  const quien = createHash("sha256").update(ip + "|" + ua + "|mz-sol").digest("hex").slice(0, 24);
+  // La clave es solo la IP (antes incluía el User-Agent y se saltaba cambiándolo). Además hay un tope global por hora.
+  const quien = createHash("sha256").update(ip + "|mz-sol").digest("hex").slice(0, 24);
   const key = "rl/" + quien;
   const hace1h = Date.now() - 3600e3;
+  if (!ip.startsWith("wa:")) {
+    const g = (((await s.get("rl/global", { type: "json" }).catch(() => null)) as number[] | null) || []).filter((t) => t > hace1h);
+    if (g.length >= 400) return false;
+    g.push(Date.now());
+    await s.setJSON("rl/global", g);
+  }
   const lista = (((await s.get(key, { type: "json" })) as number[] | null) || []).filter((t) => t > hace1h);
   if (lista.length >= LIMITE_HORA) return false;
   lista.push(Date.now());

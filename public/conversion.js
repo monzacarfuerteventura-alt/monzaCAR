@@ -52,8 +52,9 @@
   }
   // ¿Está abierto ahora? (L–V, 8:00–16:00, hora de Canarias)
   function abiertoAhora() {
+    if (window.vcHorario) return window.vcHorario().abierto;
     const p = Object.fromEntries(new Intl.DateTimeFormat("en-GB", { timeZone: "Atlantic/Canary", weekday: "short", hour: "2-digit", hourCycle: "h23" }).formatToParts(new Date()).map((x) => [x.type, x.value]));
-    return !["Sat", "Sun"].includes(p.weekday) && +p.hour >= 8 && +p.hour < 15;
+    return !["Sat", "Sun"].includes(p.weekday) && +p.hour >= 8 && +p.hour < 16;
   }
   // Reduce una foto en el móvil antes de subirla (máx. 1600 px, JPEG): sube rápido con datos móviles
   async function reducir(file, max = 1600) {
@@ -742,7 +743,7 @@
           <p class="pf-vip-note">${L("El +10 % solo se aplica si aceptas el presupuesto y haces la reparación.", "The +10% only applies if you accept the quote and go ahead with the repair.")}</p>
           <a class="btn btn-wa" target="_blank" rel="noopener" href="${waEmpresa(TAG + " " + waTxt + L(" He activado la Prioridad Taller (+10 %).", " I've switched on Workshop Priority (+10%)."))}">${IC.wa}${L("Confirmar la prioridad por WhatsApp", "Confirm priority on WhatsApp")}</a></div>`
           : `<div class="rsv-done-ic">${IC.ok}</div><div><h4>${L("¡Fotos recibidas!", "Photos received!")}</h4>
-          <p>${rapido ? L("Te escribimos por WhatsApp con el presupuesto estimado en menos de 1 hora.", "We'll message you on WhatsApp with the estimated quote in under 1 hour.") : L("Te escribimos por WhatsApp con el presupuesto estimado en cuanto abramos (L–V, 8:00).", "We'll message you on WhatsApp with the estimated quote as soon as we open (Mon–Fri, 8:00).")}</p>
+          <p>${rapido ? L("Te escribimos por WhatsApp con el presupuesto estimado lo antes posible, normalmente el mismo día laborable.", "We'll message you on WhatsApp with the estimated quote as soon as we can, usually the same working day.") : L("Te escribimos por WhatsApp con el presupuesto estimado en cuanto abramos (L–V, 8:00).", "We'll message you on WhatsApp with the estimated quote as soon as we open (Mon–Fri, 8:00).")}</p>
           <a class="btn btn-wa" target="_blank" rel="noopener" href="${waEmpresa(waTxt)}">${IC.wa}${L("¿Prisa? Escríbenos ya", "In a hurry? Message us now")}</a></div>`;
         form.querySelectorAll(":scope > :not(.pf-ok)").forEach((x) => (x.hidden = true));
         ok.hidden = false; ok.scrollIntoView({ block: "nearest", behavior: "smooth" });

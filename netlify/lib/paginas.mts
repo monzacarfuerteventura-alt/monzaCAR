@@ -9,7 +9,7 @@ export const EMPRESA = {
   email: "volcanocars2026@gmail.com",
   calle: "Calle Valle Largo, Nave 8, Polígono Industrial",
   cp: "35610",
-  localidad: "Antigua",
+  localidad: "Costa de Antigua",
   direccion: "Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Costa de Antigua, Las Palmas",
   horario: "Lunes a viernes, de 8:00 a 16:00",
   mapa: "https://maps.app.goo.gl/dz8icDhkUkB4oznd8", // ficha de Volcano Cars en Google Maps
@@ -37,7 +37,23 @@ export function slugDe(c: Pick<Car, "id" | "marca" | "modelo" | "anio">): string
   return (base ? base + "-" : "") + c.id.slice(0, 8).toLowerCase();
 }
 
+// Google corta los títulos a ~60 y las descripciones a ~155 caracteres: se recortan por palabra y la marca final se conserva.
+function recortaTitulo(t: string, max = 60) {
+  if (t.length <= max) return t;
+  const m = t.match(/^(.*?)(\s*[|·–-]\s*Volcano Cars)$/);
+  const marca = m ? m[2] : "", cuerpo = m ? m[1] : t;
+  const lim = max - marca.length;
+  if (cuerpo.length <= lim) return t;
+  const c = cuerpo.slice(0, lim - 1), i = c.lastIndexOf(" ");
+  return (i > 20 ? c.slice(0, i) : c).replace(/[\s,·|:-]+$/, "") + "…" + marca;
+}
+function recortaDesc(d: string, max = 155) {
+  if (d.length <= max) return d;
+  const c = d.slice(0, max - 1), i = c.lastIndexOf(" ");
+  return (i > 80 ? c.slice(0, i) : c).replace(/[\s,;:·-]+$/, "") + "…";
+}
 export function cabecera(origin: string, titulo: string, descripcion: string, canonical: string, extraHead = "", robots = "index, follow") {
+  titulo = recortaTitulo(titulo); descripcion = recortaDesc(descripcion);
   return `<!doctype html>
 <html lang="es">
 <head>
@@ -59,6 +75,7 @@ export function cabecera(origin: string, titulo: string, descripcion: string, ca
 <link rel="stylesheet" href="/tema.css">
 <meta property="og:site_name" content="Volcano Cars">
 <meta property="og:locale" content="es_ES">
+<script src="/origen.js"></script>
 <script src="/medicion.js" defer></script>
 ${extraHead}
 </head>

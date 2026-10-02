@@ -97,18 +97,31 @@
     return pref(es.filter((x) => MASC.test(x.name + " " + x.voiceURI)))[0] || pref(es.filter((x) => !FEM.test(x.name + " " + x.voiceURI)))[0] || pref(es)[0] || null;
   }
   if (puedeHablar) { VOZ.voz = elegirVoz(); speechSynthesis.onvoiceschanged = () => { VOZ.voz = elegirVoz(); }; }
+  let avisoSinVoz = false;
   function decir(texto, alTerminar) {
-    if (!puedeHablar) { window.toast && window.toast("Este navegador no tiene voz. Prueba con Chrome o Edge."); return; }
+    if (!puedeHablar) { window.toast && window.toast("Este navegador no tiene voz. Prueba con Chrome o Edge."); if (alTerminar) alTerminar(); return; }
     speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(texto);
-    VOZ.voz = VOZ.voz || elegirVoz();
-    if (VOZ.voz) { u.voice = VOZ.voz; u.lang = VOZ.voz.lang; } else u.lang = "es-ES";
-    const esMasc = VOZ.voz && MASC.test(VOZ.voz.name + " " + VOZ.voz.voiceURI);
-    u.pitch = esMasc ? 0.95 : 0.72; // si no hay voz masculina instalada, se grava la que haya
-    u.rate = 1.0; u.volume = 1;
-    if (alTerminar) u.onend = alTerminar;
-    speechSynthesis.speak(u);
+    const hablar = () => {
+      VOZ.voz = elegirVoz();
+      // Sin voz en español NO se habla: el aparato leería el español con su voz por defecto (a veces china o inglesa) y no se entiende nada
+      if (!VOZ.voz) {
+        if (!avisoSinVoz) { avisoSinVoz = true; window.toast && window.toast("Tu aparato no tiene voz en español. Instálala (Ajustes → Idioma → Salida de texto a voz) o usa la voz de ElevenLabs en Ayuda → Voz."); }
+        if (alTerminar) alTerminar(); return;
+      }
+      const u = new SpeechSynthesisUtterance(texto);
+      u.voice = VOZ.voz; u.lang = VOZ.voz.lang || "es-ES";
+      const esMasc = MASC.test(VOZ.voz.name + " " + VOZ.voz.voiceURI);
+      u.pitch = esMasc ? 0.95 : 0.9; u.rate = 0.95; u.volume = 1;
+      if (alTerminar) u.onend = alTerminar;
+      speechSynthesis.speak(u);
+    };
+    if (speechSynthesis.getVoices().length) hablar();
+    else { // en el móvil las voces tardan un momento en cargar
+      let ya = false; const go = () => { if (ya) return; ya = true; speechSynthesis.removeEventListener("voiceschanged", go); hablar(); };
+      speechSynthesis.addEventListener("voiceschanged", go); setTimeout(go, 1500);
+    }
   }
+  window.vcVozInfo = () => (puedeHablar ? elegirVoz() : null);
   window.vcDecir = decir;
 
   // Explicaciones propias para los campos más usados (por texto de la etiqueta)

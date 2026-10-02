@@ -1422,6 +1422,7 @@ b.fn-c-ing,b.fn-c-egr{background:none;color:var(--ink)}
 .mk-gl{list-style:none;margin:0;padding:0 13px 12px;display:grid;gap:4px;font-size:12.5px}.mk-gl li{display:flex;gap:8px;align-items:center}.mk-gl span{flex:1;color:var(--d2-mut)}
 .mk-url{margin:0 13px 13px;background:var(--d2-card2);border-radius:10px;padding:10px}.mk-url code{display:block;word-break:break-all;font-size:12px}
 .mk-qr{background:#fff;border-radius:8px;padding:6px;display:inline-block;line-height:0}.mk-qr svg{width:110px;height:110px}
+.mk-qr.big svg{width:180px;height:180px}.mk-qrbig{display:grid;gap:8px;justify-items:start;padding-top:8px}.mk-warn{margin:0;font-size:12.5px;color:#b45309;font-weight:700}.mk-en.off{opacity:.55}.mk-en .mk-edit:not([hidden]){display:grid;gap:6px;margin-top:6px}.mk-qrhoy{margin:8px 0 0;font-size:13px}.mk-canales{display:grid;gap:6px;margin:0 0 12px}.mk-canal{display:grid;grid-template-columns:104px 1fr auto 62px;gap:8px;align-items:center;font-size:12.5px}.mk-canal em{font-style:normal;color:var(--d2-mut);text-align:right}.mk-bar{height:8px;border-radius:5px;background:var(--d2-card2);overflow:hidden}.mk-bar i{display:block;height:100%;background:var(--d2-acc,#e8452c);border-radius:5px}
 .mk-pil{background:var(--d2-card);border:1px solid var(--d2-line);border-radius:14px;padding:12px 14px;transition:border-color .3s,box-shadow .3s}
 .mk-pil.on{border-color:rgba(61,191,118,.55);box-shadow:0 0 0 3px rgba(61,191,118,.08)}
 .mk-sw{display:flex;gap:12px;align-items:center;cursor:pointer}.mk-sw input{position:absolute;opacity:0}
@@ -2287,6 +2288,28 @@ textarea.in{resize:vertical;min-height:76px;font:inherit}
 /*UX-2709-CSS-FIN*/
 </style>
 <link rel="stylesheet" href="/tema-admin.css">
+<style id="fix17">
+/* Actualización 17 · móvil: nada se desborda en horizontal, objetivos táctiles de 44 px, botón de marketing discreto */
+html,body{max-width:100%;overflow-x:hidden}
+.segv{max-width:100%;overflow-x:auto;scrollbar-width:none}.segv::-webkit-scrollbar{display:none}
+.segv button{white-space:nowrap;flex:0 0 auto}
+.wrap,main,section,.card,.lead,.lr-main,.kb-card,.dlg form,.field{min-width:0}
+.lead b,.lead small,.lead .meta,.kb-card b,.kb-card small,.kb-card .mat,.card b,td,th,.dw-body h2,.dw-body b{overflow-wrap:anywhere;word-break:break-word}
+.dlg{max-width:calc(100vw - 16px)}.dlg form{max-width:100%;box-sizing:border-box}
+@media (max-width:720px){
+  #tabs.tabs{-webkit-mask-image:linear-gradient(to right,#000 88%,transparent);mask-image:linear-gradient(to right,#000 88%,transparent)}
+  .dlg{width:calc(100vw - 16px);margin-inline:auto}
+}
+@media (pointer:coarse){
+  main .btn,main .segv button,.dlg .btn,.drawer .btn{min-height:44px}
+  main button[aria-label],.cal-nav button,[data-nav]{min-width:44px;min-height:44px}
+  main input[type=checkbox],main input[type=radio]{width:22px;height:22px}
+  main a.mini,main .hint a{display:inline-block;padding:12px 0}
+}
+.mk-fab span{display:none}.mk-fab{padding:12px;opacity:.92}
+.mk-fab:hover span,.mk-fab:focus-visible span{display:inline}
+.skip17{position:absolute;left:-9999px;top:8px;background:#000;color:#fff;padding:10px 14px;border-radius:8px;z-index:1000}.skip17:focus{left:8px}
+</style>
 </head>
 <body>
 <header class="top">
@@ -2301,7 +2324,8 @@ textarea.in{resize:vertical;min-height:76px;font:inherit}
   </div>
 </header>
 
-<main class="wrap">
+<a class="skip17" href="#contenido17">Saltar al contenido</a>
+<main class="wrap" id="contenido17" tabindex="-1">
   <!-- LOGIN -->
   <section id="s-login" hidden>
     <form class="card login" id="login-form">
@@ -2396,7 +2420,8 @@ textarea.in{resize:vertical;min-height:76px;font:inherit}
   <!-- AGENDA -->
   <section id="s-agenda" hidden>
     <div class="head">
-      <div><h1 style="font-size:28px">Agenda</h1><p>Citas que los clientes han reservado en la web. Ya están confirmadas.</p></div>
+      <div><h1 style="font-size:28px">Agenda</h1><p>Citas que los clientes han reservado en la web, y las que apuntas tú cuando llaman. Ya están confirmadas.</p></div>
+      <div><button class="btn b-acc b-sm" id="cita-nueva" type="button">+ Apuntar cita (cliente que llama)</button></div>
     </div>
     <div class="list" id="agenda"></div>
     <div class="card" style="margin-top:22px;display:grid;gap:12px">
@@ -2588,6 +2613,19 @@ textarea.in{resize:vertical;min-height:76px;font:inherit}
       </div>
     </form>
   </section>
+  <details class="card" id="glosario17" style="margin-top:28px;padding:14px 18px">
+    <summary style="cursor:pointer;font-weight:800;min-height:44px;display:flex;align-items:center">¿Qué significan las siglas? (FORM, TIN, arqueo ciego…)</summary>
+    <dl style="margin:10px 0 0;display:grid;gap:10px;font-size:14.5px;line-height:1.45">
+      <div><dt><b>FORM-01 … FORM-14</b></dt><dd style="margin:2px 0 0;color:var(--muted)">Las fichas del taller y la oficina, numeradas: 01 recepción del coche, 02 inspección de 360°, 03 tiempos de trabajo, 04 control de calidad antes de entregar, 14 factura de la reparación. Cada una tiene su firma y queda guardada.</dd></div>
+      <div><dt><b>Sistema 01, MO-00</b></dt><dd style="margin:2px 0 0;color:var(--muted)">Procedimientos de trabajo del taller (cómo se hace cada tarea). Sirven de guía y de comprobación.</dd></div>
+      <div><dt><b>TIN y TAE</b></dt><dd style="margin:2px 0 0;color:var(--muted)">Los dos intereses de una financiación. El TIN es el interés que cobra el banco; la TAE incluye también las comisiones y es el que mejor compara dos ofertas.</dd></div>
+      <div><dt><b>Arqueo ciego</b></dt><dd style="margin:2px 0 0;color:var(--muted)">Al cerrar la caja cuentas el dinero sin ver cuánto debería haber; después el sistema lo compara. Así nadie “cuadra” la cifra a ojo.</dd></div>
+      <div><dt><b>Descuadre</b></dt><dd style="margin:2px 0 0;color:var(--muted)">La diferencia entre lo que contaste y lo que debería haber en caja.</dd></div>
+      <div><dt><b>Huella</b></dt><dd style="margin:2px 0 0;color:var(--muted)">Un código único de cada factura o anotación, calculado con la anterior. Si alguien cambiara algo después, el código dejaría de cuadrar y se vería.</dd></div>
+      <div><dt><b>IGIC</b></dt><dd style="margin:2px 0 0;color:var(--muted)">El impuesto indirecto de Canarias (el “IVA” de las islas). El general es el 7 %.</dd></div>
+      <div><dt><b>Factura rectificativa (R-…)</b></dt><dd style="margin:2px 0 0;color:var(--muted)">La factura que corrige otra ya emitida. La original no se borra: la rectificativa la cita.</dd></div>
+    </dl>
+  </details>
 </main>
 
 <div class="drawer" id="drawer" hidden><div class="dw-bg" id="dw-bg"></div><div class="dw-body" id="dw-body" role="dialog" aria-modal="true" aria-label="Ficha"></div></div>
@@ -2603,6 +2641,18 @@ textarea.in{resize:vertical;min-height:76px;font:inherit}
   <div class="field"><label for="nc-email">Email (opcional)</label><input class="in" id="nc-email" type="email"></div>
   <div class="field"><label for="nc-msg">Qué necesita</label><textarea class="in" id="nc-msg" rows="2" style="min-height:0"></textarea></div>
   <div style="display:flex;gap:8px;justify-content:flex-end"><button type="button" class="btn b-ghost" id="nc-cancel">Cancelar</button><button class="btn b-acc" id="nc-ok">Guardar cliente</button></div>
+</form></dialog>
+
+<dialog class="dlg" id="dlg-cita"><form id="f-cita">
+  <h2 style="font-size:24px;margin:0">Apuntar una cita</h2>
+  <p class="hint" style="margin:0">Para cuando el cliente llama o viene en persona. La hora queda ocupada en la web y el cliente entra en el CRM.</p>
+  <div class="g2"><div class="field"><label for="ct-nombre">Nombre *</label><input class="in" id="ct-nombre" required maxlength="80" autocomplete="off"></div><div class="field"><label for="ct-tel">Teléfono *</label><input class="in" id="ct-tel" type="tel" required maxlength="30"></div></div>
+  <div class="g2"><div class="field"><label for="ct-tipo">Qué viene a hacer</label><select class="in" id="ct-tipo"><option value="taller">Taller (reparación, revisión…)</option><option value="coche">Ver o probar un coche</option></select></div><div class="field" id="ct-cochebox" hidden><label for="ct-coche">Coche que quiere ver</label><select class="in" id="ct-coche"></select></div></div>
+  <div class="g2" id="ct-tbox"><div class="field"><label for="ct-vcoche">Su coche</label><input class="in" id="ct-vcoche" maxlength="120" placeholder="Ej. Seat Ibiza 2015"></div><div class="field"><label for="ct-mat">Matrícula</label><input class="in" id="ct-mat" maxlength="14"></div></div>
+  <div class="g2"><div class="field"><label for="ct-dia">Día</label><select class="in" id="ct-dia"></select></div><div class="field"><label for="ct-hora">Hora</label><select class="in" id="ct-hora"></select></div></div>
+  <div class="field"><label for="ct-msg">Qué necesita (opcional)</label><textarea class="in" id="ct-msg" rows="2" maxlength="1500" style="min-height:0"></textarea></div>
+  <p class="hint" id="ct-aviso" style="margin:0" hidden></p>
+  <div style="display:flex;gap:8px;justify-content:flex-end"><button type="button" class="btn b-ghost" id="ct-cancel">Cancelar</button><button class="btn b-acc" id="ct-ok">Apuntar cita</button></div>
 </form></dialog>
 
 <dialog class="dlg" id="dlg-orden"><form id="f-orden">
@@ -2647,7 +2697,9 @@ function show(id){ ["s-login","s-list","s-form","s-leads","s-agenda","s-dash","s
 const PUEDE_TODO=()=>!ME||!ME.equipo||ME.rol==="gerente";
 function puedeTab(t){ if(PUEDE_TODO()) return true; if(t==="dash"||t==="fin") return false; if(t==="caja") return !!ME.caja; return true; }
 async function api(path, opts={}){
-  const r = await fetch(path, {...opts, headers:{...(opts.headers||{}), authorization:"Bearer "+PW}});
+  let r;
+  try{ r = await fetch(path, {...opts, headers:{...(opts.headers||{}), authorization:"Bearer "+PW}}); }
+  catch(e){ throw new Error("Sin conexión. Lo que escribiste NO se ha guardado: comprueba la cobertura e inténtalo de nuevo."); }
   if(r.status===401){ logout("Tu sesión ha caducado. Vuelve a entrar."); throw new Error("La sesión ha caducado. Vuelve a entrar."); }
   const data = await r.json().catch(()=>({}));
   if(r.status===423&&typeof jBloquear==="function") jBloquear(data); // sin fichar: pantalla de fichaje
@@ -3227,7 +3279,7 @@ $("#leads").addEventListener("drop",async e=>{ const col=e.target.closest(".kb-c
 
 /* ---------- exportar a Excel (CSV) ---------- */
 function descargarCSV(nombre,filas){
-  const csv="﻿"+filas.map(f=>f.map(v=>{ const s=String(v??""); return /[;"\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; }).join(";")).join("\r\n");
+  const csv="﻿"+filas.map(f=>f.map(v=>{ let s=String(v??""); if(/^[=+\-@\t\r]/.test(s)&&!/^-?\d+([.,]\d+)?$/.test(s)) s="'"+s; return /[;"\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; }).join(";")).join("\r\n");
   const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"})); a.download=nombre; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },500);
 }
 $("#exp-leads").onclick=()=>{
@@ -3363,6 +3415,8 @@ $("#f-nuevo").addEventListener("submit",async e=>{
     const tipo=$("#nc-tipo").value, car=CARS.find(c=>c.id===$("#nc-coche").value);
     const body={manual:true,tipo,nombre:$("#nc-nombre").value,telefono:$("#nc-tel").value,email:$("#nc-email").value,canal:$("#nc-canal").value,mensaje:$("#nc-msg").value,
       vehiculo:tipo==="taller"?{coche:$("#nc-vcoche").value,matricula:$("#nc-mat").value}:{},coche:car?{id:car.id,titulo:`${car.marca} ${car.modelo} ${car.version||""}`.trim(),precio:car.precio}:null};
+    const dup=ultimos9(body.telefono).length>=9?LEADS.find(l=>ultimos9(l.telefono)===ultimos9(body.telefono)):null;
+    if(dup&&confirm(`Ya hay un cliente con este teléfono: ${dup.nombre} (${EST[dup.estado]||dup.estado}).\n\nAceptar = abrir su ficha (recomendado, para no duplicarlo).\nCancelar = crear otro cliente igualmente.`)){ $("#dlg-nuevo").close(); btn.disabled=false; abrirLead(dup.id); return; }
     const x=await api("/api/solicitudes",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});
     LEADS.unshift(x); conocidas&&conocidas.add(x.id); $("#dlg-nuevo").close(); contadores(); renderLeads(); abrirLead(x.id); toast("Cliente apuntado");
   }catch(err){ toast(err.message); }
@@ -3642,8 +3696,8 @@ function renderDash(){
     ["Páginas vistas por visita",t.v?t.pv/t.v:0,ult.v?ult.pv/ult.v:0,v=>String(Math.round(v*10)/10).replace(".",",")],
     ["Tiempo de respuesta (mediana)",M.mediana,P.mediana,v=>v===null?"—":durM(v),true],
     ["Ticket medio",M.ticket,P.ticket,v=>v?eur(v):"—"],
-    ["Facturación registrada",M.fact,P.fact,v=>v?eur(v):"—"],
-    ["Facturación al día",M.fact/Math.max(1,t.nDias),P.fact/Math.max(1,ult.nDias),v=>v?eur(Math.round(v)):"—"],
+    ["Importe de trabajos cerrados (CRM)",M.fact,P.fact,v=>v?eur(v):"—"],
+    ["Importe cerrado al día (CRM)",M.fact/Math.max(1,t.nDias),P.fact/Math.max(1,ult.nDias),v=>v?eur(Math.round(v)):"—"],
     ["Presupuestos aceptados",M.pres.length?M.presA.length/M.pres.length:null,P.pres.length?P.presA.length/P.pres.length:null,v=>v===null?"—":String(Math.round(v*100))+" %"],
     ["Órdenes de taller abiertas",M.ordenesMes,P.ordenesMes,v=>nfmt(v)],
   ];
@@ -3656,7 +3710,7 @@ function renderDash(){
       ${tile("Conversión web",hayWeb?String(Math.round(conv*1000)/10).replace(".",",")+" %":"—","solicitudes / visitas",delta(conv,convP))}
       ${tile("Citas reservadas",nfmt(M.citas.length),"taller y visitas a coches",delta(M.citas.length,P.citas.length))}
       ${tile("Cerradas",nfmt(M.gan.length),`${M.perd.length} perdidas`,delta(M.gan.length,P.gan.length))}
-      ${tile("Facturación",M.fact?eur(M.fact):"—",M.ticket?`ticket medio ${eur(Math.round(M.ticket))}`:"apunta los importes en el CRM",delta(M.fact,P.fact))}
+      ${tile("Trabajos cerrados (CRM)",M.fact?eur(M.fact):"—",M.ticket?`ticket medio ${eur(Math.round(M.ticket))}`:"apunta los importes en el CRM",delta(M.fact,P.fact))}
       ${tile("Tiempo de respuesta",M.mediana===null?"—":durM(M.mediana),M.nResp?`${pct(M.r15,M.nResp)} en menos de 15 min`:"en horario de apertura",delta(M.mediana||0,P.mediana,true))}
       ${tile("Presupuestos",M.pres.length?`${M.presA.length}/${M.pres.length}`:"—",M.presA.length?`aceptados · ${eur(M.presImp)}`:"aceptados / enviados",delta(M.presA.length,P.presA.length))}
     </div>
@@ -3681,7 +3735,7 @@ function renderDash(){
 }
 $("#dash-pdf").onclick=()=>{ const t=document.title; document.title=`Informe Volcano Cars ${nombreMes(MES)}`; window.print(); setTimeout(()=>document.title=t,1500); };
 $("#dash-csv").onclick=()=>{
-  const M=metricas(MES), rows=[["Fecha","Visitas","Páginas vistas","Solicitudes","Citas","Cerradas","Facturación €"]];
+  const M=metricas(MES), rows=[["Fecha","Visitas","Páginas vistas","Solicitudes","Citas","Cerradas","Importe cerrado € (CRM)"]];
   for(const d of M.t.dias){ const l=M.leads.filter(x=>diaC(x.creado)===d.f), g=M.gan.filter(x=>diaC(cierre(x))===d.f);
     rows.push([d.f,d.v,d.pv,l.length,l.filter(x=>x.cita).length,g.length,String(g.reduce((a,x)=>a+(x.importe||0),0)).replace(".",",")]); }
   rows.push([]); rows.push(["Total",M.t.v,M.t.pv,M.leads.length,M.citas.length,M.gan.length,String(M.fact).replace(".",",")]);
@@ -3730,6 +3784,37 @@ $("#agenda").addEventListener("click",async e=>{
     if(e.target.closest("[data-hecha]")){ await patchLead(x.id,{estado:"ganada"}); toast("Marcada como hecha"); renderAgenda(); renderLeads(); }
   }catch(err){ toast(err.message); }
 });
+/* ---------- apuntar una cita a mano (el cliente llama o viene) ---------- */
+let CITAS_DIAS=[];
+async function ctCargarDias(){
+  const ag=$("#ct-tipo").value==="coche"?"visita":"taller";
+  $("#ct-dia").innerHTML='<option value="">Cargando…</option>'; $("#ct-hora").innerHTML="";
+  try{ const r=await fetch("/api/citas?agenda="+ag,{cache:"no-store"}); const d=await r.json(); CITAS_DIAS=(d.dias||[]).filter(x=>!x.cerrado&&x.horas.some(h=>h.libre));
+    $("#ct-dia").innerHTML=CITAS_DIAS.length?CITAS_DIAS.map(x=>`<option value="${x.fecha}">${esc(fechaLarga(x.fecha))}</option>`).join(""):'<option value="">No quedan días libres</option>'; ctHoras();
+  }catch(_){ $("#ct-dia").innerHTML='<option value="">No se han podido cargar los días</option>'; }
+}
+function ctHoras(){ const d=CITAS_DIAS.find(x=>x.fecha===$("#ct-dia").value); $("#ct-hora").innerHTML=d?d.horas.filter(h=>h.libre).map(h=>`<option>${h.hora}</option>`).join(""):""; }
+function ctTipo(){ const c=$("#ct-tipo").value==="coche"; $("#ct-cochebox").hidden=!c; $("#ct-tbox").hidden=c; ctCargarDias(); }
+const ultimos9=t=>String(t||"").replace(/\D/g,"").slice(-9);
+function ctDuplicado(){ const t=ultimos9($("#ct-tel").value), av=$("#ct-aviso"); const x=t.length>=9?LEADS.find(l=>ultimos9(l.telefono)===t):null;
+  av.hidden=!x; if(x) av.textContent="Ojo: ya hay un cliente con este teléfono ("+x.nombre+"). Se creará otra ficha; puedes abrir la suya desde el CRM."; }
+$("#cita-nueva").onclick=()=>{ $("#f-cita").reset(); $("#ct-coche").innerHTML='<option value="">—</option>'+CARS.filter(c=>c.estado==="disponible"||c.estado==="reservado").map(c=>`<option value="${esc(c.id)}">${esc(c.marca+" "+c.modelo+" "+(c.version||""))}</option>`).join(""); $("#ct-aviso").hidden=true; ctTipo(); $("#dlg-cita").showModal(); };
+$("#ct-tipo").onchange=ctTipo; $("#ct-dia").onchange=ctHoras; $("#ct-tel").addEventListener("input",ctDuplicado);
+$("#ct-cancel").onclick=()=>$("#dlg-cita").close();
+$("#f-cita").addEventListener("submit",async e=>{
+  e.preventDefault(); const btn=$("#ct-ok"); btn.disabled=true;
+  try{
+    if(!$("#ct-dia").value||!$("#ct-hora").value) throw new Error("Elige un día y una hora libres.");
+    const tipo=$("#ct-tipo").value, car=CARS.find(c=>c.id===$("#ct-coche").value);
+    if(tipo==="coche"&&!car) throw new Error("Elige el coche que quiere ver.");
+    const body={manual:true,tipo,nombre:$("#ct-nombre").value,telefono:$("#ct-tel").value,canal:"telefono",mensaje:$("#ct-msg").value,cita:{fecha:$("#ct-dia").value,hora:$("#ct-hora").value},
+      vehiculo:tipo==="taller"?{coche:$("#ct-vcoche").value,matricula:$("#ct-mat").value}:{},coche:car?{id:car.id,titulo:`${car.marca} ${car.modelo} ${car.version||""}`.trim(),precio:car.precio}:null};
+    const x=await api("/api/solicitudes",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});
+    LEADS.unshift(x); conocidas&&conocidas.add(x.id); $("#dlg-cita").close(); contadores(); renderLeads(); renderAgenda(); toast("Cita apuntada: "+fecha(x.cita.fecha)+" a las "+x.cita.hora);
+  }catch(err){ toast(err.message); if(/ocupada|disponible/i.test(err.message)) ctCargarDias(); }
+  btn.disabled=false;
+});
+
 let CERRADOS=[];
 function pintarCerrados(){ const hoy=hoyC(); const f=CERRADOS.filter(d=>d>=hoy);
   $("#cerrados").innerHTML=f.length?f.map(d=>`<span class="pill" style="display:inline-flex;gap:8px;align-items:center">${fechaLarga(d)} <button type="button" data-abrir="${d}" aria-label="Abrir ${fechaLarga(d)}" style="border:0;background:none;cursor:pointer;font-weight:800;color:var(--bad)">✕</button></span>`).join(""):'<span style="color:var(--muted);font-size:14px">Ningún día cerrado.</span>'; }
@@ -5289,6 +5374,10 @@ function fnNuevoIngreso(){
       d.close(); toast("Ingreso guardado"); fnCargar(); }catch(err){ fnErr(err.message); }
     $("#fn-ok").disabled=false; };
 }
+async function fnCobroPost(url,obj){
+  try{ return await api(url,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(obj)}); }
+  catch(e){ if(/se pasa de/.test(e.message||"") && confirm(e.message+"\n\n¿Guardar el cobro igualmente?")) return await api(url,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({...obj,confirmarExceso:true})}); throw e; }
+}
 function fnCobro(tipo,ref,pend,txt){
   const d=fnDlg(`<form id="f-fn" novalidate><h2>Registrar cobro</h2><p class="hint">${esc(txt)}</p>
     <div class="t-g2"><div class="field"><label for="fn-importe">Importe cobrado (€) *</label><input class="in num cj-imp" id="fn-importe" inputmode="decimal" value="${(pend/100).toFixed(2).replace(".",",")}"></div><div class="field"><label for="fn-fecha">Fecha</label><input class="in" type="date" id="fn-fecha" value="${hoyC()}" max="${hoyC()}"></div></div>
@@ -5300,7 +5389,7 @@ function fnCobro(tipo,ref,pend,txt){
   fnSegBind("fn-met",avisar); $("#fn-importe").oninput=avisar;
   $("#f-fn").onsubmit=async e=>{ e.preventDefault(); $("#fn-err").hidden=true; const imp=cjNum($("#fn-importe").value), met=fnSegVal("fn-met");
     if(!(imp>0)) return fnErr("Escribe el importe."); if(!met) return fnErr("Elige cómo ha pagado."); $("#fn-ok").disabled=true;
-    try{ await api(`/api/finanzas/cobro/${tipo}/${encodeURIComponent(ref)}`,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({importe:String(imp),metodo:met,fecha:$("#fn-fecha").value})});
+    try{ await fnCobroPost(`/api/finanzas/cobro/${tipo}/${encodeURIComponent(ref)}`,{importe:String(imp),metodo:met,fecha:$("#fn-fecha").value});
       d.close(); toast("Cobro registrado"+(met==="efectivo"?" y sumado a la caja":"")); fnCargar(); }catch(err){ fnErr(err.message); }
     $("#fn-ok").disabled=false; };
 }
@@ -5322,7 +5411,7 @@ async function fnVenta(id){
     $("#fn-ok").disabled=true;
     try{ await api("/api/finanzas/venta/"+encodeURIComponent(id),{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({importe:String(imp),costeCompra:String(compra),fecha:$("#fn-fecha").value,igicPct:$("#fn-imp").value,comprador:$("#fn-cli").value,factura:$("#fn-fact").value})});
       const met=$("#fn-met")?fnSegVal("fn-met"):""; let aviso="";
-      if(met){ try{ await api(`/api/finanzas/cobro/venta/${encodeURIComponent(id)}`,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({importe:String(imp),metodo:met,fecha:$("#fn-fecha").value})}); }catch(err){ aviso=" · el cobro no se pudo guardar: "+err.message; } }
+      if(met){ try{ await fnCobroPost(`/api/finanzas/cobro/venta/${encodeURIComponent(id)}`,{importe:String(imp),metodo:met,fecha:$("#fn-fecha").value}); }catch(err){ aviso=" · el cobro no se pudo guardar: "+err.message; } }
       d.close(); toast("Venta registrada"+aviso); if(!$("#s-fin").hidden) fnCargar(); }catch(err){ fnErr(err.message); }
     $("#fn-ok").disabled=false; };
 }
@@ -6360,7 +6449,7 @@ function d2Kpis(M,P,S){
   const t=M.t, tp=P.t, conv=t.v?M.web.length/t.v:0, convP=tp.v?P.web.length/tp.v:0;
   const acum=a=>{ let s=0; return a.map(v=>s+=v); };
   const K=[
-    {k:"fact",l:"Facturación",v:M.fact?d2e(M.fact):"—",s:M.ticket?`ticket medio ${d2e(M.ticket)}`:"apunta importes al cerrar en el CRM",d:d2Chip(M.fact,P.fact),sp:acum(S.f),hot:1,capa:"prom"},
+    {k:"fact",l:"Trabajos cerrados (CRM)",v:M.fact?d2e(M.fact):"—",s:M.ticket?`ticket medio ${d2e(M.ticket)}`:"apunta importes al cerrar en el CRM",d:d2Chip(M.fact,P.fact),sp:acum(S.f),hot:1,capa:"prom"},
     {k:"sol",l:"Solicitudes",v:nfmt(M.leads.length),s:`${M.web.length} desde la web`,d:d2Chip(M.leads.length,P.leads.length),sp:S.s,capa:"trafico"},
     {k:"vis",l:"Visitas web",v:nfmt(t.v),s:`${nfmt(t.pv)} páginas vistas`,d:d2Chip(t.v,tp.v),sp:S.v,capa:"trafico"},
     {k:"conv",l:"Conversión",v:t.v?d2n(conv*100)+" %":"—",s:"solicitudes web / visitas",d:d2Chip(conv,convP),sp:S.v.map((v,i)=>v?S.s[i]/v:0),capa:"canales",hot:t.v&&conv<0.015?2:0},
@@ -6396,7 +6485,7 @@ function d2Forecast(M,P,S){
     ?`Al ritmo de los últimos ${ult.length} días cerrarás el mes con <b>${fmt(prev)}</b> ${nombre} <span class="d2-mut">(entre ${fmt(Math.max(real,prev-banda))} y ${fmt(prev+banda)}, 80 % de confianza)</span>. El mes anterior: <b>${fmt(antTotal)}</b> ${d2Chip(prev,antTotal)}`
     :`Mes cerrado con <b>${fmt(real)}</b> ${nombre}. El anterior: <b>${fmt(antTotal)}</b> ${d2Chip(real,antTotal)}`;
   return `<section class="d2-card d2-fc"><header class="d2-h"><div><small>Predicción</small><h3>Cierre del mes</h3></div>
-    <div class="d2-seg" role="group" aria-label="Métrica">${[["v","Visitas"],["s","Solicitudes"],["f","Facturación"]].map(([k,t])=>`<button type="button" data-d2fc="${k}" aria-pressed="${D2.fc===k}">${t}</button>`).join("")}</div></header>
+    <div class="d2-seg" role="group" aria-label="Métrica">${[["v","Visitas"],["s","Solicitudes"],["f","Importe cerrado"]].map(([k,t])=>`<button type="button" data-d2fc="${k}" aria-pressed="${D2.fc===k}">${t}</button>`).join("")}</div></header>
     <svg class="d2-fcsvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Acumulado de ${nombre} y previsión">
       ${[0.25,.5,.75,1].map(f=>`<line x1="${pl}" x2="${W-pr}" y1="${Y(max*f/1.08)}" y2="${Y(max*f/1.08)}" class="d2-grid"/>`).join("")}
       <line x1="${pl}" x2="${W-pr}" y1="${yAnt}" y2="${yAnt}" class="d2-ref"/><text x="${W-pr}" y="${yAnt-5}" text-anchor="end" class="d2-reft">mes anterior ${esc(fmt(antTotal))}</text>
@@ -6429,7 +6518,7 @@ function d2Sim(M){
 }
 function d2SimOut(base){
   const a=d2SimCalc(base), b=d2SimCalc(D2.sim), fila=(l,x,y,f)=>{ const d=x?Math.round((y-x)/x*100):0; return `<div class="d2-so"><span>${l}</span><b class="num">${f(y)}</b><em class="${d>0?"up":d<0?"down":""}">${d?(d>0?"+":"")+d+" %":"="}</em></div>`; };
-  return `<div class="d2-sobig"><small>Facturación al mes (proyección)</small><b class="num">${d2e(b.fact)}</b><span>${b.fact>=a.fact?"+":"−"}${d2e(Math.abs(b.fact-a.fact))} vs. tu ritmo actual</span></div>
+  return `<div class="d2-sobig"><small>Importe cerrado al mes (proyección, CRM)</small><b class="num">${d2e(b.fact)}</b><span>${b.fact>=a.fact?"+":"−"}${d2e(Math.abs(b.fact-a.fact))} vs. tu ritmo actual</span></div>
     ${fila("Visitas al mes",a.vis,b.vis,v=>nfmt(Math.round(v)))}${fila("Solicitudes",a.sol,b.sol,v=>d2n(v))}${fila("Ventas y trabajos",a.ventas,b.ventas,v=>d2n(v))}
     <div class="d2-so"><span>Coste por cliente (CPA)</span><b class="num">${b.cpa===null?"—":d2e(b.cpa)}</b><em></em></div>
     <div class="d2-so"><span>Retorno de los anuncios</span><b class="num ${b.roi===null?"":b.roi>=0?"up":"down"}">${b.roi===null?"—":(b.roi>=0?"+":"")+Math.round(b.roi*100)+" %"}</b><em></em></div>`;
@@ -6531,7 +6620,7 @@ async function d2Informes(forzar){
 }
 function d2InfHTML(inf){
   const k=inf.kpis, p=inf.prev;
-  const K=[["Facturación",k.facturacion?d2e(k.facturacion):"—",d2Chip(k.facturacion,p.facturacion),1],["Solicitudes",nfmt(k.solicitudes),d2Chip(k.solicitudes,p.solicitudes)],["Visitas web",nfmt(k.visitas),d2Chip(k.visitas,p.visitas)],["Conversión",k.visitas?d2n(k.conversion*100)+" %":"—",d2Chip(k.conversion,p.conversion)],["Citas",nfmt(k.citas),d2Chip(k.citas,p.citas)],["Cerradas",nfmt(k.ganadas),d2Chip(k.ganadas,p.ganadas)],["Contactos (WhatsApp, llamar…)",nfmt(k.contactos),d2Chip(k.contactos,p.contactos)],["Respuesta (mediana)",k.respMediana===null?"—":durM(k.respMediana),d2Chip(k.respMediana||0,p.respMediana,true)]];
+  const K=[["Trabajos cerrados (CRM)",k.facturacion?d2e(k.facturacion):"—",d2Chip(k.facturacion,p.facturacion),1],["Solicitudes",nfmt(k.solicitudes),d2Chip(k.solicitudes,p.solicitudes)],["Visitas web",nfmt(k.visitas),d2Chip(k.visitas,p.visitas)],["Conversión",k.visitas?d2n(k.conversion*100)+" %":"—",d2Chip(k.conversion,p.conversion)],["Citas",nfmt(k.citas),d2Chip(k.citas,p.citas)],["Cerradas",nfmt(k.ganadas),d2Chip(k.ganadas,p.ganadas)],["Contactos (WhatsApp, llamar…)",nfmt(k.contactos),d2Chip(k.contactos,p.contactos)],["Respuesta (mediana)",k.respMediana===null?"—":durM(k.respMediana),d2Chip(k.respMediana||0,p.respMediana,true)]];
   const tabla=(t,cab,filas)=>filas.length?`<section class="d2r-b"><h4>${t}</h4><table class="d2r-t"><thead><tr>${cab.map((c,i)=>`<th${i?' class="n"':""}>${c}</th>`).join("")}</tr></thead><tbody>${filas.map(f=>`<tr>${f.map((c,i)=>`<td${i?' class="n num"':""}>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></section>`:"";
   return `<article class="d2r" id="d2r">
     <header class="d2r-cov"><div class="d2r-logo"><svg viewBox="0 0 662 162" height="36" style="color:#F2EFEA;--logo-inv:#121211">${$(".logo svg")?$(".logo svg").innerHTML:""}</svg></div>
@@ -6596,7 +6685,10 @@ addEventListener("afterprint",()=>{ document.querySelectorAll(".d2-capa").forEac
    - Registro: todo lo que ha hecho el motor, con «Deshacer»
    Lo que envía mensajes a clientes NUNCA se manda solo: queda preparado para enviarlo con un toque.
    ===================================================================== */
-const MK={abierto:false,mini:false,tab:"vivo",hoy:null,t:null,conf:null};
+const MK={abierto:false,mini:false,tab:"vivo",hoy:null,t:null,conf:null,enl:null};
+/* v19: nombre de campaña siempre en minúsculas, sin tildes ni espacios (así "Flyer Octubre" y "flyer-octubre" son la misma) */
+const mkNorm=t=>String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9._-]+/g,"-").replace(/^-+|-+$/g,"");
+const mkCorto=cod=>`https://volcanocars.com/q/${cod}`;
 const mkSlug=c=>{ if(!/^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(c.id)) return c.id; const b=`${c.marca} ${c.modelo} ${c.anio}`.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,""); return (b?b+"-":"")+c.id.slice(0,8).toLowerCase(); };
 const mkURL=(ruta,src,med,camp)=>`https://volcanocars.com${ruta}${ruta.includes("?")?"&":"?"}utm_source=${encodeURIComponent(src)}&utm_medium=${encodeURIComponent(med)}&utm_campaign=${encodeURIComponent(camp)}`;
 const mkGer=()=>typeof ME!=="undefined"&&ME&&PUEDE_TODO();
@@ -6618,19 +6710,29 @@ function mkAbrir(si){ MK.abierto=si; mkGuardarUI(); const dw=$("#mk-dw"), fab=$(
 async function mkRefrescar(){
   if(!mkGer()) return;
   const hoy=hoyC();
-  const [m,st,vi]=await Promise.all([
+  const stat=async()=>{ const a=await api(`/api/stats?desde=${sumaDias(hoy,-89)}&hasta=${hoy}`).catch(()=>null); return a||await api(`/api/stats?desde=${sumaDias(hoy,-29)}&hasta=${hoy}`).catch(()=>null); };
+  const [m,st,vi,en]=await Promise.all([
     api("/api/marketing").catch(()=>null),
-    api(`/api/stats?desde=${sumaDias(hoy,-29)}&hasta=${hoy}`).catch(()=>null),
+    stat(),
     fetch("/api/viendo").then(r=>r.ok?r.json():{}).catch(()=>({})),
+    api("/api/enlaces").catch(()=>null),
   ]);
   if(m){ D2.mk=m; MK.conf=MK.conf||{...m.config}; }
   if(st) MK.st=st.dias||{};
+  if(en) MK.enl=en;
   VIENDO=vi||{};
-  MK.t=Date.now(); mkBadge(); if(MK.abierto) mkPintar();
+  MK.t=Date.now(); mkBadge();
+  if(MK.abierto){ if(mkOcupado()){ const f=document.querySelector("#mk-dw .mk-f"); if(f) f.textContent="Actualizado "+new Date(MK.t).toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit",second:"2-digit"})+" · pausado mientras escribes"; } else mkPintar(); }
 }
+/* v19: si estás escribiendo en un formulario, o has creado un enlace/QR que sigue en pantalla, NO se repinta (antes se borraba todo cada 30 s) */
+function mkOcupado(){ const dw=document.querySelector("#mk-dw"); if(!dw||dw.hidden) return false; const a=document.activeElement;
+  if(a&&dw.contains(a)&&/^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName)&&a.type!=="range") return true;
+  const o=dw.querySelector("#mk-utm-out"); if(o&&o.children.length) return true;
+  if(dw.querySelector(".mk-qrbox:not([hidden]),.mk-edit:not([hidden])")) return true;
+  return [...dw.querySelectorAll(".mk-form input.in")].some(i=>i.value&&i.type!=="date"); }
 function mkHoy(){
   const hoy=hoyC(), d=(MK.st&&MK.st[hoy])||{v:0,clkV:0,horas:Array(24).fill(0)};
-  const prev=Object.entries(MK.st||{}).filter(([f])=>f<hoy).map(([,x])=>x);
+  const prev=Object.entries(MK.st||{}).filter(([f])=>f<hoy&&f>=sumaDias(hoy,-29)).map(([,x])=>x);
   const mediaV=prev.length?prev.reduce((a,x)=>a+x.v,0)/prev.length:0;
   const sol=LEADS.filter(x=>diaC(x.creado)===hoy&&!x.manual).length;
   const solMedia=prev.length?LEADS.filter(x=>!x.manual&&diaC(x.creado)>=sumaDias(hoy,-29)&&diaC(x.creado)<hoy).length/prev.length:0;
@@ -6658,8 +6760,9 @@ function mkOportunidades(){
   const rev=LEADS.filter(x=>x.tipo==="taller"&&x.estado==="ganada"&&(()=>{ const c=cierre(x); if(!c) return false; const d=(Date.now()-Date.parse(c))/864e5; return d>=330&&d<=400; })());
   if(rev.length){ const x=rev[0], txt=`Hola ${x.nombre.split(" ")[0]}, te escribimos de Volcano Cars. Hace casi un año que revisamos tu ${(x.vehiculo&&x.vehiculo.coche)||"coche"}: ¿te damos cita para la revisión anual o la pre-ITV? Reserva aquí: ${mkURL("/taller-mecanico-fuerteventura/","whatsapp","recordatorio","revision-anual")}`;
     o.push({p:65,ico:"🔧",t:`${rev.length} ${rev.length===1?"cliente toca":"clientes tocan"} revisión anual`,d:"Clientes que ya confían en ti: es la venta más fácil del mes.",a:`<a class="mk-b pri" target="_blank" rel="noopener" href="https://wa.me/${waNum(x.telefono)}?text=${encodeURIComponent(txt)}">Escribir a ${esc(x.nombre.split(" ")[0])}</a>`}); }
+  for(const l of ((MK.enl&&MK.enl.enlaces)||[]).filter(x=>x.activo)){ const e=l.escaneos||{}; if(e.d30>=15&&!mkLeadsDe(l).length) o.push({p:55,ico:"📲",t:`El QR «${esc(l.camp)}» tiene ${e.d30} escaneos y ninguna solicitud`,d:"La gente lo escanea pero no escribe: revisa la página de destino (oferta clara, botón de WhatsApp, precio).",a:`<button type="button" class="mk-b" data-mkir="leads">Ver solicitudes</button>`}); }
   // Hora punta (últimos 28 días)
-  const h=Array(24).fill(0); Object.values(MK.st||{}).forEach(d=>(d.horas||[]).forEach((v,i)=>h[i]+=v));
+  const h=Array(24).fill(0); Object.entries(MK.st||{}).filter(([f])=>f>=sumaDias(hoy,-27)).forEach(([,d])=>(d.horas||[]).forEach((v,i)=>h[i]+=v));
   const tot=h.reduce((a,b)=>a+b,0); if(tot>30){ const i=h.indexOf(Math.max(...h)); o.push({p:30,ico:"🕘",t:`Tu hora punta: ${i}:00–${i+1}:00`,d:`El ${Math.round(h[i]/tot*100)} % de las visitas llega en esa hora. Publica 30 min antes y concentra ahí el presupuesto de anuncios.`,a:""}); }
   return o.sort((a,b)=>b.p-a.p);
 }
@@ -6675,46 +6778,86 @@ function mkPintar(){
     ${MK.mini?mkMini():`<nav class="mk-tabs" role="tablist">${tabs.map(([k,t])=>`<button type="button" role="tab" data-mktab="${k}" aria-selected="${MK.tab===k}">${t}</button>`).join("")}</nav>
     <div class="mk-body">${MK.tab==="camp"?mkCampanas():MK.tab==="piloto"?mkPiloto():MK.tab==="log"?mkLog():mkVivo()}</div>
     <footer class="mk-f">${MK.t?`Actualizado ${new Date(MK.t).toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit",second:"2-digit"})} · se refresca solo`:"Cargando…"}</footer>`}`;
+  if(MK.tab==="camp"&&!MK.mini) mkRenderLista();
 }
 function mkMini(){ const H=mkHoy(); return `<div class="mk-mini"><div><b class="num">${H.viendo}</b><small>viendo</small></div><div><b class="num">${H.d.v}</b><small>visitas hoy</small></div><div><b class="num">${H.sol}</b><small>solicitudes</small></div><div><b class="num">${mkOportunidades().length}</b><small>ideas</small></div></div>`; }
 function mkVivo(){
   const H=mkHoy(), op=mkOportunidades(), h=H.d.horas||[], ahora=+new Intl.DateTimeFormat("en-GB",{timeZone:"Atlantic/Canary",hour:"2-digit",hourCycle:"h23"}).format(new Date());
-  const conv=H.d.v?H.sol/H.d.v:0;
+  const conv=H.d.v?H.sol/H.d.v:0, qt=mkQRtot();
   return `<section class="mk-live">
       <div class="mk-now"><i></i><b class="num">${H.viendo}</b><span>${H.viendo===1?"persona mirando":"personas mirando"} coches ahora mismo</span></div>
       <div class="mk-kp"><div><small>Visitas hoy</small><b class="num">${nfmt(H.d.v)}</b>${d2Chip(H.d.v,H.mediaV*Math.max(.2,(ahora+1)/24))}</div>
         <div><small>Contactos hoy</small><b class="num">${nfmt(H.d.clkV||0)}</b><em>WhatsApp, llamar…</em></div>
         <div><small>Solicitudes hoy</small><b class="num">${nfmt(H.sol)}</b>${d2Chip(H.sol,H.solMedia)}</div>
         <div><small>Conversión hoy</small><b class="num">${H.d.v?String(Math.round(conv*1000)/10).replace(".",",")+" %":"—"}</b><em>solicitudes / visitas</em></div></div>
+      ${qt.n?`<p class="mk-qrhoy">📲 <b class="num">${qt.hoy}</b> ${qt.hoy===1?"escaneo":"escaneos"} de QR hoy · ${qt.d7} en 7 días</p>`:""}
       <div class="mk-hrs" aria-label="Visitas por hora hoy">${h.map((v,i)=>`<i class="${i===ahora?"now":""}" style="--h:${(v/Math.max(1,...h)).toFixed(3)}" data-tip="${i}:00 · ${v} páginas"></i>`).join("")}</div>
     </section>
     <h4 class="mk-t">Oportunidades ahora <small>${op.length}</small></h4>
     ${op.length?op.map(x=>`<article class="mk-op"><span class="mk-oi" aria-hidden="true">${x.ico}</span><div><b>${x.t}</b><p>${x.d}</p>${x.a?`<div class="mk-oa">${x.a}</div>`:""}</div></article>`).join(""):'<p class="mk-vacio">Todo en orden. Cuando aparezca una oportunidad (alguien mirando un coche, un cliente esperando, un coche que no se mueve), sale aquí.</p>'}`;
 }
+/* ---------- v19 · QR y enlaces medibles ---------- */
+const MK_CAN={flyer:"Flyer",tarjeta:"Tarjeta de visita",cartel:"Cartel / lona",vehiculo:"Rotulación del coche",pegatina:"Pegatina",instagram:"Instagram",facebook:"Facebook",tiktok:"TikTok",whatsapp:"WhatsApp",google:"Google Ads",wallapop:"Wallapop / portales",otro:"Otro"};
+const mkDestinos=sel=>{ const base=[["/","Portada"],["/coches-segunda-mano-fuerteventura/","Catálogo de coches"],["/comprar","Comprar un coche (con formulario)"],["/taller-mecanico-fuerteventura/","Taller mecánico"],["/taller","Pedir cita de taller (formulario)"],["/pre-itv-fuerteventura/","Pre-ITV"],["/itv-fuerteventura/","ITV"],["/chapa-y-pintura-fuerteventura/","Chapa y pintura"],["/financiacion-coches-fuerteventura/","Financiación"],["/contacto/","Contacto"]];
+  const coches=CARS.filter(c=>c.estado!=="vendido").map(c=>[`/coche/${mkSlug(c)}`,`Coche: ${c.marca} ${c.modelo}`]);
+  const todos=[...base,...coches]; if(sel&&!todos.some(x=>x[0]===sel)) todos.push([sel,sel]);
+  return todos.map(([v,t])=>`<option value="${esc(v)}"${v===sel?" selected":""}>${esc(t)}</option>`).join(""); };
+const mkLeadsDe=l=>{ const d=sumaDias(hoyC(),-89); return LEADS.filter(x=>x.origen&&mkNorm(x.origen.utm_campaign)===l.camp&&mkNorm(x.origen.utm_source)===l.src&&(!l.term||mkNorm(x.origen.utm_term)===l.term)&&diaC(x.creado)>=d); };
+const mkQRtot=()=>{ const l=(MK.enl&&MK.enl.enlaces)||[]; return {n:l.length,hoy:l.reduce((a,x)=>a+((x.escaneos||{}).hoy||0),0),d7:l.reduce((a,x)=>a+((x.escaneos||{}).d7||0),0)}; };
+function mkQRHTML(url,camp,src){ const nom=mkNorm(camp+"-"+src);
+  return `<div class="mk-qrbig"><span class="mk-qr big">${typeof QR!=="undefined"&&QR.svg?QR.svg(url,180):""}</span>
+    <div class="mk-oa"><button type="button" class="mk-b pri" data-mkpng data-url="${esc(url)}" data-nom="${esc(nom)}">Descargar PNG</button><button type="button" class="mk-b" data-mksvg data-url="${esc(url)}" data-nom="${esc(nom)}">SVG para imprenta</button><button type="button" class="mk-b" data-mkprint data-url="${esc(url)}" data-nom="${esc(camp)}">Imprimir</button><button type="button" class="mk-b" data-mkcopy="${esc(url)}">Copiar enlace</button></div>
+    <small class="mk-f2">Al imprimirlo: mínimo 2,5 × 2,5 cm, negro sobre blanco y con un margen blanco alrededor. Pruébalo con tu móvil antes de mandar a imprimir.</small></div>`; }
+function mkFilaEnlace(l){ const L=mkLeadsDe(l), g=L.filter(x=>x.estado==="ganada"), f=g.reduce((a,x)=>a+(x.importe||0),0), e=l.escaneos||{total:0,hoy:0,d7:0,d30:0,u30:0};
+  const aviso=l.activo&&e.d30>=15&&!L.length?`<p class="mk-warn">⚠ ${e.d30} escaneos y ninguna solicitud: revisa que la página de destino tenga una oferta y un botón claros.</p>`:"";
+  return `<article class="mk-cp mk-en ${l.activo?"":"off"}"><header><b>${esc(l.camp)}</b><span class="d2-chip">${esc(MK_CAN[l.src]||l.src)}${l.term?" · "+esc(l.term):""}</span></header>
+    <div class="mk-cpk"><div><small>Escaneos 30 d</small><b class="num">${nfmt(e.d30)}</b><em>${e.hoy?"hoy "+e.hoy:"hoy 0"}</em></div><div><small>Personas</small><b class="num">${nfmt(e.u30)}</b><em>distintas</em></div><div><small>Solicitudes</small><b class="num">${L.length}</b><em>${e.d30?Math.round(L.length/e.d30*100)+" % de escaneos":""}</em></div><div><small>Ventas</small><b class="num">${g.length}</b>${f?`<em>${eur(Math.round(f))}</em>`:""}</div></div>
+    ${aviso}<p class="mk-f2"><code>${esc(l.url.replace("https://",""))}</code> → ${esc(l.destino)}${l.activo?"":" · <b>DESACTIVADO</b>"} · ${nfmt(e.total)} escaneos en total</p>
+    <div class="mk-oa"><button type="button" class="mk-b" data-mkqr>QR</button><button type="button" class="mk-b" data-mkcopy="${esc(l.url)}">Copiar</button><button type="button" class="mk-b" data-mkdestbtn>Cambiar destino</button><button type="button" class="mk-b" data-mkact="${esc(l.cod)}" data-on="${l.activo?1:0}">${l.activo?"Desactivar":"Activar"}</button></div>
+    <div class="mk-qrbox" hidden>${mkQRHTML(l.url,l.camp,l.src)}</div>
+    <div class="mk-edit" hidden><select class="in" data-mkdsel>${mkDestinos(l.destino)}</select><button type="button" class="mk-b pri" data-mkdok="${esc(l.cod)}">Guardar</button><small class="mk-f2">El QR impreso no cambia: solo cambia a dónde lleva.</small></div></article>`; }
+function mkActEnl(r){ const l=(MK.enl&&MK.enl.enlaces)||[], i=l.findIndex(x=>x.cod===r.cod); if(i>-1) l[i]={...l[i],...r}; mkRenderLista(); }
+function mkRenderLista(){ const c=$("#mk-enl-list"); if(!c) return; const l=(MK.enl&&MK.enl.enlaces)||[];
+  c.innerHTML=l.length?`<div class="mk-cps">${l.map(mkFilaEnlace).join("")}</div>`:'<p class="mk-vacio">Todavía no has creado ningún QR. Crea uno abajo: cada flyer, tarjeta o cartel con su propio QR te dirá exactamente cuánta gente lo escanea y cuántos te escriben.</p>'; }
+async function mkDescargar(blob,nombre){ const u=URL.createObjectURL(blob), a=document.createElement("a"); a.href=u; a.download=nombre; document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); }
+function mkQRpng(url){ return new Promise((ok,ko)=>{ const t=+((QR.svg(url,100).match(/viewBox="0 0 (\d+)/)||[])[1]||33), px=t*Math.ceil(1400/t), img=new Image();
+  img.onload=()=>{ const c=document.createElement("canvas"); c.width=c.height=px; const g=c.getContext("2d"); g.fillStyle="#fff"; g.fillRect(0,0,px,px); g.imageSmoothingEnabled=false; g.drawImage(img,0,0,px,px); c.toBlob(b=>b?ok(b):ko(new Error("No se pudo crear la imagen")),"image/png"); };
+  img.onerror=()=>ko(new Error("No se pudo crear la imagen")); img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(QR.svg(url,px)); }); }
 function mkCampanas(){
-  const mk=D2.mk||{}, gastos=mk.gastos||[], desde=sumaDias(hoyC(),-89);
+  const mk=D2.mk||{}, desde=sumaDias(hoyC(),-89);
+  const gastos=(mk.gastos||[]).filter(g=>{ const f=g.hasta||g.desde; return !f||f>=desde; });
   const vis={}; Object.entries(STATS||{}).concat(Object.entries(MK.st||{})).forEach(([f,d])=>{ if(f>=desde&&d.camp) for(const [k,v] of Object.entries(d.camp)) vis[k+"|"+f]=v; });
-  const visC={}; for(const [k,v] of Object.entries(vis)){ const c=k.split("|")[0]; visC[c]=(visC[c]||0)+v; }
+  const visC={}; for(const [k,v] of Object.entries(vis)){ const c=mkNorm(k.split("|")[0]); if(c) visC[c]=(visC[c]||0)+v; }
   const L=LEADS.filter(x=>x.origen&&x.origen.utm_campaign&&diaC(x.creado)>=desde);
-  const nombres=[...new Set([...Object.keys(visC),...L.map(x=>x.origen.utm_campaign.toLowerCase()),...gastos.map(g=>g.campana)])];
-  const filas=nombres.map(n=>{ const l=L.filter(x=>x.origen.utm_campaign.toLowerCase()===n), g=l.filter(x=>x.estado==="ganada"), f=g.reduce((a,x)=>a+(x.importe||0),0), gasto=gastos.filter(x=>x.campana===n).reduce((a,x)=>a+x.gasto,0);
+  const nombres=[...new Set([...Object.keys(visC),...L.map(x=>mkNorm(x.origen.utm_campaign)),...gastos.map(g=>mkNorm(g.campana))])].filter(Boolean);
+  const filas=nombres.map(n=>{ const l=L.filter(x=>mkNorm(x.origen.utm_campaign)===n), g=l.filter(x=>x.estado==="ganada"), f=g.reduce((a,x)=>a+(x.importe||0),0), gasto=gastos.filter(x=>mkNorm(x.campana)===n).reduce((a,x)=>a+x.gasto,0);
     return {n,v:visC[n]||0,s:l.length,g:g.length,f,gasto,cpa:gasto&&l.length?gasto/l.length:null,roi:gasto?(f-gasto)/gasto:null}; }).sort((a,b)=>b.f-a.f||b.s-a.s||b.v-a.v);
-  const ops=CARS.filter(c=>c.estado!=="vendido").map(c=>`<option value="/coche/${esc(mkSlug(c))}">Coche: ${esc(c.marca+" "+c.modelo)}</option>`).join("");
-  return `<p class="mk-intro">Últimos 90 días. Cada campaña se mide por su enlace (<code>utm_campaign</code>). Apunta lo que te gastas y verás el coste por cliente y el retorno.</p>
-    ${filas.length?`<div class="mk-cps">${filas.map(r=>`<article class="mk-cp"><header><b>${esc(r.n)}</b>${r.roi===null?'<span class="d2-chip">sin gasto apuntado</span>':`<span class="d2-chip ${r.roi>=0?"up":"down"}">ROI ${(r.roi>=0?"+":"")+Math.round(r.roi*100)} %</span>`}</header>
-      <div class="mk-cpk"><div><small>Visitas</small><b class="num">${nfmt(r.v)}</b></div><div><small>Solicitudes</small><b class="num">${r.s}</b></div><div><small>Ventas</small><b class="num">${r.g}</b>${r.f?`<em>${eur(Math.round(r.f))}</em>`:""}</div><div><small>Gasto</small><b class="num">${r.gasto?eur(r.gasto):"—"}</b>${r.cpa!==null?`<em>CPA ${eur(Math.round(r.cpa))}</em>`:""}</div></div></article>`).join("")}</div>`:'<p class="mk-vacio">Aún no hay campañas medidas. Crea un enlace abajo y úsalo en tu anuncio, historia, flyer o QR.</p>'}
-    <details class="mk-det"><summary>Apuntar gasto de una campaña</summary><form class="mk-form" id="mk-gasto">
+  // De dónde llegan las solicitudes (todos los canales, incluido «Directo» y lo apuntado a mano)
+  const por={}; LEADS.filter(x=>diaC(x.creado)>=desde).forEach(x=>{ const c=(x.origen&&x.origen.canal)||"Directo"; const r=por[c]||(por[c]={n:0,g:0,f:0}); r.n++; if(x.estado==="ganada"){ r.g++; r.f+=x.importe||0; } });
+  const canales=Object.entries(por).sort((a,b)=>b[1].n-a[1].n), mx=Math.max(1,...canales.map(c=>c[1].n)), totL=canales.reduce((a,c)=>a+c[1].n,0);
+  const t=mkQRtot();
+  return `<p class="mk-intro">Últimos 90 días. Todo lo que repartas en papel lleva un <b>QR propio</b> (flyer, tarjeta, cartel…): así sabes cuánta gente lo escanea y cuántos te escriben. Apunta lo que te gastas y verás el coste por cliente.</p>
+    <h4 class="mk-t">De dónde llegan tus clientes <small>${totL} solicitudes</small></h4>
+    ${canales.length?`<div class="mk-canales">${canales.map(([c,r])=>`<div class="mk-canal"><span>${esc(c)}</span><div class="mk-bar"><i style="width:${Math.round(r.n/mx*100)}%"></i></div><b class="num">${r.n}</b><em>${r.g?r.g+" venta"+(r.g>1?"s":""):"—"}</em></div>`).join("")}</div>`:'<p class="mk-vacio">Cuando entren solicitudes, aquí verás de qué canal vienen (QR, Google, redes, portales, directo…).</p>'}
+    <h4 class="mk-t">Mis QR y enlaces <small>${t.n?`${t.hoy} escaneos hoy · ${t.d7} en 7 días`:"0"}</small></h4>
+    <div id="mk-enl-list"></div>
+    <details class="mk-det" open><summary>Crear un QR o enlace medible</summary><form class="mk-form" id="mk-utm">
+      <label>¿A dónde lleva?<select class="in" name="ruta">${mkDestinos("")}</select></label>
+      <label>¿Dónde lo pones?<select class="in" name="src"><option value="flyer|qr">Flyer (QR)</option><option value="tarjeta|qr">Tarjeta de visita (QR)</option><option value="cartel|qr">Cartel / lona / escaparate (QR)</option><option value="vehiculo|qr">Rotulación del coche (QR)</option><option value="pegatina|qr">Pegatina (QR)</option><option value="instagram|social">Instagram</option><option value="facebook|social">Facebook</option><option value="tiktok|social">TikTok</option><option value="whatsapp|mensaje">WhatsApp</option><option value="google|cpc">Google Ads</option><option value="wallapop|portal">Wallapop / portales</option><option value="otro|qr">Otro</option></select></label>
+      <label>Nombre de la campaña<input class="in" name="camp" required maxlength="60" placeholder="p. ej. oferta-pre-itv-octubre"></label>
+      <label>Zona, lote o reparto (opcional)<input class="in" name="term" maxlength="60" placeholder="p. ej. zona-puerto, lote-1, mecanico-juan"></label>
+      <button class="btn b-acc b-sm">Crear QR</button></form><div id="mk-utm-out"></div>
+      <p class="mk-f2" style="padding:0 13px 13px">Truco: para saber qué zona funciona mejor, crea <b>un QR por zona o por lote</b> (misma campaña, distinta zona) y manda a imprimir cada uno por separado.</p></details>
+    <h4 class="mk-t">Campañas <small>${filas.length}</small></h4>
+    ${filas.length?`<div class="mk-cps">${filas.map(r=>`<article class="mk-cp"><header><b>${esc(r.n)}</b>${r.roi===null?'<span class="d2-chip">sin gasto apuntado</span>':`<span class="d2-chip ${r.roi>=0?"up":"down"}" title="Sobre lo facturado en las ventas cerradas, no sobre el beneficio">ROI s/ventas ${(r.roi>=0?"+":"")+Math.round(r.roi*100)} %</span>`}</header>
+      <div class="mk-cpk"><div><small>Visitas</small><b class="num">${nfmt(r.v)}</b></div><div><small>Solicitudes</small><b class="num">${r.s}</b></div><div><small>Ventas</small><b class="num">${r.g}</b>${r.f?`<em>${eur(Math.round(r.f))}</em>`:""}</div><div><small>Gasto</small><b class="num">${r.gasto?eur(r.gasto):"—"}</b>${r.cpa!==null?`<em>CPA ${eur(Math.round(r.cpa))}</em>`:""}</div></div></article>`).join("")}</div>`:'<p class="mk-vacio">Aún no hay campañas medidas.</p>'}
+    <details class="mk-det"><summary>Apuntar gasto de una campaña (imprenta, anuncios…)</summary><form class="mk-form" id="mk-gasto">
       <label>Campaña<input class="in" name="campana" list="mk-camps" required placeholder="p. ej. flyer-septiembre"></label><datalist id="mk-camps">${nombres.map(n=>`<option value="${esc(n)}">`).join("")}</datalist>
-      <label>Canal<select class="in" name="canal"><option>Instagram</option><option>Facebook</option><option>Google Ads</option><option>Flyers / imprenta</option><option>Otro</option></select></label>
+      <label>Canal<select class="in" name="canal"><option>Flyers / imprenta</option><option>Tarjetas</option><option>Instagram</option><option>Facebook</option><option>Google Ads</option><option>Otro</option></select></label>
       <label>Gasto (€)<input class="in" name="gasto" inputmode="decimal" required placeholder="0"></label>
       <label>Desde<input class="in" type="date" name="desde"></label><label>Hasta<input class="in" type="date" name="hasta"></label>
       <button class="btn b-acc b-sm">Guardar gasto</button></form>
-      ${gastos.length?`<ul class="mk-gl">${gastos.map(g=>`<li><span>${esc(g.campana)} · ${esc(g.canal)}${g.desde?` · ${esc(g.desde)}`:""}</span><b>${eur(g.gasto)}</b><button type="button" class="mk-ic" data-mkgdel="${esc(g.id)}" aria-label="Borrar">✕</button></li>`).join("")}</ul>`:""}</details>
-    <details class="mk-det" open><summary>Crear enlace medible (para anuncios, historias, flyers y QR)</summary><form class="mk-form" id="mk-utm">
-      <label>¿A dónde lleva?<select class="in" name="ruta"><option value="/">Portada</option><option value="/coches-segunda-mano-fuerteventura/">Catálogo de coches</option><option value="/taller-mecanico-fuerteventura/">Taller</option><option value="/pre-itv-fuerteventura/">Pre-ITV</option>${ops}</select></label>
-      <label>¿Dónde lo pones?<select class="in" name="src"><option value="instagram|social">Instagram</option><option value="facebook|social">Facebook</option><option value="google|cpc">Google Ads</option><option value="whatsapp|mensaje">WhatsApp</option><option value="flyer|qr">Flyer / QR</option><option value="tiktok|social">TikTok</option></select></label>
-      <label>Nombre de la campaña<input class="in" name="camp" required placeholder="p. ej. oferta-pre-itv-octubre"></label>
-      <button class="btn b-acc b-sm">Crear enlace</button></form><div id="mk-utm-out"></div></details>`;
+      ${gastos.length?`<ul class="mk-gl">${gastos.map(g=>`<li><span>${esc(g.campana)} · ${esc(g.canal)}${g.desde?` · ${esc(g.desde)}`:""}</span><b>${eur(g.gasto)}</b><button type="button" class="mk-ic" data-mkgdel="${esc(g.id)}" aria-label="Borrar">✕</button></li>`).join("")}</ul>`:""}</details>`;
 }
 function mkPiloto(){
   const c=MK.conf||((D2.mk&&D2.mk.config)||{}), up=(D2.mk&&D2.mk.ultimoPiloto)||null, cand=(D2.mk&&D2.mk.candidatos)||[];
@@ -6744,6 +6887,13 @@ document.addEventListener("click",async e=>{ const t=e.target;
   if(t.closest("[data-mkcerrar]")){ mkAbrir(false); return; }
   if(t.closest("[data-mkmini]")){ MK.mini=!MK.mini; mkAbrir(true); return; }
   const tb=t.closest("[data-mktab]"); if(tb){ MK.tab=tb.dataset.mktab; mkGuardarUI(); mkPintar(); return; }
+  if(t.closest("[data-mkqr]")){ const a=t.closest("article"), b=a&&a.querySelector(".mk-qrbox"); if(b) b.hidden=!b.hidden; return; }
+  const pn=t.closest("[data-mkpng]"); if(pn){ pn.disabled=true; try{ await mkDescargar(await mkQRpng(pn.dataset.url),`qr-${pn.dataset.nom}.png`); }catch(err){ toast(err.message); } pn.disabled=false; return; }
+  const sv=t.closest("[data-mksvg]"); if(sv){ await mkDescargar(new Blob([QR.svg(sv.dataset.url,1000)],{type:"image/svg+xml"}),`qr-${sv.dataset.nom}.svg`); return; }
+  const pr=t.closest("[data-mkprint]"); if(pr){ const h=`<div style="text-align:center;font-family:system-ui,sans-serif;padding:40px">${QR.svg(pr.dataset.url,520)}<p style="font-size:18px;margin-top:16px">${esc(pr.dataset.nom)}</p><p style="color:#555">${esc(pr.dataset.url.replace("https://",""))}</p></div>`; if(typeof jgImprimir==="function") jgImprimir(h,"QR "+pr.dataset.nom); else toast("Descarga el PNG y imprímelo desde tu móvil u ordenador"); return; }
+  const dbt=t.closest("[data-mkdestbtn]"); if(dbt){ const a=dbt.closest("article"), b=a&&a.querySelector(".mk-edit"); if(b) b.hidden=!b.hidden; return; }
+  const dok=t.closest("[data-mkdok]"); if(dok){ const sel=dok.closest("article").querySelector("[data-mkdsel]"); dok.disabled=true; try{ const r=await api("/api/enlaces/"+dok.dataset.mkdok,{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify({destino:sel.value})}); mkActEnl(r); toast("Destino cambiado: el QR impreso ya lleva ahí"); }catch(err){ toast(err.message); dok.disabled=false; } return; }
+  const act=t.closest("[data-mkact]"); if(act){ act.disabled=true; const on=act.dataset.on==="1"; try{ if(on){ await api("/api/enlaces/"+act.dataset.mkact,{method:"DELETE"}); mkActEnl({cod:act.dataset.mkact,activo:false}); toast("QR desactivado: quien lo escanee irá a la portada"); } else { const r=await api("/api/enlaces/"+act.dataset.mkact,{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify({activo:true})}); mkActEnl(r); toast("QR activado"); } }catch(err){ toast(err.message); act.disabled=false; } return; }
   const ir=t.closest("[data-mkir]"); if(ir){ abrirTab(ir.dataset.mkir); if(innerWidth<900) mkAbrir(false); return; }
   const cp=t.closest("[data-mkcopy]"); if(cp){ try{ await navigator.clipboard.writeText(cp.dataset.mkcopy); toast("Enlace copiado"); }catch(_){ prompt("Copia el enlace:",cp.dataset.mkcopy); } return; }
   const rb=t.closest("[data-mkreb]"); if(rb){
@@ -6757,9 +6907,19 @@ document.addEventListener("input",e=>{ const s=e.target.closest&&e.target.closes
   if(s.type==="checkbox"){ MK.conf.piloto=s.checked; const p=s.closest(".mk-pil"); if(p) p.classList.toggle("on",s.checked); return; }
   MK.conf[s.dataset.mkconf]=+s.value; s.style.setProperty("--p",((s.value-s.min)/(s.max-s.min)*100)+"%"); const v=document.querySelector(`[data-mkv="${s.dataset.mkconf}"]`); if(v) v.textContent=String(s.value).replace(".",",")+s.dataset.suf; });
 document.addEventListener("submit",async e=>{ const f=e.target;
-  if(f.id==="mk-utm"){ e.preventDefault(); const d=Object.fromEntries(new FormData(f)); const [src,med]=d.src.split("|"); const camp=String(d.camp).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9._-]+/g,"-").replace(/^-|-$/g,"");
-    const url=mkURL(d.ruta,src,med,camp); $("#mk-utm-out").innerHTML=`<div class="mk-url"><code>${esc(url)}</code><div class="mk-oa"><button type="button" class="mk-b pri" data-mkcopy="${esc(url)}">Copiar</button>${typeof QR!=="undefined"&&QR.svg?`<span class="mk-qr">${QR.svg(url,140)}</span>`:""}</div></div>`; return; }
-  if(f.id==="mk-gasto"){ e.preventDefault(); const d=Object.fromEntries(new FormData(f)); const l=[...(D2.mk.gastos||[]),{campana:d.campana,canal:d.canal,gasto:+String(d.gasto).replace(",","."),desde:d.desde,hasta:d.hasta}];
+  if(f.id==="mk-utm"){ e.preventDefault(); const d=Object.fromEntries(new FormData(f)), btn=f.querySelector("button"), out=$("#mk-utm-out"); btn.disabled=true;
+    try{ const r=await api("/api/enlaces",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({destino:d.ruta,canal:d.src,camp:d.camp,term:d.term})});
+      MK.enl=MK.enl||{enlaces:[]}; MK.enl.enlaces=[r,...(MK.enl.enlaces||[])]; mkRenderLista();
+      out.innerHTML=`<div class="mk-url"><b>¡Listo! Ya cuenta cada escaneo.</b><code>${esc(r.url)}</code>${mkQRHTML(r.url,r.camp,r.src)}</div>`; f.reset();
+    }catch(err){
+      if(/\(404\)|\(5\d\d\)/.test(err.message)){ const [src,med]=d.src.split("|"), url=mkURL(d.ruta,src,med,mkNorm(d.camp)); // respaldo: enlace largo sin contador de escaneos
+        out.innerHTML=`<div class="mk-url"><b>Falta instalar la actualización 19.</b> Mientras, este enlace funciona pero NO cuenta escaneos (solo visitas):<code>${esc(url)}</code><div class="mk-oa"><button type="button" class="mk-b pri" data-mkcopy="${esc(url)}">Copiar</button>${typeof QR!=="undefined"&&QR.svg?`<span class="mk-qr">${QR.svg(url,140)}</span>`:""}</div></div>`;
+      } else toast(err.message); }
+    btn.disabled=false; return; }
+  if(f.id==="mk-gasto"){ e.preventDefault(); const d=Object.fromEntries(new FormData(f)), g=+String(d.gasto).replace(",","."), camp=mkNorm(d.campana);
+    if(!camp){ toast("Escribe el nombre de la campaña (letras y números)."); return; } if(!isFinite(g)||g<=0){ toast("Escribe un gasto mayor que 0."); return; }
+    if(d.desde&&d.hasta&&d.hasta<d.desde){ toast("La fecha «Hasta» no puede ser anterior a «Desde»."); return; }
+    const l=[...(D2.mk.gastos||[]),{campana:camp,canal:d.canal,gasto:g,desde:d.desde,hasta:d.hasta}];
     try{ D2.mk.gastos=await api("/api/marketing/gastos",{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(l)}); toast("Gasto guardado"); mkPintar(); }catch(err){ toast(err.message); } }
 });
 // Arranque: aparece al entrar el gerente; se refresca cada 30 s si está abierto (cada 2 min si no, para el contador)
@@ -8014,6 +8174,20 @@ function vzGuionDe(id){ const m=VZ&&VZ.modulos&&VZ.modulos[id]; if(m) return m;
   const v=typeof AY_VID!=="undefined"&&AY_VID[id]; if(!v) return null;
   return { titulo:id, dur:v.dur, listas:0, total:(v.pasos||[]).length, lineas:(v.pasos||[]).map(p=>({t:p.t,txt:String(p.voz||p.txt).replace(/<[^>]+>/g,"")})) }; }
 const vzHayVozNav=()=>"speechSynthesis" in window&&typeof window.vcDecir==="function";
+function vzInfo(){ const e=$("#vz-info"); if(!e||typeof window.vcVozInfo!=="function") return; const v=window.vcVozInfo();
+  e.innerHTML=v?`Voz que se usará: <b>${esc(v.name)}</b> (${esc(v.lang)}).`:`⚠️ Este aparato no tiene voz en español, así que no puede leer los pasos con claridad. Para oírlos bien: instala la voz en español del móvil (Ajustes → Idioma → Salida de texto a voz) o usa la <b>voz de ElevenLabs</b> de más abajo.`;
+  e.style.color=v?"":"#FFB070"; }
+const vzNf=x=>Number(x||0).toLocaleString("es-ES");
+const vzHechas=()=>VZ&&VZ.modulos?Object.values(VZ.modulos).reduce((a,m)=>a+(m.listas||0),0):0;
+const vzFaltan=()=>VZ&&VZ.modulos?Object.values(VZ.modulos).filter(m=>m.listas!==m.total).length:0;
+const vzTotal=()=>VZ&&VZ.modulos?Object.values(VZ.modulos).reduce((a,m)=>a+(m.total||0),0):0;
+// Créditos que le quedan a la cuenta de ElevenLabs (si la clave no deja verlos, no pasa nada: se avisa y se sigue)
+let VZ_SALDO=null;
+async function vzSaldo(){ const e=$("#vz-saldo"); if(!e) return null;
+  try{ const r=await vzFetch("/api/voz/saldo"), d=await r.json().catch(()=>({})); VZ_SALDO=d&&!d.sinDatos&&typeof d.restantes==="number"?d:null;
+    if(!$("#vz-saldo")) return VZ_SALDO;
+    $("#vz-saldo").innerHTML=VZ_SALDO?`Créditos de ElevenLabs: te quedan <b>${vzNf(VZ_SALDO.restantes)}</b> de ${vzNf(VZ_SALDO.limite)}${VZ_SALDO.renueva?" · se renuevan el "+esc(VZ_SALDO.renueva):""}.`:`No puedo ver tu saldo desde aquí; míralo en elevenlabs.io → tu perfil → Suscripción.`;
+  }catch(_){ VZ_SALDO=null; } return VZ_SALDO; }
 function vozMontar(){
   const side=document.querySelector("#s-ayuda .ay-vside"), v=$("#ay-v"); if(!side||!v) return;
   const id=AY_MOD, m=vzGuionDe(id); if(!m) return;
@@ -8023,15 +8197,23 @@ function vozMontar(){
   const sw=`<label class="vz-sw"><input type="checkbox" id="vz-on" ${vzOn()?"checked":""}><span>Oír la voz mientras veo el vídeo</span></label>`;
   box.innerHTML=lista
    ?`<p class="vz-h"><b>🎙️ Voz de ${esc(nombre)}</b></p>${sw}
-     <div class="vz-acc"><button type="button" class="btn b-ghost b-sm" data-vzdl="${id}">⬇ Descargar MP3</button>${ger&&conf?`<button type="button" class="btn b-ghost b-sm" data-vzgen="${id}">🔁 Volver a generar</button><button type="button" class="btn b-ghost b-sm" data-vzvoces>🎚️ Cambiar de voz</button>`:""}</div>`
+     <div class="vz-acc"><button type="button" class="btn b-ghost b-sm" data-vzdl="${id}">⬇ Descargar MP3</button>${ger&&conf?`<button type="button" class="btn b-ghost b-sm" data-vzgen="${id}">🔁 Volver a generar</button><button type="button" class="btn b-ghost b-sm" data-vzvoces>🎚️ Cambiar de voz</button>`:""}${ger&&conf&&vzFaltan()?`<button type="button" class="btn b-ghost b-sm" data-vzgen="*">Generar los ${vzFaltan()} vídeos que faltan</button>`:""}</div>
+     <p class="vz-est" id="vz-est" role="status" aria-live="polite"></p><div id="vz-voces"></div>${ger&&conf?`<p class="hint" id="vz-saldo" style="margin:4px 0 0"></p>`:""}`
    :`<p class="vz-h"><b>🎙️ Voz</b></p>${vzHayVozNav()?`${sw}<p class="hint" style="margin:0">Suena con la voz de tu ordenador y el vídeo se para solo mientras habla. Funciona sin configurar nada.</p>
-       <div class="vz-acc"><button type="button" class="btn b-ghost b-sm" data-vzprobar>🔊 Probar la voz</button></div>`
+       <div class="vz-acc"><button type="button" class="btn b-ghost b-sm" data-vzprobar>🔊 Probar la voz</button></div><p class="hint" id="vz-info" style="margin:6px 0 0"></p>`
        :`<p class="hint" style="margin:0">Este navegador no tiene voz. Prueba con Chrome o Edge.</p>`}
-     ${ger?(conf?`<details class="vz-g"><summary>Voz más natural (ElevenLabs)</summary><div class="vz-acc" style="margin-top:8px"><button type="button" class="btn b-brand b-sm" data-vzgen="${id}">Generar la voz de este vídeo</button><button type="button" class="btn b-ghost b-sm" data-vzgen="*">Generar los ${VZ?Object.keys(VZ.modulos).length:""} vídeos</button><button type="button" class="btn b-ghost b-sm" data-vzvoces>🎚️ Elegir voz</button></div></details>`
-         :`<details class="vz-g"><summary>Voz más natural (ElevenLabs)</summary><p class="hint" style="margin:8px 0 0">Opcional. Pon la clave <b>ELEVENLABS_API_KEY</b> en Netlify (Project configuration → Environment variables) y aquí saldrá el botón para generarla.</p></details>`):""}
+     ${ger?`<details class="vz-g" ${conf?"":"open"}><summary>Voz más natural (ElevenLabs)</summary>
+       ${conf?`<div class="vz-acc" style="margin-top:8px"><button type="button" class="btn b-brand b-sm" data-vzgen="${id}">Generar la voz de este vídeo</button><button type="button" class="btn b-ghost b-sm" data-vzgen="*">Generar los ${VZ?Object.keys(VZ.modulos).length:""} vídeos</button><button type="button" class="btn b-ghost b-sm" data-vzvoces>🎚️ Elegir voz</button></div>
+       <p class="hint" style="margin:8px 0 0">Frases con voz: <b>${vzHechas()}</b> de ${vzTotal()}. Lo que ya está hecho no se vuelve a pedir ni gasta créditos.</p><p class="hint" id="vz-saldo" style="margin:4px 0 0"></p>`:""}
+       <div class="vz-clave"><p class="hint" style="margin:10px 0 4px"><b>Clave de ElevenLabs</b>${conf?` · ahora hay una ${VZ.claveOrigen==="panel"?"guardada desde el panel":"puesta en Netlify"} (termina en <b>${esc(VZ.claveFin||"")}</b>)`:" · todavía no hay ninguna"}</p>
+         <input id="vz-key" class="inp" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Pega aquí tu clave de ElevenLabs" aria-label="Clave de ElevenLabs">
+         <div class="vz-acc"><button type="button" class="btn b-brand b-sm" data-vzclave>Guardar y comprobar la clave</button>${VZ&&VZ.claveOrigen==="panel"?`<button type="button" class="btn b-ghost b-sm" data-vzclaveborrar>Quitar la guardada</button>`:""}</div>
+         <p class="hint" style="margin:6px 0 0">En elevenlabs.io: tu perfil → <b>API Keys</b> → crear clave (con todos los permisos) → copiar. Se guarda en el servidor y solo la usa el panel.</p></div></details>`:""}
     <p class="vz-est" id="vz-est" role="status" aria-live="polite"></p><div id="vz-voces"></div>
     <details class="vz-g"><summary>Ver el guion que se lee</summary><ol>${m.lineas.map(l=>`<li><small>${ayT(l.t)}</small><span>${esc(l.txt)}</span></li>`).join("")}</ol></details>`;
   side.appendChild(box);
+  vzInfo(); if(window.speechSynthesis) speechSynthesis.addEventListener("voiceschanged",vzInfo,{once:true});
+  if(ger&&conf) vzSaldo();
   if(lista) vzEnlazar(v,m,id); else if(vzHayVozNav()) vzNavEnlazar(v,m,id);
 }
 // Voz del navegador: al llegar a cada paso el vídeo se para, el paso se dice en voz alta y el vídeo sigue solo
@@ -8079,26 +8261,41 @@ function vzEnlazar(v,m,id){
   v.addEventListener("ended",()=>{ parar(); hechas=new Set(); });
 }
 
+// Vuelve a pintar la caja de voz sin perder el aviso ni el desplegable abierto
+async function vzRemontar(msg){ const abierto=!!document.querySelector("#vz details.vz-g")?.open;
+  await vzCargar(); vozMontar(); const d=document.querySelector("#vz details.vz-g"); if(d&&abierto) d.open=true;
+  const e=$("#vz-est"); if(e&&msg) e.textContent=msg; }
 async function vzGenerar(quien){
   if(!VZ||!VZ.admin) return;
-  const ids=quien==="*"?Object.keys(VZ.modulos).filter(k=>VZ.modulos[k].listas!==VZ.modulos[k].total):[quien];
+  const todos=quien==="*", ids=todos?Object.keys(VZ.modulos).filter(k=>VZ.modulos[k].listas!==VZ.modulos[k].total):[quien];
+  const forzar=!todos&&!!VZ.modulos[quien]&&VZ.modulos[quien].listas===VZ.modulos[quien].total; // «Volver a generar»
   const set=t=>{ const e=$("#vz-est"); if(e) e.textContent=t; };
+  // Solo las frases que aún no tienen voz: las ya hechas no se piden otra vez (cada petición gasta créditos)
+  const pend=[]; for(const id of ids){ const m=VZ.modulos[id]; if(!m) continue; for(let i=0;i<m.total;i++) if(forzar||!(m.hechas&&m.hechas[i])) pend.push([id,i]); }
+  if(!pend.length){ set("✅ Todo tiene ya su voz: no hace falta generar nada."); return; }
+  const chars=pend.reduce((a,[id,i])=>{ const l=VZ.modulos[id].lineas[i]; return a+String(l.voz||l.txt).length; },0);
   const btns=[...document.querySelectorAll("[data-vzgen]")]; btns.forEach(b=>b.disabled=true);
+  set("Mirando tu saldo de ElevenLabs…"); const sal=await vzSaldo();
+  const aviso=sal&&sal.restantes<chars?`Ojo: hacen falta unos ${vzNf(chars)} créditos y te quedan ${vzNf(sal.restantes)}; llegará hasta donde alcance y lo hecho se conserva. `:"";
+  const tocados=new Set(); let hechas=0, fallo=null;
   try{
-    for(const id of ids){ const m=VZ.modulos[id];
-      for(let i=0;i<m.total;i++){
-        set(`Generando «${m.titulo}»: frase ${i+1} de ${m.total}…`);
-        let d={}, r=null;
-        for(let intento=0;intento<2;intento++){ // un reintento por si la red falla un instante
-          try{ r=await vzFetch("/api/voz/generar",{modulo:id,n:i}); d=await r.json().catch(()=>({})); if(r.ok||r.status<500) break; }catch(e){ d={error:e.message}; r=null; }
-          await new Promise(k=>setTimeout(k,1200));
-        }
-        if(!r||!r.ok){ if(d.eligeVoz) vzVoces(); throw new Error(d.error||"No se ha podido generar la voz."); }
+    for(const [id,i] of pend){ const m=VZ.modulos[id];
+      set(`${aviso}Generando «${m.titulo}»: frase ${i+1} de ${m.total} (${hechas+1} de ${pend.length})…`);
+      let d={}, r=null;
+      for(let intento=0;intento<2;intento++){ // un reintento solo si falla la red, nunca si ElevenLabs ya ha dicho el motivo
+        try{ r=await vzFetch("/api/voz/generar",{modulo:id,n:i,forzar}); d=await r.json().catch(()=>({})); if(r.ok||r.status<500||d.fatal||d.codigo) break; }catch(e){ d={error:e.message}; r=null; }
+        await new Promise(k=>setTimeout(k,1200));
       }
-      vzLimpiar(id);
+      tocados.add(id);
+      if(!r||!r.ok){ fallo=d; throw new Error(d.error||"No se ha podido generar la voz."); }
+      hechas++;
     }
-    await vzCargar(); vozMontar(); toast("Voz lista");
-  }catch(e){ set("⚠️ "+e.message); btns.forEach(b=>b.disabled=false); }
+    tocados.forEach(vzLimpiar); await vzRemontar(); toast("Voz lista"); const e=$("#vz-est"); if(e) e.textContent="✅ Voz lista: "+hechas+" frases generadas.";
+  }catch(e){
+    tocados.forEach(vzLimpiar);
+    await vzRemontar(`⚠️ ${e.message}${hechas?` Se habían generado ${hechas} frases antes del fallo y se conservan.`:""}`);
+    if(fallo&&fallo.eligeVoz) vzVoces();
+  }
 }
 async function vzVoces(){
   const box=$("#vz-voces"); if(!box) return; box.innerHTML='<p class="hint">Buscando las voces de tu cuenta…</p>';
@@ -8110,6 +8307,13 @@ async function vzVoces(){
 async function vzUsar(){ const sel=$("#vz-sel"); if(!sel) return;
   try{ const r=await vzFetch("/api/voz/elegir",{id:sel.value}), d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.error||"No se pudo guardar.");
     await vzCargar(); vozMontar(); toast("Voz elegida: ahora pulsa «Generar los vídeos»"); }catch(e){ const x=$("#vz-est"); if(x) x.textContent="⚠️ "+e.message; } }
+async function vzClave(){ const inp=$("#vz-key"), set=x=>{ const e=$("#vz-est"); if(e) e.textContent=x; }; if(!inp) return;
+  const k=inp.value.trim(); if(!k){ set("⚠️ Pega primero la clave."); inp.focus(); return; }
+  const b=document.querySelector("[data-vzclave]"); if(b) b.disabled=true; set("Comprobando la clave con ElevenLabs…");
+  try{ const r=await vzFetch("/api/voz/clave",{clave:k}), d=await r.json().catch(()=>({})); if(!r.ok) throw new Error(d.error||"No se ha podido guardar la clave.");
+    inp.value=""; await vzCargar(); vozMontar(); toast("Clave guardada y comprobada"); const e=$("#vz-est"); if(e) e.textContent="✅ Clave buena. Ahora pulsa «Elegir voz» y luego «Generar los vídeos»."; vzVoces();
+  }catch(e){ set("⚠️ "+e.message); if(b) b.disabled=false; } }
+async function vzClaveBorrar(){ try{ await vzFetch("/api/voz/claveborrar",{}); await vzCargar(); vozMontar(); toast("Clave quitada"); }catch(e){ const x=$("#vz-est"); if(x) x.textContent="⚠️ "+e.message; } }
 async function vzDescargar(id){
   const set=t=>{ const e=$("#vz-est"); if(e) e.textContent=t; };
   try{ const r=await vzFetch("/api/voz/mp3/"+id); if(!r.ok){ const d=await r.json().catch(()=>({})); throw new Error(d.error||"No se pudo descargar."); }
@@ -8121,6 +8325,8 @@ document.addEventListener("click",e=>{ const t=e.target;
   const d=t.closest("[data-vzdl]"); if(d){ vzDescargar(d.dataset.vzdl); return; }
   if(t.closest("[data-vzvoces]")){ vzVoces(); return; }
   if(t.closest("[data-vzusar]")){ vzUsar(); return; }
+  if(t.closest("[data-vzclave]")){ vzClave(); return; }
+  if(t.closest("[data-vzclaveborrar]")){ vzClaveBorrar(); return; }
 });
 
 if(typeof ayVidEnlazar==="function"){
@@ -8504,7 +8710,7 @@ function fcPagina(){ const x=TF.fichas.f5&&TF.fichas.f5.lineas?TF.fichas.f5:TW.f
   const n=Math.max(10,x.lineas.length), fila=i=>{ const l=x.lineas[i]; return l?`<tr><td>${esc(l.tipo==="OTRO"?"":l.tipo)}</td><td>${esc(l.ref)}</td><td>${esc(l.desc)}</td><td class="r">${esc(String(l.cant).replace(".",","))}</td><td class="r">${fcE(tNum(l.precio))}</td><td class="r">${l.dto?esc(String(l.dto).replace(".",","))+" %":""}</td><td class="r">${fcE(t.imp[i])}</td></tr>`:"<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>"; };
   const ck=k=>`<span class="fp-ck">${x.igicTipo===k?"✕":""}</span>`;
   return `<article class="tp-pag fc-pag">
-  <header class="fp-h"><img src="${FC_LOGO}" alt="Volcano Cars"><div><h1>${x.rect?"FACTURA RECTIFICATIVA":"FACTURA DE REPARACIÓN"}</h1><p>Documento de cobro al cliente</p><span class="fp-pill">FORM-14</span></div></header>${x.rect&&x.origen?`<p class="fp-rect">Rectifica a la factura <b>${esc(x.origen)}</b>${x.motivoRect?" · Motivo: "+esc(x.motivoRect):""}</p>`:""}
+  <header class="fp-h"><img src="${FC_LOGO}" alt="Volcano Cars"><div><h1>${x.rect?"FACTURA RECTIFICATIVA":(x.cliente&&x.cliente.doc?"FACTURA DE REPARACIÓN":"FACTURA SIMPLIFICADA")}</h1><p>Documento de cobro al cliente</p><span class="fp-pill">FORM-14</span></div></header>${x.rect&&x.origen?`<p class="fp-rect">Rectifica a la factura <b>${esc(x.origen)}</b>${x.motivoRect?" · Motivo: "+esc(x.motivoRect):""}</p>`:""}
   <table class="fp-num"><tbody><tr><th>Nº de factura</th><td><b>${esc(num)}</b></td><th>Fecha emisión</th><td>${esc(tF(em?em.fecha:""))}</td><th>Fecha operación</th><td>${esc(tF(x.fechaOperacion||(em?em.fecha:"")))}</td></tr></tbody></table>
   <p class="fp-nota"><b>El nº de factura es correlativo (F-AAAA-NNNN) y no se repite.</b> Un error no se tacha: se emite factura rectificativa.</p>
   ${bar(1,"Datos del emisor","quien factura")}<table class="fp-t"><tbody>${P("Razón social",E.razon,"NIF / CIF",E.nif)}${P("Dirección",E.direccion,"CP / localidad",E.cp)}${P("Teléfono",E.telefono,"Correo electrónico",E.email)}</tbody></table>
@@ -8772,5 +8978,29 @@ async function guiaPDF(solo){
 <script src="/panel-sistemas.js" defer></script>
 <script src="/panel-plus.js" defer></script>
 <script src="/cartel-fichaje.js" defer></script>
+<script>
+/* Actualización 17 · detalles de uso en el panel */
+(function(){
+  // Teclas ← → entre pestañas (role=tab)
+  document.addEventListener("keydown",function(e){
+    if(e.key!=="ArrowLeft"&&e.key!=="ArrowRight") return;
+    var t=e.target&&e.target.closest&&e.target.closest('[role="tab"]'); if(!t) return;
+    var l=[].slice.call(t.parentElement.querySelectorAll('[role="tab"]')).filter(function(b){return !b.hidden&&b.offsetParent!==null});
+    var i=l.indexOf(t); if(i<0) return; var n=l[(i+(e.key==="ArrowRight"?1:-1)+l.length)%l.length]; n.focus(); n.click(); e.preventDefault();
+  });
+  // Campos de texto con tope de longitud (un nombre de 500 letras rompía el diseño)
+  document.addEventListener("focusin",function(e){
+    var t=e.target; if(!t||!t.matches) return;
+    if(t.matches('input[type="text"]:not([maxlength]),input:not([type]):not([maxlength]),input[type="search"]:not([maxlength])')) t.maxLength=150;
+    else if(t.matches('textarea:not([maxlength])')) t.maxLength=3000;
+  });
+  // Nombre accesible para botones e inputs sin texto
+  function etiquetar(){
+    document.querySelectorAll("button:not([aria-label])").forEach(function(b){ if(!(b.textContent||"").trim()) b.setAttribute("aria-label",b.title||"Botón"); });
+    document.querySelectorAll("input:not([aria-label]):not([type=hidden])").forEach(function(i){ if(!i.id||!document.querySelector('label[for="'+i.id+'"]')){ if(!i.closest("label")) i.setAttribute("aria-label",i.placeholder||i.title||(i.id==="cierre-f"?"Día a cerrar":"Campo")); } });
+  }
+  etiquetar(); setTimeout(etiquetar,2500);
+})();
+</script>
 </body>
 </html>
