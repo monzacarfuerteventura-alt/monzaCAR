@@ -267,6 +267,8 @@
   // Ayuda: «Escuchar explicación» en cada módulo (lee los pasos y capítulos del vídeo)
   function ayudaVoz() {
     $$("#s-ayuda .ay-mh").forEach((h) => {
+      const art = h.closest(".ay-mod");
+      if (art && art.querySelector(".ay-vid")) { const x = h.querySelector(".vc-ay-voz"); if (x) x.remove(); return; } // el vídeo ya lleva la voz de Daniela
       if (h.querySelector(".vc-ay-voz")) return;
       const b = document.createElement("button"); b.type = "button"; b.className = "btn b-ghost b-sm vc-ay-voz"; b.innerHTML = "🔈 Escuchar explicación";
       b.onclick = () => {

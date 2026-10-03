@@ -141,7 +141,8 @@ function mkPiloto(){
     <div class="mk-oa"><button type="button" class="mk-b pri" data-mkguardar>Guardar límites</button></div>
     <p class="mk-f2">${up?`Última revisión: ${esc(new Date(up.t).toLocaleString("es-ES",{dateStyle:"medium",timeStyle:"short"}))} · ${up.candidatos} candidatos · ${up.aplicadas} aplicadas.`:"Revisa los coches cada mañana a las 9:15 (hora de Canarias)."}</p>
     <h4 class="mk-t">Candidatos hoy <small>${cand.length}</small></h4>
-    ${cand.length?cand.map(x=>`<article class="mk-op"><span class="mk-oi">🏷</span><div><b>${esc(x.titulo)}</b><p>${esc(x.motivo)}<br>${eur(x.precio)} → <b>${eur(x.nuevo)}</b></p><div class="mk-oa"><button type="button" class="mk-b" data-mkreb="${esc(x.id)}" data-precio="${x.nuevo}">Aplicar ya</button></div></div></article>`).join(""):'<p class="mk-vacio">Ningún coche cumple las condiciones ahora mismo.</p>'}`;
+    ${cand.length?cand.map(x=>`<article class="mk-op"><span class="mk-oi">🏷</span><div><b>${esc(x.titulo)}</b><p>${esc(x.motivo)}<br>${eur(x.precio)} → <b>${eur(x.nuevo)}</b></p><div class="mk-oa"><button type="button" class="mk-b" data-mkreb="${esc(x.id)}" data-precio="${x.nuevo}">Aplicar ya</button></div></div></article>`).join(""):'<p class="mk-vacio">Ningún coche cumple las condiciones ahora mismo.</p>'}
+    ${rgPintar()}`;
 }
 function mkLog(){
   const l=(D2.mk&&D2.mk.log)||[];

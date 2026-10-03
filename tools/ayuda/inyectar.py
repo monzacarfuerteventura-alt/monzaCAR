@@ -26,7 +26,7 @@ if 'data-tab="ayuda"' not in s:
 SEC = '''  <!-- AYUDA: manual de uso del panel (tools/ayuda) -->
   <section id="s-ayuda" hidden>
     <div class="head">
-      <div><h1 style="font-size:28px">Ayuda</h1><p>Un vídeo corto por pestaña: míralo y hazlo. Los pasos por escrito están debajo de cada vídeo.</p></div>
+      <div><h1 style="font-size:28px">Ayuda</h1><p>Un vídeo por pestaña, explicado con voz: míralo y hazlo.</p></div>
       <div class="acts"><button class="btn b-brand b-sm" type="button" id="ay-pdf">Descargar PDF</button></div>
     </div>
     <div id="ay"></div>

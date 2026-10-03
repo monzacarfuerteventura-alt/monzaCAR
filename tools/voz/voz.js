@@ -5,7 +5,6 @@
    Los MP3 los guarda el servidor (/api/voz) en el almacén de archivos del panel.
    Fuente: tools/voz/voz.js (+ voz.css) → python3 tools/voz/inyectar.py (después de tools/ayuda/inyectar.py)
    ===================================================================== */
-/*AY_VOZ*/const AY_VOZ={"inicio":{"v":"153dcbaea8","dur":254,"l":[{"t":2.6,"x":"Esta es la puerta del panel"},{"t":21.9,"x":"Dos formas de entrar"},{"t":42.6,"x":"Escribe tu contraseña"},{"t":61.5,"x":"Pulsa Entrar"},{"t":79.4,"x":"La barra de arriba"},{"t":98.2,"x":"Las pestañas del negocio"},{"t":116.6,"x":"Más pestañas"},{"t":141.5,"x":"Los números rojos"},{"t":158.5,"x":"Abre una pestaña"},{"t":169.4,"x":"El botón ¿Cómo funciona?"},{"t":185,"x":"Los paneles que se abren al lado"},{"t":200.6,"x":"Esta pestaña de Ayuda"}]},"dash":{"v":"5dd7f44fc8","dur":381.8,"l":[{"t":2.6,"x":"Para qué sirve"},{"t":24.7,"x":"El mes y las flechas"},{"t":40.8,"x":"Informe PDF y Excel"},{"t":61,"x":"El pulso del negocio"},{"t":86.8,"x":"Toca una tarjeta"},{"t":104.8,"x":"Visitas, solicitudes y facturación"},{"t":122.2,"x":"Cómo cerrará el mes"},{"t":140.6,"x":"El simulador ¿Y si…?"},{"t":163.1,"x":"Cuándo te buscan"},{"t":181.5,"x":"Qué coches se miran"},{"t":199.9,"x":"De dónde viene el dinero"},{"t":218.3,"x":"El detalle, en cajitas"},{"t":239,"x":"Público, horarios y promedios"},{"t":256.4,"x":"Informes automáticos"},{"t":275.7,"x":"Taller, inventario y equipo"},{"t":297.8,"x":"Marketing en vivo"}]},"crm":{"v":"306f594ad9","dur":358.8,"l":[{"t":2.7,"x":"Para qué sirve"},{"t":25.2,"x":"Los botones de arriba"},{"t":45,"x":"Las cuatro tareas del día"},{"t":67.1,"x":"Buscar y cambiar de vista"},{"t":83.6,"x":"La vista Embudo"},{"t":102,"x":"La vista Clientes"},{"t":118.1,"x":"Los filtros por estado"},{"t":134.6,"x":"Cómo leer una fila"},{"t":163.2,"x":"Apuntar a un cliente nuevo"},{"t":173.6,"x":"Nombre, teléfono y qué busca"},{"t":191.6,"x":"Guardar el cliente"},{"t":201.6,"x":"Mandar un WhatsApp ya escrito"},{"t":220.4,"x":"Anotar lo que has hecho"},{"t":239.3,"x":"No olvidarte de volver a llamar"},{"t":257.2,"x":"Cambiar el estado"},{"t":281.1,"x":"Pasarlo al taller o borrarlo"}]},"agenda":{"v":"ca11770e54","dur":212.3,"l":[{"t":2.7,"x":"Para qué sirve"},{"t":22.9,"x":"La lista de citas"},{"t":47.8,"x":"Visita o taller"},{"t":66.7,"x":"Recordar la cita por WhatsApp"},{"t":86.9,"x":"Llamar al cliente"},{"t":100.6,"x":"Cuando el cliente viene"},{"t":116.7,"x":"Cancelar una cita"},{"t":136.9,"x":"Cerrar un día"},{"t":157.6,"x":"Volver a abrir un día"}]},"coches":{"v":"6937e2acbd","dur":366.4,"l":[{"t":2.7,"x":"Para qué sirve"},{"t":21,"x":"Las cifras rápidas"},{"t":35.2,"x":"Financiación en la web"},{"t":63.4,"x":"Reservas online"},{"t":90.1,"x":"Cómo te pagan la reserva"},{"t":106.2,"x":"Cerrar una reserva"},{"t":129.7,"x":"Lista de espera"},{"t":149,"x":"Tus coches"},{"t":172.9,"x":"Cambiar el estado"},{"t":189,"x":"Añadir un coche"},{"t":206,"x":"Las fotos primero"},{"t":228.5,"x":"Los datos del coche"},{"t":247,"x":"Comparar con el mercado"},{"t":265.4,"x":"Descripción y equipamiento"},{"t":280.9,"x":"Publicar"}]},"taller":{"v":"8f062a1031","dur":630.3,"l":[{"t":2.6,"x":"Para qué sirve"},{"t":26.1,"x":"Las vistas del taller"},{"t":52.4,"x":"Buscar una orden"},{"t":66.1,"x":"Los avisos"},{"t":88.2,"x":"La tabla de órdenes"},{"t":108.5,"x":"Recibir un coche"},{"t":115.7,"x":"Los datos para empezar"},{"t":138.7,"x":"Crear la orden"},{"t":152.4,"x":"FORM-01: kilómetros y combustible"},{"t":169.4,"x":"Testigos y motivo"},{"t":185.9,"x":"Inventario, llaves y daños"},{"t":208.5,"x":"Autorización y firma"},{"t":229.2,"x":"Las pestañas de la orden"},{"t":244.8,"x":"FORM-02: la inspección 360"},{"t":267.8,"x":"Notas y fotos"},{"t":289.5,"x":"Presupuesto y cliente"},{"t":313,"x":"FORM-14: la factura"},{"t":337.4,"x":"Emitir y rectificar"},{"t":360.9,"x":"Libro de facturas"},{"t":376.5,"x":"FORM-03: los tiempos"},{"t":399,"x":"Recambios y herramientas"},{"t":420.2,"x":"FORM-04: control de calidad"},{"t":444.6,"x":"Auditoría de la orden"},{"t":462.5,"x":"Imprimir y mandar el enlace"},{"t":489.1,"x":"Cerrar y entregar"}]},"tablero":{"v":"40e1eb304e","dur":174.4,"l":[{"t":2.6,"x":"Para qué sirve"},{"t":21,"x":"En marcha"},{"t":35.7,"x":"El tablero"},{"t":49.4,"x":"Leer una tarjeta"},{"t":65.9,"x":"Avisos de ITV"},{"t":81.5,"x":"Los plazos"},{"t":98.1,"x":"Avisar por WhatsApp"},{"t":115.5,"x":"Deshacer y dar de baja"},{"t":128.4,"x":"Por qué es útil"}]},"propios":{"v":"d04b242fef","dur":216.5,"l":[{"t":2.6,"x":"Para qué sirve"},{"t":23.8,"x":"Las fases"},{"t":43.6,"x":"Añadir un coche nuevo"},{"t":56.4,"x":"Los datos del coche"},{"t":75.8,"x":"Coste y precio"},{"t":90.5,"x":"Guardar"},{"t":102.4,"x":"La ficha del coche"},{"t":123.5,"x":"Mover de fase"},{"t":139.6,"x":"Piezas, horas y costes"},{"t":160.7,"x":"Coste por hora y registro"}]},"equipo":{"v":"912127a7da","dur":154.2,"l":[{"t":2.7,"x":"Para qué sirve"},{"t":17.4,"x":"Abrir Equipo y ajustes"},{"t":26.9,"x":"Cómo entra el equipo"},{"t":43.9,"x":"El equipo"},{"t":59,"x":"Añadir una persona"},{"t":74.2,"x":"El PIN y la caja"},{"t":87,"x":"Dar de baja"},{"t":99.8,"x":"Ajustes del taller"},{"t":122.8,"x":"Guardar"}]},"alm":{"v":"aa80fdc7d8","dur":309.7,"l":[{"t":2.7,"x":"Para qué sirve"},{"t":20.1,"x":"Las cuatro pestañas"},{"t":38.5,"x":"Repuestos"},{"t":56.9,"x":"Buscar y escanear"},{"t":77.1,"x":"Nueva pieza"},{"t":82.5,"x":"Rellenar la ficha"},{"t":106,"x":"Guardar"},{"t":121.6,"x":"Entrada de material"},{"t":141.4,"x":"Hacer un recuento"},{"t":162.1,"x":"Herramientas"},{"t":179,"x":"Coger y devolver"},{"t":200.2,"x":"Pedido al proveedor"},{"t":219.5,"x":"Movimientos"},{"t":236,"x":"Recuerda"}]},"caja":{"v":"74fc4ec2fc","dur":299.3,"l":[{"t":2.6,"x":"Para qué sirve"},{"t":21.9,"x":"El estado de la caja"},{"t":43.1,"x":"Los tres botones grandes"},{"t":60.1,"x":"Un cobro en efectivo"},{"t":80.3,"x":"Registrar el cobro"},{"t":96.8,"x":"Una salida de dinero"},{"t":115.7,"x":"La foto del ticket"},{"t":134,"x":"Movimientos del turno"},{"t":148.7,"x":"Cerrar la caja"},{"t":168.9,"x":"Contar con más y menos"},{"t":184.5,"x":"Comprobar y cerrar"},{"t":203.4,"x":"Abrir la caja al día siguiente"},{"t":225,"x":"Solo para el gerente"}]},"jornada":{"v":"865ea2479f","dur":156.1,"l":[{"t":2.6,"x":"Para qué sirve"},{"t":16.8,"x":"Entrar con tu usuario"},{"t":27.7,"x":"El botón grande"},{"t":41.5,"x":"Fichar la entrada"},{"t":51.9,"x":"El reloj de arriba"},{"t":64.3,"x":"Hacer una pausa"},{"t":84.5,"x":"Volver de la pausa"},{"t":92.2,"x":"Fichar la salida"},{"t":105,"x":"Si te equivocas"},{"t":118.7,"x":"Tus horas del mes"},{"t":131.5,"x":"Si te olvidas"}]},"fin":{"v":"7fbb887e8e","dur":261.3,"l":[{"t":3,"x":"Para qué sirve"},{"t":18.5,"x":"Elegir el periodo"},{"t":33.7,"x":"Los números principales"},{"t":50.3,"x":"Los gráficos"},{"t":69.6,"x":"Pendientes"},{"t":86.6,"x":"Apuntar un gasto"},{"t":91.5,"x":"Rellenar el gasto"},{"t":113,"x":"Guardar el gasto"},{"t":129.5,"x":"Cobrar con tarjeta o transferencia"},{"t":145.1,"x":"Completar la venta de un coche"},{"t":168.1,"x":"Clasificar las salidas de caja"},{"t":183.8,"x":"Facturas emitidas y recibidas"},{"t":197.1,"x":"Para la gestoría"}]},"resp":{"v":"77398ae4a6","dur":187.7,"l":[{"t":2.6,"x":"Para qué sirve"},{"t":23.3,"x":"Los tres canales"},{"t":33.3,"x":"Reseñas de Google: el nombre"},{"t":43.8,"x":"Las estrellas"},{"t":57.5,"x":"El tipo de reseña y el servicio"},{"t":77.3,"x":"Idioma, español o inglés"},{"t":89.6,"x":"Tu respuesta"},{"t":100.6,"x":"Copiar y pegar"},{"t":114.3,"x":"WhatsApp: mensajes ya escritos"},{"t":138.2,"x":"Instagram y Facebook"}]}};/*AY_VOZ_FIN*/
 let VZ=null, VZ_TRIED=false, VZ_CLIPS={}, VZ_AUDIO=null;
 const vzOn=()=>{ try{ return localStorage.getItem("vc_vz_on")!=="0"; }catch(_){ return true; } };
 async function vzFetch(ruta,body){
@@ -40,9 +39,7 @@ async function vzSaldo(){ const e=$("#vz-saldo"); if(!e) return null;
   }catch(_){ VZ_SALDO=null; } return VZ_SALDO; }
 function vozMontar(){
   const side=document.querySelector("#s-ayuda .ay-vside"), v=$("#ay-v"); if(!side||!v) return;
-  const id=AY_MOD, est=typeof AY_VOZ!=="undefined"&&AY_VOZ[id];
-  if(est){ vozEstMontar(side,v,id,est); return; }
-  const m=vzGuionDe(id); if(!m) return;
+  const id=AY_MOD, m=vzGuionDe(id); if(!m) return;
   const old=$("#vz"); if(old) old.remove();
   const lista=!!VZ&&!!VZ.modulos&&m.listas===m.total&&m.total>0, ger=!!(VZ&&VZ.admin), conf=!!(VZ&&VZ.configurado), nombre=VZ?VZ.voz:"DAN";
   const box=document.createElement("div"); box.id="vz"; box.className="vz";
@@ -67,39 +64,6 @@ function vozMontar(){
   vzInfo(); if(window.speechSynthesis) speechSynthesis.addEventListener("voiceschanged",vzInfo,{once:true});
   if(ger&&conf) vzSaldo();
   if(lista) vzEnlazar(v,m,id); else if(vzHayVozNav()) vzNavEnlazar(v,m,id);
-}
-// VOZ DE DANIELA: audios ya hechos (public/ayuda/voz/<vídeo>/<frase>.mp3, se generan con tools/voz/estatica.py).
-// Al llegar a cada paso el vídeo se para, Daniela lo explica y el vídeo sigue solo. No necesita ElevenLabs ni claves.
-function vozEstMontar(side,v,id,est){
-  const old=$("#vz"); if(old) old.remove();
-  const box=document.createElement("div"); box.id="vz"; box.className="vz";
-  box.innerHTML=`<p class="vz-h"><b>🎙️ Voz de Daniela</b></p>
-    <label class="vz-sw"><input type="checkbox" id="vz-on" ${vzOn()?"checked":""}><span>Oír la voz mientras veo el vídeo</span></label>
-    <p class="hint" style="margin:0">El vídeo se para solo mientras Daniela explica cada paso y sigue después.</p>
-    <details class="vz-g"><summary>Ver el guion que se lee</summary><ol>${est.l.map(l=>`<li><small>${ayT(l.t)}</small><span>${esc(l.x)}</span></li>`).join("")}</ol></details>`;
-  side.appendChild(box); vzEstEnlazar(v,est,id);
-}
-function vzEstEnlazar(v,est,id){
-  const sw=$("#vz-on"), rot=document.querySelector("#s-ayuda .ay-vh span");
-  const marca=()=>{ if(rot) rot.textContent=`${ayT(est.dur)} · ${vzOn()?"con voz de Daniela":"sin sonido"}`; }; marca();
-  let hechas=new Set(), hablando=false, mio=0, aud=null, pre=null;
-  const url=i=>`/ayuda/voz/${id}/${i}.mp3?v=${est.v}`;
-  const precarga=i=>{ if(i<est.l.length){ pre=new Audio(); pre.preload="auto"; pre.src=url(i); } };
-  const parar=()=>{ mio++; hablando=false; v._vzAuto=false; if(aud){ try{ aud.pause(); }catch(_){ } aud=null; } VZ_AUDIO=null; };
-  const seguir=yo=>{ if(yo!==mio) return; hablando=false; v._vzAuto=false; aud=null; VZ_AUDIO=null; v.play().catch(()=>{}); };
-  if(sw) sw.onchange=()=>{ try{ localStorage.setItem("vc_vz_on",sw.checked?"1":"0"); }catch(_){ } if(!sw.checked){ const eraAuto=hablando; parar(); if(eraAuto) v.play().catch(()=>{}); } marca(); };
-  const tocar=()=>{ if(hablando||!vzOn()||v.paused||v.seeking) return;
-    const i=est.l.findIndex((l,k)=>!hechas.has(k)&&v.currentTime>=l.t-0.05); if(i<0) return;
-    hechas.add(i); hablando=true; const yo=++mio; v._vzAuto=true; v.pause();
-    const a=(pre&&pre.src.includes(`/${i}.mp3`))?pre:new Audio(url(i)); aud=a; VZ_AUDIO=a;
-    a.onended=()=>seguir(yo); a.onerror=()=>seguir(yo); a.play().catch(()=>seguir(yo));
-    precarga(i+1); };
-  precarga(0);
-  v.addEventListener("timeupdate",tocar);
-  v.addEventListener("seeked",()=>{ parar(); hechas=new Set(); est.l.forEach((l,k)=>{ if(l.t<v.currentTime-0.3) hechas.add(k); }); });
-  v.addEventListener("pause",()=>{ if(!v._vzAuto) parar(); });
-  v.addEventListener("play",()=>{ if(hablando&&v._vzAuto&&vzOn()) setTimeout(()=>{ if(hablando) v.pause(); },0); });
-  v.addEventListener("ended",()=>{ parar(); hechas=new Set(); });
 }
 // Voz del navegador: al llegar a cada paso el vídeo se para, el paso se dice en voz alta y el vídeo sigue solo
 function vzNavEnlazar(v,m,id){

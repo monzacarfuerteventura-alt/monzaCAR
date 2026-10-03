@@ -5,7 +5,7 @@ R = pathlib.Path(__file__).resolve().parent
 ADMIN = R.parent.parent / "public" / "admin.html"
 s = ADMIN.read_text(encoding="utf-8")
 css = (R / "dash2.css").read_text(encoding="utf-8") + "\n" + (R / "marketing.css").read_text(encoding="utf-8")
-js = (R / "dash2.js").read_text(encoding="utf-8") + "\n" + (R / "marketing.js").read_text(encoding="utf-8")
+js = (R / "dash2.js").read_text(encoding="utf-8") + "\n" + (R / "marketing.js").read_text(encoding="utf-8") + "\n" + (R / "reglas.js").read_text(encoding="utf-8")
 
 def bloque(s, ini, fin, contenido, ancla_antes):
     if ini in s:
