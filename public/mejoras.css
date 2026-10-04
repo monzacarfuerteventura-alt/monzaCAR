@@ -97,3 +97,9 @@
    si Netlify la vuelve a pintar, no se ve y la barra de secciones baja a su sitio (--badge pasa a 0). */
 #nl-badge-frame{display:none!important}
 @media (max-width:420px){.hist-btn{grid-template-columns:auto 1fr;padding:12px}.hist-dl{display:none}.hist-ic{width:40px;height:40px;border-radius:12px}.hist-ic svg{width:24px;height:24px}.hist-tx b{font-size:15px}}
+
+/* ---------------- 4. móvil: el asistente no se monta sobre el aviso de cookies ----------------
+   Mientras el aviso está abierto (primera visita) el botón del chat y su globo se esconden; en cuanto se elige
+   «Aceptar» o «Rechazar» vuelven. Antes el botón tapaba parte del aviso. (Las 4 páginas llevan este CSS inlined:
+   si cambias esto, repite tools/pagespeed/inline-css.py o edita también las páginas.) */
+@media (max-width:900px){body:has(#ck:not([hidden])) .bot-fab,body:has(#ck:not([hidden])) .bot-tip{display:none!important}}

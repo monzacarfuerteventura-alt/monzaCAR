@@ -284,13 +284,17 @@
   }
 
   /* ================= 3. ETIQUETA DE NETLIFY ================= */
-  function esNetlify(e) {
-    if (!e || e.nodeType !== 1) return false;
-    const txt = ((e.id || "") + " " + (typeof e.className === "string" ? e.className : "") + " " + e.tagName + " " + (e.getAttribute("src") || "") + " " + (e.getAttribute("href") || "")).toLowerCase();
-    if (txt.includes("netlify")) return true;
-    const t = (e.textContent || "").slice(0, 200).toLowerCase();
-    return t.includes("powered by netlify");
-  }
+  function esNetlify(e) { if (!e || e.nodeType !== 1) return false;
+    /* Solo la etiqueta real de Netlify: un elemento fijo y pequeño (o su iframe #nl-badge-frame). Las fotos, enlaces y
+       demás contenido NO cuentan aunque su dirección contenga «netlify» (/.netlify/images?…): antes una foto de coche
+       en la esquina inferior derecha se tomaba por la etiqueta y empujaba el chat y las barras a mitad de pantalla. */
+    if (e.id === "nl-badge-frame") return true;
+    if (/^(IMG|PICTURE|SOURCE|VIDEO|CANVAS|SVG|A|BUTTON|MAIN|BODY|SECTION|ARTICLE|FOOTER|HEADER|NAV)$/i.test(e.tagName)) return false;
+    let cs; try { cs = getComputedStyle(e); } catch (_) { return false; }
+    if (cs.position !== "fixed") return false;
+    const r = e.getBoundingClientRect(); if (r.height > 120 || r.width > 320 || r.height < 1) return false;
+    const t = ((e.id || "") + " " + (typeof e.className === "string" ? e.className : "") + " " + e.tagName + " " + (e.getAttribute("src") || "")).toLowerCase();
+    return t.includes("netlify") || (e.textContent || "").slice(0, 200).toLowerCase().includes("powered by netlify"); }
   function medirEtiqueta() {
     try {
       const W = innerWidth, H = innerHeight; let alto = 0;
@@ -298,7 +302,7 @@
         for (const el of document.elementsFromPoint(x, y)) {
           let e = el, hallado = null;
           while (e && e !== document.documentElement) { if (esNetlify(e)) { hallado = e; } if (getComputedStyle(e).position === "fixed") break; e = e.parentElement; }
-          if (hallado || (e && e !== document.documentElement && esNetlify(e))) { const r = (hallado || e).getBoundingClientRect(); alto = Math.max(alto, Math.ceil(H - r.top + 10)); }
+          if (hallado || (e && e !== document.documentElement && esNetlify(e))) { const r = (hallado || e).getBoundingClientRect(); alto = Math.max(alto, Math.min(90, Math.ceil(H - r.top + 10))); }
         }
       }
       document.documentElement.style.setProperty("--badge", alto + "px");

@@ -1,0 +1,456 @@
+# CLAUDE-INDICE.md · Inventario completo del código (GENERADO, no editar a mano)
+
+Generado con `python3 tools/indice.py` el 2026-10-04. Lo lee Claude junto a `CLAUDE.md`. Contiene qué hace cada archivo, sus rutas, almacenes de datos y funciones exportadas; para ver el código exacto, abrir el archivo.
+
+
+## 1. Funciones de servidor (`netlify/functions`)
+
+- **almacen.mts** (273 líneas): INVENTARIO DE REPUESTOS Y CONTROL DE HERRAMIENTAS GET /api/almacen/estado → piezas, herramientas y avisos (el coste solo lo ve el gerente) GET /api/almacen/orden/:token → recambios y herramientas de una orden (FORM-03) GET /api/almacen/mias → herramientas que tengo yo (para salir) GET /api/almacen/pendientes-cierre → herramientas fuera sin localizar hoy (cierre de caja) POST /api/almacen/pieza[/:id] → alta / edición …
+  - rutas: `["/api/almacen/:accion", "/api/almacen/:accion/:id", "/api/almacen/:accion/:id/:sub"]`
+  - almacenes: ordenes
+- **asistente.mts** (387 líneas): ASISTENTE CON IA (Groq, plan gratuito) · POST /api/asistente (El agente nocturno de WhatsApp, /api/whatsapp, usa estas mismas herramientas y datos reales: por eso algunas funciones llevan «export». No cambia nada del chat de la web.) El chat de la web manda aquí la conversación. La IA NO se inventa el stock ni las horas: para eso llama a «herramientas» que se ejecutan en este servidor con los datos reales (coches del…
+  - rutas: `"/api/asistente"`
+  - almacenes: analitica, monzacar
+  - variables: GROQ_API_KEY, GROQ_URL, MAX_CHARS, MAX_MENSAJES, MAX_RONDAS
+- **ausencias.mts** (178 líneas): AUSENCIAS · RRHH (solo panel; nada de esto es público). No exige haber fichado: quien está de baja no puede fichar. GET /api/ausencias/mias → mis solicitudes, tipos y avisos (decisiones que aún no he visto) POST /api/ausencias/subir → sube un documento (foto o PDF, hasta 4 MB); devuelve su clave POST /api/ausencias/crear → comunica una ausencia (el gerente puede registrarla a nombre de otra persona) POST /api/ausenci…
+  - rutas: `["/api/ausencias/:accion", "/api/ausencias/:accion/:id"]`
+  - variables: MAX_DOC, MAX_DOCS
+- **caja.mts** (201 líneas): CONTROL DE CAJA Y PREVENCIÓN DE PÉRDIDAS GET /api/caja/estado → la caja de ahora (el equipo NO ve la cifra teórica: cierre ciego) POST /api/caja/abrir → apertura con el conteo del fondo (se compara con el último cierre) POST /api/caja/movimiento → cobro en efectivo o salida de dinero (la salida exige foto del ticket) POST /api/caja/foto/:mov → añadir el ticket a una salida que se registró sin él POST /api/caja/cerrar…
+  - rutas: `["/api/caja/:accion", "/api/caja/:accion/:id"]`
+  - almacenes: monzacar-fotos
+- **coches-fv.mts** (60 líneas): /coches-segunda-mano-fuerteventura/ CON EL STOCK DENTRO (para Google, sin JavaScript) El texto de la página lo genera tools/seo.py (public/coches-segunda-mano-fuerteventura/index.html y netlify/lib/plantilla-coches-fv.mts). Esta función pinta los coches en venta donde pone <!--STOCK--> y añade la lista de coches en datos estructurados (ItemList). Se actualiza sola al cambiar el stock (etiqueta de caché «coches»). Si …
+  - rutas: `["/coches-segunda-mano-fuerteventura", "/coches-segunda-mano-fuerteventura/"]`
+  - almacenes: monzacar
+- **coches.mts** (138 líneas): Primera vez: mete en el panel los coches que ya estaban publicados en la web. Solo una vez: si luego los borras desde el panel, no vuelven a aparecer.
+  - rutas: `["/api/coches", "/api/coches/:id"]`
+  - almacenes: monzacar, monzacar-fotos, monzacar-informes, monzacar-videos
+- **copia-programada.mts** (42 líneas): COPIA DE SEGURIDAD AUTOMÁTICA · todos los días a las 03:05 (hora UTC) - Cada almacén se guarda en su propio archivo (diaria/AAAA-MM-DD/<almacén>.json) y un índice (diaria/AAAA-MM-DD.json): si uno falla o crece mucho, los demás se guardan igualmente y se avisa por email. - Se conservan: los últimos 30 días, el día 1 de cada mes durante 24 meses y el 1 de enero de cada año PARA SIEMPRE (la copia anual: guarda ahí todos…
+  - programada (cron UTC): `5 3 * * *`
+  - almacenes: copias
+- **copia.mts** (47 líneas): COPIA DE SEGURIDAD COMPLETA (solo el gerente, con su contraseña): GET /api/copia Descarga en un solo archivo todos los datos del negocio: coches, clientes y citas, órdenes del taller, equipo, caja, finanzas, almacén y ajustes. Sirve también para pasar los datos a otra web o a otro servidor. No incluye: las fotos y vídeos (van aparte, se listan sus nombres), las estadísticas de visitas, el registro de seguridad ni la …
+  - rutas: `"/api/copia"`
+  - almacenes: copias
+- **enlaces.mts** (151 líneas): ENLACES CORTOS Y QR MEDIBLES (actualización 19) · solo el gerente los crea - GET /q/:cod → PÚBLICO. Cuenta el escaneo y redirige (302) a la web con sus UTM puestos. - GET /api/enlaces → lista de enlaces con sus escaneos (hoy, 7 y 30 días, total y personas distintas) - POST /api/enlaces → crea un enlace { destino, canal "flyer|qr", camp, term?, nota? } - PUT /api/enlaces/:cod → cambia el destino, la nota o lo activa/d…
+  - rutas: `["/q/:cod", "/api/enlaces", "/api/enlaces/:cod"]`
+  - almacenes: enlaces
+- **entregas.mts** (50 líneas): ENTREGAS Y OPINIONES (panel, solo gerente) - GET /api/entregas → todas las entregas (foto, opinión, autorización, publicada o no) - PUT /api/entregas/:cocheId → guarda la entrega de un coche VENDIDO - DELETE /api/entregas/:cocheId → la borra (y deja de salir en /coches-vendidos) Lo público está en /coches-vendidos (netlify/functions/vendidos.mts).
+  - rutas: `["/api/entregas", "/api/entregas/:id"]`
+  - almacenes: monzacar
+- **ev.mts** (90 líneas): ANALÍTICA PROPIA, SIN COOKIES - POST /api/ev → la web avisa de lo que pasa (página vista, coche abierto, clic en WhatsApp…) - GET /api/stats → el panel pide los totales por día (requiere contraseña) Privacidad: no se guarda la IP ni nada que identifique a la persona. Para contar visitantes únicos se usa una huella que cambia cada día (sal aleatoria diaria que se borra al día siguiente), así que es imposible seguir a …
+  - rutas: `["/api/ev", "/api/stats"]`
+  - almacenes: analitica
+- **feed-inventario.mts** (32 líneas): FEEDS PARA PORTALES Y MULTIPUBLICADORES (solo lectura, protegidos con la clave FEED_TOKEN de Netlify): /feeds/xml.xml?token=… XML general /feeds/json.json?token=… JSON con el esquema completo /feeds/meta.csv?token=… catálogo de vehículos de Meta (Facebook/Instagram) Sin FEED_TOKEN (24+ caracteres) los feeds están APAGADOS (404). Solo salen coches «disponible» que pasan la validación del formato. Lleva ETag y responde…
+  - rutas: `["/feeds/xml.xml", "/feeds/meta.csv", "/feeds/json.json"]`
+  - variables: FEED_TOKEN
+- **ficha.mts** (190 líneas): FICHA DE CADA COCHE PARA GOOGLE: /coche/toyota-c-hr-2020-1a2b3c4d Página completa con fotos, datos, precio y datos estructurados (schema.org Car + Offer), para que cada coche aparezca en Google por sí solo («Toyota C-HR segunda mano Fuerteventura»). Los botones llevan a la web (/comprar?coche=ID), donde se abre la ficha con calculadora y cita.
+  - rutas: `"/coche/:slug"`
+  - almacenes: monzacar, monzacar-informes
+- **financiacion.mts** (91 líneas): FINANCIACIÓN (calculadora de cuotas de la web) - GET /api/financiacion → condiciones que usa la calculadora (público) - PUT /api/financiacion → el panel cambia las condiciones (requiere sesión) Las condiciones son las que te dé la entidad financiera con la que trabajes (TIN, comisión, plazos, importe mínimo y antigüedad máxima del coche). La web calcula con ellas la cuota, la TAE y el ejemplo representativo que exige…
+  - rutas: `"/api/financiacion"`
+  - almacenes: monzacar
+- **finanzas.mts** (349 líneas): GESTIÓN DE INGRESOS Y EGRESOS GLOBALES (solo el gerente) Ingresos automáticos, sin duplicar trabajo: · Taller: cada presupuesto ACEPTADO por el cliente es una factura emitida. Los cobros salen de «Registrar cobro» o, solos, de los cobros de caja que el equipo enlaza a esa orden. · Venta de coches: cada coche marcado «Vendido» es una venta. Con «Registrar la venta» se anotan precio final, coste de compra y forma de pa…
+  - rutas: `["/api/finanzas/:accion", "/api/finanzas/:accion/:id", "/api/finanzas/:accion/:id/:sub"]`
+  - almacenes: finanzas, monzacar, monzacar-fotos, ordenes
+- **fotos-cliente.mts** (62 líneas): FOTOS DEL CLIENTE · «Presupuesto por foto» del taller - POST /api/fotos-cliente → la web sube una foto del daño (JPEG ya reducido en el móvil, máx. 3 MB) - GET /api/fotos-cliente/:clave → solo el panel la puede ver (son fotos privadas del cliente) La foto queda «suelta» hasta que se envía la solicitud; las que nadie usa se borran solas a las 24 h (lo hace la tarea programada de las reservas).
+  - rutas: `["/api/fotos-cliente", "/api/fotos-cliente/:key"]`
+- **fotos.mts** (49 líneas): Los PDF son facturas y tickets (datos personales): nunca en cachés públicas ni en Google
+  - rutas: `["/api/fotos", "/api/fotos/:key"]`
+  - almacenes: monzacar-fotos
+- **informe-auto.mts** (33 líneas): INFORMES AUTOMÁTICOS (panel, solo gerente). Los genera solos «informe-programado» (lunes y día 1). - GET /api/informes-auto → lista de informes guardados - GET /api/informes-auto/:id → un informe - POST /api/informes-auto → { tipo, enviar } genera ahora el último periodo cerrado
+  - rutas: `["/api/informes-auto", "/api/informes-auto/:id"]`
+- **informe-programado.mts** (15 líneas): Informes automáticos: cada lunes el de la semana anterior y cada día 1 el del mes anterior (email + Telegram + panel).
+  - programada (cron UTC): `30 7 * * *`
+- **informes.mts** (85 líneas): HISTORIAL SIN SORPRESAS · el informe de revisión de cada coche en PDF Es el escaneo del FORM-02 (Inspección de entrada 360°, 80 puntos con semáforo OK / Ámbar / Rojo) y del FORM-04 (Control de calidad pre-entrega, firmado) de ESE coche. Se sube desde el panel, en la ficha del coche → «Historial Sin Sorpresas». - GET /api/informes → público: qué coches tienen informe { "<idCoche>": { fecha, kb } } - GET /api/informes/…
+  - rutas: `["/api/informes", "/api/informes/:id"]`
+  - almacenes: monzacar-informes
+- **interes.mts** (63 líneas): Solo se aceptan coches que existen (evita que alguien llene el registro con coches inventados).
+  - rutas: `["/api/interes", "/api/interes/:id"]`
+  - almacenes: monzacar
+- **inventario.mts** (33 líneas): INVENTARIO EN VIVO · GET /inventario.json El stock público en un formato estable y documentado (el mismo que usa el asistente con IA). Sale siempre de los coches del panel: no hay que mantener ningún archivo a mano. Ejemplo del formato: tools/asistente/inventario.ejemplo.json
+  - rutas: `"/inventario.json"`
+  - almacenes: monzacar
+- **jornada.mts** (171 líneas): REGISTRO DE JORNADA GET /api/jornada/yo → mi estado, mi día y (con ?mes=AAAA-MM) mi mes POST /api/jornada/fichar {accion?, qr?} → fichar (sin acción: la siguiente lógica; con qr: desde el cartel/NFC) POST /api/jornada/deshacer → anula mi último fichaje si han pasado menos de 2 min GET /api/jornada/plantilla → estado en vivo de todo el equipo (gerente) GET /api/jornada/registro?mes&uid → días con horas ordinarias, ext…
+  - rutas: `["/api/jornada/:r", "/api/jornada/:r/:id"]`
+- **local.mts** (395 líneas): PÁGINAS LOCALES PARA GOOGLE (SEO local), una por pueblo y servicio: /coches-segunda-mano-<pueblo> → catálogo en vivo + entrega gratis a domicilio en ese pueblo /taller-mecanico-<pueblo> → taller en Costa de Antigua para clientes de ese pueblo + reserva de cita al momento Los pueblos, distancias y textos están en netlify/lib/municipios.mts. Si añades un pueblo allí, añade también sus dos direcciones en config.path (ab…
+  - rutas: `[  "/coches-segunda-mano-corralejo", "/coches-segunda-mano-corralejo/",  "/coches-segunda-mano-la-oliva", "/coches-segunda-mano-la-oliva/",  "/coches-segunda-mano-puerto-del-rosario", "/coches-segunda-mano-puerto-del-rosario/",  "/coches-segunda-mano-antigua", "/coches-segunda-mano-antigua/",  "/coches-segunda-mano-caleta-de-fuste", "/coches-segunda-mano-caleta-de-fuste/",  "/coches-segunda-mano-gran-tarajal", "/coches-segunda-mano-gran-tarajal/",  "/coches-segunda-mano-costa-calma", "/coches-segunda-mano-costa-calma/",  "/coches-segunda-mano-morro-jable", "/coches-segunda-mano-morro-jable/",  "/taller-mecanico-corralejo", "/taller-mecanico-corralejo/",  "/taller-mecanico-la-oliva", "/taller-mecanico-la-oliva/",  "/taller-mecanico-puerto-del-rosario", "/taller-mecanico-puerto-del-rosario/",  "/taller-mecanico-antigua", "/taller-mecanico-antigua/",  "/taller-mecanico-caleta-de-fuste", "/taller-mecanico-caleta-de-fuste/",  "/taller-mecanico-gran-tarajal", "/taller-mecanico-gran-tarajal/",  "/taller-mecanico-costa-calma", "/taller-mecanico-costa-calma/",  "/taller-mecanico-morro-jable", "/taller-mecanico-morro-jable/",  ]`
+  - almacenes: monzacar
+- **login.mts** (136 líneas): ENTRADA AL PANEL POST /api/login {clave, codigo?} → sesión firmada de 12 h (la contraseña no se guarda en el navegador) GET /api/login (con la sesión) → comprueba que la sesión sigue viva Defensas: bloqueo tras 5 fallos (15 min, 24 h si reincide), espera fija en cada fallo, verificación en dos pasos opcional, límite de peticiones por IP en Netlify y aviso por email de bloqueos y de accesos desde dispositivos nuevos.
+  - rutas: `"/api/login"`
+  - variables: ADMIN_PASSWORD
+- **manuales.mts** (28 líneas): MANUALES DE SISTEMAS (MO-00): los 11 PDF de procedimientos son documentos INTERNOS. Ya no están en la carpeta pública: viven en netlify/privado/sistemas y solo los entrega esta función a quien haya entrado en el panel (contraseña del gerente o usuario + PIN del equipo). GET /api/manual/VolcanoCars-S01-Taller-recepcion-a-entrega
+  - rutas: `"/api/manual/:archivo"`
+- **marketing-piloto.mts** (28 líneas): PILOTO AUTOMÁTICO DE MARKETING · cada día a las 09:15 (hora de Canarias, aprox.) Si el gerente lo ha activado en el panel (Marketing en vivo → Piloto automático), aplica micro-rebajas a los coches con poco interés, respetando SUS límites. Si no está activado, solo deja las sugerencias. Cada acción se apunta en el registro, se avisa por Telegram y se puede deshacer desde el panel.
+  - programada (cron UTC): `15 8 * * *`
+- **marketing.mts** (75 líneas): MOTOR DE MARKETING (panel, solo gerente) - GET /api/marketing → config, gastos por campaña, registro de acciones y coches candidatos a micro-rebaja - PUT /api/marketing/config → límites y piloto automático - PUT /api/marketing/gastos → lista de gastos por campaña (para CPA y ROI) - POST /api/marketing/rebaja → { id, precio } aplica una micro-rebaja sugerida (a mano) - POST /api/marketing/deshacer → { accion } vuelve …
+  - rutas: `["/api/marketing", "/api/marketing/:accion"]`
+- **ordenes.mts** (248 líneas): ÓRDENES DE TRABAJO: SEGUIMIENTO EN VIVO + PRESUPUESTO ONLINE Panel (con contraseña): - GET /api/ordenes → todas las órdenes - POST /api/ordenes → crea una orden (desde una solicitud del CRM o a mano) - PATCH /api/ordenes/:token → cambia estado, fecha de entrega, fotos, mensaje o presupuesto - DELETE /api/ordenes/:token Cliente (sin contraseña, solo con el enlace secreto /s/:token): - GET /api/seguimiento/:token → est…
+  - rutas: `["/api/ordenes", "/api/ordenes/:token", "/api/seguimiento/:token", "/api/seguimiento/:token/respuesta", "/api/seguimiento/:token/video-visto"]`
+  - almacenes: ordenes, solicitudes, taller
+- **pago-presupuesto.mts** (184 líneas): PAGO DEL PRESUPUESTO CON STRIPE (tarjeta, Apple Pay, Google Pay) Cliente (enlace secreto /s/:token): - POST /api/seguimiento/:token/pagar → crea el pago en Stripe y devuelve la URL de la pasarela - GET /api/seguimiento/:token/pago → al volver de Stripe, comprueba el pago y pasa la orden a «En reparación» Stripe (opcional, refuerzo): - POST /api/stripe/webhook → mismo efecto si el cliente cierra el navegador antes de …
+  - rutas: `["/api/seguimiento/:token/pagar", "/api/seguimiento/:token/pago", "/api/stripe/webhook"]`
+  - almacenes: ordenes, solicitudes
+  - variables: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+- **piloto-web.mts** (65 líneas): PILOTO DE CONVERSIÓN EN LA WEB - GET /api/piloto-web → (público) qué reglas están activas y qué coches las disparan. Lo lee /piloto-web.js - POST /api/piloto-web/evento → (público) la ventana avisa de que se mostró / se pulsó / se cerró (sin datos personales) - GET /api/piloto-web/admin → (gerente) reglas, estado completo y resultados de la semana - PUT /api/piloto-web/config → (gerente) guarda las reglas desde el pa…
+  - rutas: `["/api/piloto-web", "/api/piloto-web/:accion"]`
+- **precios-taller.mts** (90 líneas): PRECIOS «DESDE» DEL TALLER - GET /api/precios-taller → precios que enseña la web (público, en caché del CDN) - PUT /api/precios-taller → el panel (Taller → Precios en la web) los cambia (solo el gerente) Cada servicio del taller de la web (las mismas claves que SERVICIOS en public/index.html) puede tener un precio «desde» con IGIC incluido, un sufijo («/ pieza», «/ rueda»…) y una etiqueta llamativa («Oferta», «Más pe…
+  - rutas: `"/api/precios-taller"`
+  - almacenes: monzacar
+- **reservas-tareas.mts** (41 líneas): Cada hora: libera las reservas que han caducado (y avisa), recuerda las que llevan 48 h y borra las fotos de «presupuesto por foto» que se subieron pero nunca se enviaron.
+  - programada (cron UTC): `7 * * * *`
+  - almacenes: reservas, reservas-docs, solicitudes
+- **reservas.mts** (361 líneas): RESERVA ONLINE DE 50 € · LISTA DE ESPERA Web (público): GET /api/reservas/config → formas de pago activas (tarjeta, transferencia, Bizum) POST /api/reservas → empezar una reserva (datos + visita) → enlace de pago o datos de transferencia GET /api/reservas/:token → estado de la reserva (enlace privado del cliente, /r/:token) POST /api/reservas/:token/justificante → subir el justificante de la transferencia o del Bizum…
+  - rutas: `["/api/reservas", "/api/reservas/:a", "/api/reservas/:a/:b", "/api/stripe-webhook"]`
+  - almacenes: solicitudes
+  - variables: MAX_DOC, STRIPE_WEBHOOK_SECRET
+- **salud-web.mts** (26 líneas): SALUD DE LA WEB (actualización 7) · GET /api/salud-web Responde en menos de un segundo si el servidor y la base de datos funcionan, y si la copia automática de anoche se hizo. No muestra datos del negocio. Sirve para dos cosas: 1) el instalador la usa para comprobar que la versión nueva se ha publicado bien; 2) un vigilante gratuito (UptimeRobot) puede avisarte al móvil/email si la web se cae o si dejan de hacerse la…
+  - rutas: `"/api/salud-web"`
+  - almacenes: copias
+- **salud.mts** (31 líneas): SALUD DE LA WEB · GET /api/salud Para los monitores externos (UptimeRobot, Better Stack…) y para el vigilante interno. Comprueba que la función arranca y que la base de datos (Netlify Blobs) responde, y cuánto tarda. Devuelve 200 con {"ok":true} si todo va bien y 503 si algo falla o va muy lento. No enseña datos privados.
+  - rutas: `"/api/salud"`
+  - almacenes: monzacar
+- **seguridad.mts** (70 líneas): Centro de seguridad del panel (solo con sesión): estado del muro, registro, bloqueos y 2FA.
+  - rutas: `"/api/seguridad"`
+  - almacenes: seguridad
+  - variables: ADMIN_PASSWORD, RESEND_API_KEY, SESSION_SECRET
+- **sindicar-programada.mts** (7 líneas): Cada 15 minutos lanza una pasada de multipublicación (ver lib/sindica/motor.mts). Sin SINDICA_ACTIVO=1 solo hace el simulacro.
+  - programada (cron UTC): `*/15 * * * *`
+  - variables: SINDICA_ACTIVO
+- **sindicar.mts** (22 líneas): MULTIPUBLICACIÓN · solo gerente GET /api/sindica → todo lo que enseña la tarjeta «Multipublicación» del panel (Coches). POST /api/sindica → lanza una pasada ahora (con ?simulacro=1 solo calcula el plan, sin enviar nada). Variables de Netlify: SINDICA_ACTIVO=1 (envío real; sin ella siempre simulacro) · SINDICA_CANALES=autoscout24 · SINDICA_MAX=10 · FEED_TOKEN (clave de los feeds) · AS24_URL y AS24_TOKEN (acceso a la A…
+  - rutas: `"/api/sindica"`
+  - variables: AS24_TOKEN, AS24_URL, FEED_TOKEN, SINDICA_ACTIVO, SINDICA_CANALES, SINDICA_MAX
+- **sistemas.mts** (126 líneas): SISTEMAS VOLCANO CARS · formularios digitales (MO-00 v3.0) Solo los formularios que no tenían equivalente en el panel: FORM-05 Cascos y abonos (S02) · FORM-06 Ronda 5S y seguridad (S03) · FORM-07 Hoja de preparación (S04) FORM-08 Prueba a domicilio · fianza 50 € (S06) · FORM-09 Registro de postventa (S07) FORM-10 Plan semanal de marketing (S08, solo gerente) · FORM-11 Auditoría del viernes (S09, solo gerente) FORM-01…
+  - rutas: `"/api/sistemas"`
+  - almacenes: sistemas
+  - variables: MAX_BYTES, MAX_CLAVES, MAX_FILAS, MAX_TXT
+- **sitemap.mts** (46 líneas): MAPA DEL SITIO PARA GOOGLE (/sitemap.xml), siempre al día: portada en español e inglés, secciones (/comprar, /taller, /contacto), páginas de servicios, páginas por pueblo y una entrada por cada coche a la venta (con sus fotos). Si añades una página de servicio nueva en tools/seo.py, añádela también a PAGINAS.
+  - rutas: `"/sitemap.xml"`
+  - almacenes: monzacar
+- **solicitudes.mts** (157 líneas): Solicitudes de clientes, citas en tiempo real y mini CRM. La lógica común está en netlify/lib/solicitud.mts.
+  - rutas: `["/api/solicitudes", "/api/solicitudes/:id", "/api/citas", "/api/citas/bloqueos"]`
+  - almacenes: solicitudes
+- **stats-compactar.mts** (21 líneas): Cada noche: resume los días anteriores de la analítica en «agg/AAAA-MM-DD», borra los eventos sueltos y la sal diaria (a partir de aquí ya no se puede relacionar nada con ningún visitante).
+  - programada (cron UTC): `20 2 * * *`
+  - almacenes: analitica
+- **taller.mts** (550 líneas): TALLER · SOP-01 (FORM-01 recepción, FORM-02 inspección 360°, FORM-03 tiempos, FORM-04 calidad) GET /api/taller/yo → quién soy (gerente o persona del equipo) GET/PUT /api/taller/config → tarifa, jornada y umbrales (PUT solo gerente) GET/POST /api/taller/equipo · PUT/DELETE /api/taller/equipo/:id (solo gerente; el equipo ve nombres) POST /api/taller/recepcion → nueva orden con su FORM-01 GET /api/taller/fichas/:token →…
+  - rutas: `["/api/taller/:recurso", "/api/taller/:recurso/:id", "/api/taller/:recurso/:id/:sub"]`
+  - almacenes: ordenes, solicitudes
+- **trampa.mts** (22 líneas): TRAMPAS: rutas que ninguna persona visita, solo los robots que buscan fallos (WordPress, .env, phpMyAdmin…). Quien las pide queda bloqueado 24 h para intentar entrar al panel.
+  - rutas: `[  "/wp-login.php", "/wp-admin", "/wp-admin/*", "/xmlrpc.php", "/wp-content/*", "/wp-includes/*", "/wp-json/*",  "/.env", "/.env.*", "/.git/*", "/config.php", "/phpmyadmin", "/phpmyadmin/*", "/pma/*", "/administrator/*",  "/admin.php", "/login.php", "/server-status", "/.aws/*", "/cgi-bin/*", "/vendor/phpunit/*", "/owa/*", "/boaform/*",  ]`
+- **vehiculos.mts** (356 líneas): COCHES PROPIOS · control interno (solo panel; nada de esto es público) GET /api/vehiculos/estado → fichas (los importes solo los ve el gerente) y ajustes GET /api/vehiculos/ficha/:id → una ficha completa POST /api/vehiculos/crear → alta de un coche que entra (gerente o recepción) POST /api/vehiculos/editar/:id → datos del coche (compra, precio previsto y enlace: solo gerente) POST /api/vehiculos/fase/:id → cambio de …
+  - rutas: `["/api/vehiculos/:accion", "/api/vehiculos/:accion/:id", "/api/vehiculos/:accion/:id/:sub", "/api/vehiculos/:accion/:id/:sub/:dato"]`
+  - almacenes: monzacar
+  - variables: MAX_ACT
+- **vendidos.mts** (142 líneas): COCHES VENDIDOS Y ENTREGADOS · /coches-vendidos Prueba social real y local: cada coche que ha encontrado dueño, cuánto tardó en venderse y, cuando el cliente lo autoriza, la foto de la entrega y su opinión tal como la dijo. - Las opiniones NO se marcan con datos estructurados de «Review»: Google no permite reseñas de un negocio sobre sí mismo en su propia web (serían «autopromoción»). Las reseñas públicas están en la…
+  - rutas: `["/coches-vendidos", "/coches-vendidos/"]`
+  - almacenes: monzacar
+- **videos.mts** (118 líneas): Vídeos 360° de los coches. Las funciones de Netlify no aceptan subidas ni respuestas de más de 6 MB, así que el vídeo se sube en trozos de 4 MB y se sirve por rangos (el navegador pide el vídeo a trozos al reproducirlo). POST /api/videos {size, mime} → {key, trozo} (panel) PUT /api/videos/:key/:n trozo n (panel) POST /api/videos/:key/fin → marca el vídeo como completo (panel) DELETE /api/videos/:key → borra un vídeo …
+  - rutas: `["/api/videos", "/api/videos/:key", "/api/videos/:key/:parte"]`
+  - almacenes: monzacar-videos
+- **viendo.mts** (87 líneas): sendBeacon puede llegar vacío
+  - rutas: `["/api/viendo", "/api/viendo/:id"]`
+  - almacenes: monzacar
+  - variables: MAX_POR_CONEXION
+- **vigilante.mts** (56 líneas): VIGILANTE · se ejecuta solo cada 10 minutos (función programada de Netlify) Abre las páginas clave como lo haría un cliente y mide cuánto tardan. Si algo falla o va lento, avisa por Telegram (TELEGRAM_BOT_TOKEN y TELEGRAM_CHAT_ID, las mismas de los avisos de clientes). Solo avisa cuando cambia el estado (cae / se recupera), así no llena el móvil de mensajes. Guarda las últimas 144 mediciones (24 h) en el almacén «vig…
+  - programada (cron UTC): `*/10 * * * *`
+  - almacenes: vigilancia
+  - variables: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+- **voz.mts** (183 líneas): VOZ DE LOS VÍDEOS DE AYUDA · ElevenLabs, voz «DAN» (solo pestaña Ayuda del panel) GET /api/voz → guiones, si hay clave de ElevenLabs y cuántas frases tiene ya cada vídeo (todo el equipo) POST /api/voz/generar {modulo, n} → genera la frase n del vídeo (gerente). De una en una: cada una tarda 1-3 s GET /api/voz/clip/:modulo/:n → el MP3 de una frase (todo el equipo; el panel lo pide con su sesión) GET /api/voz/mp3/:modu…
+  - rutas: `["/api/voz", "/api/voz/:accion", "/api/voz/:accion/:modulo", "/api/voz/:accion/:modulo/:n"]`
+  - almacenes: ayuda-voz
+  - variables: ELEVENLABS_API_KEY, ELEVENLABS_VOICE_ID
+- **whatsapp-limpiar.mts** (24 líneas): Cada noche: borra de las conversaciones del agente de WhatsApp los mensajes de hace más de 48 h (así lo dice la política de privacidad). Deja solo lo mínimo para funcionar: si ya se presentó como IA, el «silencio» cuando contesta una persona y los ids de mensajes ya atendidos.
+  - programada (cron UTC): `35 3 * * *`
+  - almacenes: whatsapp
+- **whatsapp.mts** (447 líneas): AGENTE NOCTURNO DE WHATSAPP (IA) · /api/whatsapp — webhook de la WhatsApp Cloud API de Meta El 60 % de las búsquedas llegan de 19:00 a 23:00, con el taller cerrado. Este agente contesta por WhatsApp fuera de horario con los datos REALES de la web (stock, horas libres, financiación), cualifica al cliente y cierra una cita o deja el presupuesto listo para las 8:30. Guion de negociación: Chris Voss (etiquetas, espejo, p…
+  - rutas: `["/api/whatsapp", "/api/meta"]`
+  - almacenes: solicitudes, whatsapp
+  - variables: FB_PAGE_TOKEN, GROQ_API_KEY, IG_TOKEN, MAX_HIST, MAX_RONDAS, META_APP_SECRET, WA_APP_SECRET, WA_PHONE_ID, WA_TOKEN, WA_VERIFY_TOKEN
+
+## 2. Lógica compartida (`netlify/lib`)
+
+- **acceso.mts** (32 líneas): Devuelve quién hace la petición o la respuesta de error lista para devolver.
+  - exporta: Nivel, permiso, esRespuesta
+- **almacen.mts** (36 líneas): ALMACÉN · repuestos y herramientas (lógica compartida con la caja y el taller)
+  - exporta: a, Pieza, MovPieza, Herramienta, CAT_PIEZA, CAT_HERR, UNIDADES, redondeo, listarA, herramientasPendientes
+- **analitica.mts** (82 líneas): Analítica propia: helpers comunes a /api/ev, /api/stats y a la compactación nocturna.
+  - exporta: TIPOS, BOT, FUENTE, FUENTE_NOMBRE, limpio, salDelDia, Dia, resumir, clavesDelDia, diaResumido
+- **ausencias.mts** (75 líneas): AUSENCIAS · RRHH. Todo se guarda en la tienda «ausencias» (Netlify Blobs): sol/<id> la solicitud (datos, documentos, historial y decisión) doc/<clave> el archivo (foto o PDF) · docmeta/<clave> quién lo subió y qué es cont/<año> contador de referencias AUS-2026-001
+  - exporta: astore, TIPOS, ESTADOS, Doc, Paso, Sol, rid, ahora, str, esFecha, sumarDias, contarDias, leerSol, CONFLICTO, guardarSol, listarSol, siguienteRef, activa, cubre
+- **caja.mts** (96 líneas): CAJA · lógica compartida (la usan /api/caja y /api/finanzas) Todo movimiento de efectivo pasa por aquí: mismas reglas, mismo libro, mismas alertas.
+  - exporta: s, DEN, CAT_E, CAT_I, TXT_CAT, SALIDA_GRANDE, str, cent, eur, esFoto, rid, ahora, Conteo, Turno, Mov, leerDesglose, libro, alerta, listar, movsDe, teorico, turnoAbierto, leerMov, crearMovimiento
+- **copia.mts** (43 líneas): Qué se guarda en las copias de seguridad (manual /api/copia y automática copia-programada.mts)
+  - exporta: ALMACENES, SOLO_NOMBRES, conservar, volcar
+- **costes.mts** (23 líneas): COSTE POR HORA DE CADA TRABAJADOR (solo estadística del gerente: NO sale dinero de la caja). Se guarda en jornada/config/costes = { <uid>: [{ desde: "AAAA-MM-DD", cent: 1450 }, …] }. Cada cambio de tarifa vale desde su fecha; los días anteriores conservan la tarifa de entonces.
+  - exporta: Tarifa, Costes, leerCostes, guardarCostes, tarifaEn, costeMin, conCoste
+- **entregas.mts** (61 líneas): ENTREGAS · foto de la entrega y opinión del cliente de cada coche vendido Se guardan APARTE de los coches (almacén «entregas»): así el nombre del cliente, su foto y su opinión nunca salen en /api/coches ni en /inventario.json. Solo se publican en /coches-vendidos cuando hay autorización expresa del cliente y el gerente marca «Publicar».
+  - exporta: Entrega, estore, esFotoEntrega, limpiarEntrega, leerEntregas
+- **facturas.mts** (165 líneas): FACTURAS · numeración correlativa, registro inalterable y listado para la gestoría. - Series: F-AAAA-NNNN (facturas) y R-AAAA-NNNN (rectificativas por sustitución). El número se reserva SOLO al emitir, así que no hay huecos por presupuestos rechazados ni por órdenes sin factura. - Cada factura emitida deja un REGISTRO que no se edita ni se borra (almacén «facturas», clave reg/NNNNNN). Cada registro lleva una huella S…
+  - exporta: enLotes, reservarNumero, dd, eur2, ahoraConHuso, huellaAlta, qrUrl, Registro, sellarHuecos, emitirFactura, todosLosRegistros, comprobarIntegridad, listado, csv
+- **guiones.mts** (1031 líneas): GUIONES DE LOS VÍDEOS DE AYUDA (voz «DAN») Un guion por vídeo de la pestaña Ayuda (public/ayuda/videos/<id>.mp4). Cada línea empieza en el segundo `t` del vídeo (los mismos momentos que los pasos que se ven en pantalla) y está escrita para que se entienda a la primera: frases cortas, palabras de todos los días, una sola idea por frase. `txt` es lo que se lee en pantalla; `voz` (opcional) es cómo se pronuncia cuando h…
+  - exporta: LineaGuion, Guion, GUIONES, VOZ_AJUSTES, palabras, guion, huecos
+- **informe.mts** (142 líneas): INFORME EJECUTIVO (automático): semana o mes cerrado, comparado con el periodo anterior de la misma duración. Lo usan la función programada «informe-auto» (email + Telegram + copia en el panel) y el panel.
+  - exporta: Kpis, Informe, calcularInforme, emailInforme, generar
+- **jornada.mts** (235 líneas): REGISTRO DE JORNADA (art. 34.9 del Estatuto de los Trabajadores) Fichaje de ultra-baja fricción: un botón que cambia según el momento (entrada → pausa → reanudar → salida), QR/NFC fijo en el taller y fichajes que se enganchan solos con el FORM-03. · La hora la pone SIEMPRE el servidor. Nadie puede escribirla desde el móvil. · Nada se borra: una pulsación por error se «deshace» con un apunte nuevo, y el gerente corrig…
+  - exporta: jstore, Accion, EventoJ, Dia, EstadoJ, leerEstado, leerDia, olvidada, efectivo, validos, calcDia, autoPausar, autoReanudar, Ctx, fichar, deshacer, isoCanarias, corregir, exigirJornada, resumenYo
+- **libro.mts** (41 líneas): Añade una anotación al libro SIN que dos personas a la vez se pisen el número: antes de escribir se «reserva» el número n con una escritura «solo si no existe» (onlyIfNew). Si otra persona lo tenía ya, se espera un momento y se vuelve a leer la cabeza (que ella actualiza al terminar). Si tras varios intentos sigue sin liberarse (alguien se quedó a medias), se escribe como antes para no bloquear nunca el libro. `hacer…
+  - exporta: anotarSeguro, anotar, leerLibro
+- **marketing.mts** (124 líneas): MOTOR DE MARKETING · lógica común del panel (/api/marketing) y del piloto automático (marketing-piloto) Qué hace solo (si el gerente activa el piloto automático): · Micro-rebaja de coches que llevan tiempo publicados y casi nadie mira, SIEMPRE dentro de los límites que pone el gerente (máx. % por rebaja, máx. € por rebaja, rebaja total máxima, coches por semana). Cada acción queda apuntada y se puede deshacer con un …
+  - exporta: Config, CONFIG_BASE, Accion, Gasto, mk, leerConfig, limpiarConfig, leerLog, apuntar, interes, Candidato, candidatos, leerCoches, aplicarPrecio, telegram
+- **meta.mts** (73 líneas): CANALES DE META · un solo agente para WhatsApp, Facebook Messenger e Instagram Direct Los tres llegan al mismo webhook (/api/whatsapp, también /api/meta) con formas distintas. Aquí se normalizan a un «evento» y se envía la respuesta por el mismo canal. Messenger e Instagram solo se activan si existen sus variables (FB_PAGE_TOKEN / IG_TOKEN); sin ellas se ignoran sin romper nada. WhatsApp object «whatsapp_business_acc…
+  - exporta: Canal, Evento, ETIQUETA, LIMITE, clave, eventosSociales, firmaMeta, sinFormato, enviarSocial
+- **municipios.mts** (102 líneas): Municipios y pueblos de Fuerteventura con página propia (venta y taller). Distancias y tiempos: por carretera desde nuestra nave de Costa de Antigua, APROXIMADOS (dependen del punto exacto y del tráfico). Para añadir una zona: copia un bloque, cambia los datos y añade su dirección a netlify/functions/local.mts (config.path).
+  - exporta: Municipio, MUNICIPIOS, porSlug, RUTAS_VENTA, RUTAS_TALLER, RUTAS_VENTA_IDX, RUTAS_TALLER_IDX
+- **notificar.mts** (107 líneas): AVISOS EXTERNOS GRATUITOS DE CADA CLIENTE NUEVO (además del email de Resend que ya existía) Se envían solo si están puestas las variables en Netlify (Project configuration → Environment variables): · Telegram (gratis, llega al móvil al instante): TELEGRAM_BOT_TOKEN = el token que te da @BotFather (123456:ABC-DEF…) TELEGRAM_CHAT_ID = tu chat o grupo (lo ves escribiendo a @userinfobot, o el del grupo) · Google Sheets (…
+  - exporta: resumenLead, notificarExternos
+- **paginas.mts** (110 líneas): Piezas comunes de las páginas que genera el servidor (fichas de coches) — mismo diseño que tools/seo.py
+  - exporta: EMPRESA, escH, eur, kmTxt, foto, fotoW, imgAttrs, wa, slugDe, cabecera, pie
+- **piloto.mts** (146 líneas): PILOTO DE CONVERSIÓN EN LA WEB · lógica común de /api/piloto-web (público + panel) El panel guarda unas REGLAS (interruptores y números). Este archivo las cruza con los datos REALES de la web (personas que abren cada ficha, solicitudes, tráfico por hora) y publica un «estado» pequeño que lee la web (public/piloto-web.js) para actuar sola en la ficha del coche: · Prueba social: «N personas han pedido información de es…
+  - exporta: Reglas, REGLAS_BASE, limpiarReglas, pw, leerReglas, EstadoWeb, calcularEstado, estadoWeb, TIPOS_EV, ACC_EV, resumenEventos
+- **plantilla-coches-fv.mts** (3 líneas): GENERADO por tools/seo.py: no editar a mano
+  - exporta: PLANTILLA
+- **reservas.mts** (398 líneas): RESERVA ONLINE DE 50 € (REEMBOLSABLES) · lógica común Estados de una reserva: iniciada → el cliente ha rellenado sus datos y está pagando. El coche queda apartado en silencio (sigue «Disponible» en la web) para que nadie pague a la vez: 35 min con tarjeta, 60 min con transferencia o Bizum. Si no termina, se libera sola. pendiente → transferencia o Bizum con justificante subido. El coche pasa a RESERVADO al momento. T…
+  - exporta: IMPORTE, MIN_PAGO_TARJETA, MIN_PAGO_TRANSFER, HORAS_VERIFICAR, HORAS_RESERVA, Metodo, EstadoReserva, Reserva, Entrega, MUNICIPIOS_ENTREGA, FRANJAS_ENTREGA, etiquetaEntrega, Espera, Config, R, DOCS, esToken, nuevoToken, nuevoCodigo, nota, CONFIG_DEF, leerConfig, ibanBonito, ibanValido, stripeActivo, configPublica, concepto, leerCoches, estadoCoche, leer, guardar, apartadoDe, activa, apartar, alCRM, vistaPublica, pasarAPendiente, confirmar, cancelar, vender …
+- **seguridad.mts** (285 líneas): MURO DE SEGURIDAD - Bloqueo por intentos: 5 contraseñas mal en 15 min → esa conexión queda bloqueada 15 min; si reincide en 24 h, 24 h. Las «trampas» (rutas que solo prueban los robots: /wp-login.php, /.env…) bloquean la conexión 24 h directamente. - Segundo factor (2FA) opcional con Google Authenticator: variable ADMIN_TOTP_SECRET. - Registro de seguridad (30 días) visible en el panel y avisos por email de bloqueos …
+  - exporta: huella, ipCorta, dispositivo, pais, Evento, registrar, leerRegistro, estaBloqueado, bloquear, fallo, limpiarFallos, listaBloqueos, desbloquear, avisar, dispositivoNuevo, codigoTotp, dosFactoresActivo, verificarTotp, nombreEnApp, iniciar2FA, confirmar2FA, desactivar2FA, exige2FAEquipo, fijarExige2FAEquipo, totpEquipo, iniciar2FAEquipo, confirmar2FAEquipo, verificarTotpEquipo, quitar2FAEquipo, dispositivoDeConfianza, confiarDispositivo, listaConfianza, olvidarConfianza, horaInusual
+- **shared.mts** (402 líneas): sin token fuera de Netlify
+  - exporta: store, purgar, json, SESION_HORAS, crearSesion, leerSesion, minIat, cerrarTodasLasSesiones, isAdmin, telefonoValido, igualSeguro, mismoOrigen, Car, Rebaja, precioMinimo30, historialCompleto, cambiarPrecio, Mercado, Video, esVideo, VIDEO_TROZO, borrarVideo, esFotoSubida, esFotoFija, SEMILLA, SEMILLA_NUEVOS, cleanCar, canarias, sumarDias, canalDe, ResultadoEmail, destinoAvisos, ultimoEmail, enviarAviso, enviarEmail, waNum
+- **sindica/adaptadores.mts** (93 líneas): PATRÓN ADAPTADOR · un adaptador por canal. Todos cumplen la misma interfaz, así el motor no sabe nada de portales. IMPORTANTE (honestidad técnica): los formatos de AutoScout24 y de Meta de este archivo son un BORRADOR razonable. Los portales publican su especificación solo a socios/clientes con acceso. Antes de activar un canal hay que contrastar cada campo con su documentación oficial y ajustar SOLO el adaptador (na…
+  - exporta: ModoCanal, Canal, PayloadAutoScout24, autoscout24, feedXmlGenerico, envolverXml, META_COLUMNAS, metaVehiculos, metaCsv, feedJson, envolverJson, CANALES
+- **sindica/esquema.mts** (120 líneas): SINDICACIÓN DE COCHES · ESQUEMA UNIFICADO Una sola forma de describir un coche para TODOS los canales (feeds y APIs). Cada canal tiene su adaptador (adaptadores.mts) que lo traduce a lo que pide ese portal. Este archivo es puro: no toca la base de datos ni la red.
+  - exporta: CocheWeb, Combustible, Cambio, VehiculoUnificado, VENDEDOR, normCombustible, normCambio, slugDe, urlFoto, desdeCoche, validarBase, huella, Consejo, consejos
+- **sindica/estado.mts** (122 líneas): ESTADO, DIFERENCIAS Y REINTENTOS (puro, sin red). El motor compara lo que hay AHORA en la web con lo que se envió la última vez a cada canal, y decide: crear, actualizar, retirar o no hacer nada.
+  - exporta: RegistroCanal, Operacion, MAX_INTENTOS, calcularOperaciones, esperaMs, esReintentable, ErrorCanal, leerRetryAfter, Circuito, CIRCUITO_FALLOS, circuitoNuevo, circuitoAbierto, pasarPorCircuito, conReintentos, anotar
+- **sindica/motor.mts** (112 líneas): MOTOR DE MULTIPUBLICACIÓN · Fuente de verdad: los coches de la web (almacén «monzacar», clave «coches»). Este motor solo los LEE. · Cada pasada: valida → compara con el registro de cada canal → crea / actualiza / retira (máx. SINDICA_MAX por pasada). · Protecciones: cerrojo (dos pasadas a la vez no se pisan), interruptor de circuito por canal (si el portal cae, se deja de insistir y se avisa UNA vez), respeto de «Ret…
+  - exporta: ORIGEN, env, S, cargar, cargarCoches, canalesApiConfigurados, faltanAs24, pasada, informe
+- **sindica/transporte.mts** (39 líneas): TRANSPORTE HTTP para canales de tipo API. Solo AutoScout24 de momento, y SIN dirección real: hay que poner en Netlify AS24_URL (base de la API que te dé AutoScout24 o tu socio de datos) y AS24_TOKEN. Los verbos y rutas de aquí (POST /listings, PUT /listings/{id}, DELETE /listings/{id}) son los habituales en una API REST: contrástalos con la documentación que te entreguen y ajusta SOLO este archivo.
+  - exporta: enviarAutoScout24
+- **solicitud.mts** (344 líneas): (Lógica común de las solicitudes: la usan /api/solicitudes y las reservas online) SOLICITUDES DE CLIENTES (mini CRM) - POST /api/solicitudes → la web guarda una solicitud (coche, taller, tasación o contacto) - GET /api/solicitudes → el panel lista todas (requiere contraseña) - PATCH /api/solicitudes/:id → el panel cambia el estado o añade notas - DELETE /api/solicitudes/:id → el panel borra una solicitud (derecho de …
+  - exporta: TIPOS, ZONAS_ALERTA, ETIQUETA_VIP, ESTADOS, CONSENTIMIENTO_VERSION, RETENCION, HORAS, AGENDAS, HORIZONTE, Solicitud, ACTIVIDAD, MOTIVOS, str, fechaISO, ahoraCanarias, sumarDias, diaSemana, bloqueos, huecoValido, ocupados, ocuparHueco, FOTOS_CLIENTE, esFotoCliente, fotosExisten, marcarFotosUsadas, borrarFotos, liberar, limpiar, dentroDelLimite, eurTxt, fechaBonita, avisar, mensajeVIP, mensajeAlerta
+- **taller.mts** (182 líneas): TALLER · Manual SOP-01 (Recepción, inspección y control de tiempos) Equipo con PIN, fichas FORM-01..04, fichajes que no se pueden tocar sin el gerente y auditoría.
+  - exporta: Rol, ROLES, Persona, Config, CONFIG_DEFECTO, tstore, leerConfig, leerEquipo, hashPin, pinOk, crearSesionEquipo, Quien, quien, Estado4, Marca, F1, F2, Evento, F3, F4, EMISOR, F5Linea, F5, totalesF5, Fichas, MOTIVOS_PAUSA, Tramo, tramos, estadoTiempo, calculo, F2_SECCIONES, F2_IDS, resumenF2, F4_A, F4_B, F4_C, F4_D, hoyCanarias, horaCanarias, guardarOrden
+- **vehiculos.mts** (130 líneas): Para Finanzas: por cada coche de la web enlazado a una ficha, su reacondicionamiento interno y su compra.
+  - exporta: v, FASES, Fase, FASE_TXT, Actualizacion, Hora, Coste, PiezaV, Ficha, Cfg, rid, ahora, leerCfg, leerFicha, guardarFicha, listarFichas, siguienteRef, minTotal, costeHoras, costePiezas, costeOtros, costePendiente, costeReacond, desglose, costesPorCoche, anotarPieza, devolverPieza, TIPOS_TAREA, TipoTarea, Tarea, leerTarea, guardarTarea, listarTareas, calculoTarea, etiquetaTarea, tareaEnMarcha, tareaAutoPausar, tareaAutoReanudar
+- **ventas.mts** (55 líneas): MOTOR DE VENTAS (método Chris Voss) · reglas comunes a WhatsApp, Messenger e Instagram Funciones puras (sin red ni base de datos) para poder probarlas y usarlas desde cualquier canal: · sanear(texto) filtro de salida: ninguna respuesta del agente sale con una frase prohibida · enHorario(ahora, ...) ¿está una persona atendiendo? L–V 08:00–16:00 hora de Canarias, sin días cerrados · primeraGestion(...) fuera de horario…
+  - exporta: HORA_GESTION, PROHIBIDAS, sanear, tieneProhibidas, esLaborable, enHorario, primeraGestion
+
+## 3. Páginas HTML (`public`)
+
+- **public/404.html** (34 líneas, 1 KB): Página no encontrada | Volcano Cars
+- **public/admin.html** (9183 líneas, 1094 KB): Panel Volcano Cars
+  - vistas: v-empty, v-up, v-cancel, v-bar, v-ok, v-change, v-rm, v-err
+  - pestañas del panel: agenda, alm, ayuda, caja, coches, dash, fin, jornada, leads, ordenes, resp
+  - scripts: /cartel-fichaje.js, /panel-mejoras.js, /panel-plus.js, /panel-precios.js, /panel-sistemas.js
+- **public/aviso-legal.html** (82 líneas, 6 KB): Aviso legal · Volcano Cars
+  - scripts: /medicion.js, /origen.js
+- **public/chapa-y-pintura-fuerteventura/index.html** (79 líneas, 13 KB): Chapa y pintura en Fuerteventura | Volcano Cars
+  - scripts: /medicion.js, /origen.js, /precios-taller.js
+- **public/coches-segunda-mano-fuerteventura/index.html** (98 líneas, 15 KB): Coches de segunda mano en Fuerteventura | Volcano Cars
+  - scripts: /medicion.js, /origen.js
+- **public/comprar/index.html** (3199 líneas, 337 KB): Coches de ocasión en Fuerteventura | Volcano Cars
+  - vistas: v-inicio, v-comprar, v-taller, v-contacto
+  - scripts: /conversion.js, /medicion.js, /mejoras.js, /origen.js, /piloto-web.js, /script-ia.js, /taller-ui.js
+- **public/condiciones.html** (129 líneas, 12 KB): Condiciones de venta, taller y garantía · Volcano Cars
+  - scripts: /medicion.js, /origen.js
+- **public/contacto/index.html** (85 líneas, 12 KB): Contacto y cómo llegar | Volcano Cars Fuerteventura
+  - scripts: /medicion.js, /origen.js
+- **public/cookies.html** (67 líneas, 4 KB): Política de cookies · Volcano Cars
+  - scripts: /medicion.js
+- **public/en/index.html** (3202 líneas, 337 KB): Used cars and car workshop in Fuerteventura | Volcano Cars
+  - vistas: v-inicio, v-comprar, v-taller, v-contacto
+  - scripts: /conversion.js, /medicion.js, /mejoras.js, /origen.js, /piloto-web.js, /script-ia.js, /taller-ui.js
+- **public/financiacion-coches-fuerteventura/index.html** (78 líneas, 12 KB): Financiación de coches en Fuerteventura | Volcano Cars
+  - scripts: /medicion.js, /origen.js
+- **public/index.html** (3201 líneas, 338 KB): Coches de ocasión y taller en Fuerteventura | Volcano Cars
+  - vistas: v-inicio, v-comprar, v-taller, v-contacto
+  - scripts: /conversion.js, /medicion.js, /mejoras.js, /origen.js, /piloto-web.js, /script-ia.js, /taller-ui.js
+- **public/itv-fuerteventura/index.html** (95 líneas, 14 KB): ITV en Fuerteventura: guía y cómo aprobar | Volcano Cars
+  - scripts: /medicion.js, /origen.js, /precios-taller.js
+- **public/pre-itv-fuerteventura/index.html** (78 líneas, 11 KB): Pre-ITV en Fuerteventura | Volcano Cars
+  - scripts: /medicion.js, /origen.js, /precios-taller.js
+- **public/privacidad.html** (102 líneas, 14 KB): Política de privacidad · Volcano Cars
+  - scripts: /medicion.js, /origen.js
+- **public/reserva.html** (135 líneas, 17 KB): Tu reserva · Volcano Cars
+  - scripts: /conversion.js
+- **public/seguimiento.html** (300 líneas, 35 KB): Seguimiento de tu coche · Volcano Cars
+- **public/taller-mecanico-fuerteventura/index.html** (79 líneas, 15 KB): Taller mecánico en Fuerteventura | Volcano Cars
+  - scripts: /medicion.js, /origen.js, /precios-taller.js
+- **public/taller/index.html** (3199 líneas, 337 KB): Taller mecánico y chapa y pintura | Volcano Cars
+  - vistas: v-inicio, v-comprar, v-taller, v-contacto
+  - scripts: /conversion.js, /medicion.js, /mejoras.js, /origen.js, /piloto-web.js, /script-ia.js, /taller-ui.js
+
+## 4. JavaScript y CSS del navegador (`public/*.js|css`)
+
+- **cartel-fichaje.js** (99 líneas): CARTEL DE FICHAJE QR / NFC · Volcano Cars (27-09-2026) A4 vertical, a sangre, estética del taller: grafito, magma y brillo neón. Lo usa el panel (Jornada → «Ver e imprimir el cartel») y la herramienta tools/cartel/generar-pdf.mjs. window.vcCartel.html({url, desde, qrSvg})
+- **conversion.css** (346 líneas): VOLCANO CARS · CONVERSIÓN (conversion.css) Reserva flash 50 €, lista de espera, confirmación y presupuesto por foto. Mismo estilo «high-tech» de toda la web: antracita, naranja volcánico, letra técnica y bordes redondeados. Solo afecta a sus propias clases (.rsv-*, .pf-*), así que no cambia nada de lo que ya existía.
+- **conversion.js** (775 líneas): VOLCANO CARS · CONVERSIÓN (conversion.js) Cuatro módulos, sin librerías externas: 1. RESERVA FLASH 50 € en la ficha del coche (tarjeta · Google Pay · Apple Pay con Stripe, o transferencia / Bizum con justificante). 2. LISTA DE ESPERA en los coches RESERVADOS. 3. CONFIRMACIÓN + COMPROBANTE PDF (generado aquí mismo, sin jsPDF: la web no carga código de otras webs) y reenvío por WhatsApp. 4. PRESUPUESTO POR FOTO en el t…
+- **medicion.js** (99 líneas): MEDICIÓN · Google Analytics 4 + conversiones de Google Ads, con aviso de cookies ÚNICO sitio donde se ponen los códigos. Mientras estén vacíos, la web no carga nada de Google ni enseña el aviso de cookies. · ga4: «ID de medición» de Analytics (G-XXXXXXXXXX) · ads: «ID de conversión» de Google Ads (AW-XXXXXXXXX) · conv: la «etiqueta» de cada conversión (lo que va detrás de la barra: AW-123/<etiqueta>) La portada (inde…
+- **mejoras.css** (106 líneas): VOLCANO CARS · MEJORAS DE CAPTACIÓN (mejoras.css) Alertas por pueblo (.al-*), Historial Sin Sorpresas (.hist-*) y ajustes del móvil. Usa las variables de marca de la web (--rosso, --surface…), así que respeta el tema claro/oscuro. Solo afecta a sus propias clases.
+- **mejoras.js** (265 líneas): VOLCANO CARS · MEJORAS DE CAPTACIÓN (mejoras.js + mejoras.css) 1. ALERTAS DE COCHES NUEVOS POR PUEBLO, debajo del catálogo: quien no encuentra su coche deja pueblo + WhatsApp y recibe el aviso antes de que el coche se anuncie. Llega al CRM como «Alerta» y el panel, al dar de alta un coche, enseña qué alertas encajan con él. 2. «HISTORIAL SIN SORPRESAS» en la ficha de cada coche: descarga del PDF con la inspección de …
+- **origen.js** (16 líneas): ORIGEN DE LA VISITA (actualización 19) Si alguien llega por un QR o un anuncio a una página interna (p. ej. /pre-itv-fuerteventura/?utm_source=flyer…) y luego pasa a otra página para pedir cita, los UTM se perdían y la solicitud salía como «Directo». Aquí se recuerdan solo durante la visita (sessionStorage: desaparece al cerrar la pestaña, no es una cookie y no se envía a ningún sitio). Los formularios lo leen con wi…
+- **paginas.css** (328 líneas): Estilo de las páginas de servicios y de las fichas de coches (Volcano Cars)
+- **panel-mejoras.js** (124 líneas): VOLCANO CARS · PANEL: HISTORIAL SIN SORPRESAS + ALERTAS QUE ENCAJAN En la ficha de cada coche del panel (Coches → Editar / Añadir): 1. «Historial Sin Sorpresas»: sube el PDF con el FORM-02 (inspección 360°, 80 puntos) y el FORM-04 firmado de ESE coche. En la web sale el botón de descarga solo cuando hay PDF. 2. «Alertas que encajan»: los clientes apuntados a las alertas de la web cuyo presupuesto y cambio encajan con…
+- **panel-plus.js** (335 líneas): VOLCANO CARS · PANEL PLUS (27-09-2026) 1. Sonidos del panel (SFX): pasar el ratón, pulsar, enviar, avisos y vídeos. Se generan en el propio navegador (Web Audio): no hay archivos que descargar. Botón 🔊 arriba para quitarlos o ponerlos (se recuerda en cada dispositivo). 2. Guía por voz (voz masculina en español): explica campo por campo la pantalla abierta, o cada campo al tocarlo (modo «Explicar al tocar»). En Ayuda,…
+- **panel-precios.js** (224 líneas): VOLCANO CARS · PANEL: PRECIOS «DESDE» DEL TALLER (panel-precios.js) Pestaña Taller → tarjeta «Precios en la web». El gerente pone el precio «desde» (IGIC incluido) de cada servicio del taller: Pre-ITV, frenos, pintura, aceite, neumáticos… Al pulsar «Guardar y publicar» sale al momento en la web con su etiqueta de precio animada (/precios-taller.js). · Vacío = «a presupuestar» (la web no enseña precio). · Sufijo opcio…
+- **panel-sistemas.js** (494 líneas): VOLCANO CARS · PANEL: SISTEMAS VOLCANO CARS (MO-00 v3.0) (panel-sistemas.js) Pestaña Taller → tarjeta «Sistemas Volcano Cars»: · Biblioteca para el equipo: los 11 sistemas en su orden estricto (S01 → S11) con su PDF, y el índice MO-00 con el orden de implantación. · Formularios digitales que no existían en el panel: FORM-05 Cascos y abonos (S02) FORM-06 Ronda 5S y seguridad (S03) FORM-07 Hoja de preparación (S04) FOR…
+- **piloto-web.js** (267 líneas): VOLCANO CARS · PILOTO DE CONVERSIÓN EN LA WEB (piloto-web.js) Actúa solo en la ficha del coche según las reglas que el gerente activa en el panel (Marketing en vivo → Piloto). Lee /api/piloto-web (datos REALES). 1. Prueba social: «2 personas han pedido información de este coche hoy». (el «N personas lo ven ahora mismo» ya lo pinta la ficha con /api/viendo) 2. Regla A · baja conversión: muchas visitas y ninguna solici…
+- **precios-taller.css** (163 líneas): VOLCANO CARS · ETIQUETAS DE PRECIO «DESDE» (precios-taller.css) Lo carga solo /precios-taller.js. Etiqueta con forma de etiqueta de tienda (punta + agujero), brillo que la recorre, cifras que suben, entrada con rebote y balanceo al pasar por la tarjeta. Colores oficiales: naranja volcánico #D94A26 / #C83E1A.
+- **precios-taller.js** (273 líneas): VOLCANO CARS · PRECIOS «DESDE» DEL TALLER (precios-taller.js) Los precios se cambian en el panel: Taller → «Precios en la web». Se guardan en /api/precios-taller y este archivo los pinta solo: · en cada tarjeta de servicio del taller (/taller y la portada), con una etiqueta de precio animada; · en las etiquetas de las tarjetas «Chapa y pintura» y «Mecánica rápida» de la portada; · en las páginas de servicio (/pre-itv…
+- **script-ia.js** (308 líneas): VOLCANO CARS · ASISTENTE CON IA (script-ia.js) Se engancha al asistente que ya tiene la web (window.VC_BOT) sin rehacerlo: · Los atajos de siempre (Horario, Financiación, Garantía…) siguen igual y responden al momento, sin gastar IA. · Lo que el cliente ESCRIBE lo responde la IA (/api/asistente), que consulta el stock real, las horas libres y la financiación. · Si la IA propone una cita, rellena el formulario del tal…
+- **taller-ui.js** (97 líneas): VOLCANO CARS · TALLER «HIGH-TECH» (taller-ui.js) Detalles visuales del taller. No toca la reserva: solo escucha los servicios que marca el cliente y pinta: · el contador «3 seleccionados» encima de las tarjetas; · el bloque «Tu presupuesto» del panel de la cita. PRECIOS «DESDE»: ya no se escriben aquí. Se ponen en el panel (Taller → «Precios en la web») y los trae /precios-taller.js, que también pinta las etiquetas a…
+- **taller-vfx.css** (100 líneas): VOLCANO CARS · FONDO VFX DEL TALLER (taller-vfx.css) Lo carga solo /taller-vfx.js. Todo lo que se mueve usa opacity o transform (lo hace la tarjeta gráfica): nada de desenfoques caros sobre el vídeo, para que el móvil vaya fluido y no gaste batería.
+- **taller-vfx.js** (224 líneas): VOLCANO CARS · FONDO VFX DEL TALLER (taller-vfx.js) Al marcar un servicio del taller, el fondo de la sección pasa a un vídeo en CÁMARA LENTA de ese servicio (render 3D de cine: chispas, arcos eléctricos, agua, aceite, pintura...), con fundido cruzado entre clips, un instante de «revelado» para que se vea bien y luego una capa oscura para que el texto se lea. CÓMO FUNCIONA · Dos <video> apilados: el nuevo entra con su…
+- **taller.css** (416 líneas): VOLCANO CARS · TALLER «HIGH-TECH» (taller.css) Solo afecta a la sección del taller (#v-taller) y a su barra móvil. No cambia ninguna ID ni clase que use el JavaScript de la reserva: solo cambia cómo se ve. Colores oficiales: naranja volcánico #D94A26 / #C83E1A · carbón #121212 / #1E1E1E · blanco #FFFFFF.
+- **tema-admin.css** (141 líneas): VOLCANO CARS · TEMA «HIGH-TECH» DEL PANEL (tema-admin.css) Mismo estilo que la web y el taller: carbón, naranja volcánico, letra técnica y brillos suaves. Solo cambia el aspecto: ninguna ID ni clase que use el panel. Al imprimir (informes, órdenes del taller, etiquetas, finanzas, guía) todo vuelve a salir en claro.
+- **tema.css** (211 líneas): VOLCANO CARS · TEMA «HIGH-TECH» DE TODA LA WEB (tema.css) El mismo estilo del taller en toda la web pública: portada, catálogo, ficha del coche, contacto, páginas de pueblos y servicios, legales, seguimiento de la reparación, chat y avisos. Funciona sobre las variables de color que ya usaba la web (su modo oscuro, ahora siempre activo gracias a tools/tema.py): no cambia ninguna ID ni clase que use el JavaScript. Colo…
+
+## 5. Herramientas y pruebas (`tools`)
+
+- **tools/CAMBIOS-CAPTACION.md** (nota, 62 líneas): 
+- **tools/CAMBIOS-FICHA-COCHE.md** (nota, 71 líneas): 
+- **tools/CAMBIOS-INTERFAZ-COMPACTA.md** (nota, 111 líneas): 4 campos en 2 filas
+- **tools/CAMBIOS-PORTADA.md** (nota, 83 líneas): roca volcánica con un resplandor de lava desde abajo; bordes que se funden
+- **tools/GUIA-TEMA.md** (nota, 35 líneas): fondo
+- **tools/almacen/almacen.js** (370 líneas): INVENTARIO · repuestos (stock en tiempo real) y herramientas (anti-pérdida) Integrado con FORM-03 (recambios y herramientas de cada orden) y con el cierre de caja (auditoría de herramientas no devueltas). Fuente: tools/almacen/almacen.js → python3 tools/almacen/inyectar.py
+- **tools/almacen/inyectar.py** (21 líneas): ALMACEN-CSS-INICIO
+- **tools/asistente/GUIA-ASISTENTE-IA.md** (nota, 124 líneas): 
+- **tools/asistente/google-script.js** (101 líneas): * VOLCANO CARS · Registro automático de clientes en Google Sheets (gratis) * * Cada solicitud de la web (formularios de taller, coches, financiación y * la tarjeta «que me llamen» del asistente con IA) añade una fila a tu hoja. * * INSTALACIÓN (5 minutos, una sola vez): * 1. Crea una hoja nueva en https://sheets.new (ponle nombre, p. ej. «Clientes Volcano Cars»). * 2. Menú Extensiones → Apps Script. Borra lo que haya…
+- **tools/ausencias/ausencias.js** (216 líneas): AUSENCIAS · RRHH (tools/ausencias) — se copia dentro de admin.html con python3 tools/ausencias/inyectar.py · Trabajador: en su pantalla de fichaje, botón «Ausencias y permisos»: comunica una baja, cita médica, permiso, vacaciones… con fechas, motivo y documentos (foto o PDF). Ve la respuesta del gerente y puede completar la información. · Gerente: en la pestaña «Jornada», arriba: quién falta hoy, solicitudes por revi…
+- **tools/ausencias/inyectar.py** (22 líneas): AUSENCIAS-CSS-INICIO
+- **tools/ayuda/GUIONES-VIDEOS.md** (nota, 111 líneas): 
+- **tools/ayuda/ayuda.js** (475 líneas): AYUDA · manual de uso del panel, por pestaña y por puesto Fuente: tools/ayuda/ayuda.js (+ ayuda.css) → se copia dentro de admin.html con python3 tools/ayuda/inyectar.py. Para cambiar un texto, edítalo aquí y vuelve a inyectar. Estructura de cada módulo: objetivo · cuándo usarlo · mapa de la pantalla · guías paso a paso («¿Cómo hago para…?») · glosario de estados.
+- **tools/ayuda/grabar/LEEME.md** (nota, 15 líneas): 
+- **tools/ayuda/grabar/director.mjs** (69 líneas): (sin descripción)
+- **tools/ayuda/grabar/director2.mjs** (82 líneas): (sin descripción)
+- **tools/ayuda/grabar/harness.mjs** (19 líneas): (sin descripción)
+- **tools/ayuda/grabar/harness2.mjs** (17 líneas): Grabación contra el servidor local de pruebas (bun tools/ayuda/grabar/servidor-grabacion.mjs). Datos inventados.
+- **tools/ayuda/grabar/seed-demo.mjs** (35 líneas): Datos de PRUEBA para ver el dashboard con vida (solo en el banco de pruebas local).
+- **tools/ayuda/grabar/seed.mjs** (14 líneas): (sin descripción)
+- **tools/ayuda/grabar/servidor-grabacion.mjs** (27 líneas): Servidor local con datos de ejemplo para grabar los vídeos de la Ayuda (bun tools/ayuda/grabar/servidor-grabacion.mjs). Todo lo que sale en los vídeos es inventado: nombres, matrículas, importes y teléfonos.
+- **tools/ayuda/grabar/v-agenda.mjs** (11 líneas): (sin descripción)
+- **tools/ayuda/grabar/v-alm.mjs** (12 líneas): (sin descripción)
+- **tools/ayuda/grabar/v-caja.mjs** (14 líneas): (sin descripción)
+- **tools/ayuda/grabar/v-coches.mjs** (13 líneas): (sin descripción)
+- **tools/ayuda/grabar/v-crm.mjs** (14 líneas): (sin descripción)
+- **tools/ayuda/grabar/v-dash.mjs** (16 líneas): (sin descripción)
+- **tools/ayuda/grabar/v-fin.mjs** (15 líneas): (sin descripción)
+- **tools/ayuda/grabar/v-inicio.mjs** (14 líneas): (sin descripción)
+- **tools/ayuda/grabar/v-jornada.mjs** (16 líneas): (sin descripción)
+- **tools/ayuda/grabar/v-taller.mjs** (15 líneas): (sin descripción)
+- **tools/ayuda/grabar/v2-agenda.mjs** (16 líneas): (sin descripción)
+- **tools/ayuda/grabar/v2-alm.mjs** (21 líneas): (sin descripción)
+- **tools/ayuda/grabar/v2-caja.mjs** (22 líneas): (sin descripción)
+- **tools/ayuda/grabar/v2-coches.mjs** (22 líneas): (sin descripción)
+- **tools/ayuda/grabar/v2-crm.mjs** (23 líneas): (sin descripción)
+- **tools/ayuda/grabar/v2-dash.mjs** (23 líneas): (sin descripción)
+- **tools/ayuda/grabar/v2-equipo.mjs** (16 líneas): (sin descripción)
+- **tools/ayuda/grabar/v2-fin.mjs** (20 líneas): (sin descripción)
+- **tools/ayuda/grabar/v2-inicio.mjs** (19 líneas): (sin descripción)
+- **tools/ayuda/grabar/v2-jornada.mjs** (18 líneas): (sin descripción)
+- **tools/ayuda/grabar/v2-propios.mjs** (17 líneas): (sin descripción)
+- **tools/ayuda/grabar/v2-resp.mjs** (17 líneas): (sin descripción)
+- **tools/ayuda/grabar/v2-tablero.mjs** (16 líneas): (sin descripción)
+- **tools/ayuda/grabar/v2-taller.mjs** (33 líneas): (sin descripción)
+- **tools/ayuda/grabar/v2lib.mjs** (14 líneas): Ayudas comunes para los guiones largos de la Ayuda.
+- **tools/ayuda/inyectar.py** (47 líneas): AYUDA-CSS-INICIO
+- **tools/ayuda/videos.py** (16 líneas): AY_VID
+- **tools/build-en.py** (428 líneas): (sin descripción)
+- **tools/build-rutas.py** (48 líneas): (sin descripción)
+- **tools/caja/caja.js** (255 líneas): CONTROL DE CAJA Y PREVENCIÓN DE PÉRDIDAS Arqueo ciego (apertura y cierre), cobros y salidas con ticket, cuadro de mando del propietario y libro de registro encadenado. Fuente: tools/caja/caja.js → se copia dentro de admin.html con python3 tools/caja/inyectar.py
+- **tools/caja/inyectar.py** (21 líneas): CAJA-CSS-INICIO
+- **tools/cambiar-direccion.py** (13 líneas): (sin descripción)
+- **tools/carga/prueba-carga.js** (63 líneas): PRUEBA DE CARGA DE volcanocars.com con k6 (https://k6.io) — solo lecturas, no crea clientes ni citas. Cómo usarla (Windows, sin permisos de administrador): 1. Descarga k6 portable: https://github.com/grafana/k6/releases → k6-vX.Y.Z-windows-amd64.zip → descomprímelo. 2. En PowerShell, dentro de esa carpeta: .\k6.exe run ..\ruta\a\prueba-carga.js (día normal x10 + pico, ~6 min) .\k6.exe run -e ESCENARIO=humo ..\ruta\a\…
+- **tools/costes/costes.js** (60 líneas): COSTE DE PERSONAL EN TIEMPO REAL (tools/costes) — dentro de la pestaña «Jornada» (solo gerente) · Tarifa (€/hora) de cada trabajador, con fecha de inicio: los días anteriores conservan la tarifa de entonces. · Estadística teórica = horas trabajadas (sin pausas) × tarifa. NO sale nada de la Caja: eso lo haces tú a mano. · Se actualiza cada segundo mientras alguien tiene la jornada abierta; el mes se suma día a día. Se…
+- **tools/costes/inyectar.py** (22 líneas): COSTES-CSS-INICIO
+- **tools/dash2/dash2.js** (268 líneas): DASHBOARD 2 · centro de mando del negocio (solo gerente) Fuente: tools/dash2/dash2.js (+ dash2.css) → se copia dentro de admin.html con python3 tools/dash2/inyectar.py - Pulso del negocio: KPIs con mini-gráfico diario y cambio vs. periodo anterior - Previsión de cierre de mes (ritmo real + banda de confianza del 80 %) - Simulador «¿y si…?» con deslizadores (visitas, conversión, cierre, ticket, anuncios) - Mapa de cal…
+- **tools/dash2/inyectar.py** (21 líneas): .js y *.css) dentro de public/admin.html. # Ejecuta después de cambiar cualquier cosa de estos módulos: python3 tools/dash2/inyectar.py import pathlib R = pathlib.Path(__file__).resolve().parent ADMIN = R.parent.parent / "public" / "admin.html" s = ADMIN.read_text(encoding="utf-8") css = (R / "dash2.css").read_text(encoding="utf-8") + "\n" + (R / "marketing.css").read_text(encoding="utf-8") js = (R / "dash2.js").read…
+- **tools/dash2/marketing.js** (180 líneas): MARKETING EN VIVO · panel lateral flotante (solo gerente) - En vivo: quién está mirando ahora, visitas/contactos/solicitudes de hoy y OPORTUNIDADES con acción - Campañas: visitas, solicitudes, ventas, gasto, CPA y ROI por campaña (utm_campaign) + creador de enlaces medibles - Piloto automático: micro-rebajas solas dentro de TUS límites (se aplican cada mañana, se pueden deshacer) - Registro: todo lo que ha hecho el m…
+- **tools/dash2/reglas.js** (45 líneas): Piloto de conversión en la web: reglas ON/OFF (pestaña Piloto)
+- **tools/docs/MODELO-AUSENCIAS.md** (nota, 24 líneas): 
+- **tools/docs/MODELO-COSTES.md** (nota, 8 líneas): 
+- **tools/docs/MODELO-DE-DATOS.md** (nota, 59 líneas): 
+- **tools/docs/QA-MATRIZ.md** (nota, 30 líneas): 
+- **tools/factura/factura.js** (100 líneas): FORM-14 · FACTURA DE REPARACIÓN (ficha «f5» de Taller, entre FORM-02 y FORM-03) Se rellena sola desde el presupuesto y los datos de recepción; el gerente o recepción la revisan y la emiten. Emitida queda bloqueada; si hay que corregir, el gerente la reabre con motivo y la nueva emisión sale como rectificativa (-R1, -R2…). El mecánico no ve importes. Este módulo solo AÑADE: engancha con las funciones de taller.js (tCa…
+- **tools/factura/inyectar.py** (21 líneas): FACTURA-CSS-INICIO
+- **tools/finanzas/finanzas.js** (309 líneas): FINANZAS · Ingresos y egresos globales (solo el gerente) Integrado con Taller (presupuestos aceptados), Coches (vendidos) y Caja. Fuente: tools/finanzas/finanzas.js → python3 tools/finanzas/inyectar.py
+- **tools/finanzas/inyectar.py** (21 líneas): FINANZAS-CSS-INICIO
+- **tools/fuentes-locales.mjs** (58 líneas): Generado al publicar por tools/fuentes-locales.mjs
+- **tools/guia/guia.js** (246 líneas): GUÍA DE VENTA · «El Método de Venta Volcano Cars» (SOP-02 v2.0) Fuente: tools/guia/guia.js → se copia dentro de admin.html con python3 tools/guia/inyectar.py. Para cambiar textos, edita aquí.
+- **tools/guia/inyectar.py** (21 líneas): GUIA-CSS-INICIO
+- **tools/indice.py** (90 líneas): (sin descripción)
+- **tools/jornada/LEEME-JORNADA.md** (nota, 70 líneas): 
+- **tools/jornada/inyectar.py** (65 líneas): JORNADA-CSS-INICIO
+- **tools/jornada/jornada.js** (310 líneas): JORNADA · fichaje de ultra-baja fricción + 2FA del equipo + registro legal Fuente: tools/jornada/jornada.js (+ jornada.css) → se copia dentro de admin.html con python3 tools/jornada/inyectar.py · Equipo: tras entrar con PIN, si no está trabajando ve UN botón gigante que cambia solo (Entrada → Pausa/Salida → Reanudar). 1 toque, hora del servidor, aviso de 2 s y «Deshacer». · Cartel QR / pegatina NFC del taller: escane…
+- **tools/legal.py** (255 líneas): etiqueta «Powered by Netlify»: tapaba el aviso de cookies; la solución de fondo es apagarla en Netlify
+- **tools/pagespeed/inline-css.py** (20 líneas): (sin descripción)
+- **tools/pruebas/LEEME.md** (nota, 9 líneas): 
+- **tools/pruebas/e2e-ausencias-panel.py** (92 líneas): (sin descripción)
+- **tools/pruebas/e2e-ausencias.mjs** (143 líneas): PRUEBA DE «AUSENCIAS (RRHH)» DE PRINCIPIO A FIN (30-09-2026) Ejecuta las funciones reales de netlify/functions con un almacén en memoria y recorre el panel con cada puesto: Gerente (contraseña), Lestter (puesto Gerente con PIN), Calidad, Recepción y Mecánico. Uso (en el ordenador del desarrollador, con bun): bun tools/pruebas/e2e-ausencias.mjs Necesita un @netlify/blobs de pruebas en node_modules (ver tools/pruebas/L…
+- **tools/pruebas/e2e-copias.mjs** (34 líneas): Prueba de las copias de seguridad: reparto por almacén, conservación (30 días · día 1 de cada mes · 1 de enero para siempre) y descarga. Uso: bun tools/pruebas/e2e-copias.mjs (necesita el @netlify/blobs de pruebas, ver LEEME.md)
+- **tools/pruebas/e2e-costes-panel.py** (54 líneas): (sin descripción)
+- **tools/pruebas/e2e-costes.mjs** (90 líneas): PRUEBA DE «COSTE DE PERSONAL» DE PRINCIPIO A FIN (30-09-2026) Ejecuta las funciones reales de netlify/functions con un almacén en memoria y recorre el panel con cada puesto: Gerente (contraseña), Lestter (puesto Gerente con PIN), Calidad, Recepción y Mecánico. Uso (en el ordenador del desarrollador, con bun): bun tools/pruebas/e2e-costes.mjs Necesita un @netlify/blobs de pruebas en node_modules (ver tools/pruebas/LEE…
+- **tools/pruebas/e2e-factura-panel.py** (59 líneas): (sin descripción)
+- **tools/pruebas/e2e-factura.mjs** (112 líneas): PRUEBA DE LA «FACTURA DE REPARACIÓN» (FORM-14) DE PRINCIPIO A FIN (30-09-2026) Ejecuta las funciones reales de netlify/functions con un almacén en memoria y recorre el panel con cada puesto: Gerente (contraseña), Lestter (puesto Gerente con PIN), Calidad, Recepción y Mecánico. Uso (en el ordenador del desarrollador, con bun): bun tools/pruebas/e2e-factura.mjs Necesita un @netlify/blobs de pruebas en node_modules (ver…
+- **tools/pruebas/e2e-panel.py** (111 líneas): (sin descripción)
+- **tools/pruebas/e2e-permisos.mjs** (129 líneas): PRUEBA DE PERMISOS DE PRINCIPIO A FIN (27-09-2026) Ejecuta las funciones reales de netlify/functions con un almacén en memoria y recorre el panel con cada puesto: Gerente (contraseña), Lestter (puesto Gerente con PIN), Calidad, Recepción y Mecánico. Uso (en el ordenador del desarrollador, con bun): bun tools/pruebas/e2e-permisos.mjs Necesita un @netlify/blobs de pruebas en node_modules (ver tools/pruebas/LEEME.md).
+- **tools/pruebas/e2e-seguridad.mjs** (32 líneas): Prueba de seguridad: bloqueo del PIN por usuario y manuales privados. Uso: bun tools/pruebas/e2e-seguridad.mjs
+- **tools/pruebas/e2e-tareas-panel.py** (78 líneas): (sin descripción)
+- **tools/pruebas/e2e-vehiculos-panel.py** (56 líneas): (sin descripción)
+- **tools/pruebas/e2e-vehiculos.mjs** (202 líneas): PRUEBA DE «COCHES PROPIOS» DE PRINCIPIO A FIN (30-09-2026) Ejecuta las funciones reales de netlify/functions con un almacén en memoria y recorre el panel con cada puesto: Gerente (contraseña), Lestter (puesto Gerente con PIN), Calidad, Recepción y Mecánico. Uso (en el ordenador del desarrollador, con bun): bun tools/pruebas/e2e-vehiculos.mjs Necesita un @netlify/blobs de pruebas en node_modules (ver tools/pruebas/LEE…
+- **tools/pruebas/e2e-ventas.mjs** (145 líneas): Motor de ventas (Módulo 4): filtro de frases prohibidas, horario/08:30 y canales Messenger / Instagram / WhatsApp. Uso: bun tools/pruebas/e2e-ventas.mjs (mismo almacén en memoria que el resto de pruebas)
+- **tools/pruebas/e2e-voz-panel.py** (95 líneas): (sin descripción)
+- **tools/pruebas/e2e-voz.mjs** (101 líneas): Voz de los vídeos de ayuda (Módulo 5): guiones y servicio ElevenLabs «DAN» (simulado). Uso: bun tools/pruebas/e2e-voz.mjs
+- **tools/pruebas/servidor-local.mjs** (45 líneas): Servidor de pruebas: sirve public/ y ejecuta las funciones reales de netlify/functions con un almacén en memoria. Uso: bun tools/pruebas/servidor-local.mjs → http://localhost:8888/admin
+- **tools/pruebas/sindica-integracion.mjs** (80 líneas): Simulación completa del motor con un almacén falso y un portal simulado (sin red): node tools/pruebas/sindica-integracion.mjs
+- **tools/pruebas/sindica.test.mjs** (143 líneas): Pruebas de la multipublicación (no necesitan red ni Netlify): node --test tools/pruebas/sindica.test.mjs
+- **tools/pulido/inyectar.py** (22 líneas): PULIDO-CSS-INICIO
+- **tools/pulido/pulido.js** (12 líneas): PULIDO DE INTERFAZ · la sección activa del menú siempre a la vista (móvil)
+- **tools/reservas/GUIA-RESERVAS.md** (nota, 109 líneas): 
+- **tools/reservas/inyectar.py** (21 líneas): RSV-CSS-INICIO
+- **tools/reservas/reservas.js** (191 líneas): PANEL · RESERVAS ONLINE DE 50 €, LISTAS DE ESPERA Y FOTOS DEL DAÑO (se copia dentro de public/admin.html con: python3 tools/reservas/inyectar.py) En la pestaña «Coches», encima de la lista: · Reservas activas: confirmar el pago, ver el justificante, alargar, marcar vendido, liberar y mandar la confirmación por WhatsApp. · Listas de espera: un botón por persona que abre WhatsApp con el aviso «¡Buenas noticias…! vuelve…
+- **tools/respuestas/inyectar.py** (41 líneas): RESP-CSS-INICIO
+- **tools/respuestas/respuestas-datos.js** (258 líneas): RESPUESTAS · textos para contestar reseñas de Google (y, más adelante, WhatsApp, Instagram y Facebook). Solo datos y el generador: la pantalla está en respuestas.js. Para cambiar un texto, edítalo aquí y ejecuta python3 tools/respuestas/inyectar.py (y python3 tools/respuestas/pdf.py para el PDF). Reglas de estilo: tú, frases cortas, nada de datos del cliente (matrícula, importes, averías), las quejas se llevan al tel…
+- **tools/respuestas/respuestas.js** (108 líneas): RESPUESTAS · pestaña del gerente para contestar con un clic. Ahora: reseñas de Google. Los textos y el generador están en respuestas-datos.js; esto es solo la pantalla.
+- **tools/seo.py** (459 líneas): (sin descripción)
+- **tools/sindica/inyectar.py** (21 líneas): MULTIPUB-CSS-INICIO
+- **tools/sindica/panel.js** (169 líneas): PANEL · MULTIPUBLICACIÓN EN OTROS PORTALES (tarjeta en la pestaña «Coches», solo gerente) (se copia dentro de public/admin.html con: python3 tools/sindica/inyectar.py) Lee GET /api/sindica y enseña: en qué punto estás (4 pasos), los enlaces para portales y multipublicadores, la conexión directa por API, el botón «Simular ahora» y el estado de cada coche con consejos para completarlo.
+- **tools/taller-diseno/GUIA-TALLER.md** (nota, 64 líneas): 
+- **tools/taller-vfx/3d/escenas.js** (173 líneas): VOLCANO CARS · ESCENAS 3D DEL TALLER Cada escena devuelve, para un instante t∈[0,1), lo que hay que dibujar. Todo el movimiento es periódico → el vídeo hace bucle perfecto.
+- **tools/taller-vfx/3d/escenas2.js** (409 líneas): VOLCANO CARS · ESCENAS 3D (2/2): frenos, neumáticos, diagnosis, pre-ITV, aire, batería, carrocería (golpes, pintura, arañazos), aceite y despiece.
+- **tools/taller-vfx/3d/escenas3.js** (479 líneas): VOLCANO CARS · ESCENAS DE CINE (v3): cámara lenta hiperrealista Sustituyen a las de escenas.js / escenas2.js (reutilizan sus piezas 3D). Todas: suelo de taller mojado con reflejos, haz de luz con polvo, luces reales que salen de las chispas/arcos, desenfoque de movimiento y profundidad de campo (los pone el motor al acumular subfotogramas). Encuadre CUADRADO: el mismo render sirve para la versión horizontal (recorte …
+- **tools/taller-vfx/3d/motor.js** (803 líneas): VOLCANO CARS · MOTOR DE RENDER 3D (WebGL2) PARA LOS CLIPS DEL TALLER Render fotograma a fotograma (no en tiempo real): materiales físicos (PBR: metal, aluminio mecanizado, pintura con barniz, goma, plástico), luz de estudio con reflejos, sombras suaves, piezas en rayos X, partículas (chispas, fluidos, hielo, arcos eléctricos) y bloom. Lo usan escenas.js y renderizar3d.py.
+- **tools/taller-vfx/3d/renderizar3d.py** (72 líneas): (sin descripción)
+- **tools/taller-vfx/GUIA-VIDEOS.md** (nota, 84 líneas): 
+- **tools/taller-vfx/renderizar.py** (56 líneas): (sin descripción)
+- **tools/taller/inyectar.py** (21 líneas): TALLER-CSS-INICIO
+- **tools/taller/taller.js** (821 líneas): TALLER · Manual SOP-01 (FORM-01 Recepción, FORM-02 Inspección 360°, FORM-03 Control de tiempos, FORM-04 Control de calidad) Fuente: tools/taller/taller.js → se copia dentro de admin.html con python3 tools/taller/inyectar.py. Para cambiar textos, edita aquí.
+- **tools/tareas/inyectar.py** (22 líneas): TAREAS-CSS-INICIO
+- **tools/tareas/tareas.js** (211 líneas): FICHAJE DE TAREAS POR COCHE · pantalla de fichaje (#s-fichar), justo debajo de la jornada "Modo taller": botones grandes de 1 toque para manos con grasa o guantes. · Órdenes de clientes: usa el FORM-03 de siempre (mismo servidor, mismas reglas). · Coches propios (Taller → Coches propios): reparación, mantenimiento, limpieza/preparación. Al pulsar Pausa / Salida de la jornada, la tarea en marcha se pausa sola (y se re…
+- **tools/tema.py** (61 líneas): (sin descripción)
+- **tools/vehiculos/inyectar.py** (22 líneas): VEHICULOS-CSS-INICIO
+- **tools/vehiculos/vehiculos.js** (227 líneas): TALLER · COCHES PROPIOS (control interno de cada coche que entra para venderlo) Vista dentro de la pestaña Taller. Todo es privado: no toca la web pública. Fase: Entrada/dañado → En reparación → Control de calidad → Listo para venta (interno) → Vendido. Las piezas salen del Inventario; las horas y otros costes se anotan aquí; Finanzas suma todo al beneficio. Fuente: tools/vehiculos/vehiculos.js → python3 tools/vehicu…
+- **tools/voz/inyectar.py** (22 líneas): VOZ-CSS-INICIO
+- **tools/voz/voz.js** (188 líneas): AYUDA · VOZ DE DAN (ElevenLabs) en los vídeos de la pestaña Ayuda No cambia la Ayuda: se engancha a ayVidEnlazar() y añade, debajo de los pasos del vídeo, el interruptor «Voz de DAN», el guion y (solo gerente) el botón para generar la voz. Los MP3 los guarda el servidor (/api/voz) en el almacén de archivos del panel. Fuente: tools/voz/voz.js (+ voz.css) → python3 tools/voz/inyectar.py (después de tools/ayuda/inyectar…
+- **tools/whatsapp/SYSTEM-PROMPT.md** (nota, 170 líneas): 
+
+## 6. Carpetas de contenido
+
+- `public/.well-known/`: 1 archivos
+- `public/ayuda/`: 42 archivos
+- `public/chapa-y-pintura-fuerteventura/`: 1 archivos
+- `public/coches/`: 31 archivos
+- `public/coches-segunda-mano-fuerteventura/`: 1 archivos
+- `public/comprar/`: 1 archivos
+- `public/contacto/`: 1 archivos
+- `public/en/`: 1 archivos
+- `public/financiacion-coches-fuerteventura/`: 1 archivos
+- `public/fonts/`: 1 archivos
+- `public/ig/`: 333 archivos
+- `public/itv-fuerteventura/`: 1 archivos
+- `public/marca/`: 2 archivos
+- `public/pre-itv-fuerteventura/`: 1 archivos
+- `public/taller/`: 1 archivos
+- `public/taller-mecanico-fuerteventura/`: 1 archivos
+- `public/vfx/`: 72 archivos
+
+---
+Total de líneas de código indexadas: 52375.

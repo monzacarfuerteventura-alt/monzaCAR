@@ -325,3 +325,31 @@ Todo viene APAGADO: subirla no envía nada a ningún portal.
   `SINDICA_CANALES=autoscout24`, `AS24_URL`, `AS24_TOKEN`, `SINDICA_ACTIVO=1` (sin ella SIEMPRE es simulacro), `SINDICA_MAX` (10).
 - Los formatos de AutoScout24 y Meta son un BORRADOR: hay que contrastarlos con la documentación oficial antes de activar el envío real.
   Wallapop PRO, Coches.net y Milanuncios no tienen adaptador directo: se alimentan con un multipublicador (usa el feed XML/JSON) o con contrato propio.
+
+## Actualización 31 (4-10-2026) · barras flotantes a mitad de pantalla, etiqueta de Netlify y solapes en móvil
+- **Causa de la barra flotante en medio** (`public/mejoras.js` y `public/panel-plus.js`): el script que sube el chat y la barra de
+  secciones cuando aparece la etiqueta «Powered by Netlify» daba por «etiqueta» cualquier elemento cuya dirección contuviera la palabra
+  «netlify». Las fotos de los coches se piden a `/.netlify/images?…`, así que una foto en la esquina inferior derecha se tomaba por la
+  etiqueta, `--badge` valía hasta ~230 px y chat, globo y barra de secciones se quedaban a mitad de pantalla (más al redimensionar la
+  ventana al aparecer/ocultarse la barra del navegador). Ahora solo cuenta la etiqueta real (`#nl-badge-frame` o un elemento fijo y
+  pequeño), nunca fotos ni enlaces, y la subida está limitada a 90 px.
+- **Páginas SEO de zona y de servicio** (`public/paginas.css`): en móvil se QUITA la barra fija de WhatsApp/Llamar de abajo (`.pg-barra`):
+  duplicaba el «Llamar» de la cabecera, ocupaba sitio y chocaba con la etiqueta de Netlify y con el aviso de cookies. Es solo CSS (el HTML
+  no cambia); cada página sigue teniendo «Llamar» arriba y sus botones de teléfono y WhatsApp en el contenido. Además se apaga la etiqueta
+  de Netlify (misma regla que ya llevaban portada, /comprar y /taller). Las 4 páginas legales (`aviso-legal`, `privacidad`, `cookies`,
+  `condiciones` y `tools/legal.py`) llevan la misma regla: la etiqueta tapaba su aviso de cookies.
+- **Portada, /en, /comprar y /taller** (CSS inlined, y `public/mejoras.css` como fuente): mientras el aviso de cookies está abierto en el
+  móvil, el botón del chat y su globo se esconden para no taparlo; vuelven al elegir «Aceptar» o «Rechazar».
+- La solución de fondo para la etiqueta sigue siendo apagarla en Netlify: Project configuration → General → «Powered by Netlify badge» → Off.
+- Comprobado en Chrome móvil simulado (360, 412), tablet y escritorio sobre 35 páginas: antes, con una foto en la esquina, las barras se
+  desplazaban en 4 de 4 posiciones (hasta 227 px); ahora 0. Sin desbordes laterales, sin errores de JavaScript, sin imágenes rotas.
+
+## Actualización 33 (4-10-2026) · incluye la 31 y la 32 · filtros de coches y barra «servicio elegido»
+- **Bug: la barra «1 servicio elegido · Reservar» (del Taller) salía en «Coches disponibles».** Al cambiar de vista con la transición de vistas del
+  navegador, el cambio real ocurre un instante después y `barra()` se calculaba antes, viendo todavía el Taller abierto. Ahora `barra()` se vuelve a
+  calcular dentro del propio cambio de vista (`go()` → `swap`). Solo se ve en Taller, y vuelve al regresar a él. Archivos: `index.html`, `en/`, `comprar/`, `taller/`.
+- **Filtros de precio:** de 1.500 € a 5.500 € en saltos de 500 € (9 valores), tanto en los botones rápidos «Hasta …» como en las listas Desde/Hasta del panel de filtros.
+- **Filtro de kilómetros:** de «Hasta 100.000 km» a «Hasta 400.000 km» en saltos de 50.000 km (100, 150, 200, 250, 300, 350 y 400 mil). Se quita «Hasta 50.000 km».
+- **Combustible:** solo Gasolina, Diésel y GLP (se quitan Híbrido, Híbrido enchufable y Eléctrico del panel). Los botones rápidos «Diésel» y «Gasolina» siguen igual.
+- Enlaces antiguos con `?pmax=6500` o `?kmax=50000` siguen funcionando (se filtra por ese valor aunque ya no haya botón para él).
+- Los valores están en `PRECIOS`, `QUICK` (precios), `kms` y `combs` dentro de cada página; hay que cambiarlos en las 4 (`index.html`, `en/`, `comprar/`, `taller/`).

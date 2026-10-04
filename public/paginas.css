@@ -312,3 +312,16 @@ h3{font-size:21px;font-weight:800;font-stretch:100%}
   footer a{display:inline-flex;align-items:center;min-height:44px;padding-inline:4px}
   main p a[href^="mailto:"],.legal a[href^="mailto:"]{display:inline-block;padding-block:12px}
 }
+
+/* ---------- Móvil: sin barra fija de WhatsApp / Llamar abajo ----------
+   La cabecera ya lleva el botón «Llamar» y cada página tiene sus botones de contacto en el contenido: la barra de abajo
+   duplicaba «Llamar», ocupaba sitio y chocaba con el aviso de cookies y con la etiqueta de Netlify. Se quita en móvil
+   (solo CSS: el HTML de las páginas no cambia). Si algún día se quiere recuperar, borra este bloque.
+   · La etiqueta «Powered by Netlify» (iframe #nl-badge-frame, abajo a la derecha) se apaga, igual que en la portada,
+     /comprar y /taller (mejoras.css); la solución de fondo es apagarla en Netlify (Project configuration → General →
+     Powered by Netlify badge → Off). */
+#nl-badge-frame{display:none!important}
+@media (max-width:760px){
+  .pg-barra{display:none!important}
+  body{padding-bottom:0!important}
+}

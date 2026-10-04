@@ -240,13 +240,23 @@
 /* ---------- 27-09-2026 · Etiqueta «Powered by Netlify»: si aparece abajo a la derecha,
    el asistente y las barras flotantes suben para que no queden tapados (variable --badge) ---------- */
 (() => {
-  const esN = (e) => { if (!e || e.nodeType !== 1) return false; const t = ((e.id || "") + " " + (typeof e.className === "string" ? e.className : "") + " " + e.tagName + " " + (e.getAttribute("src") || "") + " " + (e.getAttribute("href") || "")).toLowerCase(); return t.includes("netlify") || (e.textContent || "").slice(0, 200).toLowerCase().includes("powered by netlify"); };
+  const esN = (e) => { if (!e || e.nodeType !== 1) return false;
+    /* Solo la etiqueta real de Netlify: un elemento fijo y pequeño (o su iframe #nl-badge-frame). Las fotos, enlaces y
+       demás contenido NO cuentan aunque su dirección contenga «netlify» (/.netlify/images?…): antes una foto de coche
+       en la esquina inferior derecha se tomaba por la etiqueta y empujaba el chat y las barras a mitad de pantalla. */
+    if (e.id === "nl-badge-frame") return true;
+    if (/^(IMG|PICTURE|SOURCE|VIDEO|CANVAS|SVG|A|BUTTON|MAIN|BODY|SECTION|ARTICLE|FOOTER|HEADER|NAV)$/i.test(e.tagName)) return false;
+    let cs; try { cs = getComputedStyle(e); } catch (_) { return false; }
+    if (cs.position !== "fixed") return false;
+    const r = e.getBoundingClientRect(); if (r.height > 120 || r.width > 320 || r.height < 1) return false;
+    const t = ((e.id || "") + " " + (typeof e.className === "string" ? e.className : "") + " " + e.tagName + " " + (e.getAttribute("src") || "")).toLowerCase();
+    return t.includes("netlify") || (e.textContent || "").slice(0, 200).toLowerCase().includes("powered by netlify"); };
   function medir() {
     try {
       const W = innerWidth, H = innerHeight; let alto = 0;
       for (const [x, y] of [[W - 30, H - 26], [W - 100, H - 26], [W - 160, H - 30], [W - 60, H - 50]])
         for (const el of document.elementsFromPoint(x, y)) { let e = el; while (e && e !== document.documentElement) { if (esN(e)) { alto = Math.max(alto, Math.ceil(H - e.getBoundingClientRect().top + 10)); break; } if (getComputedStyle(e).position === "fixed") break; e = e.parentElement; } }
-      document.documentElement.style.setProperty("--badge", alto + "px");
+      document.documentElement.style.setProperty("--badge", Math.min(alto, 90) + "px");
     } catch (_) { }
   }
   setTimeout(medir, 1500); setTimeout(medir, 5000);
