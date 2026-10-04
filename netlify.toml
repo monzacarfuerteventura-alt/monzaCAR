@@ -1,6 +1,6 @@
 [build]
   # Descarga las fuentes a /fonts para no pedirlas a Google en cada visita (tools/fuentes-locales.mjs)
-  command = "node tools/fuentes-locales.mjs"
+  command = "node tools/fuentes-locales.mjs; node tools/minificar-html.mjs"
   publish = "public"
   functions = "netlify/functions"
 

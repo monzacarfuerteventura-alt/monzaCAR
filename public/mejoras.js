@@ -62,7 +62,7 @@
         <span class="al-bell" aria-hidden="true">${ICO.bell}<i></i></span>
         <div>
           <span class="al-kicker">${L("Alertas de coches · WhatsApp", "New-car alerts · WhatsApp")}</span>
-          <h3 id="al-h">${L("¿No encuentras el coche exacto que buscas?", "Can't find the exact car you're after?")}</h3>
+          <h2 id="al-h">${L("¿No encuentras el coche exacto que buscas?", "Can't find the exact car you're after?")}</h2>
           <p>${L("Recibe avisos de nuevos coches antes de que se publiquen.", "Get alerts about new cars before they're published.")}</p>
         </div>
       </div>

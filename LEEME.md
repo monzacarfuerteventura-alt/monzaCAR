@@ -371,3 +371,57 @@ Todo viene APAGADO: subirla no envía nada a ningún portal.
   `precios-taller.css` van en línea. En Comprar, al llegar los coches aparecían los filtros y empujaban las tarjetas (CLS **0,43 → 0**); ahora se reserva su hueco.
 - **Archivos:** `rendimiento.css`, `rendimiento.js` (nuevos), `taller-vfx.js`, `precios-taller.js`, `index.html`, `en/`, `comprar/`, `taller/`, `tools/pagespeed/inline-rendimiento.py` (nuevo, mete todo en línea), `CLAUDE.md`, `CLAUDE-INDICE.md`.
 - Visual: lo único que cambia a simple vista es que la lava del rótulo y las rayas de la carretera ya no «fluyen», y el aro de la garantía cambia de color en vez de girar.
+
+## Actualización 37 (4-10-2026) · parte de la 36 · el modo ligero ya no se activa en móviles potentes
+- **Bug:** la web tomaba por «móvil flojo» a móviles muy rápidos y les quitaba efectos y vídeo. La 36 decidía por `hardwareConcurrency ≤4` o conexión 2G, y con un único
+  sondeo de fotogramas a los 1,2 s de cargar (justo cuando la página aún estaba descargando fotos y vídeo). Además `?lite=1` se guardaba para siempre en el aparato.
+- **Ahora el modo ligero (`html.lite`) solo entra:** (1) móvil táctil con ≤2 GB de memoria, (2) «ahorro de datos» activado en el aparato, o (3) si, con la página
+  cargada y sin hacer scroll, los fotogramas tardan >45 ms (<22 fps) **dos veces seguidas** (a los 2,5 s y 1,5 s después). Núcleos y tipo de conexión ya no deciden.
+  El vídeo del Taller sigue ahorrándose con «ahorro de datos» o 2G (función `ahorro()` de `taller-vfx.js`, sin cambios).
+- **Forzado:** `?lite=1` solo vale en esa pestaña; `?lite=0` se recuerda en el aparato. La clave antigua `vc-lite` se borra sola al abrir la web (si el móvil se había
+  quedado atascado en ligero, se arregla sin hacer nada). Nuevo `?diag=1`: cuadro con el modo y el motivo, memoria, núcleos, «ahorro de datos», red y «reducir movimiento».
+- **Probado** (Chrome móvil simulado, 412 px): 8 GB/8 núcleos → completo; 8 GB/4 núcleos → completo (antes ligero); 2 GB → ligero; CPU 20 veces más lenta
+  (~30 fps) → completo; CPU 40 veces más lenta (~20 fps) → ligero; `?lite=1` → ligero.
+- **Archivos (9):** `public/rendimiento.js`, `public/rendimiento.css` (solo un comentario), `public/index.html`, `public/en/index.html`, `public/comprar/index.html`,
+  `public/taller/index.html` (solo cambia el `<script id="vc-perf-js">`, generado con `tools/pagespeed/inline-rendimiento.py`), `CLAUDE.md`, `CLAUDE-INDICE.md`, `LEEME.md`.
+
+## Actualización 38 (4-10-2026) · INCLUYE la 37 · cookies compactas, noindex en vendidos y PageSpeed
+- **Cookies:** aviso mucho más pequeño (texto corto, botones en una fila, menos relleno) en las 4 páginas y en las páginas SEO (`medicion.js`).
+- **Coches vendidos:** `/coches-vendidos` ahora lleva `noindex, follow` y se quita del sitemap hasta que haya entregas publicadas.
+- **SEO 66–69 → sin bloqueo:** `/comprar` y `/taller` ya no llevan `noindex`; su canónica apunta a las páginas SEO de coches y de taller.
+- **Velocidad:** `origen.js` y `medicion.js` en línea; `/api/coches` se pide desde la cabecera; la 1.ª foto del catálogo carga primero (solo en /comprar);
+  `/api/interes` y `/api/viendo` esperan 1,5 s; JS externos minificados (fuentes legibles en `tools/src-js/`).
+- **Accesibilidad:** el título de «Alertas de coches» pasa de h3 a h2 (orden de encabezados).
+- **Archivos (22):** 4 páginas SPA, `medicion.js`, `origen.js`, `conversion.js`, `mejoras.js`, `mejoras.css`, `script-ia.js`, `taller-ui.js`, `taller-vfx.js`,
+  `piloto-web.js`, `precios-taller.js`, `rendimiento.js`, `rendimiento.css`, `vendidos.mts`, `sitemap.mts`, `build-en.py`, `CLAUDE.md`, `CLAUDE-INDICE.md`, `LEEME.md`
+  y la carpeta nueva `tools/src-js/` (9 archivos).
+
+## Actualización 39 (4-10-2026) · INCLUYE la 37 y la 38 · auditoría de todas las páginas
+- **Indexación:** las 16 páginas de pueblo (8 pueblos × taller y coches) se indexan, cada una con párrafos y preguntas propios (La Oliva, Costa Calma, Morro Jable
+  y la venta de Antigua tenían `noindex`). Las 4 páginas legales también (con descripción y canónica). `/comprar` y `/taller` sin `noindex` (canónica a su página SEO).
+  `/coches-vendidos` sigue en `noindex` a propósito hasta que haya entregas publicadas.
+- **Accesibilidad 100:** pie de las páginas del servidor en h3, contraste del porcentaje de oferta, tarjetas de coche y botones de día con nombre accesible
+  correcto, título «Reserva tu cita» en nivel 2, enlace «Qué incluye la pre-ITV».
+- **Velocidad:** se minifica TODO AL PUBLICAR (JS y CSS sueltos y en línea; el código del repositorio sigue legible); la medición, el origen y la petición de coches
+  van en la cabecera/en línea; aviso de cookies compacto. Si el minificado fallara, Netlify publica sin minificar.
+- **Medido** (Lighthouse móvil en mi entorno, más lento que Google): páginas SEO, de pueblo, ficha y legales 97–100 en rendimiento y 100 en accesibilidad y SEO;
+  portada, /comprar, /taller y /en entre 55 y 77 en rendimiento en MI entorno (en PageSpeed real daban 95–98). Ver el informe del chat.
+- **Archivos:** ver `LEEME.txt` del ZIP (incluye `package.json` y `package-lock.json` por la dependencia de minificado).
+
+## Actualización 40 (4-10-2026) · INCLUYE la 37, 38 y 39 · páginas SEO y legales con el diseño de la web principal
+- **Qué cambia a la vista:** cabecera compacta (logo + «Llamar» con icono), botones más bajos y en filas (principal a todo el ancho; WhatsApp y Llamar lado a lado),
+  tarjetas con el mismo cristal oscuro, brillo naranja suave en la portada de cada página, **barra de pestañas inferior igual que la portada** (Inicio, Comprar,
+  Taller, Contacto) y **botón redondo de WhatsApp**. El aviso de cookies sube para no tapar la barra.
+- **Páginas que cambian:** las 6 páginas SEO de servicio, Contacto, las 16 de pueblo, las fichas de coche, Coches vendidos y las 4 legales (aviso legal, privacidad,
+  cookies y condiciones, que ahora tienen cabecera, migas y pie como el resto).
+- **Medido** (Lighthouse móvil en mi entorno): páginas SEO y de pueblo 85–97 en rendimiento, 100 en accesibilidad, buenas prácticas y SEO; legales 100/100/100/100.
+  Los saltos de diseño (CLS) por el cambio de fuente se corrigen con la precarga de fuentes, que se añade AL PUBLICAR (no pude probarla completa aquí).
+- **Archivos:** además de los de la 37–39: `public/paginas.css`, las 7 páginas estáticas SEO, las 4 legales, `netlify/lib/paginas.mts`, `plantilla-coches-fv.mts`,
+  `tools/fuentes-locales.mjs`.
+
+## Actualización 41 (4-10-2026) · INCLUYE la 37, 38, 39 y 40 · auditoría con Search Console
+- **Sitemap:** `/contacto/` (la URL final, sin salto 301).
+- **Portada ES y EN:** descripciones por debajo de 160 caracteres y datos estructurados `WebSite` + `Organization` (marca «Volcano Cars», logo, teléfono y dirección).
+- **Rastreo completo de la web (75 URLs):** sin enlaces rotos, sin duplicados de título o descripción, sin imágenes sin alt, JSON-LD correcto.
+- **Archivos nuevos respecto a la 40:** `netlify/functions/sitemap.mts`, `public/index.html`, `public/en/index.html`, `CLAUDE.md`, `CLAUDE-INDICE.md`, `LEEME.md`.
+

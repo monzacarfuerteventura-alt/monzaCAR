@@ -198,7 +198,7 @@ Generado con `python3 tools/indice.py` el 2026-10-04. Lo lee Claude junto a `CLA
   - exporta: Config, CONFIG_BASE, Accion, Gasto, mk, leerConfig, limpiarConfig, leerLog, apuntar, interes, Candidato, candidatos, leerCoches, aplicarPrecio, telegram
 - **meta.mts** (73 líneas): CANALES DE META · un solo agente para WhatsApp, Facebook Messenger e Instagram Direct Los tres llegan al mismo webhook (/api/whatsapp, también /api/meta) con formas distintas. Aquí se normalizan a un «evento» y se envía la respuesta por el mismo canal. Messenger e Instagram solo se activan si existen sus variables (FB_PAGE_TOKEN / IG_TOKEN); sin ellas se ignoran sin romper nada. WhatsApp object «whatsapp_business_acc…
   - exporta: Canal, Evento, ETIQUETA, LIMITE, clave, eventosSociales, firmaMeta, sinFormato, enviarSocial
-- **municipios.mts** (102 líneas): Municipios y pueblos de Fuerteventura con página propia (venta y taller). Distancias y tiempos: por carretera desde nuestra nave de Costa de Antigua, APROXIMADOS (dependen del punto exacto y del tráfico). Para añadir una zona: copia un bloque, cambia los datos y añade su dirección a netlify/functions/local.mts (config.path).
+- **municipios.mts** (115 líneas): Municipios y pueblos de Fuerteventura con página propia (venta y taller). Distancias y tiempos: por carretera desde nuestra nave de Costa de Antigua, APROXIMADOS (dependen del punto exacto y del tráfico). Para añadir una zona: copia un bloque, cambia los datos y añade su dirección a netlify/functions/local.mts (config.path).
   - exporta: Municipio, MUNICIPIOS, porSlug, RUTAS_VENTA, RUTAS_TALLER, RUTAS_VENTA_IDX, RUTAS_TALLER_IDX
 - **notificar.mts** (107 líneas): AVISOS EXTERNOS GRATUITOS DE CADA CLIENTE NUEVO (además del email de Resend que ya existía) Se envían solo si están puestas las variables en Netlify (Project configuration → Environment variables): · Telegram (gratis, llega al móvil al instante): TELEGRAM_BOT_TOKEN = el token que te da @BotFather (123456:ABC-DEF…) TELEGRAM_CHAT_ID = tu chat o grupo (lo ves escribiendo a @userinfobot, o el del grupo) · Google Sheets (…
   - exporta: resumenLead, notificarExternos
@@ -240,43 +240,43 @@ Generado con `python3 tools/indice.py` el 2026-10-04. Lo lee Claude junto a `CLA
   - vistas: v-empty, v-up, v-cancel, v-bar, v-ok, v-change, v-rm, v-err
   - pestañas del panel: agenda, alm, ayuda, caja, coches, dash, fin, jornada, leads, ordenes, resp
   - scripts: /cartel-fichaje.js, /panel-mejoras.js, /panel-plus.js, /panel-precios.js, /panel-sistemas.js
-- **public/aviso-legal.html** (82 líneas, 6 KB): Aviso legal · Volcano Cars
+- **public/aviso-legal.html** (87 líneas, 9 KB): Aviso legal · Volcano Cars
   - scripts: /medicion.js, /origen.js
-- **public/chapa-y-pintura-fuerteventura/index.html** (79 líneas, 13 KB): Chapa y pintura en Fuerteventura | Volcano Cars
+- **public/chapa-y-pintura-fuerteventura/index.html** (79 líneas, 15 KB): Chapa y pintura en Fuerteventura | Volcano Cars
   - scripts: /medicion.js, /origen.js, /precios-taller.js
-- **public/coches-segunda-mano-fuerteventura/index.html** (98 líneas, 15 KB): Coches de segunda mano en Fuerteventura | Volcano Cars
+- **public/coches-segunda-mano-fuerteventura/index.html** (98 líneas, 17 KB): Coches de segunda mano en Fuerteventura | Volcano Cars
   - scripts: /medicion.js, /origen.js
-- **public/comprar/index.html** (3200 líneas, 352 KB): Coches de ocasión en Fuerteventura | Volcano Cars
+- **public/comprar/index.html** (3201 líneas, 359 KB): Coches de ocasión en Fuerteventura | Volcano Cars
   - vistas: v-inicio, v-comprar, v-taller, v-contacto
-  - scripts: /conversion.js, /medicion.js, /mejoras.js, /origen.js, /piloto-web.js, /script-ia.js, /taller-ui.js
-- **public/condiciones.html** (129 líneas, 12 KB): Condiciones de venta, taller y garantía · Volcano Cars
+  - scripts: /conversion.js, /mejoras.js, /piloto-web.js, /script-ia.js, /taller-ui.js
+- **public/condiciones.html** (134 líneas, 16 KB): Condiciones de venta, taller y garantía · Volcano Cars
   - scripts: /medicion.js, /origen.js
-- **public/contacto/index.html** (85 líneas, 12 KB): Contacto y cómo llegar | Volcano Cars Fuerteventura
+- **public/contacto/index.html** (85 líneas, 14 KB): Contacto y cómo llegar | Volcano Cars Fuerteventura
   - scripts: /medicion.js, /origen.js
-- **public/cookies.html** (67 líneas, 4 KB): Política de cookies · Volcano Cars
+- **public/cookies.html** (72 líneas, 8 KB): Política de cookies · Volcano Cars
   - scripts: /medicion.js
-- **public/en/index.html** (3203 líneas, 352 KB): Used cars and car workshop in Fuerteventura | Volcano Cars
+- **public/en/index.html** (3206 líneas, 360 KB): Used cars and car workshop in Fuerteventura | Volcano Cars
   - vistas: v-inicio, v-comprar, v-taller, v-contacto
-  - scripts: /conversion.js, /medicion.js, /mejoras.js, /origen.js, /piloto-web.js, /script-ia.js, /taller-ui.js
-- **public/financiacion-coches-fuerteventura/index.html** (78 líneas, 12 KB): Financiación de coches en Fuerteventura | Volcano Cars
+  - scripts: /conversion.js, /mejoras.js, /piloto-web.js, /script-ia.js, /taller-ui.js
+- **public/financiacion-coches-fuerteventura/index.html** (78 líneas, 14 KB): Financiación de coches en Fuerteventura | Volcano Cars
   - scripts: /medicion.js, /origen.js
-- **public/index.html** (3202 líneas, 352 KB): Coches de ocasión y taller en Fuerteventura | Volcano Cars
+- **public/index.html** (3205 líneas, 360 KB): Coches de ocasión y taller en Fuerteventura | Volcano Cars
   - vistas: v-inicio, v-comprar, v-taller, v-contacto
-  - scripts: /conversion.js, /medicion.js, /mejoras.js, /origen.js, /piloto-web.js, /script-ia.js, /taller-ui.js
-- **public/itv-fuerteventura/index.html** (95 líneas, 14 KB): ITV en Fuerteventura: guía y cómo aprobar | Volcano Cars
+  - scripts: /conversion.js, /mejoras.js, /piloto-web.js, /script-ia.js, /taller-ui.js
+- **public/itv-fuerteventura/index.html** (95 líneas, 16 KB): ITV en Fuerteventura: guía y cómo aprobar | Volcano Cars
   - scripts: /medicion.js, /origen.js, /precios-taller.js
-- **public/pre-itv-fuerteventura/index.html** (78 líneas, 11 KB): Pre-ITV en Fuerteventura | Volcano Cars
+- **public/pre-itv-fuerteventura/index.html** (78 líneas, 13 KB): Pre-ITV en Fuerteventura | Volcano Cars
   - scripts: /medicion.js, /origen.js, /precios-taller.js
-- **public/privacidad.html** (102 líneas, 14 KB): Política de privacidad · Volcano Cars
+- **public/privacidad.html** (107 líneas, 17 KB): Política de privacidad · Volcano Cars
   - scripts: /medicion.js, /origen.js
 - **public/reserva.html** (135 líneas, 17 KB): Tu reserva · Volcano Cars
   - scripts: /conversion.js
 - **public/seguimiento.html** (300 líneas, 35 KB): Seguimiento de tu coche · Volcano Cars
-- **public/taller-mecanico-fuerteventura/index.html** (79 líneas, 15 KB): Taller mecánico en Fuerteventura | Volcano Cars
+- **public/taller-mecanico-fuerteventura/index.html** (79 líneas, 17 KB): Taller mecánico en Fuerteventura | Volcano Cars
   - scripts: /medicion.js, /origen.js, /precios-taller.js
-- **public/taller/index.html** (3200 líneas, 352 KB): Taller mecánico y chapa y pintura | Volcano Cars
+- **public/taller/index.html** (3201 líneas, 359 KB): Taller mecánico y chapa y pintura | Volcano Cars
   - vistas: v-inicio, v-comprar, v-taller, v-contacto
-  - scripts: /conversion.js, /medicion.js, /mejoras.js, /origen.js, /piloto-web.js, /script-ia.js, /taller-ui.js
+  - scripts: /conversion.js, /mejoras.js, /piloto-web.js, /script-ia.js, /taller-ui.js
 
 ## 4. JavaScript y CSS del navegador (`public/*.js|css`)
 
@@ -287,7 +287,7 @@ Generado con `python3 tools/indice.py` el 2026-10-04. Lo lee Claude junto a `CLA
 - **mejoras.css** (106 líneas): VOLCANO CARS · MEJORAS DE CAPTACIÓN (mejoras.css) Alertas por pueblo (.al-*), Historial Sin Sorpresas (.hist-*) y ajustes del móvil. Usa las variables de marca de la web (--rosso, --surface…), así que respeta el tema claro/oscuro. Solo afecta a sus propias clases.
 - **mejoras.js** (265 líneas): VOLCANO CARS · MEJORAS DE CAPTACIÓN (mejoras.js + mejoras.css) 1. ALERTAS DE COCHES NUEVOS POR PUEBLO, debajo del catálogo: quien no encuentra su coche deja pueblo + WhatsApp y recibe el aviso antes de que el coche se anuncie. Llega al CRM como «Alerta» y el panel, al dar de alta un coche, enseña qué alertas encajan con él. 2. «HISTORIAL SIN SORPRESAS» en la ficha de cada coche: descarga del PDF con la inspección de …
 - **origen.js** (16 líneas): ORIGEN DE LA VISITA (actualización 19) Si alguien llega por un QR o un anuncio a una página interna (p. ej. /pre-itv-fuerteventura/?utm_source=flyer…) y luego pasa a otra página para pedir cita, los UTM se perdían y la solicitud salía como «Directo». Aquí se recuerdan solo durante la visita (sessionStorage: desaparece al cerrar la pestaña, no es una cookie y no se envía a ningún sitio). Los formularios lo leen con wi…
-- **paginas.css** (328 líneas): Estilo de las páginas de servicios y de las fichas de coches (Volcano Cars)
+- **paginas.css** (415 líneas): Estilo de las páginas de servicios y de las fichas de coches (Volcano Cars)
 - **panel-mejoras.js** (124 líneas): VOLCANO CARS · PANEL: HISTORIAL SIN SORPRESAS + ALERTAS QUE ENCAJAN En la ficha de cada coche del panel (Coches → Editar / Añadir): 1. «Historial Sin Sorpresas»: sube el PDF con el FORM-02 (inspección 360°, 80 puntos) y el FORM-04 firmado de ESE coche. En la web sale el botón de descarga solo cuando hay PDF. 2. «Alertas que encajan»: los clientes apuntados a las alertas de la web cuyo presupuesto y cambio encajan con…
 - **panel-plus.js** (335 líneas): VOLCANO CARS · PANEL PLUS (27-09-2026) 1. Sonidos del panel (SFX): pasar el ratón, pulsar, enviar, avisos y vídeos. Se generan en el propio navegador (Web Audio): no hay archivos que descargar. Botón 🔊 arriba para quitarlos o ponerlos (se recuerda en cada dispositivo). 2. Guía por voz (voz masculina en español): explica campo por campo la pantalla abierta, o cada campo al tocarlo (modo «Explicar al tocar»). En Ayuda,…
 - **panel-precios.js** (224 líneas): VOLCANO CARS · PANEL: PRECIOS «DESDE» DEL TALLER (panel-precios.js) Pestaña Taller → tarjeta «Precios en la web». El gerente pone el precio «desde» (IGIC incluido) de cada servicio del taller: Pre-ITV, frenos, pintura, aceite, neumáticos… Al pulsar «Guardar y publicar» sale al momento en la web con su etiqueta de precio animada (/precios-taller.js). · Vacío = «a presupuestar» (la web no enseña precio). · Sufijo opcio…
@@ -296,7 +296,7 @@ Generado con `python3 tools/indice.py` el 2026-10-04. Lo lee Claude junto a `CLA
 - **precios-taller.css** (163 líneas): VOLCANO CARS · ETIQUETAS DE PRECIO «DESDE» (precios-taller.css) Lo carga solo /precios-taller.js. Etiqueta con forma de etiqueta de tienda (punta + agujero), brillo que la recorre, cifras que suben, entrada con rebote y balanceo al pasar por la tarjeta. Colores oficiales: naranja volcánico #D94A26 / #C83E1A.
 - **precios-taller.js** (273 líneas): VOLCANO CARS · PRECIOS «DESDE» DEL TALLER (precios-taller.js) Los precios se cambian en el panel: Taller → «Precios en la web». Se guardan en /api/precios-taller y este archivo los pinta solo: · en cada tarjeta de servicio del taller (/taller y la portada), con una etiqueta de precio animada; · en las etiquetas de las tarjetas «Chapa y pintura» y «Mecánica rápida» de la portada; · en las páginas de servicio (/pre-itv…
 - **rendimiento.css** (83 líneas): VOLCANO CARS · RENDIMIENTO (rendimiento.css + rendimiento.js) Va copiado (inline) en las 4 páginas SPA (index, en, comprar, taller) con: python3 tools/pagespeed/inline-rendimiento.py Si cambias algo aquí, vuelve a ejecutar ese script. 1. ANIMACIONES BARATAS (todos los móviles). Lo que se animaba con sombras, máscaras o posición de fondo obligaba al móvil a repintar la pantalla entera en cada fotograma, incluso sin to…
-- **rendimiento.js** (59 líneas): VOLCANO CARS · RENDIMIENTO (rendimiento.js) — va copiado (inline) en la cabecera de las 4 páginas SPA: python3 tools/pagespeed/inline-rendimiento.py (ver rendimiento.css para el detalle) · MODO LIGERO: pone la clase «lite» en <html> en móviles flojos. Se decide antes de pintar nada, sin parpadeos. - móvil con poca memoria (≤2 GB) o 4 núcleos o menos, «ahorro de datos» o conexión 2G → ligero desde el principio - si, y…
+- **rendimiento.js** (99 líneas): VOLCANO CARS · RENDIMIENTO (rendimiento.js) — va copiado (inline) en la cabecera de las 4 páginas SPA: python3 tools/pagespeed/inline-rendimiento.py (ver rendimiento.css para el detalle) · MODO LIGERO: pone la clase «lite» en <html> SOLO en móviles de verdad flojos. Los móviles buenos cargan la web completa, con todos los efectos. - Seguro desde el principio (sin parpadeos): móvil con 2 GB de memoria o menos, o «ahor…
 - **script-ia.js** (308 líneas): VOLCANO CARS · ASISTENTE CON IA (script-ia.js) Se engancha al asistente que ya tiene la web (window.VC_BOT) sin rehacerlo: · Los atajos de siempre (Horario, Financiación, Garantía…) siguen igual y responden al momento, sin gastar IA. · Lo que el cliente ESCRIBE lo responde la IA (/api/asistente), que consulta el stock real, las horas libres y la financiación. · Si la IA propone una cita, rellena el formulario del tal…
 - **taller-ui.js** (97 líneas): VOLCANO CARS · TALLER «HIGH-TECH» (taller-ui.js) Detalles visuales del taller. No toca la reserva: solo escucha los servicios que marca el cliente y pinta: · el contador «3 seleccionados» encima de las tarjetas; · el bloque «Tu presupuesto» del panel de la cita. PRECIOS «DESDE»: ya no se escriben aquí. Se ponen en el panel (Taller → «Precios en la web») y los trae /precios-taller.js, que también pinta las etiquetas a…
 - **taller-vfx.css** (100 líneas): VOLCANO CARS · FONDO VFX DEL TALLER (taller-vfx.css) Lo carga solo /taller-vfx.js. Todo lo que se mueve usa opacity o transform (lo hace la tarjeta gráfica): nada de desenfoques caros sobre el vídeo, para que el móvil vaya fluido y no gaste batería.
@@ -375,7 +375,7 @@ Generado con `python3 tools/indice.py` el 2026-10-04. Lo lee Claude junto a `CLA
 - **tools/factura/inyectar.py** (21 líneas): FACTURA-CSS-INICIO
 - **tools/finanzas/finanzas.js** (309 líneas): FINANZAS · Ingresos y egresos globales (solo el gerente) Integrado con Taller (presupuestos aceptados), Coches (vendidos) y Caja. Fuente: tools/finanzas/finanzas.js → python3 tools/finanzas/inyectar.py
 - **tools/finanzas/inyectar.py** (21 líneas): FINANZAS-CSS-INICIO
-- **tools/fuentes-locales.mjs** (58 líneas): Generado al publicar por tools/fuentes-locales.mjs
+- **tools/fuentes-locales.mjs** (70 líneas): Generado al publicar por tools/fuentes-locales.mjs
 - **tools/guia/guia.js** (246 líneas): GUÍA DE VENTA · «El Método de Venta Volcano Cars» (SOP-02 v2.0) Fuente: tools/guia/guia.js → se copia dentro de admin.html con python3 tools/guia/inyectar.py. Para cambiar textos, edita aquí.
 - **tools/guia/inyectar.py** (21 líneas): GUIA-CSS-INICIO
 - **tools/indice.py** (90 líneas): (sin descripción)
@@ -383,6 +383,7 @@ Generado con `python3 tools/indice.py` el 2026-10-04. Lo lee Claude junto a `CLA
 - **tools/jornada/inyectar.py** (65 líneas): JORNADA-CSS-INICIO
 - **tools/jornada/jornada.js** (310 líneas): JORNADA · fichaje de ultra-baja fricción + 2FA del equipo + registro legal Fuente: tools/jornada/jornada.js (+ jornada.css) → se copia dentro de admin.html con python3 tools/jornada/inyectar.py · Equipo: tras entrar con PIN, si no está trabajando ve UN botón gigante que cambia solo (Entrada → Pausa/Salida → Reanudar). 1 toque, hora del servidor, aviso de 2 s y «Deshacer». · Cartel QR / pegatina NFC del taller: escane…
 - **tools/legal.py** (255 líneas): etiqueta «Powered by Netlify»: tapaba el aviso de cookies; la solución de fondo es apagarla en Netlify
+- **tools/minificar-html.mjs** (40 líneas): MINIFICADO AL PUBLICAR (Netlify ejecuta esto después de tools/fuentes-locales.mjs). En el repositorio el código sigue legible; aquí se minifica SOLO la copia que se publica: · los JavaScript y CSS sueltos de public/ (conversion.js, mejoras.js, taller-vfx.js…) · los <script> y <style> en línea de las páginas públicas (portada, /en, /comprar, /taller, SEO, legales) Si esbuild no está o algo falla, NO se toca ese archiv…
 - **tools/pagespeed/inline-css.py** (20 líneas): (sin descripción)
 - **tools/pagespeed/inline-rendimiento.py** (50 líneas): (sin descripción)
 - **tools/pruebas/LEEME.md** (nota, 9 líneas): 
@@ -456,4 +457,4 @@ Generado con `python3 tools/indice.py` el 2026-10-04. Lo lee Claude junto a `CLA
 - `public/vfx/`: 72 archivos
 
 ---
-Total de líneas de código indexadas: 52575.
+Total de líneas de código indexadas: 52795.

@@ -228,7 +228,7 @@ PAGINAS.append(dict(
                ("05", "Correa de distribución", "Cambio del kit completo de distribución."),
                ("06", "Aire acondicionado", "Carga y revisión, imprescindible con el calor de la isla."),
                ("07", "Batería y arranque", "Prueba de la batería y del sistema de arranque, y sustitución si hace falta."),
-               ("08", "Pre-ITV", "Revisamos el coche y lo dejamos listo para pasar la ITV. <a href='/pre-itv-fuerteventura/'>Más información</a>."),
+               ("08", "Pre-ITV", "Revisamos el coche y lo dejamos listo para pasar la ITV. <a href='/pre-itv-fuerteventura/'>Qué incluye la pre-ITV</a>."),
                ("09", "Chapa y pintura", "Golpes, abolladuras, arañazos y pintura. <a href='/chapa-y-pintura-fuerteventura/'>Ver chapa y pintura</a>.")])}
   </section>
   <section class="sec"><h2>Nuestro compromiso contigo</h2>{tarjetas(COMPROMISO)}</section>

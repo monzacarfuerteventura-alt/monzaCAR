@@ -26,7 +26,12 @@ try {
     const woff = bloque && (bloque.match(/url\((\/fonts\/[a-f0-9]+\.woff2)\)/) || [])[1];
     if (woff) {
       const PUB = path.resolve(DIR, "..");
-      const tag = `<link rel="preload" as="font" type="font/woff2" href="${woff}" crossorigin>`;
+      // Actualización 40: se precargan también el cuerpo de texto (Figtree, latín); si no, al cambiar la letra de respaldo por Figtree
+      // el texto se recoloca y la página «salta» (CLS). Con las dos precargadas, el salto medido pasa de 0,25 a 0.
+      const bloqueF = out.split("/* ").find((b) => b.startsWith("latin */") && /font-family:\s*'Figtree'/.test(b));
+      const woffF = bloqueF && (bloqueF.match(/url\((\/fonts\/[a-f0-9]+\.woff2)\)/) || [])[1];
+      const pre = (u) => `<link rel="preload" as="font" type="font/woff2" href="${u}" crossorigin>`;
+      const tag = pre(woff) + (woffF && woffF !== woff ? pre(woffF) : "");
       const html = [];
       const recorrer = (d) => { for (const f of fs.readdirSync(d, { withFileTypes: true })) {
         const p = path.join(d, f.name);
@@ -48,6 +53,13 @@ try {
         const t = fs.readFileSync(plant, "utf8");
         const marca = '<link rel=\\"stylesheet\\" href=\\"/fonts/fuentes.css\\"';
         if (!t.includes("as=\\\"font\\\"") && t.includes(marca)) { fs.writeFileSync(plant, t.replace(marca, JSON.stringify(tag).slice(1, -1) + "\\n" + marca)); n++; }
+      }
+      // Las páginas que genera el servidor (pueblos, fichas, vendidos) salen de la plantilla de lib/paginas.mts
+      const pag = path.resolve(PUB, "..", "netlify", "lib", "paginas.mts");
+      if (fs.existsSync(pag)) {
+        const t2 = fs.readFileSync(pag, "utf8");
+        const marca2 = '<link rel="preload" as="style" href="/fonts/fuentes.css">';
+        if (!t2.includes('as="font"') && t2.includes(marca2)) { fs.writeFileSync(pag, t2.replace(marca2, tag + "\n" + marca2)); n++; }
       }
       console.log(`fuentes-locales: precarga de ${woff} en ${n} páginas`);
     }

@@ -103,7 +103,7 @@ ${CSS}`;
       <div class="tx"><b>${escH(c.marca + " " + c.modelo)}</b><small>${c.anio} · ${escH(mesAnio(c.vendidoEn!))}</small><small>${d ? `Vendido en ${d} día${d === 1 ? "" : "s"}` : ""}${e && e.pueblo ? `${d ? " · " : ""}entregado en ${escH(e.pueblo)}` : ""}</small></div></div>`;
   }).join("")}</div>` : `<div class="vd-vacio"><b>Todavía no hay ventas publicadas.</b></div>`;
 
-  const html = cabecera(origin, titulo, desc, canonical, head, "index, follow, max-image-preview:large") + `
+  const html = cabecera(origin, titulo, desc, canonical, head, "noindex, follow") + `
 <div class="wrap">
   <nav class="migas" aria-label="Estás en"><ol><li><a href="/">Inicio</a></li><li><a href="/coches-segunda-mano-fuerteventura/">Coches de segunda mano</a></li><li aria-current="page">Coches vendidos</li></ol></nav>
   <header class="pg-hero vd-hero">

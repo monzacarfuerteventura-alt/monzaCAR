@@ -228,7 +228,7 @@ TEXT = {
     "Todas las marcas y modelos. Te damos presupuesto sin compromiso y te explicamos cada reparación antes de hacerla.": "All makes and models. Free quotes, and we explain every repair before we do it.",
     "Todos revisados en nuestro taller y con 12 meses de garantía legal.": "All checked in our workshop and with a 12-month legal warranty.",
     "Tu nombre": "Your name",
-    "Usamos cookies de Google (Analytics y Ads) solo para contar visitas y saber qué anuncios traen clientes. Sin ellas la web funciona igual.": "We only use Google cookies (Analytics and Ads) to count visits and see which ads bring us customers. The website works just the same without them.",
+    "Usamos cookies de Google solo para contar visitas y ver qué anuncios funcionan.": "We only use Google cookies to count visits and see which ads work.",
     "Ven a": "Come and",
     "Ven a verlo y pruébalo": "Come and see it, test drive it",
     "Ven a vernos": "Visit us",

@@ -49,10 +49,10 @@ window.VC_MED = {
   function aviso() {
     if (esPortada() || document.querySelector(".vc-ck")) return;
     var d = document.createElement("div"); d.className = "vc-ck"; d.setAttribute("role", "dialog"); d.setAttribute("aria-label", "Cookies");
-    d.innerHTML = '<p>Usamos cookies de Google Analytics solo para contar visitas y saber qué páginas funcionan. <a href="/cookies">Más información sobre cookies</a></p><div><button type="button" data-no>Rechazar</button><button type="button" data-si>Aceptar</button></div>';
-    d.style.cssText = "position:fixed;left:12px;right:12px;bottom:12px;z-index:999;max-width:560px;margin:0 auto;background:#1B1B1A;color:#F2EFEA;border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;font:14px/1.4 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.35)";
+    d.innerHTML = '<p>Usamos cookies de Google solo para contar visitas. <a href="/cookies">Política de cookies</a></p><div><button type="button" data-no>Rechazar</button><button type="button" data-si>Aceptar</button></div>';
+    d.style.cssText = "position:fixed;left:12px;right:12px;bottom:12px;z-index:999;max-width:560px;margin:0 auto;background:#1B1B1A;color:#F2EFEA;border-radius:12px;padding:8px 10px 8px 12px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;font:13px/1.35 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.35)";
     d.querySelector("p").style.margin = "0"; d.querySelector("a").style.color = "#F2EFEA";
-    d.querySelectorAll("button").forEach(function (b) { b.style.cssText = "border:0;border-radius:10px;min-height:44px;padding:10px 16px;font:inherit;font-weight:700;cursor:pointer;margin-left:6px;" + "background:#F2EFEA;color:#1B1B1A"; });
+    d.querySelectorAll("button").forEach(function (b) { b.style.cssText = "border:0;border-radius:10px;min-height:40px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer;margin-left:4px;" + "background:#F2EFEA;color:#1B1B1A"; });
     d.addEventListener("click", function (e) { var si = e.target.hasAttribute("data-si"), no = e.target.hasAttribute("data-no"); if (!si && !no) return;
       var antes = leer(); try { localStorage.setItem(CK, si ? "si" : "no"); } catch (_) {} d.remove();
       if (no && antes === "si") { document.cookie.split(";").map(function (c) { return c.split("=")[0].trim(); }).filter(function (n) { return /^_(gcl|ga|gac)/.test(n); }).forEach(function (n) { document.cookie = n + "=; Max-Age=0; path=/"; document.cookie = n + "=; Max-Age=0; path=/; domain=" + location.hostname; }); }

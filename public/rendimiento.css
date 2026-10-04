@@ -11,8 +11,8 @@
       lo que no puede ir por la tarjeta gráfica se mueve a menos
       fotogramas (steps) y todo se PAUSA cuando no se ve en pantalla.
    2. MODO LIGERO (html.lite). Lo activa rendimiento.js solo en móviles
-      flojos (poca memoria / pocos núcleos / ahorro de datos / se nota que
-      va a tirones) o a mano con ?lite=1 (y ?lite=0 lo quita). Quita
+      flojos de verdad (2 GB o menos / ahorro de datos / se mide que va
+      a tirones dos veces seguidas) o a mano con ?lite=1 (y ?lite=0 lo quita). Quita
       animaciones decorativas, desenfoques de cristal y transiciones de
       vista; el diseño y los colores son los mismos.
    3. SIN SALTOS DE CONTENIDO (CLS) al cargar el catálogo.

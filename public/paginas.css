@@ -163,7 +163,7 @@ h3{font-size:21px;font-weight:800;font-stretch:100%}
 .ofe{--fire1:#D9481C;--fire2:#F2994A;border-radius:20px;border:2px solid transparent;background-image:linear-gradient(var(--surface),var(--surface)),linear-gradient(135deg,var(--fire1),var(--fire2) 55%,var(--verde));background-origin:border-box;background-clip:padding-box,border-box;box-shadow:0 18px 40px -20px rgba(217,72,28,.55);overflow:hidden;margin:18px 0 4px}
 .ofe-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;background:linear-gradient(100deg,var(--fire1),var(--fire2));color:#fff}
 .ofe-head b{display:flex;align-items:center;gap:7px;font-family:var(--display);font-weight:900;font-size:15.5px;text-transform:uppercase;letter-spacing:.02em;line-height:1.15}
-.ofe-pct{flex-shrink:0;background:#fff;color:var(--fire1);font-weight:900;font-size:14.5px;padding:4px 10px;border-radius:999px}
+.ofe-pct{flex-shrink:0;background:#fff;color:#B83A12;font-weight:900;font-size:14.5px;padding:4px 10px;border-radius:999px}
 .ofe-b{padding:14px;display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
 .ofe-save b{display:block;font-family:var(--display);font-stretch:88%;font-weight:900;font-size:clamp(26px,7.4vw,32px);white-space:nowrap;line-height:1;color:var(--verde)}
 .ofe-save span{display:block;margin-top:4px;font-weight:700;font-size:15px}
@@ -325,3 +325,90 @@ h3{font-size:21px;font-weight:800;font-stretch:100%}
   .pg-barra{display:none!important}
   body{padding-bottom:0!important}
 }
+
+/* =====================================================================
+   VERSIÓN 2 (actualización 40) · las páginas SEO con el mismo diseño que la web principal
+   Cabecera compacta, botones de 44–48 px en filas, barra de pestañas igual que la portada,
+   botón de WhatsApp flotante y tarjetas con el mismo cristal oscuro. Va al final para ganar a lo anterior.
+   ===================================================================== */
+.pg-barra{display:none!important}
+html,body{overflow-x:clip}
+body{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+/* cabecera */
+.pg-top{background:linear-gradient(180deg,#181817,#121210);border-bottom:1px solid #ffffff1c;box-shadow:0 1px 0 #d94a2680,0 14px 30px -20px #000}
+.pg-logo{min-height:52px}
+.pg-logo img{height:32px}
+.pg-top .pg-call{background:transparent;color:#F2EFEA!important;border:1px solid #ffffff2e;min-height:40px;padding:0 14px;font-size:14px;font-weight:700;gap:8px}
+.pg-top .pg-call::before{content:"";width:16px;height:16px;flex:0 0 16px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F2EFEA' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z'/%3E%3C/svg%3E") center/contain no-repeat}
+.pg-top .pg-call:hover{border-color:var(--rosso);background:#d94a2624}
+.pg-nav a:not(.pg-call){min-height:40px;font-size:13.5px;padding:0 12px;border-radius:999px;color:#bdb8b0}
+.pg-nav a:not(.pg-call):hover{background:#ffffff12;color:#fff}
+/* portada de la página */
+.migas{padding-top:14px;font-size:13px}
+.pg-hero{position:relative;padding:22px 0 18px}
+.pg-hero::before{content:"";position:absolute;top:-10px;bottom:-30px;left:calc(50% - 50vw);right:calc(50% - 50vw);z-index:-1;pointer-events:none;background:radial-gradient(480px 240px at 92% 0,#d94a2626,transparent 70%);-webkit-mask-image:linear-gradient(#000 55%,transparent);mask-image:linear-gradient(#000 55%,transparent)}
+h1{font-size:clamp(29px,6.6vw,54px);line-height:1.04}
+h2{font-size:clamp(23px,5.6vw,36px)}
+.lead{font-size:clamp(16px,1.6vw,18.5px);line-height:1.55;margin-top:12px}
+.eyebrow{font-size:11.5px;letter-spacing:.18em}
+/* botones: compactos y en filas */
+.btn{min-height:44px;padding:0 18px;font-size:14.5px;font-weight:700;border-radius:999px;gap:8px;line-height:1.1;text-align:center}
+.btn:hover{transform:translateY(-1px)}
+.b-rosso{box-shadow:0 8px 20px -8px rgba(217,72,28,.55)}
+.ctas{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px;max-width:560px}
+.ctas .btn{width:100%;min-height:44px}
+.ctas .btn:first-child{grid-column:1/-1;min-height:48px}
+.ctas .btn:first-child:nth-last-child(2){grid-column:auto}
+.ctas .btn:first-child:nth-last-child(2),.ctas .btn:first-child:nth-last-child(2)~.btn{min-height:46px}
+.sello{gap:6px;margin-top:16px}
+.sello li{font-size:12.5px;padding:6px 12px}
+/* bloques */
+.sec{padding:30px 0}
+.sec+.sec{padding-top:4px}
+.grid3,.grid2{gap:12px;margin-top:18px}
+.card{background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 94%,#fff),var(--surface));border-color:#ffffff17;border-radius:20px;padding:18px;box-shadow:0 16px 34px -26px #000;transition:border-color .2s,transform .2s}
+.card:hover{border-color:#d94a2659;transform:translateY(-1px)}
+.card h3{font-size:18px;margin-bottom:6px}
+.card p{font-size:15px;line-height:1.5}
+.card .ic{height:40px;min-width:40px;border-radius:12px;font-size:14px;margin-bottom:10px}
+.pasos{gap:10px;margin-top:18px}
+.pasos li{padding:14px;border-radius:18px}
+.chips{gap:6px;margin-top:16px}
+.chips a,.lc-zonas a{min-height:40px;display:inline-flex;align-items:center;padding:0 14px;font-size:14px}
+.banda{border-radius:22px;padding:24px}
+/* barra de pestañas (igual que la portada) */
+nav.mtabs{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:50;max-width:520px;margin-inline:auto;padding:4px;background:#141415db;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid #ffffff1f;border-radius:22px;box-shadow:0 18px 40px -16px #000c}
+nav.mtabs a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:48px;text-decoration:none;font-size:10.5px;font-weight:600;color:#A8A29A;border-radius:16px;transition:background .25s,color .25s}
+nav.mtabs a:hover{color:#fff}
+nav.mtabs a[aria-current=page]{color:#fff;background:#d94a262e;box-shadow:inset 0 0 0 1px #d94a2673}
+.pg-fab{position:fixed;right:14px;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:49;width:48px;height:48px;border-radius:50%;background:var(--verde);color:#fff;display:grid;place-items:center;box-shadow:0 10px 24px -8px #000;transition:transform .2s}
+.pg-fab:hover{transform:scale(1.06)}
+.vc-ck{bottom:calc(86px + env(safe-area-inset-bottom,0px))!important}
+.pg-foot{padding-bottom:12px}
+@media (min-width:600px){
+  .ctas{display:flex;flex-wrap:wrap;max-width:none}
+  .ctas .btn,.ctas .btn:first-child{width:auto;min-height:46px;grid-column:auto}
+  .btn{padding:0 22px}
+}
+@media (min-width:900px){
+  body{padding-bottom:0}
+  nav.mtabs{display:none}
+  .pg-fab{bottom:20px;right:20px}
+  .vc-ck{bottom:12px!important}
+  .pg-hero{padding:34px 0 24px}
+  .sec{padding:40px 0}
+  .pg-top .wrap{flex-wrap:nowrap}
+  .pg-nav{margin-left:auto}
+}
+@media (prefers-reduced-motion:reduce){.card,.btn,.pg-fab{transition:none}.card:hover,.btn:hover,.pg-fab:hover{transform:none}}
+
+/* páginas legales con el mismo diseño */
+.legal{max-width:820px;padding-top:6px;padding-bottom:30px}
+.legal h1{font-size:clamp(28px,6vw,44px);margin-top:10px}
+.legal h2{font-size:clamp(19px,4.6vw,24px);margin:28px 0 8px;text-transform:none}
+.legal p,.legal li{color:var(--muted);font-size:16px;line-height:1.65;max-width:none}
+.legal .upd{font-size:13px;margin-top:6px}
+.legal .box{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px 18px;line-height:1.75;color:var(--ink)}
+.legal a{color:var(--rosso-text)}
+.legal table{width:100%;border-collapse:collapse;font-size:14.5px;display:block;overflow-x:auto}
+.legal th,.legal td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}

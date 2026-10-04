@@ -15,7 +15,7 @@ export type Municipio = {
   venta: string;         // párrafo propio para la página de coches
   taller: string;        // párrafo propio para la página del taller
   // Solo las zonas con contenido propio de verdad se ofrecen a Google. El resto existe (para anuncios y para quien
-  // llegue por un enlace) pero con «noindex»: 16 páginas casi iguales son lo que Google llama «páginas puerta».
+  // llegue por un enlace) pero con «noindex»: 16 páginas casi iguales son lo que Google llama «páginas puerta». Desde la actualización 39 todas llevan párrafos y preguntas propios y se indexan; una zona nueva sin esos textos debe quedar sin indexarTaller/indexarVenta.
   indexarTaller?: boolean;
   indexarVenta?: boolean;
   extraTaller?: string[]; // párrafos propios de esa zona (solo en las indexadas)
@@ -35,6 +35,10 @@ export const MUNICIPIOS: Municipio[] = [
     taller: "Muchos clientes del norte aprovechan para dejar el coche por la mañana y recogerlo a última hora. Te damos el presupuesto por WhatsApp antes de tocar nada y la fecha de entrega por escrito, para que no hagas el viaje en balde.",
   },
   {
+    indexarTaller: true, indexarVenta: true,
+    extraTaller: ["Desde el casco de La Oliva, Villaverde o Tindaya llegas a nuestro taller en unos 35 minutos por carretera (unos 42 km). Muchos clientes del interior del norte nos traen el coche a primera hora y lo recogen por la tarde: te mandamos el presupuesto por WhatsApp antes de empezar y la fecha de entrega por escrito.", "En el interior del norte se circula a menudo por pistas de tierra y carreteras con polvo fino. Ese polvo atasca antes el filtro de aire y el del habitáculo y castiga amortiguadores, gomas de la suspensión y frenos. En la revisión te enseñamos el estado de cada uno antes de cambiar nada."],
+    extraVenta: ["Si vives en La Oliva, Villaverde, Lajares o Tindaya no hace falta que vengas a buscar el coche: una vez firmada la compra te lo llevamos hasta la puerta de casa, con el cambio de nombre hecho. Antes de venderlo lo pasamos por nuestro taller de Costa de Antigua y revisamos frenos, neumáticos, filtros y bajos.", "Para verlo y probarlo puedes venir a nuestra nave (a unos 35 minutos de La Oliva) o pedirnos más fotos y vídeo por WhatsApp. Todos los coches llevan 12 meses de garantía legal."],
+    faqTaller: [["¿Cada cuánto conviene mirar el filtro de aire si circulo por pistas?", "Mejor en cada mantenimiento y antes si ves mucho polvo. En la revisión te enseñamos el filtro y cambiamos solo si hace falta."], ["¿Puedo dejar el coche todo el día?", "Sí. Abrimos de lunes a viernes, de 8:00 a 16:00. Reserva cita online y te decimos cuánto tardamos antes de empezar."]],
     slug: "la-oliva", nombre: "La Oliva", en: "en La Oliva", de: "de La Oliva", municipio: "La Oliva", zona: "norte", km: 42, min: 35,
     cerca: ["Villaverde", "Lajares", "Tindaya", "El Cotillo", "Corralejo"],
     venta: "Desde el pueblo de La Oliva hasta Villaverde, Lajares o Tindaya: elige el coche en la web, pruébalo cuando te venga bien y nosotros te lo entregamos en casa sin coste.",
@@ -51,7 +55,8 @@ export const MUNICIPIOS: Municipio[] = [
     taller: "Estamos a unos veinte minutos de Puerto del Rosario. Reserva hora online, tráenos el coche y te decimos por WhatsApp qué tiene y cuánto cuesta antes de reparar nada.",
   },
   {
-    indexarTaller: true, indexarVenta: false,
+    indexarTaller: true, indexarVenta: true,
+    extraVenta: ["Nuestra nave está en el Polígono Industrial de Costa de Antigua, dentro del municipio de Antigua. Puedes venir a ver y probar cualquier coche en horario de taller (lunes a viernes, de 8:00 a 16:00) y comprobar en el mismo sitio dónde y cómo se revisan antes de venderse.", "Si prefieres no moverte, te lo llevamos a casa sin coste una vez firmada la compra, en Antigua, Valles de Ortega, Triquivijate o Agua de Bueyes, con 12 meses de garantía legal."],
     extraTaller: ["Somos el taller del Polígono Industrial de Costa de Antigua: si vives en el pueblo, en Valles de Ortega, Triquivijate o Agua de Bueyes, estás a pocos minutos. Puedes traer el coche andando de vuelta a casa y te avisamos por WhatsApp cuando esté listo.", "Hacemos mecánica de todas las marcas, chapa y pintura y la pre-ITV, con presupuesto por escrito antes de empezar y fecha de entrega por escrito."],
     faqTaller: [["¿Dónde estáis exactamente?", "En la Calle Valle Largo, Nave 8, dentro del Polígono Industrial de Costa de Antigua. En Google Maps nos encuentras como Volcano Cars."]],
     slug: "antigua", nombre: "Antigua", en: "en Antigua", de: "de Antigua", municipio: "Antigua", zona: "centro", km: 3, min: 5,
@@ -80,12 +85,20 @@ export const MUNICIPIOS: Municipio[] = [
     taller: "Gran Tarajal queda a una media hora de nuestro taller. Te damos cita a una hora concreta para que no esperes, y presupuesto cerrado antes de empezar.",
   },
   {
+    indexarTaller: true, indexarVenta: true,
+    extraTaller: ["Costa Calma está a unos 45 minutos de nuestro taller (unos 60 km). Para que el viaje compense, concertamos hora fija, te damos el presupuesto cerrado por WhatsApp antes de tocar nada y la fecha de entrega por escrito. Si el trabajo es corto (revisión, frenos, neumáticos) puedes esperar; si es mayor, lo dejas y lo recoges el día acordado.", "La zona de Costa Calma y Cañada del Río recibe mucho viento, que arrastra arena y salitre. En la revisión miramos el filtro de aire, la pintura en las zonas de roce, los bajos y los conectores eléctricos, que son lo primero que se resiente."],
+    extraVenta: ["Vienes una vez a Costa de Antigua a ver y probar el coche y, una vez firmada la compra, te lo entregamos gratis en Costa Calma, Cañada del Río o La Lajita con el cambio de nombre hecho. Antes de la visita puedes pedirnos fotos y vídeo por WhatsApp para decidir si merece el viaje (unos 45 minutos).", "Los coches del sur pasan mucho tiempo al sol y al salitre. Por eso, antes de venderlos, revisamos pintura, gomas, aire acondicionado y bajos."],
+    faqTaller: [["¿Merece la pena ir desde Costa Calma?", "Si el trabajo es largo o quieres precio cerrado, sí: concertamos hora fija y te damos precio y fecha de entrega por escrito. Para una consulta rápida, escríbenos antes por WhatsApp y te orientamos."]],
     slug: "costa-calma", nombre: "Costa Calma", en: "en Costa Calma", de: "de Costa Calma", municipio: "Pájara", zona: "sur", km: 60, min: 45,
     cerca: ["Cañada del Río", "La Lajita", "Tarajalejo", "Pájara"],
     venta: "Vivas en Costa Calma, Cañada del Río o La Lajita, te llevamos el coche a casa sin coste. Vienes una vez a Costa de Antigua a verlo y firmar, y el coche te lo llevamos nosotros el día que acordemos.",
     taller: "Si vives en el sur, te interesa saber antes de salir cuánto va a costar y cuándo estará listo: te lo damos por escrito. Reserva hora online y evita esperas.",
   },
   {
+    indexarTaller: true, indexarVenta: true,
+    extraTaller: ["Morro Jable queda a más de una hora de nuestro taller (unos 80 km), así que preparamos el viaje para que no tengas que volver dos veces: antes de salir te confirmamos por WhatsApp la hora de la cita, lo que necesitas llevar y el presupuesto.", "Si lo que necesitas es una revisión sencilla, la pre-ITV, neumáticos o frenos, intentamos dejarlo hecho en el día. Para trabajos mayores te damos la fecha de entrega por escrito."],
+    extraVenta: ["Aunque Morro Jable y Jandía queden a más de una hora, comprar con nosotros no te obliga a viajar varias veces: puedes ver el coche por fotos y vídeo, venir una sola vez a probarlo y firmar, y nosotros te lo llevamos a Morro Jable, Jandía, Esquinzo o Butihondo el día que acordemos, con el cambio de nombre hecho."],
+    faqTaller: [["¿Cuánto se tarda desde Morro Jable?", "Unos 65 minutos en coche (unos 80 km), según el punto de salida y el tráfico."], ["¿Puedo hacer la pre-ITV y una reparación en el mismo viaje?", "Sí, si lo avisas al pedir la cita: lo organizamos para que quede todo en la misma visita siempre que el trabajo lo permita."]],
     slug: "morro-jable", nombre: "Morro Jable", en: "en Morro Jable", de: "de Morro Jable", municipio: "Pájara", zona: "sur", km: 80, min: 65,
     cerca: ["Jandía", "Esquinzo", "Butihondo", "Costa Calma"],
     venta: "Aunque Morro Jable esté en la otra punta de la isla, la entrega es gratis igualmente. Te enviamos más fotos o un vídeo del coche por WhatsApp y te lo llevamos a Jandía el día que acordemos.",
