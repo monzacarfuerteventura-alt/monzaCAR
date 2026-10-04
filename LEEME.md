@@ -296,3 +296,32 @@ Web pública
 - Página 404 propia, `site.webmanifest` con nombre y colores, `twitter:card`, «Costa de Antigua» unificado, `lastmod` del sitemap, «Pagas (al contado o financiado)», `h1` en Comprar/Taller/Contacto, validación propia en el formulario del taller y tope de texto (1.500), «Aire acondicionado» ya no se parte por la mitad.
 
 Pendiente a propósito: Verifactu y garantía de 12 meses (gestoría/abogado); copias de seguridad de fotos/PDF y restauración; `SESSION_SECRET` obligatorio (hay que ponerlo antes en Netlify); límite de tiempo de la copia cuando crezcan los datos.
+
+## Actualización 26 (3-10-2026) · auditoría del código completo
+Revisado: 19 páginas HTML (enlaces internos, rutas de funciones, SEO, JSON-LD, IDs, alt), sintaxis de todo el JavaScript
+(12 bloques en línea + todos los .js), sintaxis TypeScript de `netlify/`, carga de 17 páginas en móvil y PC (sin errores ni
+desbordes), datos de empresa en 224 archivos (teléfono, correo, CIF, razón social) y búsqueda de claves escritas en el código (ninguna).
+Cambios:
+- **Enlace de reseñas de Google** unificado en el enlace oficial `https://g.page/r/Caeh6Wr6CwtNECE/review`. Antes la web, el panel,
+  el asistente, el agente de WhatsApp y las plantillas apuntaban a `…NEBM…`. Archivos: `index.html`, `en/index.html`, `comprar/`, `taller/`,
+  `seguimiento.html`, `admin.html`, `script-ia.js`, `asistente.mts`, `whatsapp.mts`, `vendidos.mts`, `tools/respuestas/respuestas-datos.js`
+  y `tools/whatsapp/SYSTEM-PROMPT.md`. PRUEBA el enlace desde un móvil tras publicar.
+- **Datos del emisor de facturas en el servidor** (`netlify/lib/taller.mts`, `EMISOR`): teléfono 643 56 60 98 y correo
+  volcanocars2026@gmail.com (antes teléfono vacío y `volcanocars@gmail.com`). No altera facturas ya emitidas ni sus huellas.
+No se ha cambiado nada más. Las páginas legales llevan `noindex` a propósito (no necesitan canonical ni description).
+
+## Actualización 28 (3-10-2026) · incluye la 26 y la 27 · multipublicación en otros portales
+Todo viene APAGADO: subirla no envía nada a ningún portal.
+- **Tarjeta «Multipublicación en otros portales»** en Panel → Coches (debajo de «Financiación en la web», solo gerente): 4 pasos
+  (tus coches · enlaces para portales · conexión directa · probar sin riesgo), estado de cada coche con consejos para completar el
+  anuncio y botones «Copiar enlace», «Simular ahora» y «Enviar ahora». Código: `tools/sindica` + `python3 tools/sindica/inyectar.py`.
+- **Motor** (`netlify/lib/sindica/`): esquema unificado `volcanocars.vehiculo.v1`, adaptadores (AutoScout24, XML, JSON, Meta),
+  diferencias contra lo ya publicado, reintentos con espera exponencial, respeto de `Retry-After`, interruptor de circuito por canal,
+  cerrojo anti-pasadas simultáneas y coches RESERVADOS que se mantienen. `netlify/functions/sindicar.mts` (API del panel),
+  `sindicar-programada.mts` (cada 15 min) y `feed-inventario.mts` (`/feeds/xml.xml`, `/feeds/json.json`, `/feeds/meta.csv`, con ETag).
+- **Copia diaria**: el almacén `sindica` entra en las copias (`netlify/lib/copia.mts`).
+- **Pruebas**: `node --test tools/pruebas/sindica.test.mjs` (18) y `node tools/pruebas/sindica-integracion.mjs` (simulación completa con un portal falso).
+- **Variables de Netlify** (todas opcionales): `FEED_TOKEN` (texto largo al azar, 24+ caracteres; sin ella los feeds dan 404),
+  `SINDICA_CANALES=autoscout24`, `AS24_URL`, `AS24_TOKEN`, `SINDICA_ACTIVO=1` (sin ella SIEMPRE es simulacro), `SINDICA_MAX` (10).
+- Los formatos de AutoScout24 y Meta son un BORRADOR: hay que contrastarlos con la documentación oficial antes de activar el envío real.
+  Wallapop PRO, Coches.net y Milanuncios no tienen adaptador directo: se alimentan con un multipublicador (usa el feed XML/JSON) o con contrato propio.

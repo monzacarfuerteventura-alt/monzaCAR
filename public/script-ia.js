@@ -82,7 +82,7 @@
   })();
 
   /* ---------------- reseñas: botón en vez de enlace en texto ---------------- */
-  const URL_RESENA = "https://g.page/r/Caeh6Wr6CwtNEBM/review";
+  const URL_RESENA = "https://g.page/r/Caeh6Wr6CwtNECE/review";
   const RE_URL_RESENA = /\s*(?:👉\s*)?(?:https?:\/\/)?g\.page\/r\/[A-Za-z0-9_-]+\/review\/?\S*/gi;
   const RE_QUIERE_RESENA = /(resena|opinion en google|dejar (una |mi )?(opinion|comentario|valoracion|estrellas)|(leave|write|give) (you |us )?(a )?(google )?review|rate you|leave feedback)/;
   const normTxt = (t) => String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();

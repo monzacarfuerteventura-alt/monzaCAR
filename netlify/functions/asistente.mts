@@ -378,7 +378,7 @@ export default async (req: Request, _context: Context) => {
   const RE_RESENA = /\s*(?:\[RESENA\]|(?:https?:\/\/)?g\.page\/r\/[A-Za-z0-9_-]+\/review\/?\S*)/gi;
   if (RE_RESENA.test(texto)) {
     texto = texto.replace(RE_RESENA, "").replace(/[:：]\s*$/gm, ".").replace(/\n{3,}/g, "\n\n").trim();
-    ctx.acciones.push({ tipo: "resena", url: "https://g.page/r/Caeh6Wr6CwtNEBM/review" });
+    ctx.acciones.push({ tipo: "resena", url: "https://g.page/r/Caeh6Wr6CwtNECE/review" });
   }
   return json({ respuesta: texto.slice(0, 1200), acciones: ctx.acciones.slice(0, 3), coches: ctx.coches.slice(0, 5), modelo });
 };

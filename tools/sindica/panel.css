@@ -1,0 +1,29 @@
+/* MULTIPUBLICACIÓN · tarjeta del panel (Coches). Se copia en public/admin.html con: python3 tools/sindica/inyectar.py */
+#mp-cfg{margin-top:0}
+#mp-cfg[open] summary{padding-bottom:6px}
+.mp-body{display:grid;gap:18px;padding:6px 20px 20px}
+.mp-sem{display:flex;gap:12px;align-items:flex-start;border-radius:14px;padding:13px 15px;background:var(--surface-2)}
+.mp-sem.ok{background:var(--ok-soft)} .mp-sem.aviso{background:#FDEBD3;color:#5c3300}
+.mp-sem b{display:block;font-size:15.5px}.mp-sem span{display:block;font-size:13.5px;opacity:.9;line-height:1.45;margin-top:2px}
+.mp-sec h3{margin:0 0 8px;font-family:var(--display);font-stretch:85%;font-weight:800;font-size:17px;display:flex;gap:8px;align-items:center}
+.mp-sec h3 i{font-style:normal;width:24px;height:24px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-size:13px;font-family:var(--body)}
+.mp-sec>p{margin:0 0 10px;color:var(--muted);font-size:13.5px}
+.mp-fila{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--surface-2);border-radius:12px;padding:11px 13px;margin-bottom:8px}
+.mp-fila>span:first-child{flex:1;min-width:0}.mp-fila .chip{flex-shrink:0;white-space:nowrap}.mp-fila b{display:block;font-size:14.5px}.mp-fila small{display:block;color:var(--muted);font-size:12.5px;margin-top:1px}
+.mp-acc{display:flex;gap:6px;flex-shrink:0}
+.mp-nota{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+.mp-nota.rojo{color:var(--bad)}
+.mp-coche{display:grid;grid-template-columns:64px 1fr;gap:12px;background:var(--surface-2);border-radius:14px;padding:10px;margin-bottom:8px}
+.mp-coche img{width:64px;height:48px;object-fit:cover;border-radius:8px;background:var(--surface)}
+.mp-coche b{font-size:14.5px}.mp-coche .sub{display:block;color:var(--muted);font-size:12.5px}
+.mp-chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.mp-chips .chip.aviso{background:#FDEBD3;color:#8A4B00}
+.mp-cons{margin:6px 0 0;padding:0;list-style:none;display:grid;gap:3px}
+.mp-cons li{font-size:12.5px;color:var(--muted)} .mp-cons li.falta{color:var(--bad)}
+.mp-cons li::before{content:"› ";font-weight:800}
+.mp-res{background:var(--surface-2);border-radius:12px;padding:12px 14px;font-size:14px;display:grid;gap:6px}
+.mp-res ul{margin:0;padding-left:18px}
+.mp-ayuda{border:1px solid var(--line);border-radius:12px;padding:0}
+.mp-ayuda summary{padding:12px 14px;font-weight:700;font-size:14px;cursor:pointer}
+.mp-ayuda div{padding:0 14px 12px;font-size:13.5px;color:var(--muted);display:grid;gap:6px}
+@media (max-width:420px){.mp-fila{flex-wrap:wrap}.mp-acc{width:100%}.mp-acc .btn{flex:1}}

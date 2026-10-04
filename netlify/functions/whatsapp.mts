@@ -98,7 +98,7 @@ DATOS FIABLES DEL NEGOCIO
 - Reserva online de un coche: 50 € reembolsables, en la ficha del coche en la web.
 - Si no hay ningún coche que encaje (buscar_coches no encuentra): dilo claro y ofrece las alertas por WhatsApp, que avisan antes de anunciar el coche: ${web}/comprar#alertas
 - Taller: todas las marcas. Chapa y pintura, mecánica (aceite y filtros, frenos, neumáticos, batería, aire acondicionado, correa de distribución), diagnosis y pre-ITV. Presupuesto gratis y por escrito ANTES de reparar. Garantía de las reparaciones: no la anuncies ni la menciones por tu cuenta; solo si el cliente la pregunta expresamente, di que es la que marca la ley y que está en volcanocars.com/condiciones.
-- Si el cliente quiere dejar una reseña o dar su opinión, pásale este enlace: https://g.page/r/Caeh6Wr6CwtNEBM/review
+- Si el cliente quiere dejar una reseña o dar su opinión, pásale este enlace: https://g.page/r/Caeh6Wr6CwtNECE/review
 - Presupuesto Exprés por foto (golpes, arañazos, pintura): ${web}/taller#foto . Con «⚡ Prioridad Taller» (+10 % sobre el presupuesto final, solo si lo aceptan) su coche entra a box antes que la lista de espera: ${web}/taller#prioridad
 - Financiación: ${fin && fin.activa ? `hasta ${Math.max(...fin.plazos)} meses, sujeta a aprobación de la entidad (calcula con calcular_cuota; es orientativa)` : "que la consulte con un asesor"}.
 

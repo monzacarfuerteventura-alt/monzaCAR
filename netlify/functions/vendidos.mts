@@ -13,7 +13,7 @@ import { leerEntregas, type Entrega } from "../lib/entregas.mts";
 */
 const CACHE = { "cache-control": "public, max-age=0, must-revalidate", "netlify-cdn-cache-control": "public, s-maxage=300, stale-while-revalidate=3600", "netlify-cache-tag": "coches,vendidos,paginas" };
 const SEG = { "x-content-type-options": "nosniff", "referrer-policy": "strict-origin-when-cross-origin", "x-frame-options": "DENY" };
-const RESENAS = "https://g.page/r/Caeh6Wr6CwtNEBM/review";
+const RESENAS = "https://g.page/r/Caeh6Wr6CwtNECE/review";
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 const mesAnio = (iso: string) => { const d = new Date(iso.length === 10 ? iso + "T12:00:00Z" : iso); return isNaN(+d) ? "" : `${MESES[d.getUTCMonth()]} de ${d.getUTCFullYear()}`; };
 const ld = (o: unknown) => `<script type="application/ld+json">${JSON.stringify(o).replace(/</g, "\\u003c")}</script>`;

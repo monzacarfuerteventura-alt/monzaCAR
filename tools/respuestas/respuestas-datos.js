@@ -132,7 +132,7 @@ function rsGenerar(o){
    WHATSAPP · mensajes listos (respuestas rápidas de WhatsApp Business)
    Marcadores: {n} = «, Nombre» o nada · {nombre} · {coche} · {cuando} · {link} · {mapa} · {resena} · {web}
    ===================================================================== */
-const RS_WA_DATOS = {web:"volcanocars.com", mapa:"https://maps.app.goo.gl/dz8icDhkUkB4oznd8", resena:"https://g.page/r/Caeh6Wr6CwtNEBM/review"};
+const RS_WA_DATOS = {web:"volcanocars.com", mapa:"https://maps.app.goo.gl/dz8icDhkUkB4oznd8", resena:"https://g.page/r/Caeh6Wr6CwtNECE/review"};
 const RS_WA = [
  {g:"Automáticos (se configuran una vez)", k:"bienvenida", a:"(automático)", t:"Mensaje de bienvenida",
   es:"¡Hola! 👋 Gracias por escribir a Volcano Cars: taller mecánico, chapa y pintura y coches de ocasión en Costa de Antigua. Cuéntanos qué coche es y qué necesitas, y te respondemos enseguida. Si lo prefieres, pide cita aquí: {web}/taller",

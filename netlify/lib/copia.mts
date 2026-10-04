@@ -1,7 +1,7 @@
 import { store } from "./shared.mts";
 
 // Qué se guarda en las copias de seguridad (manual /api/copia y automática copia-programada.mts)
-export const ALMACENES = ["monzacar", "solicitudes", "ordenes", "taller", "caja", "finanzas", "almacen", "seguridad", "jornada", "entregas", "reservas", "marketing", "sistemas", "vehiculos", "enlaces"];
+export const ALMACENES = ["monzacar", "solicitudes", "ordenes", "taller", "caja", "finanzas", "almacen", "seguridad", "jornada", "entregas", "reservas", "marketing", "sistemas", "vehiculos", "enlaces", "sindica"];
 export const SOLO_NOMBRES = ["monzacar-fotos", "monzacar-videos", "monzacar-informes", "reservas-docs"];
 const FUERA = (st: string, k: string) =>
   st === "seguridad" && (k.startsWith("log/") || k.startsWith("bloqueo/") || k.startsWith("fallo") || k.startsWith("aviso/") || /^config\/(totp|min-iat)/.test(k));
