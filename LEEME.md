@@ -353,3 +353,21 @@ Todo viene APAGADO: subirla no envía nada a ningún portal.
 - **Combustible:** solo Gasolina, Diésel y GLP (se quitan Híbrido, Híbrido enchufable y Eléctrico del panel). Los botones rápidos «Diésel» y «Gasolina» siguen igual.
 - Enlaces antiguos con `?pmax=6500` o `?kmax=50000` siguen funcionando (se filtra por ese valor aunque ya no haya botón para él).
 - Los valores están en `PRECIOS`, `QUICK` (precios), `kms` y `combs` dentro de cada página; hay que cambiarlos en las 4 (`index.html`, `en/`, `comprar/`, `taller/`).
+
+## Actualización 36 (4-10-2026) · parte de la 35 · web más rápida y fluida en móviles de gama baja
+- **Causa principal:** el procesador no se gastaba en JavaScript sino en repintar la pantalla. Varias animaciones decorativas (holograma del sello y de la
+  garantía del Taller, lava del rótulo, carretera y camión de «cómo trabajamos», LED y brasas) cambiaban sombras, posiciones de fondo o `top`, y el móvil
+  recalculaba y repintaba la página en cada fotograma, **incluso sin tocar nada**. Medido (Chrome móvil simulado, CPU 6 veces más lenta, página en reposo
+  3 s): Taller 2,4 s → 0,01 s · rótulo 2,3 s → 0,03 s · ruta 2,9 s → 0,09 s.
+- **Animaciones baratas (todos los móviles):** el sello gira entero (`transform`) y el aro de la garantía cambia de tono (`filter`) en vez de repintar su
+  degradado; la lava del rótulo y las rayas de la carretera quedan fijas con los mismos colores (el rótulo sigue desplazándose y las brasas palpitando); el camión
+  de la ruta se mueve con `transform`; el LED y las brasas palpitan solo con opacidad. Todo lo que está fuera de pantalla se **pausa** (`.vc-off`).
+- **Modo ligero automático (`html.lite`):** se activa solo en móviles con ≤2 GB de memoria o ≤4 núcleos, con «ahorro de datos» o 2G, o si al cargar se miden
+  menos de ~26 fotogramas/s. Quita las animaciones decorativas, los desenfoques de cristal (las barras quedan algo más opacas), la transición animada entre vistas
+  y el scroll suave. En el Taller **no descarga ni reproduce vídeo**: solo la imagen fija de cada servicio. Mismo diseño y colores. `?lite=1` lo fuerza y
+  `?lite=0` lo quita (se recuerda en el aparato). En ordenador solo entra por «ahorro de datos», 2G o si va a tirones.
+- **Vídeos del Taller:** los 3 vídeos «favoritos» solo se precargan en aparatos con ≥4 GB y ≥6 núcleos (antes, con buena conexión, siempre: ~2 MB).
+- **Sin saltos de contenido:** en el Taller, la capa del vídeo salía sin estilo y empujaba toda la página ~300 px (CLS **0,80 → 0,01**); ahora `taller-vfx.css` y
+  `precios-taller.css` van en línea. En Comprar, al llegar los coches aparecían los filtros y empujaban las tarjetas (CLS **0,43 → 0**); ahora se reserva su hueco.
+- **Archivos:** `rendimiento.css`, `rendimiento.js` (nuevos), `taller-vfx.js`, `precios-taller.js`, `index.html`, `en/`, `comprar/`, `taller/`, `tools/pagespeed/inline-rendimiento.py` (nuevo, mete todo en línea), `CLAUDE.md`, `CLAUDE-INDICE.md`.
+- Visual: lo único que cambia a simple vista es que la lava del rótulo y las rayas de la carretera ya no «fluyen», y el aro de la garantía cambia de color en vez de girar.

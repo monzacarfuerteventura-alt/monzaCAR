@@ -26,7 +26,7 @@
   const QUIETO = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // estilos (un solo archivo aparte: así no hay que tocar las páginas)
-  if (!document.querySelector('link[href^="/precios-taller.css"]')) {
+  if (!document.getElementById("pt-css") && !document.querySelector('link[href^="/precios-taller.css"]')) { // en las páginas SPA el CSS ya va en línea (#pt-css)
     const l = document.createElement("link");
     l.rel = "stylesheet"; l.href = "/precios-taller.css";
     document.head.appendChild(l);

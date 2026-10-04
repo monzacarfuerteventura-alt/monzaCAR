@@ -23,7 +23,7 @@ Claude lee este archivo al empezar cada sesión. Mantenlo al día: al final de C
 1. Claude lo hace todo. El usuario solo recibe un **ZIP** `VolcanoCars-actualizacion-NN.zip` con carpeta `archivos/` (solo los
    archivos que cambian, con su ruta del repo) y `LEEME.txt` (comandos de PowerShell + qué incluye + qué comprobar).
 2. **No tocar nada existente que no se haya pedido.** Si se pide algo nuevo, se conserva todo lo anterior.
-3. Numeración: la siguiente actualización es la **36** (la 35 = la 33 + este archivo). Si un ZIP nuevo incluye al anterior, decirlo y
+3. Numeración: la siguiente actualización es la **37** (la 36 = rendimiento en móviles flojos; parte de la 35). Si un ZIP nuevo incluye al anterior, decirlo y
    que NO suba el anterior aparte.
 4. Antes de entregar: aplicar el ZIP sobre un clon limpio de `master`, comprobar `git status --short` (solo `M`, y `A` solo para
    archivos nuevos esperados) y probar en navegador (Playwright, móvil Pixel 7/5 y PC). Indicar en LEEME.txt cuántos archivos deben salir.
@@ -37,6 +37,9 @@ Claude lee este archivo al empezar cada sesión. Mantenlo al día: al final de C
   - `index.html` (ES, ~350 KB), `en/index.html` (EN, **se genera** con `python3 tools/build-en.py`: no editar a mano),
     `comprar/index.html`, `taller/index.html`, `contacto/index.html`. Son una SPA con vistas `#v-inicio/#v-comprar/#v-taller/#v-contacto`
     y función `go(v)`. Los cambios de la SPA hay que hacerlos **en las 4 páginas** (index, en, comprar, taller).
+  - `rendimiento.css` / `rendimiento.js`: **modo ligero** (`html.lite`), animaciones baratas, pausa de lo que no se ve y reserva de huecos (CLS).
+    Van copiados **en línea** en las 4 páginas SPA con `python3 tools/pagespeed/inline-rendimiento.py` (necesita bun; repetible), que además mete en
+    línea `taller-vfx.css` (`#vfx-css`) y `precios-taller.css` (`#pt-css`). Un cambio en cualquiera de esos 4 CSS/JS → volver a ejecutar ese script.
   - `mejoras.css` / `mejoras.js`: mejoras de interfaz. **El CSS de `mejoras.css` va copiado (inline) dentro de las 4 páginas SPA**
     (`tools/pagespeed/inline-css.py`): un arreglo de CSS se edita en `mejoras.css` Y en los 4 HTML.
   - `admin.html` (~1,1 MB): panel de gestión (Dashboard, CRM, Taller, Agenda, Coches, Finanzas, Caja, Ausencias, Marketing...).
@@ -81,7 +84,11 @@ Grafito #1B1B1A · Magma #D9481C · Hueso #F2EFEA · Hormigón #DCD8D1. Títulos
 Logo dibujado en la propia página (símbolos `vc-logo`, `vc-iso`). Instagram: carruseles **cuadrados 1080x1080**.
 
 ## 7. Estado actual (4-10-2026)
-- Última actualización entregada: **35** (incluye 31, 32, 33 y CLAUDE.md). Base anterior: commit 48ed4cb = actualización 30.
+- Última actualización entregada: **36** (rendimiento en móviles flojos). Base: la 35 (incluye 31, 32, 33 y CLAUDE.md; commit 48ed4cb = actualización 30).
+- Rendimiento (36): modo ligero automático (móvil con ≤2 GB o ≤4 núcleos, ahorro de datos, 2G, o <26 fps medidos al cargar; `?lite=1` fuerza, `?lite=0` quita),
+  animaciones sin repintados (holograma del taller por transform/filter, lava y carretera fijas, camión por transform, LED/brasas solo opacidad), pausa
+  de animaciones fuera de pantalla (`.vc-off`), fondo del taller sin vídeo en modo ligero, CLS del taller 0,80→0,01 y de /comprar 0,43→0.
+  Medido (Chrome móvil simulado, CPU 6x): coste de las animaciones en reposo 2,3–2,9 s → <0,1 s cada 3 s.
 - Filtros de coches: precios 1.500–5.500 € de 500 en 500; km hasta 100.000…400.000 (de 50.000 en 50.000); combustible solo Gasolina, Diésel y GLP.
 - La barra «N servicio(s) elegido(s) · Reservar» solo se ve en Taller (se recalcula tras el cambio de vista).
 - Páginas SEO: sin barra fija WhatsApp/Llamar abajo ni etiqueta de Netlify.
@@ -99,6 +106,17 @@ Logo dibujado en la propia página (símbolos `vc-logo`, `vc-iso`). Instagram: c
 - Playwright: servir los archivos locales sobre el HTML en vivo con `route`; las pruebas largas se lanzan con `nohup … &` (límite de 120 s por comando).
 - Vibe Prospecting: `company_country_code` y `company_region_country_code` son excluyentes; ES-CN funciona, ES-GC da 0; `show-sample` gasta créditos.
 - Cada comando de PowerShell encadenado con `&&` puede saltarse pasos: dar pasos separados y comprobables.
+
+- **Rendimiento en móvil (actualización 36).** Lo que cuesta no es el JavaScript sino repintar: animar `box-shadow`, `background-position`, `top`,
+  un `@property` de ángulo con máscara, o `filter` sobre texto con `background-clip:text` obliga a recalcular y repintar en cada fotograma. Usar solo
+  `transform`, `opacity` y (con cuidado) `filter`. Lo animado debe poder pausarse fuera de pantalla (`.vc-off`) y apagarse en `html.lite`.
+- Los CSS que antes se cargaban por JS (`taller-vfx.css`, `precios-taller.css`) provocaban saltos de contenido (CLS 0,80): la capa del vídeo salía sin
+  estilo y empujaba la página 300 px. Ahora van en línea; sus JS comprueban `#vfx-css` / `#pt-css` antes de pedirlos.
+- `go()` no usa `startViewTransition` en modo ligero. `taller-vfx.js` en modo ligero solo pide el póster (nada de vídeo) y los 3 vídeos favoritos solo
+  se precargan en aparatos con ≥4 GB y ≥6 núcleos.
+- Medir: Playwright + `Emulation.setCPUThrottlingRate` 6 + `Performance.getMetrics` (LayoutDuration/RecalcStyleDuration/TaskDuration) en reposo 3 s;
+  CLS con `PerformanceObserver('layout-shift')` y las rutas `/api/coches` y `/api/precios-taller` con datos reales. Probar con `?lite=0` (si no, el
+  contenedor de pruebas, con pocos núcleos, activa el modo ligero solo).
 
 ## 9. Auditoría y valoración (4-10-2026) · datos para responder al instante
 Tamaño medido en el repositorio: 793 archivos; 53 funciones de servidor (~6.900 líneas) + 32 archivos de lógica compartida (~5.000);

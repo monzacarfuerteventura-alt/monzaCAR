@@ -246,7 +246,7 @@ Generado con `python3 tools/indice.py` el 2026-10-04. Lo lee Claude junto a `CLA
   - scripts: /medicion.js, /origen.js, /precios-taller.js
 - **public/coches-segunda-mano-fuerteventura/index.html** (98 líneas, 15 KB): Coches de segunda mano en Fuerteventura | Volcano Cars
   - scripts: /medicion.js, /origen.js
-- **public/comprar/index.html** (3199 líneas, 337 KB): Coches de ocasión en Fuerteventura | Volcano Cars
+- **public/comprar/index.html** (3200 líneas, 352 KB): Coches de ocasión en Fuerteventura | Volcano Cars
   - vistas: v-inicio, v-comprar, v-taller, v-contacto
   - scripts: /conversion.js, /medicion.js, /mejoras.js, /origen.js, /piloto-web.js, /script-ia.js, /taller-ui.js
 - **public/condiciones.html** (129 líneas, 12 KB): Condiciones de venta, taller y garantía · Volcano Cars
@@ -255,12 +255,12 @@ Generado con `python3 tools/indice.py` el 2026-10-04. Lo lee Claude junto a `CLA
   - scripts: /medicion.js, /origen.js
 - **public/cookies.html** (67 líneas, 4 KB): Política de cookies · Volcano Cars
   - scripts: /medicion.js
-- **public/en/index.html** (3202 líneas, 337 KB): Used cars and car workshop in Fuerteventura | Volcano Cars
+- **public/en/index.html** (3203 líneas, 352 KB): Used cars and car workshop in Fuerteventura | Volcano Cars
   - vistas: v-inicio, v-comprar, v-taller, v-contacto
   - scripts: /conversion.js, /medicion.js, /mejoras.js, /origen.js, /piloto-web.js, /script-ia.js, /taller-ui.js
 - **public/financiacion-coches-fuerteventura/index.html** (78 líneas, 12 KB): Financiación de coches en Fuerteventura | Volcano Cars
   - scripts: /medicion.js, /origen.js
-- **public/index.html** (3201 líneas, 338 KB): Coches de ocasión y taller en Fuerteventura | Volcano Cars
+- **public/index.html** (3202 líneas, 352 KB): Coches de ocasión y taller en Fuerteventura | Volcano Cars
   - vistas: v-inicio, v-comprar, v-taller, v-contacto
   - scripts: /conversion.js, /medicion.js, /mejoras.js, /origen.js, /piloto-web.js, /script-ia.js, /taller-ui.js
 - **public/itv-fuerteventura/index.html** (95 líneas, 14 KB): ITV en Fuerteventura: guía y cómo aprobar | Volcano Cars
@@ -274,7 +274,7 @@ Generado con `python3 tools/indice.py` el 2026-10-04. Lo lee Claude junto a `CLA
 - **public/seguimiento.html** (300 líneas, 35 KB): Seguimiento de tu coche · Volcano Cars
 - **public/taller-mecanico-fuerteventura/index.html** (79 líneas, 15 KB): Taller mecánico en Fuerteventura | Volcano Cars
   - scripts: /medicion.js, /origen.js, /precios-taller.js
-- **public/taller/index.html** (3199 líneas, 337 KB): Taller mecánico y chapa y pintura | Volcano Cars
+- **public/taller/index.html** (3200 líneas, 352 KB): Taller mecánico y chapa y pintura | Volcano Cars
   - vistas: v-inicio, v-comprar, v-taller, v-contacto
   - scripts: /conversion.js, /medicion.js, /mejoras.js, /origen.js, /piloto-web.js, /script-ia.js, /taller-ui.js
 
@@ -295,10 +295,12 @@ Generado con `python3 tools/indice.py` el 2026-10-04. Lo lee Claude junto a `CLA
 - **piloto-web.js** (267 líneas): VOLCANO CARS · PILOTO DE CONVERSIÓN EN LA WEB (piloto-web.js) Actúa solo en la ficha del coche según las reglas que el gerente activa en el panel (Marketing en vivo → Piloto). Lee /api/piloto-web (datos REALES). 1. Prueba social: «2 personas han pedido información de este coche hoy». (el «N personas lo ven ahora mismo» ya lo pinta la ficha con /api/viendo) 2. Regla A · baja conversión: muchas visitas y ninguna solici…
 - **precios-taller.css** (163 líneas): VOLCANO CARS · ETIQUETAS DE PRECIO «DESDE» (precios-taller.css) Lo carga solo /precios-taller.js. Etiqueta con forma de etiqueta de tienda (punta + agujero), brillo que la recorre, cifras que suben, entrada con rebote y balanceo al pasar por la tarjeta. Colores oficiales: naranja volcánico #D94A26 / #C83E1A.
 - **precios-taller.js** (273 líneas): VOLCANO CARS · PRECIOS «DESDE» DEL TALLER (precios-taller.js) Los precios se cambian en el panel: Taller → «Precios en la web». Se guardan en /api/precios-taller y este archivo los pinta solo: · en cada tarjeta de servicio del taller (/taller y la portada), con una etiqueta de precio animada; · en las etiquetas de las tarjetas «Chapa y pintura» y «Mecánica rápida» de la portada; · en las páginas de servicio (/pre-itv…
+- **rendimiento.css** (83 líneas): VOLCANO CARS · RENDIMIENTO (rendimiento.css + rendimiento.js) Va copiado (inline) en las 4 páginas SPA (index, en, comprar, taller) con: python3 tools/pagespeed/inline-rendimiento.py Si cambias algo aquí, vuelve a ejecutar ese script. 1. ANIMACIONES BARATAS (todos los móviles). Lo que se animaba con sombras, máscaras o posición de fondo obligaba al móvil a repintar la pantalla entera en cada fotograma, incluso sin to…
+- **rendimiento.js** (59 líneas): VOLCANO CARS · RENDIMIENTO (rendimiento.js) — va copiado (inline) en la cabecera de las 4 páginas SPA: python3 tools/pagespeed/inline-rendimiento.py (ver rendimiento.css para el detalle) · MODO LIGERO: pone la clase «lite» en <html> en móviles flojos. Se decide antes de pintar nada, sin parpadeos. - móvil con poca memoria (≤2 GB) o 4 núcleos o menos, «ahorro de datos» o conexión 2G → ligero desde el principio - si, y…
 - **script-ia.js** (308 líneas): VOLCANO CARS · ASISTENTE CON IA (script-ia.js) Se engancha al asistente que ya tiene la web (window.VC_BOT) sin rehacerlo: · Los atajos de siempre (Horario, Financiación, Garantía…) siguen igual y responden al momento, sin gastar IA. · Lo que el cliente ESCRIBE lo responde la IA (/api/asistente), que consulta el stock real, las horas libres y la financiación. · Si la IA propone una cita, rellena el formulario del tal…
 - **taller-ui.js** (97 líneas): VOLCANO CARS · TALLER «HIGH-TECH» (taller-ui.js) Detalles visuales del taller. No toca la reserva: solo escucha los servicios que marca el cliente y pinta: · el contador «3 seleccionados» encima de las tarjetas; · el bloque «Tu presupuesto» del panel de la cita. PRECIOS «DESDE»: ya no se escriben aquí. Se ponen en el panel (Taller → «Precios en la web») y los trae /precios-taller.js, que también pinta las etiquetas a…
 - **taller-vfx.css** (100 líneas): VOLCANO CARS · FONDO VFX DEL TALLER (taller-vfx.css) Lo carga solo /taller-vfx.js. Todo lo que se mueve usa opacity o transform (lo hace la tarjeta gráfica): nada de desenfoques caros sobre el vídeo, para que el móvil vaya fluido y no gaste batería.
-- **taller-vfx.js** (224 líneas): VOLCANO CARS · FONDO VFX DEL TALLER (taller-vfx.js) Al marcar un servicio del taller, el fondo de la sección pasa a un vídeo en CÁMARA LENTA de ese servicio (render 3D de cine: chispas, arcos eléctricos, agua, aceite, pintura...), con fundido cruzado entre clips, un instante de «revelado» para que se vea bien y luego una capa oscura para que el texto se lea. CÓMO FUNCIONA · Dos <video> apilados: el nuevo entra con su…
+- **taller-vfx.js** (228 líneas): VOLCANO CARS · FONDO VFX DEL TALLER (taller-vfx.js) Al marcar un servicio del taller, el fondo de la sección pasa a un vídeo en CÁMARA LENTA de ese servicio (render 3D de cine: chispas, arcos eléctricos, agua, aceite, pintura...), con fundido cruzado entre clips, un instante de «revelado» para que se vea bien y luego una capa oscura para que el texto se lea. CÓMO FUNCIONA · Dos <video> apilados: el nuevo entra con su…
 - **taller.css** (416 líneas): VOLCANO CARS · TALLER «HIGH-TECH» (taller.css) Solo afecta a la sección del taller (#v-taller) y a su barra móvil. No cambia ninguna ID ni clase que use el JavaScript de la reserva: solo cambia cómo se ve. Colores oficiales: naranja volcánico #D94A26 / #C83E1A · carbón #121212 / #1E1E1E · blanco #FFFFFF.
 - **tema-admin.css** (141 líneas): VOLCANO CARS · TEMA «HIGH-TECH» DEL PANEL (tema-admin.css) Mismo estilo que la web y el taller: carbón, naranja volcánico, letra técnica y brillos suaves. Solo cambia el aspecto: ninguna ID ni clase que use el panel. Al imprimir (informes, órdenes del taller, etiquetas, finanzas, guía) todo vuelve a salir en claro.
 - **tema.css** (211 líneas): VOLCANO CARS · TEMA «HIGH-TECH» DE TODA LA WEB (tema.css) El mismo estilo del taller en toda la web pública: portada, catálogo, ficha del coche, contacto, páginas de pueblos y servicios, legales, seguimiento de la reparación, chat y avisos. Funciona sobre las variables de color que ya usaba la web (su modo oscuro, ahora siempre activo gracias a tools/tema.py): no cambia ninguna ID ni clase que use el JavaScript. Colo…
@@ -382,6 +384,7 @@ Generado con `python3 tools/indice.py` el 2026-10-04. Lo lee Claude junto a `CLA
 - **tools/jornada/jornada.js** (310 líneas): JORNADA · fichaje de ultra-baja fricción + 2FA del equipo + registro legal Fuente: tools/jornada/jornada.js (+ jornada.css) → se copia dentro de admin.html con python3 tools/jornada/inyectar.py · Equipo: tras entrar con PIN, si no está trabajando ve UN botón gigante que cambia solo (Entrada → Pausa/Salida → Reanudar). 1 toque, hora del servidor, aviso de 2 s y «Deshacer». · Cartel QR / pegatina NFC del taller: escane…
 - **tools/legal.py** (255 líneas): etiqueta «Powered by Netlify»: tapaba el aviso de cookies; la solución de fondo es apagarla en Netlify
 - **tools/pagespeed/inline-css.py** (20 líneas): (sin descripción)
+- **tools/pagespeed/inline-rendimiento.py** (50 líneas): (sin descripción)
 - **tools/pruebas/LEEME.md** (nota, 9 líneas): 
 - **tools/pruebas/e2e-ausencias-panel.py** (92 líneas): (sin descripción)
 - **tools/pruebas/e2e-ausencias.mjs** (143 líneas): PRUEBA DE «AUSENCIAS (RRHH)» DE PRINCIPIO A FIN (30-09-2026) Ejecuta las funciones reales de netlify/functions con un almacén en memoria y recorre el panel con cada puesto: Gerente (contraseña), Lestter (puesto Gerente con PIN), Calidad, Recepción y Mecánico. Uso (en el ordenador del desarrollador, con bun): bun tools/pruebas/e2e-ausencias.mjs Necesita un @netlify/blobs de pruebas en node_modules (ver tools/pruebas/L…
@@ -453,4 +456,4 @@ Generado con `python3 tools/indice.py` el 2026-10-04. Lo lee Claude junto a `CLA
 - `public/vfx/`: 72 archivos
 
 ---
-Total de líneas de código indexadas: 52375.
+Total de líneas de código indexadas: 52575.

@@ -1,0 +1,82 @@
+/* =====================================================================
+   VOLCANO CARS · RENDIMIENTO  (rendimiento.css + rendimiento.js)
+   ---------------------------------------------------------------------
+   Va copiado (inline) en las 4 páginas SPA (index, en, comprar, taller)
+   con:  python3 tools/pagespeed/inline-rendimiento.py
+   Si cambias algo aquí, vuelve a ejecutar ese script.
+
+   1. ANIMACIONES BARATAS (todos los móviles). Lo que se animaba con
+      sombras, máscaras o posición de fondo obligaba al móvil a repintar
+      la pantalla entera en cada fotograma, incluso sin tocar nada. Ahora
+      lo que no puede ir por la tarjeta gráfica se mueve a menos
+      fotogramas (steps) y todo se PAUSA cuando no se ve en pantalla.
+   2. MODO LIGERO (html.lite). Lo activa rendimiento.js solo en móviles
+      flojos (poca memoria / pocos núcleos / ahorro de datos / se nota que
+      va a tirones) o a mano con ?lite=1 (y ?lite=0 lo quita). Quita
+      animaciones decorativas, desenfoques de cristal y transiciones de
+      vista; el diseño y los colores son los mismos.
+   3. SIN SALTOS DE CONTENIDO (CLS) al cargar el catálogo.
+   ===================================================================== */
+
+/* ---------- 1. animaciones baratas ---------- */
+/* el LED y las brasas animaban box-shadow (repintado): ahora solo opacidad (va por la tarjeta gráfica) */
+@keyframes txLed { 50% { opacity: .45; } }
+@keyframes brasa { 50% { opacity: .55; } }
+/* holograma de la garantía y del sello: antes se animaba el ángulo del degradado (con máscara), que obligaba al móvil a
+   repintar y recalcular en cada fotograma. Ahora el sello GIRA entero (transform) y el aro de la garantía CAMBIA de
+   tono (filter): las dos cosas las hace la tarjeta gráfica sin molestar al procesador. */
+@keyframes txHoloAro { to { filter: hue-rotate(360deg); } }
+@keyframes txHoloSello { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: no-preference) {
+  #v-taller .garantia.tx-holo::before { animation-name: txHoloAro; }
+  #v-taller .sello::before { animation-name: txHoloSello; animation-timing-function: linear; }
+}
+/* rótulo de lava: el degradado que «fluía» (posición de fondo) se repintaba entero en cada fotograma. Se queda el degradado
+   fijo con los mismos colores; el rótulo sigue desplazándose y las brasas siguen palpitando */
+.marquee::before, .marquee::after, .mq-track span:nth-child(even) { animation: none; }
+/* carretera de la ruta: las rayas que corrían (posición de fondo) se repintaban en cada fotograma; quedan fijas y el camión sigue bajando */
+.ruta::before { animation: none; }
+/* punto «base» de la ruta: palpita con opacidad en vez de con sombra */
+@keyframes base { 50% { opacity: .6; } }
+/* el camión de la ruta se movía con «top» (obligaba a recalcular la página en cada fotograma): ahora se mueve con transform.
+   --ruta-d (lo que baja) lo calcula rendimiento.js al verse la ruta */
+@keyframes rutaT { 0%, 100% { transform: translateY(0); } 45%, 55% { transform: translateY(var(--ruta-d, 220px)); } }
+@media (prefers-reduced-motion: no-preference) { .ruta .camion { top: 4px; animation-name: rutaT; } }
+/* lo que no se ve en pantalla no se anima (lo marca rendimiento.js) */
+.vc-off, .vc-off *, .vc-off::before, .vc-off::after, .vc-off *::before, .vc-off *::after { animation-play-state: paused !important; }
+
+/* ---------- 2. modo ligero ---------- */
+html.lite { scroll-behavior: auto !important; }
+/* animaciones decorativas fuera (se quedan las funcionales: cargando… y «escribiendo…» del chat) */
+html.lite .hero::before, html.lite .vc-hero .vc-halo, html.lite .vc-hero .vc-sparks circle,
+html.lite .marquee::before, html.lite .marquee::after, html.lite .mq-track span, html.lite .mq-track span::after,
+html.lite .status.open i, html.lite .demand i, html.lite .c-live i, html.lite .vivo i, html.lite .ag-live i,
+html.lite .garantia::after, html.lite .sello-aro, html.lite .v360b svg, html.lite .gal-360::before,
+html.lite .esf-hint .hand, html.lite .ruta::before, html.lite .ruta .camion, html.lite .ruta li.base::before,
+html.lite .bot-fab::before, html.lite .ofe-head b svg, html.lite #v-taller .tx-led,
+html.lite #v-taller .garantia.tx-holo::before, html.lite #v-taller .sello::before,
+html.lite .rsv-st.ok i, html.lite .rsv-cta::after, html.lite .vfx-scan, html.lite .vfx-hud i { animation: none !important; }
+/* el rótulo sigue moviéndose (solo transform) pero sin el texto de lava con sombra, que se repinta entero */
+html.lite .mq-track span:nth-child(even) { filter: none; }
+/* adornos que solo sirven en pantallas potentes */
+html.lite #v-taller .sello::after { display: none; }
+html.lite .hs-card::before { filter: none; }
+html.lite .vfx-hud { display: none; }
+
+/* desenfoque de cristal fuera; las barras se quedan algo más opacas para que se lean igual */
+html.lite *, html.lite *::before, html.lite *::after { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+html.lite header.top { background: color-mix(in srgb, var(--ground) 96%, transparent); }
+html.lite nav.mtabs, html.lite .mtabs { background: #141415f5 !important; }
+html.lite .barra-cita { background: #121212f7; }
+html.lite .rev, html.lite .trust li { background: linear-gradient(160deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .06)); }
+html.lite dialog::backdrop, html.lite dialog.fx-dlg::backdrop, html.lite .rsv-dlg::backdrop { background: rgba(8, 9, 10, .84); -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+html.lite #v-taller .panel.tx-panel { background: linear-gradient(#222224fa, #161617fc); }
+
+/* ---------- 3. sin saltos al cargar el catálogo ---------- */
+/* hasta que llegan los coches (la página aún está leyéndose, o pone «Cargando coches…») se deja libre el hueco que luego ocupan
+   la barra de filtros y el contador (248 px en móvil, 365 px con los filtros en dos líneas, 251 px en pantallas grandes) y una
+   altura mínima para las tarjetas: así lo que se ve (cabecera, pie…) no se mueve cuando aparecen. Medido con las tarjetas reales
+   en 360-1600 px de ancho. */
+#cat-grid:is(:empty, :has(> .cargando)) { margin-top: 248px; min-height: 520px; }
+@media (min-width: 700px) and (max-width: 979px) { #cat-grid:is(:empty, :has(> .cargando)) { margin-top: 365px; } }
+@media (min-width: 980px) { #cat-grid:is(:empty, :has(> .cargando)) { margin-top: 251px; } }

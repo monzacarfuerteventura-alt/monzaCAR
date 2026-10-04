@@ -51,11 +51,15 @@
   const cont = document.getElementById("services");
   if (!sec || !cont || sec.querySelector(".vfx") || !("Promise" in window)) return;
 
-  if (!document.querySelector('link[href^="/taller-vfx.css"]')) {
+  if (!document.getElementById("vfx-css") && !document.querySelector('link[href^="/taller-vfx.css"]')) { // en las páginas SPA el CSS ya va en línea (#vfx-css): así no hay salto de contenido al cargar
     const l = document.createElement("link"); l.rel = "stylesheet"; l.href = "/taller-vfx.css"; document.head.appendChild(l);
   }
 
   const QUIETO = matchMedia("(prefers-reduced-motion: reduce)");
+  // modo ligero (rendimiento.js): móviles flojos → solo la imagen fija del servicio, sin vídeo (ni descarga ni decodificación)
+  const lite = () => document.documentElement.classList.contains("lite");
+  // los 3 vídeos «favoritos» solo se precargan en aparatos con margen (memoria y núcleos de sobra)
+  const potente = () => (navigator.deviceMemory || 4) >= 4 && (navigator.hardwareConcurrency || 8) >= 6;
   const RED = navigator.connection || {};
   const ahorro = () => !!RED.saveData || /(^|-)2g$/.test(RED.effectiveType || "");
   const buenaRed = () => !ahorro() && (!RED.effectiveType || RED.effectiveType === "4g");
@@ -140,7 +144,7 @@
     v.pause(); v.removeAttribute("src"); v.load();
     v.poster = urlPoster(k, o);
     cruzar(v);
-    if (QUIETO.matches) return; // «reducir movimiento»: solo la imagen fija
+    if (QUIETO.matches || lite()) return; // «reducir movimiento» o modo ligero: solo la imagen fija
 
     // 2) en cuanto está el vídeo (en memoria suele ser inmediato), empieza a moverse
     enUso = k + "-" + o + "." + EXT;
@@ -184,12 +188,12 @@
   /* ---------------- precarga por intención ---------------- */
   const kDe = (e) => { const l = e.target.closest && e.target.closest(".svc"); const i = l && l.querySelector("input[data-k]"); return i ? i.dataset.k : null; };
   // el dedo toca la tarjeta ~100-200 ms antes del clic: se aprovecha para empezar a descargar
-  cont.addEventListener("pointerdown", (e) => { const k = kDe(e); if (k) { prePoster(k); if (!QUIETO.matches) traer(k); } }, { passive: true });
+  cont.addEventListener("pointerdown", (e) => { const k = kDe(e); if (k) { prePoster(k); if (!QUIETO.matches && !lite()) traer(k); } }, { passive: true });
   let tHover = 0;
   cont.addEventListener("pointerover", (e) => {
     if (e.pointerType !== "mouse") return;
     const k = kDe(e); if (!k) return;
-    clearTimeout(tHover); tHover = setTimeout(() => { prePoster(k); if (!QUIETO.matches && !ahorro()) traer(k); }, 90);
+    clearTimeout(tHover); tHover = setTimeout(() => { prePoster(k); if (!QUIETO.matches && !ahorro() && !lite()) traer(k); }, 90);
   });
   cont.addEventListener("focusin", (e) => { const k = kDe(e); if (k) prePoster(k); });
 
@@ -199,9 +203,9 @@
   function precargar() {
     if (precargado) return; precargado = true;
     ocioso(() => {
-      if (ahorro()) return;
+      if (ahorro() || lite()) return; // modo ligero: los pósters se piden al tocar cada servicio, no todos de golpe
       cont.querySelectorAll("input[data-k]").forEach((i) => prePoster(i.dataset.k));
-      if (QUIETO.matches || !buenaRed()) return;
+      if (QUIETO.matches || !buenaRed() || !potente()) return;
       // de uno en uno, para no competir con lo que el cliente está haciendo
       VFX.favoritos.reduce((p, k) => p.then(() => new Promise((ok) => ocioso(() => traer(k).then(ok, ok)))), Promise.resolve());
     }, { timeout: 2500 });
