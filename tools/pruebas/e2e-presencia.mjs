@@ -76,10 +76,11 @@ esperar("fija la nave con ±8 m y radio 150 m", r.status === 200 && r.data.nave 
 r = await llamar("POST", "/api/jornada/nave", G, { accion: "radio", radio: 10 });
 esperar("el radio no baja de 40 m", r.status === 200 && r.data.nave.radio === 40, est(r));
 r = await llamar("POST", "/api/jornada/nave", G, { accion: "radio", radio: 99999 });
-esperar("el radio no pasa de 500 m", r.status === 200 && r.data.nave.radio === 500, est(r));
+esperar("el radio no pasa de 200 m (actualización 45)", r.status === 200 && r.data.nave.radio === 200, est(r));
 r = await llamar("POST", "/api/jornada/nave", G, { accion: "radio", radio: 150 });
 esperar("radio 150 m", r.status === 200 && r.data.nave.radio === 150, est(r));
 
+r = await llamar("POST", "/api/jornada/nave", G, { accion: "radio", radio: 150 });
 console.log("\n4) Intentos de trampa (todos deben ser rechazados)");
 const intento = async (nombre, body, codigo, usuario = "pedro") => {
   const x = await llamar("POST", "/api/jornada/fichar", T[usuario], body);
@@ -96,11 +97,19 @@ let x = await intento("a 500 m de la nave", { accion: "entrada", pos: aqui(0.004
 esperar("   …y el mensaje dice la distancia real que ha calculado el servidor", /Estás a 5[0-9]{2} m del taller/.test(x.data.error), x.data.error);
 await intento("a 5 km (en casa)", { accion: "entrada", pos: aqui(0.045) }, "fuera");
 await intento("GPS muy impreciso (±250 m) aunque «esté» en la nave", { accion: "entrada", pos: aqui(0, 250) }, "imprecisa");
+await intento("GPS de ±60 m (más de 50 m de error) aunque esté en la nave", { accion: "entrada", pos: aqui(0, 60) }, "imprecisa");
+x = await intento("cerca (119 m) pero con ±40 m de error: el círculo de error se sale del radio (119+40 > 150)", { accion: "entrada", pos: aqui(0.00098, 40) }, "imprecisa");
+esperar("   …y el mensaje explica que no puede confirmar que esté DENTRO", /DENTRO de la nave/.test(x.data.error), x.data.error);
+await intento("ubicación de hace 60 s (lectura antigua)", { accion: "entrada", pos: { ...aqui(0.0001, 10), edad: 60000 } }, "antigua");
 x = await llamar("POST", "/api/jornada/fichar", T.pedro, { qr: "ABCDEFGHIJKLMN", pos: aqui() });
 esperar("QR falso aunque esté en la nave (400)", x.status === 400, est(x));
 x = await llamar("GET", "/api/jornada/yo", T.pedro);
 esperar("tras todos esos intentos, Pedro sigue FUERA (no se ha registrado nada)", x.data.estado === "fuera", est(x));
 
+x = await llamar("POST", "/api/jornada/fichar", T.luis, { accion: "entrada", pos: { lat: LAT + 0.00098, lng: LNG + 0.00049, acc: 25, edad: 3000 } });
+esperar("justo dentro: 119 m + ±25 m = 144 m ≤ 150 m y lectura de hace 3 s → SÍ ficha", x.status === 200, est(x));
+x = await llamar("POST", "/api/jornada/deshacer", T.luis, {});
+esperar("   (se deshace ese fichaje para seguir con la prueba)", x.status === 200, est(x));
 console.log("\n5) Fichar de verdad en la nave");
 x = await llamar("POST", "/api/jornada/fichar", T.pedro, { accion: "entrada", pos: aqui(0.0001, 12), did: DID_A });
 esperar("Pedro ficha la entrada a ~14 m", x.status === 200 && x.data.ok, est(x));
@@ -153,6 +162,19 @@ esperar("   …y anota los rechazos, los fichajes con prueba y los cambios de la
 r = await llamar("GET", "/api/jornada/nave", T.pedro);
 esperar("un mecánico no puede ver la configuración de la nave (403)", r.status === 403, est(r));
 
+console.log("\n8b) «Comprobar dónde estoy» (diagnóstico del gerente, sin fichar)");
+r = await llamar("POST", "/api/jornada/nave", G, { accion: "probar", pos: aqui(0.0001, 10) });
+esperar("dentro: dice DENTRO y la distancia", r.status === 200 && r.data.dentro === true && /DENTRO/.test(r.data.texto), est(r) + " " + (r.data && r.data.texto));
+r = await llamar("POST", "/api/jornada/nave", G, { accion: "probar", pos: aqui(0.0045, 10) });
+esperar("a ~547 m: dice FUERA", r.status === 200 && r.data.dentro === false && /FUERA/.test(r.data.texto), r.data && r.data.texto);
+r = await llamar("POST", "/api/jornada/nave", G, { accion: "probar", pos: aqui(0, 70) });
+esperar("±70 m de error: dice GPS impreciso", r.status === 200 && r.data.dentro === false && /impreciso/.test(r.data.texto), r.data && r.data.texto);
+r = await llamar("POST", "/api/jornada/nave", G, { accion: "probar" });
+esperar("sin ubicación: lo explica", r.status === 200 && r.data.dentro === false && /No he recibido/.test(r.data.texto), r.data && r.data.texto);
+r = await llamar("POST", "/api/jornada/nave", T.pedro, { accion: "probar", pos: aqui() });
+esperar("un mecánico NO puede usar el diagnóstico (403)", r.status === 403, est(r));
+lb = await llamar("GET", "/api/jornada/libro", G);
+esperar("el diagnóstico no anota nada en el libro", !lb.data.entradas.some((e) => e.accion === "nave-probar"), "");
 console.log("\n9) Desactivar y volver a activar");
 r = await llamar("POST", "/api/jornada/nave", G, { accion: "activar", si: false });
 esperar("el gerente desactiva", r.status === 200 && r.data.nave.activa === false, est(r));

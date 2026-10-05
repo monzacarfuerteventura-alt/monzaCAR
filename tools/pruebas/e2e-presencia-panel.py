@@ -40,8 +40,11 @@ with sync_playwright() as p:
     page.screenshot(path=str(OUT / "1-gerente-sin-activar.png"), full_page=True)
     page.click("[data-jgnave=fijar]"); page.wait_for_function("document.querySelector('#jg .jg-nave')?.innerText.includes('Activa')", timeout=10000)
     txt = page.inner_text("#jg .jg-nave")
-    check("tras «Fijar la nave aquí» queda Activa con radio 150 m", "Activa" in txt and "150 m" in txt, txt[:260])
+    check("tras «Fijar la nave aquí» queda Activa con radio 80 m (nuevo valor por defecto)", "Activa" in txt and "80 m" in txt, txt[:260])
     page.screenshot(path=str(OUT / "2-gerente-activa.png"), full_page=True)
+    page.click("[data-jgnave=probar]"); page.wait_for_selector("#jg .jg-nave .msg", timeout=20000)
+    m = page.inner_text("#jg .jg-nave .msg")
+    check("«Comprobar dónde estoy» en la nave dice DENTRO y la distancia", "DENTRO" in m and "Radio permitido: 80 m" in m, m)
     page.click("#logout")
 
     print("\n2) Pedro intenta fichar desde casa (GPS a ~5 km)")

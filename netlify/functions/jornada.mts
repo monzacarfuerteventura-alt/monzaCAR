@@ -4,7 +4,7 @@ import { quien, leerEquipo, hoyCanarias } from "../lib/taller.mts";
 import { leerLibro, anotar } from "../lib/libro.mts";
 import { leerCostes, guardarCostes, tarifaEn, costeMin, conCoste } from "../lib/costes.mts";
 import { registrar, pais, huella, listaConfianza, olvidarConfianza, quitar2FAEquipo, totpEquipo, exige2FAEquipo, fijarExige2FAEquipo, leerRegistro } from "../lib/seguridad.mts";
-import { leerNave, guardarNave, evaluar, memorizar, anotarRechazo, leerRechazos, leerPos, clampRadio, naveVista, ACC_FIJAR, RADIO_DEF, type Prueba } from "../lib/presencia.mts";
+import { leerNave, guardarNave, evaluar, memorizar, anotarRechazo, leerRechazos, leerPos, clampRadio, naveVista, diagnostico, ACC_FIJAR, RADIO_DEF, type Prueba } from "../lib/presencia.mts";
 import { jstore, fichar, deshacer, corregir, resumenYo, leerEstado, efectivo, olvidada, leerDia, calcDia, type Dia, type Accion } from "../lib/jornada.mts";
 
 /*
@@ -156,6 +156,7 @@ export default async (req: Request, context: Context) => {
       return guardar({ lat: pos.lat, lng: pos.lng, radio: clampRadio(body.radio ?? n0?.radio ?? RADIO_DEF), activa: true, precision: pos.acc, fijada: ahora, por: q.nombre, redes: n0?.redes || [] }, "fijada", { lat: +pos.lat.toFixed(5), lng: +pos.lng.toFixed(5), precision: Math.round(pos.acc) });
     }
     if (!n0) return json({ error: "Primero fija la ubicación de la nave (estando allí)." }, 400);
+    if (body.accion === "probar") return json({ ...diagnostico(body.pos, n0), nave: naveVista(n0), rechazos: await leerRechazos(14) });
     if (body.accion === "radio") return guardar({ ...n0, radio: clampRadio(body.radio) }, "radio");
     if (body.accion === "activar") return guardar({ ...n0, activa: !!body.si }, body.si ? "activada" : "desactivada");
     if (body.accion === "red") { // la WiFi del taller (la conexión desde la que está entrando el gerente ahora mismo)

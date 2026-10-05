@@ -1661,7 +1661,7 @@ html body.modo-equipo #tabs #tab-ayuda{display:inline-flex!important}
 .jg-live{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
 .jg-col{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;display:grid;gap:8px;align-content:start}
 .jg-col h3{margin:0;font-size:16px;display:flex;justify-content:space-between}
-.jg-nave a,.jg-ok a{color:var(--accent)}.jg-ok{color:var(--ok);font-weight:700}.jg-warn{color:var(--bad);font-weight:700}.jg-nv{color:var(--muted)}
+.jg-nave a,.jg-ok a{color:var(--accent)}.msg.jg-okm{background:var(--ok-soft);color:var(--ok)}.jg-ok{color:var(--ok);font-weight:700}.jg-warn{color:var(--bad);font-weight:700}.jg-nv{color:var(--muted)}
 .chip.jg-okc{background:var(--ok-soft);color:var(--ok)}.jg-nave .quick{align-items:center}.jg-rad{display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--muted)}.jg-rad .in{width:auto;min-height:36px;padding:4px 8px}
 .jg-h4{margin:14px 0 6px;font-size:14px}.j-priv{margin:10px 0 0;font-size:12.5px}.j-chk{background:var(--surface-2);margin:0 0 10px}
 .jg-p{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:9px 10px;border-radius:12px;background:var(--surface-2)}
@@ -7541,7 +7541,7 @@ function ayPdf(){
    · Gerente: pestaña «Jornada» con la plantilla en vivo, horas del mes, correcciones con motivo,
      Excel (.xlsx), PDF para firmar, accesos y dispositivos de confianza.
    ===================================================================== */
-let J_QRSEL="", J=null, J_SKEW=0, J_TAB="ordenes", J_MIAS=null, J_QR="", J_BUSY=false, J_CHK=false, J_NAVE=null, J_MES=hoyC().slice(0,7), J_PL=null, J_REG=null, J_UID="", J_ACC=null;
+let J_QRSEL="", J=null, J_SKEW=0, J_TAB="ordenes", J_MIAS=null, J_QR="", J_BUSY=false, J_CHK=false, J_NAVE=null, J_PROBA=null, J_MES=hoyC().slice(0,7), J_PL=null, J_REG=null, J_UID="", J_ACC=null;
 const J_TXT={entrada:"Entrada",pausa:"Pausa",reanudar:"Vuelta de la pausa",salida:"Salida",anulacion:"Anulado"};
 const J_VIA={boton:"Botón",qr:"QR del taller",nfc:"NFC",correccion:"Corrección del gerente"};
 const jAhora=()=>Date.now()+J_SKEW;
@@ -7591,7 +7591,13 @@ setInterval(()=>{ const r=$("#j-reloj"); if(r&&!$("#s-fichar").hidden){ r.textCo
 /* ---------- antitrampa: ubicación en el momento de fichar (el servidor calcula la distancia a la nave) ---------- */
 function jDid(){ let d=""; try{ d=localStorage.getItem("vc_did")||""; if(!/^[A-Za-z0-9_-]{16,40}$/.test(d)){ d=[...crypto.getRandomValues(new Uint8Array(20))].map(x=>"abcdefghijkmnpqrstuvwxyz23456789"[x%32]).join(""); localStorage.setItem("vc_did",d); } }catch(_){ } return d; }
 function jPos(){ return new Promise(ok=>{ if(!navigator.geolocation) return ok({error:"no"});
-  navigator.geolocation.getCurrentPosition(p=>ok({lat:p.coords.latitude,lng:p.coords.longitude,acc:p.coords.accuracy}),e=>ok({error:e&&e.code===1?"denegado":"no"}),{enableHighAccuracy:true,timeout:15000,maximumAge:0}); }); }
+  let mejor=null, fin=false, err="", id=null, tm=null;
+  const cerrar=()=>{ if(fin) return; fin=true; clearTimeout(tm); try{ navigator.geolocation.clearWatch(id); }catch(_){ }
+    ok(mejor?{lat:mejor.coords.latitude,lng:mejor.coords.longitude,acc:mejor.coords.accuracy,edad:Math.max(0,Date.now()-mejor.timestamp)}:{error:err||"no"}); };
+  tm=setTimeout(cerrar,12000);
+  // Se escucha el GPS hasta ~12 s y se queda con la lectura MÁS PRECISA (ignora las de hace más de 15 s): la primera lectura de un GPS en frío puede estar a cientos de metros
+  id=navigator.geolocation.watchPosition(p=>{ if(Date.now()-p.timestamp>15000) return; if(!mejor||p.coords.accuracy<mejor.coords.accuracy) mejor=p; if(mejor.coords.accuracy<=15) cerrar(); },
+    e=>{ err=e&&e.code===1?"denegado":"no"; if(e&&e.code===1) cerrar(); }, {enableHighAccuracy:true,timeout:12000,maximumAge:0}); }); }
 async function jFichar(acc,extra={}){
   if(J_BUSY) return; J_BUSY=true; J_CHK=true; jPintar();
   try{
@@ -7759,26 +7765,31 @@ function jgPrueba(x){ if(x.via==="correccion"||x.tipo==="anulacion") return "";
   return `<br><small class="jg-ok">✓ En la nave · a ${p.d} m (±${p.a} m)${p.red?" · WiFi del taller":""} · <a href="${esc(jgMapa(p.lat,p.lng))}" target="_blank" rel="noopener noreferrer">ver en el mapa</a></small>${al.map(a=>`<br><small class="jg-warn">⚠ ${esc(J_AL[a]||a)}</small>`).join("")}`; }
 function jgNaveCard(){ const N=J_NAVE; if(!N) return "";
   if(N.error) return `<section class="card"><h3>Antitrampa del fichaje</h3><div class="msg bad">${esc(N.error)}</div></section>`;
-  const n=N.nave, rz=N.rechazos||[], MOT={fuera:r=>`a ${r.d>=1000?(r.d/1000).toFixed(1).replace(".",",")+" km":r.d+" m"} de la nave`,imprecisa:r=>`ubicación imprecisa (±${r.a} m)`,"sin-ubicacion":()=>"sin ubicación (GPS apagado o sin permiso)"};
-  const radios=[50,100,150,200,300,500]; if(n&&!radios.includes(n.radio)) radios.push(n.radio); radios.sort((a,b)=>a-b);
+  const n=N.nave, rz=N.rechazos||[], MOT={antigua:()=>"ubicación antigua",fuera:r=>`a ${r.d>=1000?(r.d/1000).toFixed(1).replace(".",",")+" km":r.d+" m"} de la nave`,imprecisa:r=>`ubicación imprecisa (±${r.a} m)`,"sin-ubicacion":()=>"sin ubicación (GPS apagado o sin permiso)"};
+  const radios=[40,60,80,100,150,200]; if(n&&!radios.includes(n.radio)) radios.push(n.radio); radios.sort((a,b)=>a-b);
   const estado=!n?'<span class="chip rojo">NO activa</span>':n.activa?'<span class="chip jg-okc">Activa</span>':'<span class="chip rojo">Desactivada</span>';
   return `<section class="card jg-nave"><h3>Antitrampa del fichaje ${estado}</h3>
     ${!n?'<div class="msg bad">Ahora mismo cualquiera con usuario y PIN puede fichar desde casa. <b>Para activarla:</b> ve a la nave, abre este panel desde tu móvil y pulsa «Fijar la nave aquí».</div>'
       :`<p class="hint">${n.activa?"Solo se puede fichar estando en la nave.":"<b>Desactivada: ahora se puede fichar desde cualquier sitio.</b>"} Nave fijada el ${esc(fechaHora(n.fijada))} por ${esc(n.por)} (GPS ±${n.precision} m) · radio ${n.radio} m · ${n.redes?n.redes+" WiFi del taller guardada"+(n.redes>1?"s":""):"sin WiFi del taller guardada"} · <a href="${esc(jgMapa(n.lat,n.lng))}" target="_blank" rel="noopener noreferrer">ver en el mapa</a></p>`}
     <div class="quick"><button type="button" class="btn b-brand b-sm" data-jgnave="fijar">📍 ${n?"Volver a fijar":"Fijar"} la nave aquí</button>
-      <label class="jg-rad">Radio <select class="in" id="jg-nave-radio" aria-label="Radio permitido alrededor de la nave">${radios.map(r=>`<option value="${r}" ${n&&r===n.radio||!n&&r===150?"selected":""}>${r} m</option>`).join("")}</select></label>
-      ${n?`<button type="button" class="btn b-ghost b-sm" data-jgnave="red">📶 Guardar la WiFi del taller</button>${n.redes?'<button type="button" class="btn b-ghost b-sm" data-jgnave="quitar-redes">Quitar WiFi</button>':""}<button type="button" class="btn ${n.activa?"b-bad":"b-acc"} b-sm" data-jgnave="${n.activa?"desactivar":"activar"}">${n.activa?"Desactivar":"Activar"}</button>`:""}</div>
+      <label class="jg-rad">Radio <select class="in" id="jg-nave-radio" aria-label="Radio permitido alrededor de la nave">${radios.map(r=>`<option value="${r}" ${n&&r===n.radio||!n&&r===80?"selected":""}>${r} m</option>`).join("")}</select></label>
+      ${n?`<button type="button" class="btn b-ghost b-sm" data-jgnave="probar">🧪 Comprobar dónde estoy</button><button type="button" class="btn b-ghost b-sm" data-jgnave="red">📶 Guardar la WiFi del taller</button>${n.redes?'<button type="button" class="btn b-ghost b-sm" data-jgnave="quitar-redes">Quitar WiFi</button>':""}<button type="button" class="btn ${n.activa?"b-bad":"b-acc"} b-sm" data-jgnave="${n.activa?"desactivar":"activar"}">${n.activa?"Desactivar":"Activar"}</button>`:""}</div>
+    ${J_PROBA?`<div class="msg ${J_PROBA.dentro?"jg-okm":"bad"}" role="status">${esc(J_PROBA.texto)}</div>`:""}
+    <p class="hint">«Comprobar dónde estoy» aplica las mismas reglas que al fichar, pero sin fichar ni anotar nada. Regla: el GPS tiene que dar ±50 m o mejor y el círculo de error entero tiene que caber dentro del radio.</p>
     <p class="hint">«Guardar la WiFi del taller» marca como «WiFi del taller» a quien fiche desde esa conexión (hazlo conectado a la WiFi de la nave). No bloquea a nadie que fiche con datos móviles; sirve de prueba extra.</p>
     <h4 class="jg-h4">Intentos bloqueados (14 días) <span class="num">${rz.length}</span></h4>
     ${rz.map(r=>`<div class="jg-row"><span><b>${esc(r.nombre)}</b><small>${esc(fechaHora(r.t))} · ${esc((MOT[r.codigo]||(()=>r.codigo))(r))}</small></span></div>`).join("")||'<p class="hint">Nadie ha intentado fichar fuera de la nave.</p>'}
   </section>`; }
 document.addEventListener("click",async e=>{ const b=e.target.closest("[data-jgnave]"); if(!b) return; const a=b.dataset.jgnave;
-  const post=async body=>{ const r=await api("/api/jornada/nave",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)}); J_NAVE=r; jgPintar(); return r; };
+  const post=async body=>{ const r=await api("/api/jornada/nave",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)}); J_NAVE=r; J_PROBA=null; jgPintar(); return r; };
   try{
     if(a==="fijar"){ if(J_NAVE&&J_NAVE.nave&&!confirm("Ya hay una nave fijada. ¿Cambiarla por tu posición actual? Hazlo solo si estás de pie en la nave.")) return;
       b.disabled=true; toast("Buscando tu ubicación…"); const p=await jPos();
       if(p.error){ b.disabled=false; toast(p.error==="denegado"?"Permite «Ubicación» para este sitio en el móvil y vuelve a pulsar":"No he podido obtener tu ubicación: activa el GPS"); return; }
       const sel=$("#jg-nave-radio"); await post({accion:"fijar",pos:p,radio:sel?+sel.value:undefined}); toast("Nave fijada: el fichaje ya solo funciona estando aquí"); }
+    else if(a==="probar"){ b.disabled=true; J_PROBA=null; toast("Midiendo tu ubicación (hasta 12 s)…"); const p=await jPos(); b.disabled=false;
+      if(p.error){ J_PROBA={dentro:false,texto:p.error==="denegado"?"El móvil tiene bloqueada la ubicación para este sitio: permítela y vuelve a pulsar.":"No he podido obtener tu ubicación: activa el GPS."}; jgPintar(); return; }
+      const r=await api("/api/jornada/nave",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({accion:"probar",pos:p})}); J_PROBA={dentro:!!r.dentro,texto:r.texto}; J_NAVE={...J_NAVE,nave:r.nave||J_NAVE.nave,rechazos:r.rechazos||J_NAVE.rechazos}; jgPintar(); }
     else if(a==="red"){ await post({accion:"red"}); toast("WiFi del taller guardada"); }
     else if(a==="quitar-redes"){ if(!confirm("¿Quitar la WiFi del taller guardada?")) return; await post({accion:"quitar-redes"}); toast("WiFi quitada"); }
     else if(a==="desactivar"){ if(!confirm("¿Desactivar la antitrampa? Se podrá fichar desde cualquier sitio.")) return; await post({accion:"activar",si:false}); toast("Antitrampa desactivada"); }
