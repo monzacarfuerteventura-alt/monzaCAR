@@ -18,12 +18,14 @@ import { tareaAutoPausar, tareaAutoReanudar } from "./vehiculos.mts";
 import { tstore, estadoTiempo, guardarOrden, hoyCanarias, leerEquipo, type Quien, type Fichas, type Persona } from "./taller.mts";
 import { anotar } from "./libro.mts";
 import { ipCorta, huella, dispositivo } from "./seguridad.mts";
+import type { Prueba } from "./presencia.mts";
 
 export const jstore = () => store("jornada");
 export type Accion = "entrada" | "pausa" | "reanudar" | "salida";
 export type EventoJ = {
   n: number; tipo: Accion | "anulacion"; t: string; reg: string; via: string; por: string; nombre: string;
   ip?: string; h?: string; disp?: string; motivo?: string; anula?: number;
+  pos?: { r: string; d: number; a: number; lat: number; lng: number; red: boolean; alerta?: string[] }; dv?: string; // prueba de presencia en la nave (actualización 44)
 };
 export type Dia = { uid: string; fecha: string; eventos: EventoJ[]; incidencias: { t: string; txt: string }[] };
 export type EstadoJ = { estado: "fuera" | "trabajando" | "pausa"; fecha: string; desde: string; entrada: string; n: number };
@@ -130,7 +132,7 @@ export async function autoReanudar(q: Quien) {
 
 // ---------- fichar (1 petición = 1 fichaje; la hora es la del servidor) ----------
 export type Ctx = { ip: string; ua: string; via: string };
-export async function fichar(q: Quien, accion: Accion | "", ctx: Ctx) {
+export async function fichar(q: Quien, accion: Accion | "", ctx: Ctx, prueba?: Prueba) {
   const ahora = new Date().toISOString(), hoy = hoyCanarias();
   let est = await leerEstado(q.uid), olvido = "";
   if (olvidada(est)) { // jornada anterior sin salida: se deja marcada como incidencia (no se inventa ninguna hora)
@@ -147,13 +149,14 @@ export async function fichar(q: Quien, accion: Accion | "", ctx: Ctx) {
   const fecha = est.estado === "fuera" ? hoy : est.fecha;
   const d = await leerDia(q.uid, fecha);
   const ev: EventoJ = { n: d.eventos.length + 1, tipo: acc, t: ahora, reg: ahora, via: ctx.via, por: q.uid, nombre: q.nombre, ip: ipCorta(ctx.ip), h: huella(ctx.ip), disp: dispositivo(ctx.ua) };
+  if (prueba) { ev.pos = { r: prueba.r, d: prueba.d, a: prueba.a, lat: prueba.lat, lng: prueba.lng, red: prueba.red, ...(prueba.alerta ? { alerta: prueba.alerta } : {}) }; if (prueba.dv) ev.dv = prueba.dv; }
   d.eventos.push(ev);
   const nuevo: EstadoJ = acc === "salida" ? { ...FUERA, fecha, n: ev.n, desde: ahora } : { estado: acc === "pausa" ? "pausa" : "trabajando", fecha, desde: ahora, entrada: acc === "entrada" ? ahora : est.entrada, n: ev.n };
   await Promise.all([guardarDia(d), jstore().setJSON("estado/" + q.uid, nuevo)]);
   // Lo que no hace falta para contestar va en paralelo y no retrasa el «fichado»
   const [orden] = await Promise.all([
     (acc === "pausa" || acc === "salida" ? autoPausar(q, acc === "salida") : autoReanudar(q)).catch(() => ""),
-    anotar("jornada", q, "fichaje", { uid: q.uid, fecha, n: ev.n, tipo: acc, t: ahora, via: ctx.via }).catch(() => null),
+    anotar("jornada", q, "fichaje", { uid: q.uid, fecha, n: ev.n, tipo: acc, t: ahora, via: ctx.via, ...(prueba ? { nave: prueba.d, precision: prueba.a, red: prueba.red, ...(prueba.alerta ? { alerta: prueba.alerta } : {}) } : {}) }).catch(() => null),
   ]);
   return { ok: true, accion: acc, t: ahora, estado: nuevo, olvido, orden };
 }

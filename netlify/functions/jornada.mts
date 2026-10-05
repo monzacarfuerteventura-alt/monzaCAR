@@ -3,7 +3,8 @@ import { json, mismoOrigen } from "../lib/shared.mts";
 import { quien, leerEquipo, hoyCanarias } from "../lib/taller.mts";
 import { leerLibro, anotar } from "../lib/libro.mts";
 import { leerCostes, guardarCostes, tarifaEn, costeMin, conCoste } from "../lib/costes.mts";
-import { registrar, pais, listaConfianza, olvidarConfianza, quitar2FAEquipo, totpEquipo, exige2FAEquipo, fijarExige2FAEquipo, leerRegistro } from "../lib/seguridad.mts";
+import { registrar, pais, huella, listaConfianza, olvidarConfianza, quitar2FAEquipo, totpEquipo, exige2FAEquipo, fijarExige2FAEquipo, leerRegistro } from "../lib/seguridad.mts";
+import { leerNave, guardarNave, evaluar, memorizar, anotarRechazo, leerRechazos, leerPos, clampRadio, naveVista, ACC_FIJAR, RADIO_DEF, type Prueba } from "../lib/presencia.mts";
 import { jstore, fichar, deshacer, corregir, resumenYo, leerEstado, efectivo, olvidada, leerDia, calcDia, type Dia, type Accion } from "../lib/jornada.mts";
 
 /*
@@ -18,6 +19,8 @@ import { jstore, fichar, deshacer, corregir, resumenYo, leerEstado, efectivo, ol
   GET  /api/jornada/libro                  → libro encadenado: ¿alguien ha tocado los datos? (gerente)
   GET/POST /api/jornada/qr                 → código del cartel QR/NFC del taller; POST lo cambia (gerente)
   GET/POST /api/jornada/acceso             → 2FA del equipo, dispositivos de confianza y accesos raros (gerente)
+  GET/POST /api/jornada/nave               → antitrampa: ubicación de la nave, radio, WiFi de la nave e intentos rechazados (gerente)
+  Antitrampa: con la nave fijada y activa, POST /fichar exige {pos:{lat,lng,acc}} y el servidor calcula la distancia; fuera del radio → 403.
 */
 const QR_RE = /^[A-Za-z0-9]{10,40}$/;
 const nuevoCodigo = () => { const abc = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789"; return [...crypto.getRandomValues(new Uint8Array(20))].map((x) => abc[x % abc.length]).join(""); };
@@ -57,8 +60,24 @@ export default async (req: Request, context: Context) => {
     } else if (body.via === "nfc") ctx.via = "nfc";
     const acc = ["entrada", "pausa", "reanudar", "salida"].includes(body.accion) ? (body.accion as Accion) : "";
     if (!acc && ctx.via === "boton") return json({ error: "Elige qué quieres fichar." }, 400);
-    const res: any = await fichar(q, acc, ctx);
+    // ANTITRAMPA: con la nave fijada y activa, solo se ficha estando en la nave (la distancia la calcula el servidor)
+    const nave = await leerNave();
+    let prueba: Prueba | undefined;
+    if (nave && nave.activa) {
+      const v = await evaluar(q, body, ctx.ip, nave);
+      if (!v.ok) {
+        await Promise.all([
+          anotar("jornada", q, "fichaje-rechazado", { codigo: v.codigo, accion: acc || "auto", via: ctx.via, d: v.d ?? null, a: v.a ?? null }).catch(() => null),
+          anotarRechazo({ t: new Date().toISOString(), uid: q.uid, nombre: q.nombre, codigo: v.codigo, accion: acc || "auto", via: ctx.via, d: v.d, a: v.a }).catch(() => null),
+          registrar("fichaje-fuera", ctx.ip, ctx.ua, pais(req, context), q.nombre + ": " + (v.codigo === "fuera" ? `a ${v.d} m de la nave` : v.codigo === "imprecisa" ? `ubicación imprecisa (±${v.a} m)` : "sin ubicación")).catch(() => null),
+        ]);
+        return json({ error: v.mensaje, codigo: v.codigo, rechazado: true, jornada: await resumenYo(yo) }, 403);
+      }
+      prueba = v.prueba;
+    }
+    const res: any = await fichar(q, acc, ctx, prueba);
     if (res.error) return json({ ...res, jornada: await resumenYo(yo) }, res.conflicto ? 409 : 400);
+    if (prueba) await memorizar(q.uid, leerPos(body.pos), prueba.dv); // para detectar coordenadas repetidas y el mismo móvil con dos personas
     return json({ ...res, jornada: await resumenYo(yo) });
   }
 
@@ -123,6 +142,31 @@ export default async (req: Request, context: Context) => {
   }
   if (r === "libro" && req.method === "GET") return json(await leerLibro("jornada", 300));
 
+  if (r === "nave") {
+    if (req.method === "GET") return json({ nave: naveVista(await leerNave()), rechazos: await leerRechazos(14) });
+    const n0 = await leerNave(), ahora = new Date().toISOString();
+    const guardar = async (n: any, que: string, extra: Record<string, unknown> = {}) => {
+      await guardarNave(n); await anotar("jornada", q, "nave-" + que, { radio: n.radio, activa: n.activa, redes: n.redes.length, ...extra }).catch(() => null);
+      return json({ ok: true, nave: naveVista(n), rechazos: await leerRechazos(14) });
+    };
+    if (body.accion === "fijar") { // el gerente, de pie en la nave: se toma esta posición como centro
+      const pos = leerPos(body.pos);
+      if (!pos) return json({ error: "No he recibido tu ubicación. Permite «Ubicación» en el móvil y vuelve a pulsar." }, 400);
+      if (pos.acc > ACC_FIJAR) return json({ error: `Ahora mismo el GPS tiene ±${Math.round(pos.acc)} m de error. Sal a la puerta de la nave, espera unos segundos y vuelve a pulsar (hace falta ±${ACC_FIJAR} m o mejor).` }, 400);
+      return guardar({ lat: pos.lat, lng: pos.lng, radio: clampRadio(body.radio ?? n0?.radio ?? RADIO_DEF), activa: true, precision: pos.acc, fijada: ahora, por: q.nombre, redes: n0?.redes || [] }, "fijada", { lat: +pos.lat.toFixed(5), lng: +pos.lng.toFixed(5), precision: Math.round(pos.acc) });
+    }
+    if (!n0) return json({ error: "Primero fija la ubicación de la nave (estando allí)." }, 400);
+    if (body.accion === "radio") return guardar({ ...n0, radio: clampRadio(body.radio) }, "radio");
+    if (body.accion === "activar") return guardar({ ...n0, activa: !!body.si }, body.si ? "activada" : "desactivada");
+    if (body.accion === "red") { // la WiFi del taller (la conexión desde la que está entrando el gerente ahora mismo)
+      if (!ctx.ip) return json({ error: "No he podido ver tu conexión." }, 400);
+      const h = huella(ctx.ip);
+      return guardar({ ...n0, redes: n0.redes.includes(h) ? n0.redes : [...n0.redes, h].slice(-5) }, "red-anadida");
+    }
+    if (body.accion === "quitar-redes") return guardar({ ...n0, redes: [] }, "redes-quitadas");
+    return json({ error: "Acción no válida" }, 400);
+  }
+
   if (r === "qr") {
     const c = await codigoQR(req.method === "POST");
     if (req.method === "POST") await registrar("qr-nuevo", ctx.ip, ctx.ua, pais(req, context), "Nuevo código QR de fichaje (el anterior deja de valer)");
@@ -135,7 +179,7 @@ export default async (req: Request, context: Context) => {
         listaConfianza(), leerRegistro(200), exige2FAEquipo(),
         Promise.all(equipo.map(async (x) => [x.id, !!(await totpEquipo(x.id))] as const)),
       ]);
-      const raros = reg.filter((e) => ["login-fallo", "2fa-fallo", "bloqueo", "inusual", "recuperacion", "qr-invalido", "trampa"].includes(e.tipo)).slice(0, 60);
+      const raros = reg.filter((e) => ["login-fallo", "2fa-fallo", "bloqueo", "inusual", "recuperacion", "qr-invalido", "trampa", "fichaje-fuera"].includes(e.tipo)).slice(0, 60);
       return json({ exige2fa: exige, totp: Object.fromEntries(conTotp), dispositivos: disp, raros });
     }
     if (body.accion === "exigir") { await fijarExige2FAEquipo(!!body.si); await registrar("2fa-equipo", ctx.ip, ctx.ua, pais(req, context), body.si ? "2FA obligatoria para el equipo" : "2FA del equipo desactivada"); return json({ ok: true }); }

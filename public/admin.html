@@ -1661,6 +1661,9 @@ html body.modo-equipo #tabs #tab-ayuda{display:inline-flex!important}
 .jg-live{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
 .jg-col{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;display:grid;gap:8px;align-content:start}
 .jg-col h3{margin:0;font-size:16px;display:flex;justify-content:space-between}
+.jg-nave a,.jg-ok a{color:var(--accent)}.jg-ok{color:var(--ok);font-weight:700}.jg-warn{color:var(--bad);font-weight:700}.jg-nv{color:var(--muted)}
+.chip.jg-okc{background:var(--ok-soft);color:var(--ok)}.jg-nave .quick{align-items:center}.jg-rad{display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--muted)}.jg-rad .in{width:auto;min-height:36px;padding:4px 8px}
+.jg-h4{margin:14px 0 6px;font-size:14px}.j-priv{margin:10px 0 0;font-size:12.5px}.j-chk{background:var(--surface-2);margin:0 0 10px}
 .jg-p{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:9px 10px;border-radius:12px;background:var(--surface-2)}
 .jg-p i{width:10px;height:10px;border-radius:50%;background:#C62D1F}
 .jg-p.trabajando i{background:#1F8B4C}
@@ -7538,7 +7541,7 @@ function ayPdf(){
    · Gerente: pestaña «Jornada» con la plantilla en vivo, horas del mes, correcciones con motivo,
      Excel (.xlsx), PDF para firmar, accesos y dispositivos de confianza.
    ===================================================================== */
-let J_QRSEL="", J=null, J_SKEW=0, J_TAB="ordenes", J_MIAS=null, J_QR="", J_BUSY=false, J_MES=hoyC().slice(0,7), J_PL=null, J_REG=null, J_UID="", J_ACC=null;
+let J_QRSEL="", J=null, J_SKEW=0, J_TAB="ordenes", J_MIAS=null, J_QR="", J_BUSY=false, J_CHK=false, J_NAVE=null, J_MES=hoyC().slice(0,7), J_PL=null, J_REG=null, J_UID="", J_ACC=null;
 const J_TXT={entrada:"Entrada",pausa:"Pausa",reanudar:"Vuelta de la pausa",salida:"Salida",anulacion:"Anulado"};
 const J_VIA={boton:"Botón",qr:"QR del taller",nfc:"NFC",correccion:"Corrección del gerente"};
 const jAhora=()=>Date.now()+J_SKEW;
@@ -7569,8 +7572,10 @@ function jPintar(msg){
       <div class="j-est ${est[0]}"><i></i><span>${est[1]}${J&&J.desde&&J.estado!=="fuera"?` desde las ${jHM(J.desde)}`:""}</span></div></div>
     ${J&&J.olvido?`<div class="msg bad j-olv">El ${esc(fecha(J.olvido))} no fichaste la salida. Ficha la entrada de hoy y avisa al gerente para que la corrija.</div>`:""}
     ${msg?`<div class="msg bad">${esc(msg)}</div>`:""}
+    ${J_CHK?'<div class="msg j-chk">📍 Comprobando que estás en la nave…</div>':""}
     <button type="button" class="j-big ${cls}" data-jacc="${p}" ${J_QRSEL?`data-jqr="${esc(J_QRSEL)}"`:""} ${J_BUSY?"disabled":""}><span class="j-ico" aria-hidden="true">${ico}</span><span>${txt}</span></button>
     ${s?`<button type="button" class="j-sec" data-jacc="${s}" ${J_QRSEL?`data-jqr="${esc(J_QRSEL)}"`:""} ${J_BUSY?"disabled":""}>${J_BTN[s][0]} ${J_BTN[s][1]}</button>`:""}
+    <p class="hint j-priv">📍 Al fichar se comprueba que estás en la nave. Solo se usa tu ubicación en ese momento: no se te sigue.</p>
     <div class="j-hoy"><div><small>Trabajado hoy</small><b class="num" id="j-trab">${jH(jTrabajadoAhora())}</b></div><div><small>Pausas</small><b class="num">${jH(J&&J.hoy?J.hoy.pausaMin:0)}</b></div><div><small>Tu jornada</small><b class="num">${jH((J&&J.jornadaH||8)*60)}</b></div></div>
     ${evs.length?`<ol class="j-evs">${evs.map(e=>`<li class="${e.tipo}"><b class="num">${jHM(e.t)}</b>${J_TXT[e.tipo]}${e.via==="qr"||e.via==="nfc"?' <small>· QR</small>':e.via==="correccion"?' <small>· corregido</small>':""}</li>`).join("")}</ol>`:""}
     <div class="j-pie">${J&&J.estado==="trabajando"?`<button type="button" class="btn b-ghost b-sm" data-jvolver>← Volver al trabajo</button>`:""}<button type="button" class="btn b-ghost b-sm" data-jmias>Mis horas del mes</button></div>
@@ -7583,10 +7588,15 @@ function jPrecargarMias(){ J_MIAS=null; api("/api/almacen/mias").then(l=>J_MIAS=
 // El reloj y el contador avanzan solos (sin pedir nada al servidor)
 setInterval(()=>{ const r=$("#j-reloj"); if(r&&!$("#s-fichar").hidden){ r.textContent=jHM(new Date(jAhora()).toISOString()); const t=$("#j-trab"); if(t) t.textContent=jH(jTrabajadoAhora()); } jChip(); },15000);
 
+/* ---------- antitrampa: ubicación en el momento de fichar (el servidor calcula la distancia a la nave) ---------- */
+function jDid(){ let d=""; try{ d=localStorage.getItem("vc_did")||""; if(!/^[A-Za-z0-9_-]{16,40}$/.test(d)){ d=[...crypto.getRandomValues(new Uint8Array(20))].map(x=>"abcdefghijkmnpqrstuvwxyz23456789"[x%32]).join(""); localStorage.setItem("vc_did",d); } }catch(_){ } return d; }
+function jPos(){ return new Promise(ok=>{ if(!navigator.geolocation) return ok({error:"no"});
+  navigator.geolocation.getCurrentPosition(p=>ok({lat:p.coords.latitude,lng:p.coords.longitude,acc:p.coords.accuracy}),e=>ok({error:e&&e.code===1?"denegado":"no"}),{enableHighAccuracy:true,timeout:15000,maximumAge:0}); }); }
 async function jFichar(acc,extra={}){
-  if(J_BUSY) return; J_BUSY=true; jPintar();
+  if(J_BUSY) return; J_BUSY=true; J_CHK=true; jPintar();
   try{
-    const r=await api("/api/jornada/fichar",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({accion:acc||undefined,...extra})});
+    const pos=await jPos(); J_CHK=false;
+    const r=await api("/api/jornada/fichar",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({accion:acc||undefined,...extra,pos:pos.error?undefined:pos,did:jDid()})});
     J_BUSY=false;
     if(r.elegir){ J_QRSEL=extra.qr||""; jRecibir(r.jornada); jAbrir(); jToast("Estás trabajando: elige pausa o salida"); return; }
     J_QRSEL="";
@@ -7598,7 +7608,7 @@ async function jFichar(acc,extra={}){
       Promise.all([api("/api/ordenes").then(o=>{ ORDENES=o; }).catch(()=>{}),typeof tCargarEquipo==="function"?tCargarEquipo():null]).then(()=>{ if(!$("#s-ordenes").hidden) renderOrdenes(); });
       abrirTab(J_TAB||"ordenes");
     } else jAbrir();
-  }catch(err){ J_BUSY=false; await jCargar(); jAbrir(err.message); }
+  }catch(err){ J_BUSY=false; J_CHK=false; await jCargar(); jAbrir(err.message); }
 }
 async function jSalida(extra){ // antes de salir: herramientas a su nombre (ya precargadas, no retrasa)
   const l=J_MIAS||[]; if(!l.length||typeof alResolverHerramientas!=="function") return jFichar("salida",extra);
@@ -7696,14 +7706,15 @@ function jTablaDias(p,ger){
 /* =====================================================================
    PESTAÑA «JORNADA» (gerente)
    ===================================================================== */
-async function jgAbrir(){ show("s-jornada"); history.replaceState(null,"","#jornada"); jgPintar(); await Promise.all([jgPlantilla(),jgRegistro()]); }
+async function jgAbrir(){ show("s-jornada"); history.replaceState(null,"","#jornada"); jgPintar(); await Promise.all([jgPlantilla(),jgRegistro(),jgNave()]); }
+async function jgNave(){ try{ J_NAVE=await api("/api/jornada/nave"); }catch(err){ J_NAVE={error:err.message}; } jgPintar(); }
 async function jgPlantilla(){ try{ J_PL=await api("/api/jornada/plantilla"); }catch(err){ J_PL={error:err.message}; } jgPintar(); }
 async function jgRegistro(){ try{ J_REG=await api(`/api/jornada/registro?mes=${J_MES}`); }catch(err){ J_REG={error:err.message}; } jgPintar(); }
 setInterval(()=>{ const s=$("#s-jornada"); if(s&&!s.hidden&&!document.hidden) jgPlantilla(); },30000);
 function jgPintar(){
   const box=$("#jg"); if(!box) return;
   const ps=J_PL&&J_PL.personas||[], g=k=>ps.filter(p=>p.estado===k);
-  const card=p=>`<div class="jg-p ${p.estado}"><i></i><div><b>${esc(p.nombre)}</b><small>${p.estado==="fuera"?(p.hoy.salida?`Salió a las ${jHM(p.hoy.salida)}`:"No ha fichado hoy"):`Desde las ${jHM(p.desde)}`}${p.olvido?` · <em>sin salida el ${esc(fecha(p.olvido))}</em>`:""}</small></div><span class="num">${jH(p.hoy.trabajoMin)}</span></div>`;
+  const card=p=>`<div class="jg-p ${p.estado}"><i></i><div><b>${esc(p.nombre)}</b><small>${p.estado==="fuera"?(p.hoy.salida?`Salió a las ${jHM(p.hoy.salida)}`:"No ha fichado hoy"):`Desde las ${jHM(p.desde)}`}${p.olvido?` · <em>sin salida el ${esc(fecha(p.olvido))}</em>`:""}${jgSello(p.ultimo)}</small></div><span class="num">${jH(p.hoy.trabajoMin)}</span></div>`;
   const col=(k,t,xs)=>`<section class="jg-col ${k}"><h3>${t} <span class="num">${xs.length}</span></h3>${xs.map(card).join("")||'<p class="hint">Nadie.</p>'}</section>`;
   const reg=J_REG&&J_REG.personas||[], sel=J_UID?reg.filter(p=>p.uid===J_UID):reg;
   const inc=reg.flatMap(p=>p.dias.filter(d=>d.incidencias.length).map(d=>({p,d})));
@@ -7717,6 +7728,7 @@ function jgPintar(){
         ${reg.map(p=>`<tr><td><b>${esc(p.nombre)}</b><small> · ${String(p.jornadaH).replace(".",",")} h/día</small></td><td class="n num">${p.total.diasTrabajados}</td><td class="n num"><b>${jH(p.total.trabajoMin)}</b></td><td class="n num">${jH(p.total.ordinariasMin)}</td><td class="n num">${p.total.extraMin?jH(p.total.extraMin):"—"}</td><td class="n num">${jH(p.total.pausaMin)}</td><td class="n num">${p.total.incidencias||""}</td><td><button type="button" class="chipb" data-jguid="${esc(p.uid)}">Ver días</button></td></tr>`).join("")||'<tr><td colspan="8" class="hint">Sin fichajes este mes.</td></tr>'}</tbody></table></div>`}
       <p class="hint">Horas extra = lo trabajado por encima de la jornada diaria de cada persona (Taller → Equipo y ajustes). La hora de cada fichaje la pone el servidor. Nada se borra: las correcciones quedan con su motivo.</p></section>
     ${inc.length?`<section class="card"><h3>Incidencias del mes <span class="chip rojo">${inc.length}</span></h3>${inc.map(({p,d})=>`<button type="button" class="t-al ambar" data-jgdia="${esc(p.uid)}|${esc(d.fecha)}">${esc(p.nombre)} · ${esc(fecha(d.fecha))}: ${esc(d.incidencias.join(", "))}</button>`).join("")}</section>`:""}
+    ${jgNaveCard()}
     <div class="jg-dos">
       <section class="card"><h3>Cartel QR / NFC del taller</h3><p class="hint">Pégalo en la entrada del taller. Cada trabajador lo escanea con su móvil (ya de confianza) y ficha en 1 segundo: entrada o vuelta de la pausa directas; si está trabajando, elige pausa o salida.</p>
         <div class="quick"><button type="button" class="btn b-brand b-sm" data-jgqr>Ver e imprimir el cartel</button><button type="button" class="btn b-ghost b-sm" data-jgqrnuevo>Cambiar el código</button></div></section>
@@ -7736,13 +7748,52 @@ document.addEventListener("click",async e=>{ const t=e.target;
 });
 document.addEventListener("change",e=>{ if(e.target.id==="jg-uid"){ J_UID=e.target.value; jgPintar(); } });
 
+/* ---------- antitrampa del fichaje: la nave, la WiFi y los intentos rechazados ---------- */
+const J_AL={"posicion-repetida":"coordenadas idénticas a otro fichaje (posible ubicación falsa)","mismo-movil":"mismo móvil que otro compañero hoy (¿ficha por otro?)"};
+const jgMapa=(lat,lng)=>`https://www.google.com/maps?q=${lat},${lng}`;
+function jgSello(ev){ if(!ev||!ev.pos) return ""; const al=ev.pos.alerta||[];
+  return al.length?` · <em class="jg-warn" title="${esc(al.map(a=>J_AL[a]||a).join("; "))}">⚠ revisar</em>`:` · <span class="jg-ok">✓ en la nave</span>`; }
+function jgPrueba(x){ if(x.via==="correccion"||x.tipo==="anulacion") return "";
+  const p=x.pos; if(!p) return '<br><small class="jg-nv">Sin verificar (no hay prueba de ubicación)</small>';
+  const al=p.alerta||[];
+  return `<br><small class="jg-ok">✓ En la nave · a ${p.d} m (±${p.a} m)${p.red?" · WiFi del taller":""} · <a href="${esc(jgMapa(p.lat,p.lng))}" target="_blank" rel="noopener noreferrer">ver en el mapa</a></small>${al.map(a=>`<br><small class="jg-warn">⚠ ${esc(J_AL[a]||a)}</small>`).join("")}`; }
+function jgNaveCard(){ const N=J_NAVE; if(!N) return "";
+  if(N.error) return `<section class="card"><h3>Antitrampa del fichaje</h3><div class="msg bad">${esc(N.error)}</div></section>`;
+  const n=N.nave, rz=N.rechazos||[], MOT={fuera:r=>`a ${r.d>=1000?(r.d/1000).toFixed(1).replace(".",",")+" km":r.d+" m"} de la nave`,imprecisa:r=>`ubicación imprecisa (±${r.a} m)`,"sin-ubicacion":()=>"sin ubicación (GPS apagado o sin permiso)"};
+  const radios=[50,100,150,200,300,500]; if(n&&!radios.includes(n.radio)) radios.push(n.radio); radios.sort((a,b)=>a-b);
+  const estado=!n?'<span class="chip rojo">NO activa</span>':n.activa?'<span class="chip jg-okc">Activa</span>':'<span class="chip rojo">Desactivada</span>';
+  return `<section class="card jg-nave"><h3>Antitrampa del fichaje ${estado}</h3>
+    ${!n?'<div class="msg bad">Ahora mismo cualquiera con usuario y PIN puede fichar desde casa. <b>Para activarla:</b> ve a la nave, abre este panel desde tu móvil y pulsa «Fijar la nave aquí».</div>'
+      :`<p class="hint">${n.activa?"Solo se puede fichar estando en la nave.":"<b>Desactivada: ahora se puede fichar desde cualquier sitio.</b>"} Nave fijada el ${esc(fechaHora(n.fijada))} por ${esc(n.por)} (GPS ±${n.precision} m) · radio ${n.radio} m · ${n.redes?n.redes+" WiFi del taller guardada"+(n.redes>1?"s":""):"sin WiFi del taller guardada"} · <a href="${esc(jgMapa(n.lat,n.lng))}" target="_blank" rel="noopener noreferrer">ver en el mapa</a></p>`}
+    <div class="quick"><button type="button" class="btn b-brand b-sm" data-jgnave="fijar">📍 ${n?"Volver a fijar":"Fijar"} la nave aquí</button>
+      <label class="jg-rad">Radio <select class="in" id="jg-nave-radio" aria-label="Radio permitido alrededor de la nave">${radios.map(r=>`<option value="${r}" ${n&&r===n.radio||!n&&r===150?"selected":""}>${r} m</option>`).join("")}</select></label>
+      ${n?`<button type="button" class="btn b-ghost b-sm" data-jgnave="red">📶 Guardar la WiFi del taller</button>${n.redes?'<button type="button" class="btn b-ghost b-sm" data-jgnave="quitar-redes">Quitar WiFi</button>':""}<button type="button" class="btn ${n.activa?"b-bad":"b-acc"} b-sm" data-jgnave="${n.activa?"desactivar":"activar"}">${n.activa?"Desactivar":"Activar"}</button>`:""}</div>
+    <p class="hint">«Guardar la WiFi del taller» marca como «WiFi del taller» a quien fiche desde esa conexión (hazlo conectado a la WiFi de la nave). No bloquea a nadie que fiche con datos móviles; sirve de prueba extra.</p>
+    <h4 class="jg-h4">Intentos bloqueados (14 días) <span class="num">${rz.length}</span></h4>
+    ${rz.map(r=>`<div class="jg-row"><span><b>${esc(r.nombre)}</b><small>${esc(fechaHora(r.t))} · ${esc((MOT[r.codigo]||(()=>r.codigo))(r))}</small></span></div>`).join("")||'<p class="hint">Nadie ha intentado fichar fuera de la nave.</p>'}
+  </section>`; }
+document.addEventListener("click",async e=>{ const b=e.target.closest("[data-jgnave]"); if(!b) return; const a=b.dataset.jgnave;
+  const post=async body=>{ const r=await api("/api/jornada/nave",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)}); J_NAVE=r; jgPintar(); return r; };
+  try{
+    if(a==="fijar"){ if(J_NAVE&&J_NAVE.nave&&!confirm("Ya hay una nave fijada. ¿Cambiarla por tu posición actual? Hazlo solo si estás de pie en la nave.")) return;
+      b.disabled=true; toast("Buscando tu ubicación…"); const p=await jPos();
+      if(p.error){ b.disabled=false; toast(p.error==="denegado"?"Permite «Ubicación» para este sitio en el móvil y vuelve a pulsar":"No he podido obtener tu ubicación: activa el GPS"); return; }
+      const sel=$("#jg-nave-radio"); await post({accion:"fijar",pos:p,radio:sel?+sel.value:undefined}); toast("Nave fijada: el fichaje ya solo funciona estando aquí"); }
+    else if(a==="red"){ await post({accion:"red"}); toast("WiFi del taller guardada"); }
+    else if(a==="quitar-redes"){ if(!confirm("¿Quitar la WiFi del taller guardada?")) return; await post({accion:"quitar-redes"}); toast("WiFi quitada"); }
+    else if(a==="desactivar"){ if(!confirm("¿Desactivar la antitrampa? Se podrá fichar desde cualquier sitio.")) return; await post({accion:"activar",si:false}); toast("Antitrampa desactivada"); }
+    else if(a==="activar"){ await post({accion:"activar",si:true}); toast("Antitrampa activada"); }
+  }catch(err){ toast(err.message); jgPintar(); } });
+document.addEventListener("change",async e=>{ if(e.target.id!=="jg-nave-radio"||!(J_NAVE&&J_NAVE.nave)) return;
+  try{ J_NAVE=await api("/api/jornada/nave",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({accion:"radio",radio:+e.target.value})}); jgPintar(); toast("Radio cambiado a "+e.target.value+" m"); }catch(err){ toast(err.message); } });
+
 /* ---------- ver y corregir un día ---------- */
 async function jgDia(uid,f){
   let d=$("#dlg-jdia"); if(!d){ d=document.createElement("dialog"); d.id="dlg-jdia"; d.className="t-dlg fn-dlg"; document.body.appendChild(d); }
   d.innerHTML='<div class="t-dlg-in"><p class="hint">Cargando…</p></div>'; d.showModal();
   const pint=r=>{ const anul=new Set(r.dia.eventos.filter(x=>x.tipo==="anulacion").map(x=>x.anula)), nom=(J_REG&&J_REG.personas.find(p=>p.uid===uid)||{}).nombre||"";
     d.innerHTML=`<div class="t-dlg-in"><h2>${esc(nom)} · ${esc(fecha(f))}</h2><p class="hint">Trabajado ${jH(r.calc.trabajoMin)} · pausas ${jH(r.calc.pausaMin)}${r.calc.extraMin?" · extra "+jH(r.calc.extraMin):""}${r.calc.incidencias.length?" · <b>"+esc(r.calc.incidencias.join(", "))+"</b>":""}</p>
-      <div class="t-dlg-tab"><table class="tabla j-tab"><thead><tr><th>#</th><th>Hora</th><th>Fichaje</th><th>Cómo</th><th>Registrado</th></tr></thead><tbody>${r.dia.eventos.map(x=>`<tr class="${anul.has(x.n)?"j-anul":""}"><td class="num">${x.n}</td><td class="num"><b>${jHM(x.t)}</b></td><td>${x.tipo==="anulacion"?`Anula el #${x.anula}`:J_TXT[x.tipo]}${x.motivo?`<br><small>${esc(x.motivo)}</small>`:""}</td><td><small>${esc(J_VIA[x.via]||x.via)}${x.disp?" · "+esc(x.disp):""}${x.ip?" · "+esc(x.ip):""}</small></td><td><small>${esc(x.nombre||"")} · ${esc(fechaHora(x.reg))}</small></td></tr>`).join("")||'<tr><td colspan="5" class="hint">Sin fichajes.</td></tr>'}</tbody></table></div>
+      <div class="t-dlg-tab"><table class="tabla j-tab"><thead><tr><th>#</th><th>Hora</th><th>Fichaje</th><th>Cómo</th><th>Registrado</th></tr></thead><tbody>${r.dia.eventos.map(x=>`<tr class="${anul.has(x.n)?"j-anul":""}"><td class="num">${x.n}</td><td class="num"><b>${jHM(x.t)}</b></td><td>${x.tipo==="anulacion"?`Anula el #${x.anula}`:J_TXT[x.tipo]}${x.motivo?`<br><small>${esc(x.motivo)}</small>`:""}${jgPrueba(x)}</td><td><small>${esc(J_VIA[x.via]||x.via)}${x.disp?" · "+esc(x.disp):""}${x.ip?" · "+esc(x.ip):""}</small></td><td><small>${esc(x.nombre||"")} · ${esc(fechaHora(x.reg))}</small></td></tr>`).join("")||'<tr><td colspan="5" class="hint">Sin fichajes.</td></tr>'}</tbody></table></div>
       <form id="jg-corr" class="jg-corr"><h3>Corregir (queda registrado con tu nombre y el motivo)</h3>
         <div class="t-g2"><div class="field"><label>Qué quieres hacer</label><select class="in" name="que"><option value="add">Añadir un fichaje olvidado</option>${r.dia.eventos.filter(x=>x.tipo!=="anulacion"&&!anul.has(x.n)).map(x=>`<option value="${x.n}">Anular #${x.n} (${J_TXT[x.tipo]} ${jHM(x.t)})</option>`).join("")}</select></div>
         <div class="field" data-jgadd><label>Fichaje y hora</label><div class="jg-th"><select class="in" name="tipo">${["entrada","pausa","reanudar","salida"].map(k=>`<option value="${k}">${J_TXT[k]}</option>`).join("")}</select><input class="in num" type="time" name="hora"></div></div></div>
@@ -7761,7 +7812,7 @@ async function jgDia(uid,f){
 /* ---------- acceso: 2FA del equipo, dispositivos de confianza, accesos raros ---------- */
 async function jgAcceso(){ DW={tipo:"jornada",id:"acc"}; abrirDrawer('<div class="empty">Cargando…</div>');
   try{ J_ACC=await api("/api/jornada/acceso"); jgAccPintar(); }catch(err){ $("#dw-body").innerHTML=`<div class="empty">${esc(err.message)}</div>`; } }
-function jgAccPintar(){ const a=J_ACC, eq=(J_REG&&J_REG.personas)||[], TIPOS={"login-fallo":"PIN o contraseña mal","2fa-fallo":"Código 2FA mal",bloqueo:"Conexión bloqueada",inusual:"Hora poco habitual",recuperacion:"Código de recuperación usado","qr-invalido":"QR que no vale",trampa:"Robot"};
+function jgAccPintar(){ const a=J_ACC, eq=(J_REG&&J_REG.personas)||[], TIPOS={"login-fallo":"PIN o contraseña mal","2fa-fallo":"Código 2FA mal",bloqueo:"Conexión bloqueada",inusual:"Hora poco habitual",recuperacion:"Código de recuperación usado","qr-invalido":"QR que no vale","fichaje-fuera":"Intento de fichar fuera de la nave",trampa:"Robot"};
   $("#dw-body").innerHTML=`<div class="dw-head"><div><span class="tipo taller">Jornada</span><h2 class="dw-nombre" style="margin:0">Acceso y seguridad</h2></div><button class="x" type="button" data-cerrar aria-label="Cerrar">✕</button></div>
     <section class="dw-box"><h3>Google Authenticator del equipo</h3><label class="t-chk"><input type="checkbox" data-jgexige ${a.exige2fa?"checked":""}><span>Obligatorio para el equipo en cada dispositivo nuevo (después, 30 días de confianza en ese dispositivo)</span></label>
       ${eq.map(p=>`<div class="jg-row"><span><b>${esc(p.nombre)}</b><small>${a.totp[p.uid]?"✓ Vinculado":"Se vinculará al entrar"}</small></span>${a.totp[p.uid]?`<button type="button" class="btn b-ghost b-sm" data-jgreset="${esc(p.uid)}">Restablecer (perdió el móvil)</button>`:""}</div>`).join("")}</section>

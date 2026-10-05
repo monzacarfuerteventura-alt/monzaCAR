@@ -435,3 +435,15 @@ Todo viene APAGADO: subirla no envía nada a ningún portal.
 - **Servidor:** sin cambios (usa `/api/enlaces` y `/q/:cod`, que ya estaban publicados desde la actualización 19).
 - **Archivos:** `public/admin.html`, `CLAUDE.md`, `CLAUDE-INDICE.md`, `LEEME.md`. Deben salir **4 archivos** en `git status`.
 
+## Actualización 44 (5-10-2026) · Antitrampa del fichaje: solo se ficha en la nave
+- **Problema (auditoría):** el fichaje pedía usuario, PIN y 2FA, pero se podía fichar desde casa: el botón no comprobaba dónde estabas, el «NFC» lo decidía el propio móvil y el QR del cartel es un código fijo que vale una foto.
+- **Ahora:** con la nave fijada, **todo fichaje (botón, QR o NFC) comprueba la ubicación del móvil en ese instante** y el servidor calcula la distancia a la nave. Fuera del radio, sin ubicación o con el GPS muy impreciso → **no ficha** y te lo anota. Antes de la actualización 44 nada se bloquea: tienes que fijar la nave una vez (ver abajo).
+- **Activarla (1 minuto, estando en la nave):** abre el panel desde tu móvil → **Jornada → Antitrampa del fichaje → «📍 Fijar la nave aquí»** (permite «Ubicación» cuando el móvil lo pida). Radio recomendado: 150 m (puedes cambiarlo). Opcional: conectado a la WiFi del taller, pulsa **«📶 Guardar la WiFi del taller»**: los fichajes desde esa red salen marcados como «WiFi del taller» (prueba extra, no bloquea a nadie).
+- **Qué ves tú:** en Jornada, la lista en vivo marca **✓ en la nave** (o **⚠ revisar**); en el detalle de cada día, cada fichaje dice «✓ En la nave · a 34 m (±12 m)», si vino de la WiFi del taller y un enlace al mapa; y una lista de **intentos bloqueados** (quién, cuándo y a qué distancia). También salen en «Accesos raros». Todo queda en el libro encadenado.
+- **Avisos que no bloquean:** «coordenadas idénticas a otro fichaje» (señal de app de ubicación falsa) y «mismo móvil que otro compañero hoy» (alguien ficha por otro).
+- **Trabajadores:** al fichar el móvil pide permiso de «Ubicación» (solo la primera vez). La pantalla de fichaje avisa de que se comprueba la ubicación solo en ese momento. Si no hay GPS o está fuera, ven un mensaje claro y tú puedes corregir a mano con motivo (como siempre).
+- **El cartel impreso no cambia:** el QR sigue valiendo.
+- **Servidor:** `netlify/lib/presencia.mts` (nuevo), `netlify/lib/jornada.mts`, `netlify/functions/jornada.mts` (ruta `/api/jornada/nave`). **Cabecera:** `netlify.toml` permite la ubicación solo en `/admin`.
+- **Pruebas:** `tools/pruebas/e2e-presencia.mjs` (56 comprobaciones) y `tools/pruebas/e2e-presencia-panel.py` (11, navegador móvil con GPS simulado); la prueba de permisos de siempre sigue en 97/97.
+- **Archivos:** `netlify.toml`, `netlify/lib/presencia.mts`, `netlify/lib/jornada.mts`, `netlify/functions/jornada.mts`, `public/admin.html`, `tools/pruebas/e2e-presencia.mjs`, `tools/pruebas/e2e-presencia-panel.py`, `tools/pruebas/LEEME.md`, `CLAUDE.md`, `CLAUDE-INDICE.md`, `LEEME.md`. Deben salir **11 archivos** en `git status` (8 modificados `M` y 3 nuevos `??`/`A`: `presencia.mts` y las dos pruebas).
+

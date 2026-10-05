@@ -69,7 +69,7 @@ Generado con `python3 tools/indice.py` el 2026-10-05. Lo lee Claude junto a `CLA
 - **inventario.mts** (33 líneas): INVENTARIO EN VIVO · GET /inventario.json El stock público en un formato estable y documentado (el mismo que usa el asistente con IA). Sale siempre de los coches del panel: no hay que mantener ningún archivo a mano. Ejemplo del formato: tools/asistente/inventario.ejemplo.json
   - rutas: `"/inventario.json"`
   - almacenes: monzacar
-- **jornada.mts** (171 líneas): REGISTRO DE JORNADA GET /api/jornada/yo → mi estado, mi día y (con ?mes=AAAA-MM) mi mes POST /api/jornada/fichar {accion?, qr?} → fichar (sin acción: la siguiente lógica; con qr: desde el cartel/NFC) POST /api/jornada/deshacer → anula mi último fichaje si han pasado menos de 2 min GET /api/jornada/plantilla → estado en vivo de todo el equipo (gerente) GET /api/jornada/registro?mes&uid → días con horas ordinarias, ext…
+- **jornada.mts** (215 líneas): REGISTRO DE JORNADA GET /api/jornada/yo → mi estado, mi día y (con ?mes=AAAA-MM) mi mes POST /api/jornada/fichar {accion?, qr?} → fichar (sin acción: la siguiente lógica; con qr: desde el cartel/NFC) POST /api/jornada/deshacer → anula mi último fichaje si han pasado menos de 2 min GET /api/jornada/plantilla → estado en vivo de todo el equipo (gerente) GET /api/jornada/registro?mes&uid → días con horas ordinarias, ext…
   - rutas: `["/api/jornada/:r", "/api/jornada/:r/:id"]`
 - **local.mts** (395 líneas): PÁGINAS LOCALES PARA GOOGLE (SEO local), una por pueblo y servicio: /coches-segunda-mano-<pueblo> → catálogo en vivo + entrega gratis a domicilio en ese pueblo /taller-mecanico-<pueblo> → taller en Costa de Antigua para clientes de ese pueblo + reserva de cita al momento Los pueblos, distancias y textos están en netlify/lib/municipios.mts. Si añades un pueblo allí, añade también sus dos direcciones en config.path (ab…
   - rutas: `[  "/coches-segunda-mano-corralejo", "/coches-segunda-mano-corralejo/",  "/coches-segunda-mano-la-oliva", "/coches-segunda-mano-la-oliva/",  "/coches-segunda-mano-puerto-del-rosario", "/coches-segunda-mano-puerto-del-rosario/",  "/coches-segunda-mano-antigua", "/coches-segunda-mano-antigua/",  "/coches-segunda-mano-caleta-de-fuste", "/coches-segunda-mano-caleta-de-fuste/",  "/coches-segunda-mano-gran-tarajal", "/coches-segunda-mano-gran-tarajal/",  "/coches-segunda-mano-costa-calma", "/coches-segunda-mano-costa-calma/",  "/coches-segunda-mano-morro-jable", "/coches-segunda-mano-morro-jable/",  "/taller-mecanico-corralejo", "/taller-mecanico-corralejo/",  "/taller-mecanico-la-oliva", "/taller-mecanico-la-oliva/",  "/taller-mecanico-puerto-del-rosario", "/taller-mecanico-puerto-del-rosario/",  "/taller-mecanico-antigua", "/taller-mecanico-antigua/",  "/taller-mecanico-caleta-de-fuste", "/taller-mecanico-caleta-de-fuste/",  "/taller-mecanico-gran-tarajal", "/taller-mecanico-gran-tarajal/",  "/taller-mecanico-costa-calma", "/taller-mecanico-costa-calma/",  "/taller-mecanico-morro-jable", "/taller-mecanico-morro-jable/",  ]`
@@ -190,7 +190,7 @@ Generado con `python3 tools/indice.py` el 2026-10-05. Lo lee Claude junto a `CLA
   - exporta: LineaGuion, Guion, GUIONES, VOZ_AJUSTES, palabras, guion, huecos
 - **informe.mts** (142 líneas): INFORME EJECUTIVO (automático): semana o mes cerrado, comparado con el periodo anterior de la misma duración. Lo usan la función programada «informe-auto» (email + Telegram + copia en el panel) y el panel.
   - exporta: Kpis, Informe, calcularInforme, emailInforme, generar
-- **jornada.mts** (235 líneas): REGISTRO DE JORNADA (art. 34.9 del Estatuto de los Trabajadores) Fichaje de ultra-baja fricción: un botón que cambia según el momento (entrada → pausa → reanudar → salida), QR/NFC fijo en el taller y fichajes que se enganchan solos con el FORM-03. · La hora la pone SIEMPRE el servidor. Nadie puede escribirla desde el móvil. · Nada se borra: una pulsación por error se «deshace» con un apunte nuevo, y el gerente corrig…
+- **jornada.mts** (238 líneas): REGISTRO DE JORNADA (art. 34.9 del Estatuto de los Trabajadores) Fichaje de ultra-baja fricción: un botón que cambia según el momento (entrada → pausa → reanudar → salida), QR/NFC fijo en el taller y fichajes que se enganchan solos con el FORM-03. · La hora la pone SIEMPRE el servidor. Nadie puede escribirla desde el móvil. · Nada se borra: una pulsación por error se «deshace» con un apunte nuevo, y el gerente corrig…
   - exporta: jstore, Accion, EventoJ, Dia, EstadoJ, leerEstado, leerDia, olvidada, efectivo, validos, calcDia, autoPausar, autoReanudar, Ctx, fichar, deshacer, isoCanarias, corregir, exigirJornada, resumenYo
 - **libro.mts** (41 líneas): Añade una anotación al libro SIN que dos personas a la vez se pisen el número: antes de escribir se «reserva» el número n con una escritura «solo si no existe» (onlyIfNew). Si otra persona lo tenía ya, se espera un momento y se vuelve a leer la cabeza (que ella actualiza al terminar). Si tras varios intentos sigue sin liberarse (alguien se quedó a medias), se escribe como antes para no bloquear nunca el libro. `hacer…
   - exporta: anotarSeguro, anotar, leerLibro
@@ -208,6 +208,8 @@ Generado con `python3 tools/indice.py` el 2026-10-05. Lo lee Claude junto a `CLA
   - exporta: Reglas, REGLAS_BASE, limpiarReglas, pw, leerReglas, EstadoWeb, calcularEstado, estadoWeb, TIPOS_EV, ACC_EV, resumenEventos
 - **plantilla-coches-fv.mts** (3 líneas): GENERADO por tools/seo.py: no editar a mano
   - exporta: PLANTILLA
+- **presencia.mts** (115 líneas): PRESENCIA EN LA NAVE · antitrampa del fichaje (actualización 44) El servidor comprueba, en el momento de fichar, que la persona está DENTRO de la nave. Nunca se fía del móvil: · El móvil solo manda sus coordenadas (y la precisión); la distancia a la nave la calcula SIEMPRE el servidor. · Si la geovalla está activa y no hay ubicación, o está fuera del radio, o es muy imprecisa → NO se ficha (y queda anotado el intento…
+  - exporta: Nave, Prueba, Pos, RADIO_MIN, ACC_MAX, ACC_FIJAR, distM, leerPos, leerNave, guardarNave, clampRadio, Veredicto, evaluar, memorizar, Rechazo, anotarRechazo, leerRechazos, naveVista
 - **reservas.mts** (398 líneas): RESERVA ONLINE DE 50 € (REEMBOLSABLES) · lógica común Estados de una reserva: iniciada → el cliente ha rellenado sus datos y está pagando. El coche queda apartado en silencio (sigue «Disponible» en la web) para que nadie pague a la vez: 35 min con tarjeta, 60 min con transferencia o Bizum. Si no termina, se libera sola. pendiente → transferencia o Bizum con justificante subido. El coche pasa a RESERVADO al momento. T…
   - exporta: IMPORTE, MIN_PAGO_TARJETA, MIN_PAGO_TRANSFER, HORAS_VERIFICAR, HORAS_RESERVA, Metodo, EstadoReserva, Reserva, Entrega, MUNICIPIOS_ENTREGA, FRANJAS_ENTREGA, etiquetaEntrega, Espera, Config, R, DOCS, esToken, nuevoToken, nuevoCodigo, nota, CONFIG_DEF, leerConfig, ibanBonito, ibanValido, stripeActivo, configPublica, concepto, leerCoches, estadoCoche, leer, guardar, apartadoDe, activa, apartar, alCRM, vistaPublica, pasarAPendiente, confirmar, cancelar, vender …
 - **seguridad.mts** (285 líneas): MURO DE SEGURIDAD - Bloqueo por intentos: 5 contraseñas mal en 15 min → esa conexión queda bloqueada 15 min; si reincide en 24 h, 24 h. Las «trampas» (rutas que solo prueban los robots: /wp-login.php, /.env…) bloquean la conexión 24 h directamente. - Segundo factor (2FA) opcional con Google Authenticator: variable ADMIN_TOTP_SECRET. - Registro de seguridad (30 días) visible en el panel y avisos por email de bloqueos …
@@ -236,7 +238,7 @@ Generado con `python3 tools/indice.py` el 2026-10-05. Lo lee Claude junto a `CLA
 ## 3. Páginas HTML (`public`)
 
 - **public/404.html** (34 líneas, 1 KB): Página no encontrada | Volcano Cars
-- **public/admin.html** (9303 líneas, 1109 KB): Panel Volcano Cars
+- **public/admin.html** (9354 líneas, 1116 KB): Panel Volcano Cars
   - vistas: v-empty, v-up, v-cancel, v-bar, v-ok, v-change, v-rm, v-err
   - pestañas del panel: agenda, alm, ayuda, caja, coches, dash, fin, jornada, leads, ordenes, resp
   - scripts: /cartel-fichaje.js, /panel-mejoras.js, /panel-plus.js, /panel-precios.js, /panel-sistemas.js
@@ -386,7 +388,7 @@ Generado con `python3 tools/indice.py` el 2026-10-05. Lo lee Claude junto a `CLA
 - **tools/minificar-html.mjs** (40 líneas): MINIFICADO AL PUBLICAR (Netlify ejecuta esto después de tools/fuentes-locales.mjs). En el repositorio el código sigue legible; aquí se minifica SOLO la copia que se publica: · los JavaScript y CSS sueltos de public/ (conversion.js, mejoras.js, taller-vfx.js…) · los <script> y <style> en línea de las páginas públicas (portada, /en, /comprar, /taller, SEO, legales) Si esbuild no está o algo falla, NO se toca ese archiv…
 - **tools/pagespeed/inline-css.py** (20 líneas): (sin descripción)
 - **tools/pagespeed/inline-rendimiento.py** (50 líneas): (sin descripción)
-- **tools/pruebas/LEEME.md** (nota, 9 líneas): 
+- **tools/pruebas/LEEME.md** (nota, 14 líneas): 
 - **tools/pruebas/e2e-ausencias-panel.py** (92 líneas): (sin descripción)
 - **tools/pruebas/e2e-ausencias.mjs** (143 líneas): PRUEBA DE «AUSENCIAS (RRHH)» DE PRINCIPIO A FIN (30-09-2026) Ejecuta las funciones reales de netlify/functions con un almacén en memoria y recorre el panel con cada puesto: Gerente (contraseña), Lestter (puesto Gerente con PIN), Calidad, Recepción y Mecánico. Uso (en el ordenador del desarrollador, con bun): bun tools/pruebas/e2e-ausencias.mjs Necesita un @netlify/blobs de pruebas en node_modules (ver tools/pruebas/L…
 - **tools/pruebas/e2e-copias.mjs** (34 líneas): Prueba de las copias de seguridad: reparto por almacén, conservación (30 días · día 1 de cada mes · 1 de enero para siempre) y descarga. Uso: bun tools/pruebas/e2e-copias.mjs (necesita el @netlify/blobs de pruebas, ver LEEME.md)
@@ -396,6 +398,8 @@ Generado con `python3 tools/indice.py` el 2026-10-05. Lo lee Claude junto a `CLA
 - **tools/pruebas/e2e-factura.mjs** (112 líneas): PRUEBA DE LA «FACTURA DE REPARACIÓN» (FORM-14) DE PRINCIPIO A FIN (30-09-2026) Ejecuta las funciones reales de netlify/functions con un almacén en memoria y recorre el panel con cada puesto: Gerente (contraseña), Lestter (puesto Gerente con PIN), Calidad, Recepción y Mecánico. Uso (en el ordenador del desarrollador, con bun): bun tools/pruebas/e2e-factura.mjs Necesita un @netlify/blobs de pruebas en node_modules (ver…
 - **tools/pruebas/e2e-panel.py** (111 líneas): (sin descripción)
 - **tools/pruebas/e2e-permisos.mjs** (129 líneas): PRUEBA DE PERMISOS DE PRINCIPIO A FIN (27-09-2026) Ejecuta las funciones reales de netlify/functions con un almacén en memoria y recorre el panel con cada puesto: Gerente (contraseña), Lestter (puesto Gerente con PIN), Calidad, Recepción y Mecánico. Uso (en el ordenador del desarrollador, con bun): bun tools/pruebas/e2e-permisos.mjs Necesita un @netlify/blobs de pruebas en node_modules (ver tools/pruebas/LEEME.md).
+- **tools/pruebas/e2e-presencia-panel.py** (102 líneas): (sin descripción)
+- **tools/pruebas/e2e-presencia.mjs** (171 líneas): PRUEBA DEL ANTITRAMPA DEL FICHAJE (actualización 44) Ejecuta las funciones reales de netlify/functions con un almacén en memoria. Uso: bun tools/pruebas/e2e-presencia.mjs (necesita el @netlify/blobs de pruebas, ver LEEME.md)
 - **tools/pruebas/e2e-seguridad.mjs** (32 líneas): Prueba de seguridad: bloqueo del PIN por usuario y manuales privados. Uso: bun tools/pruebas/e2e-seguridad.mjs
 - **tools/pruebas/e2e-tareas-panel.py** (78 líneas): (sin descripción)
 - **tools/pruebas/e2e-vehiculos-panel.py** (56 líneas): (sin descripción)
@@ -457,4 +461,4 @@ Generado con `python3 tools/indice.py` el 2026-10-05. Lo lee Claude junto a `CLA
 - `public/vfx/`: 72 archivos
 
 ---
-Total de líneas de código indexadas: 52915.
+Total de líneas de código indexadas: 53401.
