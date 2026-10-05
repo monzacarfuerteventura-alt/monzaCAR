@@ -9,8 +9,8 @@
    ===================================================================== */
 window.VC_MED = {
   ga4: "G-2ZWYPY3TT4",
-  ads: "",
-  conv: { solicitud: "", whatsapp: "", llamada: "" }
+  ads: "AW-18469780390",
+  conv: { solicitud: "5582CPLtzpEdEKb3iedE", whatsapp: "0ZVMCJfq2pEdEKb3iedE", llamada: "ZC-GCM2-2pEdEKb3iedE" }
 };
 (function () {
   var M = window.VC_MED, CK = "mz_cookies";
