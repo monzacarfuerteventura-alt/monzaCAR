@@ -1,6 +1,6 @@
 # CLAUDE-INDICE.md · Inventario completo del código (GENERADO, no editar a mano)
 
-Generado con `python3 tools/indice.py` el 2026-10-04. Lo lee Claude junto a `CLAUDE.md`. Contiene qué hace cada archivo, sus rutas, almacenes de datos y funciones exportadas; para ver el código exacto, abrir el archivo.
+Generado con `python3 tools/indice.py` el 2026-10-05. Lo lee Claude junto a `CLAUDE.md`. Contiene qué hace cada archivo, sus rutas, almacenes de datos y funciones exportadas; para ver el código exacto, abrir el archivo.
 
 
 ## 1. Funciones de servidor (`netlify/functions`)
@@ -236,7 +236,7 @@ Generado con `python3 tools/indice.py` el 2026-10-04. Lo lee Claude junto a `CLA
 ## 3. Páginas HTML (`public`)
 
 - **public/404.html** (34 líneas, 1 KB): Página no encontrada | Volcano Cars
-- **public/admin.html** (9183 líneas, 1094 KB): Panel Volcano Cars
+- **public/admin.html** (9303 líneas, 1109 KB): Panel Volcano Cars
   - vistas: v-empty, v-up, v-cancel, v-bar, v-ok, v-change, v-rm, v-err
   - pestañas del panel: agenda, alm, ayuda, caja, coches, dash, fin, jornada, leads, ordenes, resp
   - scripts: /cartel-fichaje.js, /panel-mejoras.js, /panel-plus.js, /panel-precios.js, /panel-sistemas.js
@@ -457,4 +457,4 @@ Generado con `python3 tools/indice.py` el 2026-10-04. Lo lee Claude junto a `CLA
 - `public/vfx/`: 72 archivos
 
 ---
-Total de líneas de código indexadas: 52795.
+Total de líneas de código indexadas: 52915.

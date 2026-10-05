@@ -425,3 +425,13 @@ Todo viene APAGADO: subirla no envía nada a ningún portal.
 - **Rastreo completo de la web (75 URLs):** sin enlaces rotos, sin duplicados de título o descripción, sin imágenes sin alt, JSON-LD correcto.
 - **Archivos nuevos respecto a la 40:** `netlify/functions/sitemap.mts`, `public/index.html`, `public/en/index.html`, `CLAUDE.md`, `CLAUDE-INDICE.md`, `LEEME.md`.
 
+## Actualización 43 (5-10-2026) · Campañas guardadas con QR en el panel
+- **Problema:** al crear una campaña en *Marketing en vivo › Campañas* el enlace solo se mostraba en ese momento; al salir y volver a entrar no quedaba rastro y no había forma de volver a copiarlo ni de ver el tráfico hasta que entrara la primera persona.
+- **Ahora:** arriba de la pestaña Campañas sale **«Mis campañas»**, con una tarjeta por cada campaña guardada (enlace corto `volcanocars.com/q/XXXXXX`). Se ve desde el primer minuto, aunque no tenga ningún escaneo («Esperando 1.er escaneo»).
+- **Cada tarjeta:** Copiar enlace (todas las veces que quieras) · Ver QR y bajarlo en SVG (para la imprenta) o PNG · escaneos total / hoy / 7 días / personas · último escaneo · visitas web, solicitudes, ventas y gasto/ROI de esa campaña · Editar destino y nota (el QR ya impreso sigue valiendo) · Pausar/Activar · Probar (cuenta como 1 escaneo).
+- **Crear:** «＋ Nueva campaña» (destino, dónde lo pones —Flyer, Tarjeta de visita, Cartel, Rotulación, Pegatina, Instagram, Facebook, TikTok, WhatsApp, Google Ads, Wallapop, Otro—, nombre y nota). El nombre es único por campaña: así las cifras no se mezclan. Usa uno distinto para cada flyer, tarjeta o anuncio.
+- **Se mantiene:** «Apuntar gasto» (ahora también sugiere los nombres de las campañas guardadas) y las campañas medidas por enlaces largos o anuncios (salen debajo, en «Otras campañas medidas»).
+- **Arreglo extra:** el panel se repintaba solo cada 30 s y borraba lo que estabas escribiendo y subía el scroll arriba; ahora espera mientras escribes y mantiene la posición.
+- **Servidor:** sin cambios (usa `/api/enlaces` y `/q/:cod`, que ya estaban publicados desde la actualización 19).
+- **Archivos:** `public/admin.html`, `CLAUDE.md`, `CLAUDE-INDICE.md`, `LEEME.md`. Deben salir **4 archivos** en `git status`.
+

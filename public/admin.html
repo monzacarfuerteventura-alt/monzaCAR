@@ -1422,6 +1422,36 @@ b.fn-c-ing,b.fn-c-egr{background:none;color:var(--ink)}
 .mk-gl{list-style:none;margin:0;padding:0 13px 12px;display:grid;gap:4px;font-size:12.5px}.mk-gl li{display:flex;gap:8px;align-items:center}.mk-gl span{flex:1;color:var(--d2-mut)}
 .mk-url{margin:0 13px 13px;background:var(--d2-card2);border-radius:10px;padding:10px}.mk-url code{display:block;word-break:break-all;font-size:12px}
 .mk-qr{background:#fff;border-radius:8px;padding:6px;display:inline-block;line-height:0}.mk-qr svg{width:110px;height:110px}
+/* ---- Campañas guardadas (actualización 42): enlaces cortos /q/ con QR, siempre visibles arriba ---- */
+.mkc-hd{display:flex;align-items:center;justify-content:space-between;gap:8px}.mkc-hd .mk-t{margin:0}
+.mkc-lista{display:grid;gap:10px}
+.mkc{background:var(--d2-card);border:1px solid var(--d2-line);border-radius:14px;padding:12px;display:grid;gap:10px;animation:d2in .3s var(--d2-ease)}
+.mkc.off{opacity:.7}
+.mkc.nuevo{border-color:var(--d2-a);box-shadow:0 0 0 3px var(--d2-glow)}
+.mkc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.mkc-top>div{min-width:0}.mkc-top b{display:block;font-size:15px;line-height:1.25;word-break:break-word}
+.mkc-top small{display:block;margin-top:2px;font-size:12px;color:var(--d2-mut)}
+.mkc-chip{font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:999px;white-space:nowrap;background:var(--d2-card2);color:var(--d2-mut)}
+.mkc-chip.on{background:rgba(61,191,118,.16);color:var(--d2-ok)}
+.mkc-chip.wait{background:rgba(255,138,92,.16);color:var(--d2-a2)}
+.mkc-link{display:flex;align-items:center;gap:8px;background:var(--d2-card2);border-radius:10px;padding:6px 6px 6px 11px}
+.mkc-link code{flex:1;min-width:0;font-size:13px;font-weight:800;color:var(--d2-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mkc-k{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.mkc-k>div{display:grid;gap:1px}.mkc-k small{font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--d2-mut)}
+.mkc-k b{font-size:20px;font-weight:900;line-height:1.1}.mkc-k em{font-style:normal;font-size:11px;font-weight:700;color:var(--d2-mut)}
+.mkc-web{border-top:1px solid var(--d2-line);padding-top:8px}
+.mkc-sub{margin:0;font-size:12.5px;line-height:1.45;color:var(--d2-mut)}
+.mkc-acc{display:flex;flex-wrap:wrap;gap:6px}.mkc-acc .mk-b{padding:7px 10px}
+.mkc-qr{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;background:var(--d2-card2);border-radius:12px;padding:10px}
+.mkc-qr .mk-qr svg{width:150px;height:150px}.mkc-qr .mkc-acc{margin-top:8px}
+.mkc-ed{display:grid;gap:8px;background:var(--d2-card2);border-radius:12px;padding:10px}
+.mkc-ed label{display:grid;gap:4px;font-size:12px;font-weight:700;color:var(--d2-mut)}
+.mkc-ed .in{padding:9px 11px;font-size:14px;background:var(--d2-card);color:var(--d2-ink);border-color:var(--d2-line)}
+.mkc-new{background:var(--d2-card);border:1px solid var(--d2-a);border-radius:14px;padding-top:13px}
+.mkc-new .mk-form{padding-top:0}
+.mkc-prev{font-size:12px;color:var(--d2-mut)}.mkc-prev b{color:var(--d2-ink)}.mkc-prev.warn,.mkc-prev.warn b{color:var(--d2-bad)}
+.mkc-vacio{display:grid;gap:4px;padding:14px;border:1.5px dashed var(--d2-line);border-radius:12px;font-size:13.5px;color:var(--d2-mut)}.mkc-vacio b{color:var(--d2-ink);font-size:14.5px}
+@media (max-width:420px){.mkc-qr{grid-template-columns:1fr;justify-items:center;text-align:center}}
 .mk-pil{background:var(--d2-card);border:1px solid var(--d2-line);border-radius:14px;padding:12px 14px;transition:border-color .3s,box-shadow .3s}
 .mk-pil.on{border-color:rgba(61,191,118,.55);box-shadow:0 0 0 3px rgba(61,191,118,.08)}
 .mk-sw{display:flex;gap:12px;align-items:center;cursor:pointer}.mk-sw input{position:absolute;opacity:0}
@@ -6717,6 +6747,26 @@ addEventListener("afterprint",()=>{ document.querySelectorAll(".d2-capa").forEac
    Lo que envía mensajes a clientes NUNCA se manda solo: queda preparado para enviarlo con un toque.
    ===================================================================== */
 const MK={abierto:false,mini:false,tab:"vivo",hoy:null,t:null,conf:null};
+/* ---------- Campañas guardadas (actualización 42) ----------
+   Cada campaña = un enlace corto https://volcanocars.com/q/XXXXXX (+ su QR) que se guarda en el servidor (/api/enlaces):
+   no desaparece al salir, se puede copiar y bajar el QR las veces que haga falta y cuenta los escaneos aunque nadie haya entrado aún. */
+const MKE={lista:null,err:"",form:false,qr:{},edit:"",nuevo:"",ocupado:false,d:{}};
+const MK_DEST=[["/","Portada"],["/taller-mecanico-fuerteventura/","Taller mecánico"],["/chapa-y-pintura-fuerteventura/","Chapa y pintura"],["/pre-itv-fuerteventura/","Pre-ITV"],["/itv-fuerteventura/","ITV"],["/coches-segunda-mano-fuerteventura/","Catálogo de coches"],["/financiacion-coches-fuerteventura/","Financiación"],["/contacto/","Contacto"]];
+const MK_CAN=[["flyer|qr","Flyer"],["tarjeta|qr","Tarjeta de visita"],["cartel|qr","Cartel"],["vehiculo|qr","Rotulación / vehículo"],["pegatina|qr","Pegatina"],["instagram|social","Instagram"],["facebook|social","Facebook"],["tiktok|social","TikTok"],["whatsapp|mensaje","WhatsApp"],["google|cpc","Google Ads"],["wallapop|portal","Wallapop"],["otro|qr","Otro"]];
+const mkNorm=t=>String(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9._-]+/g,"-").replace(/^-+|-+$/g,"").slice(0,60);
+const mkCanTxt=(s,m)=>{ const f=MK_CAN.find(x=>x[0]===s+"|"+m); return f?f[1]:s; };
+function mkDestTxt(d){ const f=MK_DEST.find(x=>x[0]===d); if(f) return f[1];
+  const m=/^\/coche\/([^/]+)/.exec(d||""); if(m){ const c=(typeof CARS!=="undefined"?CARS:[]).find(c=>mkSlug(c)===m[1]); return c?`Coche: ${c.marca} ${c.modelo}`:"Ficha de un coche"; } return d||"—"; }
+// no repintar el panel (cada 30 s) mientras se escribe: se perdería lo tecleado
+function mkEditando(){ const a=document.activeElement; if(a&&a.closest&&a.closest("#mk-dw")&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return true;
+  return !!(MKE.form&&(MKE.d.camp||MKE.d.nota)); }
+function mkBajar(blob,nombre){ const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=nombre; document.body.append(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000); }
+function mkDescargar(cod,tipo){ const e=(MKE.lista||[]).find(x=>x.cod===cod); if(!e) return; const nombre="qr-"+e.camp;
+  const t=QR.encode(e.url).length+8, px=t*Math.max(1,Math.floor(1200/t)); // tamaño múltiplo exacto de los cuadritos: bordes limpios al imprimir
+  if(tipo==="svg"){ mkBajar(new Blob([QR.svg(e.url,px)],{type:"image/svg+xml"}),nombre+".svg"); return; }
+  const img=new Image(); img.onload=()=>{ const cv=document.createElement("canvas"); cv.width=cv.height=px; const c=cv.getContext("2d"); c.fillStyle="#fff"; c.fillRect(0,0,px,px); c.imageSmoothingEnabled=false; c.drawImage(img,0,0,px,px);
+    cv.toBlob(b=>b?mkBajar(b,nombre+".png"):toast("No se ha podido crear el PNG"),"image/png"); };
+  img.onerror=()=>toast("No se ha podido crear el PNG"); img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(QR.svg(e.url,px)); }
 const mkSlug=c=>{ if(!/^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(c.id)) return c.id; const b=`${c.marca} ${c.modelo} ${c.anio}`.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,""); return (b?b+"-":"")+c.id.slice(0,8).toLowerCase(); };
 const mkURL=(ruta,src,med,camp)=>`https://volcanocars.com${ruta}${ruta.includes("?")?"&":"?"}utm_source=${encodeURIComponent(src)}&utm_medium=${encodeURIComponent(med)}&utm_campaign=${encodeURIComponent(camp)}`;
 const mkGer=()=>typeof ME!=="undefined"&&ME&&PUEDE_TODO();
@@ -6738,15 +6788,17 @@ function mkAbrir(si){ MK.abierto=si; mkGuardarUI(); const dw=$("#mk-dw"), fab=$(
 async function mkRefrescar(){
   if(!mkGer()) return;
   const hoy=hoyC();
-  const [m,st,vi]=await Promise.all([
+  const [m,st,vi,en]=await Promise.all([
     api("/api/marketing").catch(()=>null),
     api(`/api/stats?desde=${sumaDias(hoy,-29)}&hasta=${hoy}`).catch(()=>null),
     fetch("/api/viendo").then(r=>r.ok?r.json():{}).catch(()=>({})),
+    api("/api/enlaces").catch(e=>({__err:e.message||"No se han podido cargar tus campañas."})),
   ]);
   if(m){ D2.mk=m; MK.conf=MK.conf||{...m.config}; }
+  if(en&&Array.isArray(en.enlaces)){ MKE.lista=en.enlaces; MKE.err=""; } else if(en&&en.__err&&MKE.lista===null) MKE.err=en.__err;
   if(st) MK.st=st.dias||{};
   VIENDO=vi||{};
-  MK.t=Date.now(); mkBadge(); if(MK.abierto) mkPintar();
+  MK.t=Date.now(); mkBadge(); if(MK.abierto&&!mkEditando()) mkPintar();
 }
 function mkHoy(){
   const hoy=hoyC(), d=(MK.st&&MK.st[hoy])||{v:0,clkV:0,horas:Array(24).fill(0)};
@@ -6787,6 +6839,7 @@ function mkBadge(){ const b=$("#mk-badge"); if(!b) return; const n=mkOportunidad
 /* ---------- pintar ---------- */
 function mkPintar(){
   const dw=$("#mk-dw"); if(!dw||dw.hidden) return;
+  const bd0=dw.querySelector(".mk-body"), sc0=bd0&&MK._tp===MK.tab?bd0.scrollTop:0; MK._tp=MK.tab;
   const cfg=(D2.mk&&D2.mk.config)||{}, piloto=!!cfg.piloto;
   const tabs=[["vivo","En vivo"],["camp","Campañas"],["piloto","Piloto"],["log","Registro"]];
   dw.innerHTML=`<header class="mk-h"><div><small>Motor de marketing</small><b>${MK.mini?"":"Marketing en vivo"}</b></div>
@@ -6795,6 +6848,7 @@ function mkPintar(){
     ${MK.mini?mkMini():`<nav class="mk-tabs" role="tablist">${tabs.map(([k,t])=>`<button type="button" role="tab" data-mktab="${k}" aria-selected="${MK.tab===k}">${t}</button>`).join("")}</nav>
     <div class="mk-body">${MK.tab==="camp"?mkCampanas():MK.tab==="piloto"?mkPiloto():MK.tab==="log"?mkLog():mkVivo()}</div>
     <footer class="mk-f">${MK.t?`Actualizado ${new Date(MK.t).toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit",second:"2-digit"})} · se refresca solo`:"Cargando…"}</footer>`}`;
+  if(sc0){ const bd1=dw.querySelector(".mk-body"); if(bd1) bd1.scrollTop=sc0; }
 }
 function mkMini(){ const H=mkHoy(); return `<div class="mk-mini"><div><b class="num">${H.viendo}</b><small>viendo</small></div><div><b class="num">${H.d.v}</b><small>visitas hoy</small></div><div><b class="num">${H.sol}</b><small>solicitudes</small></div><div><b class="num">${mkOportunidades().length}</b><small>ideas</small></div></div>`; }
 function mkVivo(){
@@ -6811,30 +6865,66 @@ function mkVivo(){
     <h4 class="mk-t">Oportunidades ahora <small>${op.length}</small></h4>
     ${op.length?op.map(x=>`<article class="mk-op"><span class="mk-oi" aria-hidden="true">${x.ico}</span><div><b>${x.t}</b><p>${x.d}</p>${x.a?`<div class="mk-oa">${x.a}</div>`:""}</div></article>`).join(""):'<p class="mk-vacio">Todo en orden. Cuando aparezca una oportunidad (alguien mirando un coche, un cliente esperando, un coche que no se mueve), sale aquí.</p>'}`;
 }
+function mkFormNueva(){
+  const d=MKE.d, sel=(v,a)=>v===a?" selected":"";
+  const dest=MK_DEST.map(([v,t])=>`<option value="${esc(v)}"${sel(d.ruta,v)}>${esc(t)}</option>`).join("")+CARS.filter(c=>c.estado!=="vendido").map(c=>{ const v=`/coche/${mkSlug(c)}`; return `<option value="${esc(v)}"${sel(d.ruta,v)}>Coche: ${esc(c.marca+" "+c.modelo)}</option>`; }).join("");
+  const can=MK_CAN.map(([v,t])=>`<option value="${v}"${sel(d.canal,v)}>${esc(t)}</option>`).join("");
+  const n=mkNorm(d.camp), dup=n&&(MKE.lista||[]).some(x=>x.camp===n);
+  return `<section class="mkc-new"><form class="mk-form" id="mkc-form" autocomplete="off">
+    <label>¿A dónde lleva?<select class="in" name="ruta">${dest}</select></label>
+    <label>¿Dónde lo pones?<select class="in" name="canal">${can}</select></label>
+    <label>Nombre de la campaña<input class="in" name="camp" required maxlength="60" placeholder="p. ej. flyer-taller-octubre" value="${esc(d.camp||"")}"></label>
+    <small class="mkc-prev${dup?" warn":""}" id="mkc-prev">${dup?"Ya tienes una campaña con este nombre. Usa otro para medirla por separado.":n?`Se guardará como: <b>${esc(n)}</b>`:"Usa un nombre distinto para cada flyer, tarjeta o anuncio."}</small>
+    <label>Nota solo para ti (opcional)<input class="in" name="nota" maxlength="200" placeholder="p. ej. 500 flyers en Caleta de Fuste" value="${esc(d.nota||"")}"></label>
+    <button class="btn b-acc b-sm" ${MKE.ocupado?"disabled":""}>${MKE.ocupado?"Creando…":"Crear campaña y QR"}</button></form></section>`;
+}
+function mkTarjeta(e,r){
+  const s=e.escaneos||{}, on=e.activo!==false, sin=!s.total, cod=esc(e.cod), corto=String(e.url||"").replace(/^https?:\/\//,"");
+  const chip=!on?'<span class="mkc-chip">Pausada</span>':sin?'<span class="mkc-chip wait">Esperando 1.er escaneo</span>':'<span class="mkc-chip on">● Activa</span>';
+  const creada=new Date(e.creado).toLocaleDateString("es-ES",{day:"numeric",month:"short",year:"numeric",timeZone:"Atlantic/Canary"});
+  const estado=!on?"Pausada: quien escanee el QR llega a la portada y no se cuenta. Pulsa «Activar» para volver a medir.":sin?"Aún sin escaneos. En cuanto alguien abra el enlace o escanee el QR se verá aquí.":`Último escaneo ${esc(hace(s.ultimo))}.`;
+  const qr=MKE.qr[e.cod]?`<div class="mkc-qr"><span class="mk-qr">${QR.svg(e.url,150)}</span><div><p class="mkc-sub">QR del enlace corto: se lee fácil aunque salga pequeño en la tarjeta. Si cambias el destino después, el QR impreso sigue valiendo.</p><div class="mkc-acc"><button type="button" class="mk-b pri" data-mke-dl="svg" data-cod="${cod}">Bajar SVG (imprenta)</button><button type="button" class="mk-b" data-mke-dl="png" data-cod="${cod}">Bajar PNG</button></div></div></div>`:"";
+  const dests=MK_DEST.map(([v,t])=>`<option value="${esc(v)}"${v===e.destino?" selected":""}>${esc(t)}</option>`).join("")+CARS.filter(c=>c.estado!=="vendido"||`/coche/${mkSlug(c)}`===e.destino).map(c=>{ const v=`/coche/${mkSlug(c)}`; return `<option value="${esc(v)}"${v===e.destino?" selected":""}>Coche: ${esc(c.marca+" "+c.modelo)}</option>`; }).join("");
+  const enDest=MK_DEST.some(x=>x[0]===e.destino)||/^\/coche\//.test(e.destino||"");
+  const ed=MKE.edit===e.cod?`<form class="mkc-ed" data-mkc-edit="${cod}"><label>Destino<select class="in" name="destino">${enDest?"":`<option value="${esc(e.destino)}" selected>${esc(e.destino)}</option>`}${dests}</select></label><label>Nota<input class="in" name="nota" maxlength="200" value="${esc(e.nota||"")}"></label><p class="mkc-sub">El nombre y el canal no se cambian (se mezclarían las cifras). El QR ya impreso no cambia.</p><div class="mkc-acc"><button class="mk-b pri">Guardar cambios</button><button type="button" class="mk-b" data-mke-edit="">Cancelar</button></div></form>`:"";
+  return `<article class="mkc${on?"":" off"}${MKE.nuevo===e.cod?" nuevo":""}" data-mkc="${cod}">
+    <div class="mkc-top"><div><b>${esc(e.camp)}</b><small>${esc(mkCanTxt(e.src,e.med))} → ${esc(mkDestTxt(e.destino))} · creada el ${esc(creada)}</small></div>${chip}</div>
+    <div class="mkc-link"><code>${esc(corto)}</code><button type="button" class="mk-b pri" data-mkcopy="${esc(e.url)}">Copiar</button></div>
+    <div class="mkc-k"><div><small>Escaneos</small><b class="num">${nfmt(s.total||0)}</b></div><div><small>Hoy</small><b class="num">${nfmt(s.hoy||0)}</b></div><div><small>7 días</small><b class="num">${nfmt(s.d7||0)}</b></div><div><small>Personas</small><b class="num">${nfmt(s.unicos||0)}</b></div></div>
+    <p class="mkc-sub">${estado}${e.nota?` <i>${esc(e.nota)}</i>`:""}</p>
+    <div class="mkc-k mkc-web"><div><small>Visitas web</small><b class="num">${nfmt(r.v)}</b></div><div><small>Solicitudes</small><b class="num">${r.s}</b></div><div><small>Ventas</small><b class="num">${r.g}</b>${r.f?`<em>${eur(Math.round(r.f))}</em>`:""}</div><div><small>Gasto</small><b class="num">${r.gasto?eur(r.gasto):"—"}</b>${r.cpa!==null?`<em>CPA ${eur(Math.round(r.cpa))}</em>`:""}${r.roi!==null?`<em>ROI ${(r.roi>=0?"+":"")+Math.round(r.roi*100)} %</em>`:""}</div></div>
+    ${qr}${ed}
+    <div class="mkc-acc"><button type="button" class="mk-b" data-mke-qr="${cod}">${MKE.qr[e.cod]?"Ocultar QR":"Ver QR"}</button><a class="mk-b" href="${esc(e.url)}" target="_blank" rel="noopener" title="Abre el enlace como lo vería un cliente (cuenta como 1 escaneo)">Probar</a><button type="button" class="mk-b" data-mke-edit="${cod}">Editar</button><button type="button" class="mk-b" data-mke-pausa="${cod}" data-on="${on?"1":"0"}">${on?"Pausar":"Activar"}</button></div>
+  </article>`;
+}
 function mkCampanas(){
-  const mk=D2.mk||{}, gastos=mk.gastos||[], desde=sumaDias(hoyC(),-89);
+  const mk=D2.mk||{}, gastos=mk.gastos||[], desde=sumaDias(hoyC(),-89), guardadas=MKE.lista||[];
   const vis={}; Object.entries(STATS||{}).concat(Object.entries(MK.st||{})).forEach(([f,d])=>{ if(f>=desde&&d.camp) for(const [k,v] of Object.entries(d.camp)) vis[k+"|"+f]=v; });
   const visC={}; for(const [k,v] of Object.entries(vis)){ const c=k.split("|")[0]; visC[c]=(visC[c]||0)+v; }
   const L=LEADS.filter(x=>x.origen&&x.origen.utm_campaign&&diaC(x.creado)>=desde);
-  const nombres=[...new Set([...Object.keys(visC),...L.map(x=>x.origen.utm_campaign.toLowerCase()),...gastos.map(g=>g.campana)])];
+  const nombres=[...new Set([...Object.keys(visC),...L.map(x=>x.origen.utm_campaign.toLowerCase()),...gastos.map(g=>g.campana),...guardadas.map(x=>x.camp)])];
   const filas=nombres.map(n=>{ const l=L.filter(x=>x.origen.utm_campaign.toLowerCase()===n), g=l.filter(x=>x.estado==="ganada"), f=g.reduce((a,x)=>a+(x.importe||0),0), gasto=gastos.filter(x=>x.campana===n).reduce((a,x)=>a+x.gasto,0);
     return {n,v:visC[n]||0,s:l.length,g:g.length,f,gasto,cpa:gasto&&l.length?gasto/l.length:null,roi:gasto?(f-gasto)/gasto:null}; }).sort((a,b)=>b.f-a.f||b.s-a.s||b.v-a.v);
-  const ops=CARS.filter(c=>c.estado!=="vendido").map(c=>`<option value="/coche/${esc(mkSlug(c))}">Coche: ${esc(c.marca+" "+c.modelo)}</option>`).join("");
-  return `<p class="mk-intro">Últimos 90 días. Cada campaña se mide por su enlace (<code>utm_campaign</code>). Apunta lo que te gastas y verás el coste por cliente y el retorno.</p>
-    ${filas.length?`<div class="mk-cps">${filas.map(r=>`<article class="mk-cp"><header><b>${esc(r.n)}</b>${r.roi===null?'<span class="d2-chip">sin gasto apuntado</span>':`<span class="d2-chip ${r.roi>=0?"up":"down"}">ROI ${(r.roi>=0?"+":"")+Math.round(r.roi*100)} %</span>`}</header>
-      <div class="mk-cpk"><div><small>Visitas</small><b class="num">${nfmt(r.v)}</b></div><div><small>Solicitudes</small><b class="num">${r.s}</b></div><div><small>Ventas</small><b class="num">${r.g}</b>${r.f?`<em>${eur(Math.round(r.f))}</em>`:""}</div><div><small>Gasto</small><b class="num">${r.gasto?eur(r.gasto):"—"}</b>${r.cpa!==null?`<em>CPA ${eur(Math.round(r.cpa))}</em>`:""}</div></div></article>`).join("")}</div>`:'<p class="mk-vacio">Aún no hay campañas medidas. Crea un enlace abajo y úsalo en tu anuncio, historia, flyer o QR.</p>'}
+  const propias=new Set(guardadas.map(x=>x.camp)), otras=filas.filter(r=>!propias.has(r.n));
+  const fila=n=>filas.find(r=>r.n===n)||{n,v:0,s:0,g:0,f:0,gasto:0,cpa:null,roi:null};
+  let lista;
+  if(MKE.lista===null) lista=MKE.err?`<p class="mk-vacio">${esc(MKE.err)} <button type="button" class="mk-b" data-mke-reint>Reintentar</button></p>`:'<p class="mk-vacio">Cargando tus campañas…</p>';
+  else if(!guardadas.length) lista='<div class="mkc-vacio"><b>Aún no has creado ninguna campaña</b><span>Crea una por cada flyer, tarjeta o anuncio. Cada una tiene su enlace corto y su QR, y se queda guardada aquí para siempre.</span></div>';
+  else lista=`<div class="mkc-lista">${guardadas.map(e=>mkTarjeta(e,fila(e.camp))).join("")}</div>`;
+  const mostrarForm=MKE.form||(MKE.lista!==null&&!guardadas.length);
+  return `<p class="mk-intro">Cada campaña tiene su enlace corto y su QR, guardados aquí. <b>Escaneos</b> = veces que alguien abre el enlace o el QR (cuenta aunque no acepte cookies). <b>Visitas web</b> = personas que llegaron a la web con él (últimos 90 días).</p>
+    <div class="mkc-hd"><h4 class="mk-t">Mis campañas <small>${guardadas.length}</small></h4><button type="button" class="mk-b pri" data-mke-nueva>${mostrarForm&&guardadas.length?"Cerrar":"＋ Nueva campaña"}</button></div>
+    ${mostrarForm?mkFormNueva():""}
+    ${lista}
+    ${otras.length?`<h4 class="mk-t">Otras campañas medidas <small>enlaces largos y anuncios</small></h4><div class="mk-cps">${otras.map(r=>`<article class="mk-cp"><header><b>${esc(r.n)}</b>${r.roi===null?'<span class="d2-chip">sin gasto apuntado</span>':`<span class="d2-chip ${r.roi>=0?"up":"down"}">ROI ${(r.roi>=0?"+":"")+Math.round(r.roi*100)} %</span>`}</header>
+      <div class="mk-cpk"><div><small>Visitas</small><b class="num">${nfmt(r.v)}</b></div><div><small>Solicitudes</small><b class="num">${r.s}</b></div><div><small>Ventas</small><b class="num">${r.g}</b>${r.f?`<em>${eur(Math.round(r.f))}</em>`:""}</div><div><small>Gasto</small><b class="num">${r.gasto?eur(r.gasto):"—"}</b>${r.cpa!==null?`<em>CPA ${eur(Math.round(r.cpa))}</em>`:""}</div></div></article>`).join("")}</div>`:""}
     <details class="mk-det"><summary>Apuntar gasto de una campaña</summary><form class="mk-form" id="mk-gasto">
       <label>Campaña<input class="in" name="campana" list="mk-camps" required placeholder="p. ej. flyer-septiembre"></label><datalist id="mk-camps">${nombres.map(n=>`<option value="${esc(n)}">`).join("")}</datalist>
       <label>Canal<select class="in" name="canal"><option>Instagram</option><option>Facebook</option><option>Google Ads</option><option>Flyers / imprenta</option><option>Otro</option></select></label>
       <label>Gasto (€)<input class="in" name="gasto" inputmode="decimal" required placeholder="0"></label>
       <label>Desde<input class="in" type="date" name="desde"></label><label>Hasta<input class="in" type="date" name="hasta"></label>
       <button class="btn b-acc b-sm">Guardar gasto</button></form>
-      ${gastos.length?`<ul class="mk-gl">${gastos.map(g=>`<li><span>${esc(g.campana)} · ${esc(g.canal)}${g.desde?` · ${esc(g.desde)}`:""}</span><b>${eur(g.gasto)}</b><button type="button" class="mk-ic" data-mkgdel="${esc(g.id)}" aria-label="Borrar">✕</button></li>`).join("")}</ul>`:""}</details>
-    <details class="mk-det" open><summary>Crear enlace medible (para anuncios, historias, flyers y QR)</summary><form class="mk-form" id="mk-utm">
-      <label>¿A dónde lleva?<select class="in" name="ruta"><option value="/">Portada</option><option value="/coches-segunda-mano-fuerteventura/">Catálogo de coches</option><option value="/taller-mecanico-fuerteventura/">Taller</option><option value="/pre-itv-fuerteventura/">Pre-ITV</option>${ops}</select></label>
-      <label>¿Dónde lo pones?<select class="in" name="src"><option value="instagram|social">Instagram</option><option value="facebook|social">Facebook</option><option value="google|cpc">Google Ads</option><option value="whatsapp|mensaje">WhatsApp</option><option value="flyer|qr">Flyer / QR</option><option value="tiktok|social">TikTok</option></select></label>
-      <label>Nombre de la campaña<input class="in" name="camp" required placeholder="p. ej. oferta-pre-itv-octubre"></label>
-      <button class="btn b-acc b-sm">Crear enlace</button></form><div id="mk-utm-out"></div></details>`;
+      ${gastos.length?`<ul class="mk-gl">${gastos.map(g=>`<li><span>${esc(g.campana)} · ${esc(g.canal)}${g.desde?` · ${esc(g.desde)}`:""}</span><b>${eur(g.gasto)}</b><button type="button" class="mk-ic" data-mkgdel="${esc(g.id)}" aria-label="Borrar">✕</button></li>`).join("")}</ul>`:""}</details>`;
 }
 function mkPiloto(){
   const c=MK.conf||((D2.mk&&D2.mk.config)||{}), up=(D2.mk&&D2.mk.ultimoPiloto)||null, cand=(D2.mk&&D2.mk.candidatos)||[];
@@ -6878,10 +6968,40 @@ document.addEventListener("input",e=>{ const s=e.target.closest&&e.target.closes
   if(s.type==="checkbox"){ MK.conf.piloto=s.checked; const p=s.closest(".mk-pil"); if(p) p.classList.toggle("on",s.checked); return; }
   MK.conf[s.dataset.mkconf]=+s.value; s.style.setProperty("--p",((s.value-s.min)/(s.max-s.min)*100)+"%"); const v=document.querySelector(`[data-mkv="${s.dataset.mkconf}"]`); if(v) v.textContent=String(s.value).replace(".",",")+s.dataset.suf; });
 document.addEventListener("submit",async e=>{ const f=e.target;
-  if(f.id==="mk-utm"){ e.preventDefault(); const d=Object.fromEntries(new FormData(f)); const [src,med]=d.src.split("|"); const camp=String(d.camp).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9._-]+/g,"-").replace(/^-|-$/g,"");
-    const url=mkURL(d.ruta,src,med,camp); $("#mk-utm-out").innerHTML=`<div class="mk-url"><code>${esc(url)}</code><div class="mk-oa"><button type="button" class="mk-b pri" data-mkcopy="${esc(url)}">Copiar</button>${typeof QR!=="undefined"&&QR.svg?`<span class="mk-qr">${QR.svg(url,140)}</span>`:""}</div></div>`; return; }
   if(f.id==="mk-gasto"){ e.preventDefault(); const d=Object.fromEntries(new FormData(f)); const l=[...(D2.mk.gastos||[]),{campana:d.campana,canal:d.canal,gasto:+String(d.gasto).replace(",","."),desde:d.desde,hasta:d.hasta}];
     try{ D2.mk.gastos=await api("/api/marketing/gastos",{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(l)}); toast("Gasto guardado"); mkPintar(); }catch(err){ toast(err.message); } }
+});
+/* ---- Campañas guardadas: formulario, acciones de cada tarjeta y borrador (no se pierde al repintar) ---- */
+document.addEventListener("input",e=>{ const f=e.target.closest&&e.target.closest("#mkc-form"); if(!f) return;
+  MKE.d[e.target.name]=e.target.value;
+  if(e.target.name==="camp"){ const p=$("#mkc-prev"), n=mkNorm(e.target.value), dup=n&&(MKE.lista||[]).some(x=>x.camp===n);
+    if(p){ p.classList.toggle("warn",!!dup); p.innerHTML=dup?"Ya tienes una campaña con este nombre. Usa otro para medirla por separado.":n?`Se guardará como: <b>${esc(n)}</b>`:"Usa un nombre distinto para cada flyer, tarjeta o anuncio."; } } });
+document.addEventListener("submit",async e=>{ const f=e.target;
+  if(f.id==="mkc-form"){ e.preventDefault(); if(MKE.ocupado) return;
+    const d=Object.fromEntries(new FormData(f)), camp=mkNorm(d.camp);
+    if(!camp){ toast("Ponle un nombre a la campaña."); return; }
+    if((MKE.lista||[]).some(x=>x.camp===camp)){ toast("Ya tienes una campaña con ese nombre. Usa otro."); return; }
+    MKE.ocupado=true; mkPintar();
+    try{ const r=await api("/api/enlaces",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({destino:d.ruta,canal:d.canal,camp,nota:d.nota||""})});
+      MKE.lista=[r,...(MKE.lista||[])]; MKE.form=false; MKE.d={}; MKE.qr[r.cod]=true; MKE.nuevo=r.cod; MKE.ocupado=false; mkPintar();
+      const b=document.querySelector("#mk-dw .mk-body"); if(b) b.scrollTop=0; toast("Campaña creada y guardada"); mkRefrescar();
+    }catch(err){ MKE.ocupado=false; mkPintar(); toast(err.message); } return; }
+  if(f.dataset&&f.dataset.mkcEdit){ e.preventDefault(); const cod=f.dataset.mkcEdit, d=Object.fromEntries(new FormData(f));
+    try{ const r=await api("/api/enlaces/"+encodeURIComponent(cod),{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify({destino:d.destino,nota:d.nota||""})});
+      const it=(MKE.lista||[]).find(x=>x.cod===cod); if(it) Object.assign(it,{destino:r.destino,nota:r.nota,activo:r.activo,cambiado:r.cambiado}); MKE.edit=""; mkPintar(); toast("Cambios guardados");
+    }catch(err){ toast(err.message); } return; }
+});
+document.addEventListener("click",async e=>{ const t=e.target; if(!t.closest||!t.closest("#mk-dw")) return;
+  if(t.closest("[data-mke-nueva]")){ MKE.form=!MKE.form; mkPintar(); if(MKE.form){ const i=document.querySelector("#mkc-form [name=camp]"); if(i) i.focus(); } return; }
+  if(t.closest("[data-mke-reint]")){ MKE.err=""; mkRefrescar(); return; }
+  const q=t.closest("[data-mke-qr]"); if(q){ const c=q.dataset.mkeQr; MKE.qr[c]=!MKE.qr[c]; mkPintar(); return; }
+  const ed=t.closest("[data-mke-edit]"); if(ed){ MKE.edit=ed.dataset.mkeEdit||""; mkPintar(); return; }
+  const dl=t.closest("[data-mke-dl]"); if(dl){ mkDescargar(dl.dataset.cod,dl.dataset.mkeDl); return; }
+  const pa=t.closest("[data-mke-pausa]"); if(pa){ const cod=pa.dataset.mkePausa, on=pa.dataset.on==="1", it=(MKE.lista||[]).find(x=>x.cod===cod); if(!it) return;
+    if(on&&!confirm(`¿Pausar «${it.camp}»?\n\nQuien escanee un QR ya impreso llegará a la portada y NO se contará. Puedes activarla otra vez cuando quieras.`)) return;
+    pa.disabled=true;
+    try{ const r=await api("/api/enlaces/"+encodeURIComponent(cod),{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify({activo:!on})}); it.activo=r.activo; mkPintar(); toast(r.activo?"Campaña activada":"Campaña pausada"); }
+    catch(err){ pa.disabled=false; toast(err.message); } return; }
 });
 // Arranque: aparece al entrar el gerente; se refresca cada 30 s si está abierto (cada 2 min si no, para el contador)
 setInterval(()=>{ if(mkGer()){ mkMontar(); } else { const f=$("#mk-fab"), d=$("#mk-dw"); if(f){ f.remove(); d&&d.remove(); document.body.classList.remove("mk-on"); } } },1000);
