@@ -494,6 +494,42 @@ footer .logo-word{width:220px}
 }
 </style>
 <script>document.documentElement.classList.add("js")</script>
+<!-- Google tag (gtag.js) - Google Ads AW-18469780390 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18469780390"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'AW-18469780390');
+</script>
+<!-- Medicion de conversiones: cita (formulario), llamada y WhatsApp.
+     Rellena cada etiqueta con la parte que va despues de AW-18469780390/ en el fragmento de evento de Google Ads.
+     Mientras una etiqueta este vacia, ese evento no se envia. -->
+<script>
+(function(){
+  var ID = 'AW-18469780390';
+  var LABELS = { cita: '5582CPLtzpEdEKb3iedE', llamada: 'ZC-GCM2-2pEdEKb3iedE', whatsapp: '0ZVMCJfq2pEdEKb3iedE' };
+  function conv(k){
+    try { if (LABELS[k]) gtag('event', 'conversion', { 'send_to': ID + '/' + LABELS[k] }); } catch(e){}
+  }
+  /* Formulario de cita: solo cuenta si se eligio dia y hora (es decir, si realmente se envia) */
+  document.addEventListener('submit', function(e){
+    var f = e.target;
+    if (f && f.id === 'shop-form') {
+      var d = document.getElementById('t-date'), t = document.getElementById('t-time');
+      if (d && t && d.value && t.value) conv('cita');
+    }
+  }, true);
+  /* Clic en telefono o en WhatsApp */
+  document.addEventListener('click', function(e){
+    var a = e.target && e.target.closest ? e.target.closest('a') : null;
+    if (!a) return;
+    var h = a.getAttribute('href') || '';
+    if (h.indexOf('tel:') === 0) conv('llamada');
+    else if (h.indexOf('wa.me') > -1) conv('whatsapp');
+  }, true);
+})();
+</script>
 </head>
 <body>
 <!-- SVG sprites -->
