@@ -25,6 +25,7 @@ import { str, cent, eur, esFoto, rid, ahora, listar as listarCaja, movsDe, turno
   POST /api/finanzas/gasto · /gasto-anular/:id
   POST /api/finanzas/ingreso · /ingreso-anular/:id
   POST /api/finanzas/cobro/:tipo/:id        (tipo = taller | venta)
+  POST /api/finanzas/cobro-anular/:tipo/:id {cobro, motivo}   (Actualización 46: anula un cobro; no se borra)
   POST /api/finanzas/venta/:coche           (datos de la venta)
   POST /api/finanzas/coste/:coche           (coste de compra de un coche en stock)
   POST /api/finanzas/clasificar/:movCaja    (clasifica una salida de caja registrada en la caja)
@@ -48,7 +49,7 @@ const diaDe = (iso: string) => hoyCanarias(new Date(iso));
 
 type Adj = { key: string; tipo: "foto" | "pdf" } | null;
 type Gasto = { id: string; fecha: string; categoria: string; area: string; proveedor: string; concepto: string; factura: string; base: number; impuestoPct: number; impuesto: number; total: number; metodo: string; adjunto: Adj; coche: string; cajaMov: string; t: string; por: string; anulado: null | { t: string; motivo: string } };
-type Cobro = { id: string; fecha: string; metodo: string; importe: number; cajaMov: string; nota: string; t: string; por: string };
+type Cobro = { id: string; fecha: string; metodo: string; importe: number; cajaMov: string; nota: string; t: string; por: string; anulado?: null | { t: string; motivo: string } };
 type Venta = { coche: string; fecha: string; importe: number; igicPct: number; comprador: string; factura: string; costeCompra: number; nota: string; cobros: Cobro[]; t: string };
 type Ingreso = { id: string; fecha: string; concepto: string; cliente: string; factura: string; area: string; base: number; impuestoPct: number; impuesto: number; total: number; metodo: string; adjunto: Adj; cajaMov: string; t: string; anulado: null | { t: string; motivo: string } };
 
@@ -70,6 +71,10 @@ function importes(b: any) {
   if (Math.abs(total - (base + impuesto)) > 2) return { error: `El total no cuadra: base ${eur(base)} + ${String(pct).replace(".", ",")} % (${eur(impuesto)}) = ${eur(base + impuesto)}.` };
   return { base, impuestoPct: pct, impuesto, total: base + impuesto };
 }
+
+// Actualización 46 · antiduplicados: el mismo apunte (mismo importe y mismo concepto) repetido en menos de 2 minutos NO se guarda otra vez
+const RECIENTE = 120_000, hace = (iso: string) => Date.now() - Date.parse(iso || "");
+const DUP_COBRO = "Este mismo cobro (mismo importe y forma de pago) ya se registró hace un momento. No se ha duplicado. Si de verdad es un segundo cobro, espera 2 minutos o cambia el importe.";
 
 // Pago o cobro en efectivo → movimiento en la caja abierta (con las mismas reglas que la caja)
 async function porCaja(q: Quien, datos: any, origin: string) {
@@ -101,9 +106,9 @@ async function resumen(desde: string, hasta: string) {
   for (const o of ords) {
     const p = o.presupuesto, reg = cobrosT.find((c) => c.token === o.token);
     const caja = movs.filter((m) => m.tipo === "ingreso" && m.orden === o.token && !usadosCaja.has(m.id));
-    if (!(p && p.estado === "aceptado") && !reg?.cobros.length && !caja.length && !facDeOrden.get(o.token)) continue;
+    if (!(p && p.estado === "aceptado") && !(reg?.cobros || []).some((c) => !c.anulado) && !caja.length && !facDeOrden.get(o.token)) continue;
     const lineas = p?.lineas || [], base0 = Math.round(lineas.reduce((a: number, l: any) => a + (Number(l.n) || 0) * (Number(l.p) || 0), 0) * 100), igic = p ? Number(p.igic) || 0 : cfg.igic;
-    const cobrado = [...(reg?.cobros || []).map((c) => ({ ...c, origen: "finanzas" })), ...caja.map((m) => ({ id: m.id, fecha: diaDe(m.t), metodo: "efectivo", importe: m.importe, cajaMov: m.id, nota: "Cobrado en caja por " + m.porNombre, origen: "caja" }))];
+    const cobrado = [...(reg?.cobros || []).filter((c) => !c.anulado).map((c) => ({ ...c, origen: "finanzas" })), ...caja.map((m) => ({ id: m.id, fecha: diaDe(m.t), metodo: "efectivo", importe: m.importe, cajaMov: m.id, nota: "Cobrado en caja por " + m.porNombre, origen: "caja" }))];
     const fac = facDeOrden.get(o.token);
     const totalAcept = fac ? Math.round(fac.total * 100) : (p && p.estado === "aceptado" ? base0 + Math.round(base0 * igic / 100) : 0);
     const total = totalAcept || cobrado.reduce((a, c) => a + c.importe, 0);
@@ -123,7 +128,7 @@ async function resumen(desde: string, hasta: string) {
     const compra = v?.costeCompra ?? co?.compra ?? propios.get(id)?.compra ?? 0;
     // Reacondicionamiento = gastos apuntados a este coche + piezas, horas y costes aprobados de su ficha en Taller → Coches propios
     const reac = gastos.filter((g) => !g.anulado && g.coche === id).reduce((a, g) => a + g.base, 0) + (propios.get(id)?.reac || 0);
-    const cobrado = [...(v?.cobros || []).map((x) => ({ ...x, origen: "finanzas" })), ...caja.map((m) => ({ id: m.id, fecha: diaDe(m.t), metodo: "efectivo", importe: m.importe, cajaMov: m.id, nota: "Cobrado en caja por " + m.porNombre, origen: "caja" }))];
+    const cobrado = [...(v?.cobros || []).filter((x) => !x.anulado).map((x) => ({ ...x, origen: "finanzas" })), ...caja.map((m) => ({ id: m.id, fecha: diaDe(m.t), metodo: "efectivo", importe: m.importe, cajaMov: m.id, nota: "Cobrado en caja por " + m.porNombre, origen: "caja" }))];
     const fechaDoc = v?.fecha || (c?.vendidoEn ? diaDe(c.vendidoEn) : diaDe(c?.actualizado || ahora()));
     const nombre = c ? `${c.marca} ${c.modelo} ${c.version || ""}`.trim() + (c.anio ? ` (${c.anio})` : "") : "Coche borrado del inventario";
     const doc = { id: "v-" + id, tipo: "venta", area: "venta", ref: id, fecha: fechaDoc, num: v?.factura || "", cliente: v?.comprador || "", concepto: "Venta · " + nombre, base, impuestoPct: igic, impuesto: total - base, total, cobrado: cobrado.reduce((a, x) => a + x.importe, 0), cobros: cobrado, estimado: !v, costeCompra: compra, reacondicionamiento: reac, beneficio: base - compra - reac, sinCoste: !compra };
@@ -231,6 +236,8 @@ export default async (req: Request) => {
     if (!esFoto(body.adjunto) || !(await existeArchivo(body.adjunto))) return json({ error: "Adjunta la foto o el PDF de la factura o el recibo." }, 400);
     const area = AREAS.includes(body.area) ? body.area : cat.area;
     const coche = /^[a-z0-9-]{3,80}$/.test(String(body.coche || "")) ? String(body.coche) : "";
+    { const dup = (await lista<Gasto>("gasto/")).find((x) => !x.anulado && hace(x.t) < RECIENTE && x.total === imp.total && x.metodo === metodo && x.proveedor.toLowerCase() === proveedor.toLowerCase());
+      if (dup) return json({ error: "Este mismo gasto (mismo proveedor, importe y forma de pago) ya se guardó hace un momento. No se ha duplicado.", duplicado: true }, 409); }
     const g: Gasto = { id: rid(), fecha: d, categoria: body.categoria, area, proveedor, concepto, factura, ...imp, metodo, adjunto: { key: body.adjunto, tipo: body.adjunto.endsWith(".pdf") ? "pdf" : "foto" }, coche, cajaMov: "", t: ahora(), por: q.nombre, anulado: null };
     if (metodo === "efectivo") {
       if (d !== hoyCanarias()) return json({ error: "Un pago en efectivo sale de la caja de hoy: pon la fecha de hoy (para días pasados, pide un ajuste en Control de Caja)." }, 400);
@@ -253,12 +260,27 @@ export default async (req: Request) => {
     return json({ ok: true });
   }
 
+  // ---------- anular un cobro de taller o de venta (Actualización 46: nunca se borra; sale de los totales y queda en el libro) ----------
+  if (accion === "cobro-anular" && req.method === "POST" && (id === "taller" || id === "venta")) {
+    const motivo = str(body.motivo, 300); if (motivo.length < 5) return json({ error: "Escribe el motivo de la anulación." }, 400);
+    const k = id === "taller" ? "cobro-taller/" + id2 : "venta/" + id2;
+    const reg = (await f().get(k, { type: "json" }).catch(() => null)) as any; if (!reg) return json({ error: "No existe." }, 404);
+    const c = (reg.cobros || []).find((x: Cobro) => x.id === String(body.cobro || "")); if (!c) return json({ error: "Cobro no encontrado." }, 404);
+    if (c.anulado) return json({ error: "Ya está anulado." }, 409);
+    c.anulado = { t: ahora(), motivo }; await f().setJSON(k, reg);
+    if (c.cajaMov) { const r = await leerMov(c.cajaMov); if (r && !r.m.anulado) { r.m.anulado = { t: ahora(), motivo: "Anulado desde Finanzas: " + motivo }; await sCaja().setJSON(r.key, r.m); await libroCaja(q, "anulacion", { importe: r.m.importe, tipo: r.m.tipo, concepto: r.m.concepto, motivo: "Finanzas: " + motivo }, r.m.turno, r.m.id); } }
+    await libro(q, "cobro-anular", { tipo: id, ref: id2, cobro: c.id, importe: c.importe, metodo: c.metodo, motivo });
+    return json({ ok: true });
+  }
+
   // ---------- ingreso manual (otros ingresos con factura) ----------
   if (accion === "ingreso" && req.method === "POST") {
     const d = fecha(body.fecha); if (!d || d > hoyCanarias()) return json({ error: "Pon la fecha." }, 400);
     const concepto = str(body.concepto, 300); if (concepto.length < 3) return json({ error: "Escribe el concepto." }, 400);
     const imp = importes(body); if (!imp) return json({ error: "Escribe la base imponible." }, 400); if ("error" in imp) return json({ error: imp.error }, 400);
     const metodo = COBROS.includes(body.metodo) ? body.metodo : ""; if (!metodo) return json({ error: "Elige cómo se cobró." }, 400);
+    { const dup = (await lista<Ingreso>("ingreso/")).find((x) => !x.anulado && hace(x.t) < RECIENTE && x.total === imp.total && x.metodo === metodo && x.concepto.toLowerCase() === concepto.toLowerCase());
+      if (dup) return json({ error: "Este mismo ingreso (mismo concepto, importe y forma de cobro) ya se guardó hace un momento. No se ha duplicado.", duplicado: true }, 409); }
     const i: Ingreso = { id: rid(), fecha: d, concepto, cliente: str(body.cliente, 120), factura: str(body.factura, 40), area: AREAS.includes(body.area) ? body.area : "general", ...imp, metodo, adjunto: esFoto(body.adjunto) ? { key: body.adjunto, tipo: body.adjunto.endsWith(".pdf") ? "pdf" : "foto" } : null, cajaMov: "", t: ahora(), anulado: null };
     if (metodo === "efectivo") {
       if (d !== hoyCanarias()) return json({ error: "Un cobro en efectivo entra en la caja de hoy: pon la fecha de hoy." }, 400);
@@ -283,7 +305,8 @@ export default async (req: Request) => {
       if (!/^[A-Za-z0-9]{16}$/.test(id2)) return json({ error: "Orden no válida." }, 400);
       const o = (await store("ordenes").get("o/" + id2, { type: "json" })) as any; if (!o) return json({ error: "Orden no encontrada." }, 404);
       { const p = o.presupuesto; const reg0 = ((await f().get("cobro-taller/" + id2, { type: "json" }).catch(() => null)) as any) || { cobros: [] };
-        const ya = (reg0.cobros || []).reduce((n: number, x: any) => n + (x.importe || 0), 0);
+        const ya = (reg0.cobros || []).filter((x: any) => !x.anulado).reduce((n: number, x: any) => n + (x.importe || 0), 0);
+        if ((reg0.cobros || []).some((x: any) => !x.anulado && x.importe === importe && x.metodo === metodo && hace(x.t) < RECIENTE)) return json({ error: DUP_COBRO, duplicado: true }, 409);
         const totalC = p && p.lineas ? Math.round(p.lineas.reduce((n: number, l: any) => n + (l.n || 1) * (l.p || 0), 0) * (1 + (p.igic ?? 7) / 100) * 100) : 0;
         if (totalC > 0 && ya + importe > totalC + 1 && !body.confirmarExceso) return json({ error: `Con este cobro se pasa de lo que vale el trabajo (${eur(totalC)}; ya cobrado ${eur(ya)}). Revisa el importe.`, exceso: true }, 409); }
       concepto = `Cobro taller ${o.num || ""} · ${o.vehiculo?.coche || ""} ${(o.vehiculo?.matricula || "").toUpperCase()}`.trim(); ref = o.num || "";
@@ -295,7 +318,8 @@ export default async (req: Request) => {
       const v = (await f().get("venta/" + id2, { type: "json" }).catch(() => null)) as Venta | null;
       if (!v) return json({ error: "Primero registra los datos de la venta de este coche." }, 409);
       concepto = `Cobro venta · ${car ? car.marca + " " + car.modelo : id2}`; ref = v.factura;
-      { const ya = (v.cobros || []).reduce((n: number, x: any) => n + (x.importe || 0), 0);
+      { const ya = (v.cobros || []).filter((x: any) => !x.anulado).reduce((n: number, x: any) => n + (x.importe || 0), 0);
+        if ((v.cobros || []).some((x: any) => !x.anulado && x.importe === importe && x.metodo === metodo && hace(x.t) < RECIENTE)) return json({ error: DUP_COBRO, duplicado: true }, 409);
         if (v.importe > 0 && ya + importe > v.importe + 1 && !body.confirmarExceso) return json({ error: `Con este cobro se pasa del precio de venta (${eur(v.importe)}; ya cobrado ${eur(ya)}). Revisa el importe.`, exceso: true }, 409); }
       if (metodo === "efectivo") {
         if (d !== hoyCanarias()) return json({ error: "Un cobro en efectivo entra en la caja de hoy: pon la fecha de hoy." }, 400);

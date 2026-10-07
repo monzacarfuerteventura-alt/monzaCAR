@@ -1,0 +1,567 @@
+{
+ "F2_SECCIONES": [
+  [
+   "A",
+   "Exterior y carrocería",
+   "",
+   [
+    [
+     "a1",
+     "Paragolpes delantero y trasero"
+    ],
+    [
+     "a2",
+     "Capó, aletas y puertas: alineación y holguras"
+    ],
+    [
+     "a3",
+     "Portón / maletero y cierres"
+    ],
+    [
+     "a4",
+     "Pintura: rayones, picados, diferencias de tono"
+    ],
+    [
+     "a5",
+     "Abolladuras o golpes"
+    ],
+    [
+     "a6",
+     "Óxido por salitre (bajos de puertas, pasos de rueda)"
+    ],
+    [
+     "a7",
+     "Parabrisas y cristales: grietas, impactos"
+    ],
+    [
+     "a8",
+     "Retrovisores"
+    ],
+    [
+     "a9",
+     "Limpiaparabrisas y escobillas"
+    ],
+    [
+     "a10",
+     "Faros, pilotos, intermitentes, freno, marcha atrás"
+    ],
+    [
+     "a11",
+     "Matrícula y soportes"
+    ],
+    [
+     "a12",
+     "Bajos y protector de cárter (golpes de pistas)"
+    ],
+    [
+     "a13",
+     "Escape: estado, fugas, soportes"
+    ]
+   ]
+  ],
+  [
+   "B",
+   "Habitáculo e interior",
+   "",
+   [
+    [
+     "b1",
+     "Tapicería y asientos: roturas, manchas, mecanismos"
+    ],
+    [
+     "b2",
+     "Cinturones: anclaje, retracción, hebillas"
+    ],
+    [
+     "b3",
+     "Volante, palanca y pedales: desgaste"
+    ],
+    [
+     "b4",
+     "Cuadro: testigos con contacto y con motor en marcha"
+    ],
+    [
+     "b5",
+     "Aire acondicionado: enfría y no huele"
+    ],
+    [
+     "b6",
+     "Calefacción y desempañado"
+    ],
+    [
+     "b7",
+     "Elevalunas, cierre centralizado y mandos"
+    ],
+    [
+     "b8",
+     "Radio, pantalla y conectividad"
+    ],
+    [
+     "b9",
+     "Airbags: testigo apagado, tapas sin manipular"
+    ],
+    [
+     "b10",
+     "Olores, humedad, arena o filtraciones"
+    ],
+    [
+     "b11",
+     "Luces interiores y claxon"
+    ],
+    [
+     "b12",
+     "Maletero: rueda, gato, herramientas"
+    ]
+   ]
+  ],
+  [
+   "C",
+   "Mecánica básica",
+   "capó abierto",
+   [
+    [
+     "c1",
+     "Aceite motor: nivel y aspecto"
+    ],
+    [
+     "c2",
+     "Refrigerante: nivel, color y circuito"
+    ],
+    [
+     "c3",
+     "Líquido de frenos: nivel y color"
+    ],
+    [
+     "c4",
+     "Líquido dirección asistida (si aplica)"
+    ],
+    [
+     "c5",
+     "Líquido lavaparabrisas"
+    ],
+    [
+     "c6",
+     "Batería: fecha, bornes, test de carga",
+     "Voltios"
+    ],
+    [
+     "c7",
+     "Correa de accesorios: grietas, tensión, ruido"
+    ],
+    [
+     "c8",
+     "Distribución: fecha / km del último cambio",
+     "Fecha · km"
+    ],
+    [
+     "c9",
+     "Mangueras y abrazaderas"
+    ],
+    [
+     "c10",
+     "Fugas de aceite, refrigerante o combustible"
+    ],
+    [
+     "c11",
+     "Filtro de aire: polvo y arena (calima)"
+    ],
+    [
+     "c12",
+     "Radiador y condensador A/C: obstruido o corroído"
+    ],
+    [
+     "c13",
+     "Ruido y ralentí en frío"
+    ],
+    [
+     "c14",
+     "Último mantenimiento (libro o factura)",
+     "Fecha"
+    ]
+   ]
+  ],
+  [
+   "D",
+   "Neumáticos, frenos y suspensión",
+   "",
+   [
+    [
+     "d1",
+     "Dibujo neumáticos (mín. legal 1,6 mm)",
+     "DI · DD · TI · TD mm"
+    ],
+    [
+     "d2",
+     "Presión, fecha DOT, grietas, hernias",
+     "DOT más antiguo"
+    ],
+    [
+     "d3",
+     "Desgaste irregular (alineación)"
+    ],
+    [
+     "d4",
+     "Rueda de repuesto o kit"
+    ],
+    [
+     "d5",
+     "Llantas: golpes o deformaciones"
+    ],
+    [
+     "d6",
+     "Pastillas delanteras: espesor",
+     "mm"
+    ],
+    [
+     "d7",
+     "Pastillas traseras / zapatas: espesor",
+     "mm"
+    ],
+    [
+     "d8",
+     "Discos y tambores: rayado, bordes, alabeo"
+    ],
+    [
+     "d9",
+     "Latiguillos y tuberías de freno"
+    ],
+    [
+     "d10",
+     "Freno de mano: recorrido y eficacia"
+    ],
+    [
+     "d11",
+     "Amortiguadores: fugas y rebote"
+    ],
+    [
+     "d12",
+     "Rótulas, silentblocks, fuelles, bieletas"
+    ],
+    [
+     "d13",
+     "Holguras en dirección y cojinetes"
+    ],
+    [
+     "d14",
+     "Palieres y juntas: grasa o ruidos"
+    ]
+   ]
+  ],
+  [
+   "E",
+   "Diagnosis OBD",
+   "",
+   [
+    [
+     "e1",
+     "Equipo OBD utilizado",
+     "Equipo"
+    ],
+    [
+     "e2",
+     "Códigos de avería activos (DTC)",
+     "Códigos"
+    ],
+    [
+     "e3",
+     "Códigos pendientes y almacenados"
+    ],
+    [
+     "e4",
+     "Monitores de emisiones (listos / no listos)"
+    ],
+    [
+     "e5",
+     "Datos en vivo: temperatura, sondas, ralentí, mezcla"
+    ],
+    [
+     "e6",
+     "Módulos: ABS, airbag, transmisión, carrocería"
+    ],
+    [
+     "e7",
+     "Kilometraje coherente entre módulos"
+    ],
+    [
+     "e8",
+     "Informe OBD guardado en la carpeta"
+    ]
+   ]
+  ],
+  [
+   "F",
+   "Prueba en carretera",
+   "10–15 km, ciudad y tramo rápido",
+   [
+    [
+     "f1",
+     "Arranque en frío y ralentí estable"
+    ],
+    [
+     "f2",
+     "Aceleración: respuesta, tirones, humo"
+    ],
+    [
+     "f3",
+     "Cambio / caja automática: suavidad, ruidos"
+    ],
+    [
+     "f4",
+     "Embrague: punto de agarre, patina"
+    ],
+    [
+     "f5",
+     "Frenada recta, sin vibración ni ruidos"
+    ],
+    [
+     "f6",
+     "Dirección centrada, sin holguras ni vibración"
+    ],
+    [
+     "f7",
+     "Suspensión: ruidos en baches y curvas"
+    ],
+    [
+     "f8",
+     "Ruidos anómalos (rodamientos, transmisión)"
+    ],
+    [
+     "f9",
+     "Temperatura de motor estable"
+    ],
+    [
+     "f10",
+     "A/C funcionando en marcha"
+    ],
+    [
+     "f11",
+     "Testigos encendidos durante la prueba"
+    ],
+    [
+     "f12",
+     "Km recorridos en la prueba",
+     "km"
+    ]
+   ]
+  ],
+  [
+   "G",
+   "Documentación",
+   "obligatorio en coches de stock (nuestros)",
+   [
+    [
+     "g1",
+     "Permiso de circulación y ficha técnica"
+    ],
+    [
+     "g2",
+     "ITV en vigor",
+     "Caduca"
+    ],
+    [
+     "g3",
+     "Informe DGT: titularidad, cargas, embargos"
+    ],
+    [
+     "g4",
+     "Impuesto de circulación al corriente"
+    ],
+    [
+     "g5",
+     "Libro de mantenimiento y facturas"
+    ],
+    [
+     "g6",
+     "Número de llaves y mando",
+     "Llaves"
+    ],
+    [
+     "g7",
+     "Kilometraje coherente (ITV, facturas, OBD)"
+    ]
+   ]
+  ]
+ ],
+ "F4_SECC": [
+  [
+   "A",
+   "Trabajo y seguridad",
+   [
+    [
+     "a1",
+     "Todos los trabajos autorizados en el presupuesto están hechos"
+    ],
+    [
+     "a2",
+     "Puntos en ROJO de FORM-02 corregidos o rechazados por escrito"
+    ],
+    [
+     "a3",
+     "No hay trabajos hechos sin autorización"
+    ],
+    [
+     "a4",
+     "Recambios instalados = presupuesto = factura"
+    ],
+    [
+     "a5",
+     "Piezas sustituidas guardadas para el cliente (si las pide)"
+    ],
+    [
+     "a6",
+     "Pares de apriete revisados (ruedas, tren delantero, frenos)"
+    ],
+    [
+     "a7",
+     "Sin fugas tras la reparación (revisado con motor caliente)"
+    ],
+    [
+     "a8",
+     "Niveles de aceite, refrigerante y frenos correctos"
+    ],
+    [
+     "a9",
+     "Presión de neumáticos según fabricante"
+    ],
+    [
+     "a10",
+     "Testigos apagados y OBD sin averías nuevas"
+    ],
+    [
+     "a11",
+     "Testigo de mantenimiento reiniciado (si procede)"
+    ],
+    [
+     "a12",
+     "Prueba en carretera final sin ruidos ni vibraciones"
+    ],
+    [
+     "a13",
+     "Luces, intermitentes, limpias, claxon y A/C funcionan"
+    ]
+   ]
+  ],
+  [
+   "B",
+   "Limpieza y presentación",
+   [
+    [
+     "b1",
+     "Exterior lavado: sin grasa, huellas, arena ni salitre"
+    ],
+    [
+     "b2",
+     "Cristales limpios por dentro y por fuera"
+    ],
+    [
+     "b3",
+     "Interior aspirado, salpicadero y plásticos limpios"
+    ],
+    [
+     "b4",
+     "Sin grasa en volante, palanca, tapicería y moquetas"
+    ],
+    [
+     "b5",
+     "Protectores de asiento, alfombrilla y volante retirados"
+    ],
+    [
+     "b6",
+     "Sin olores extraños (aceite, humedad, humo)"
+    ],
+    [
+     "b7",
+     "Ningún daño nuevo respecto al croquis de FORM-01"
+    ],
+    [
+     "b8",
+     "Herramientas y accesorios del coche en su sitio"
+    ]
+   ]
+  ],
+  [
+   "C",
+   "Entrega al cliente",
+   [
+    [
+     "c1",
+     "Objetos personales devueltos a su sitio"
+    ],
+    [
+     "c2",
+     "Km y combustible de salida anotados"
+    ],
+    [
+     "c3",
+     "Factura desglosada preparada"
+    ],
+    [
+     "c4",
+     "Garantía explicada y entregada por escrito"
+    ],
+    [
+     "c5",
+     "Puntos en ÁMBAR pendientes explicados"
+    ],
+    [
+     "c6",
+     "Cliente avisado de la hora de recogida"
+    ],
+    [
+     "c7",
+     "Repaso del coche y factura con el cliente"
+    ],
+    [
+     "c8",
+     "Firma de conformidad del cliente"
+    ],
+    [
+     "c9",
+     "QR de reseñas mostrado y tarjeta entregada"
+    ]
+   ]
+  ],
+  [
+   "D",
+   "Alta para venta",
+   [
+    [
+     "d1",
+     "Documentación completa y verificada"
+    ],
+    [
+     "d2",
+     "Sin cargas ni embargos (o cancelados)"
+    ],
+    [
+     "d3",
+     "Coste total anotado (coche + taller)"
+    ],
+    [
+     "d4",
+     "Precio de venta y margen calculados"
+    ],
+    [
+     "d5",
+     "Fotos del anuncio con el coche limpio"
+    ],
+    [
+     "d6",
+     "Ficha con historial para el comprador"
+    ],
+    [
+     "d7",
+     "2 llaves y libro en la carpeta del coche"
+    ],
+    [
+     "d8",
+     "En exposición con llave etiquetada"
+    ],
+    [
+     "d9",
+     "Anuncio publicado (web y portales)"
+    ]
+   ]
+  ]
+ ]
+}

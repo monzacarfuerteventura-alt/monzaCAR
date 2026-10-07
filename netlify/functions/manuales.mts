@@ -10,15 +10,17 @@ import { permiso, esRespuesta } from "../lib/acceso.mts";
   gerente o usuario + PIN del equipo).   GET /api/manual/VolcanoCars-S01-Taller-recepcion-a-entrega
 */
 const NOMBRE = /^VolcanoCars-S(0[0-9]|1[01])-[A-Za-z0-9.-]+$/;
+const FORMULARIO = /^(FORM-(01|02|03|04|14|15|16|17)|FICHAS-TALLER)$/; // PDF originales de las fichas: netlify/privado/formularios/FORM-NN.pdf
 export default async (req: Request) => {
   if (req.method !== "GET") return json({ error: "Método no permitido" }, 405);
   const q = await permiso(req, "equipo"); if (esRespuesta(q)) return q;
   const f = decodeURIComponent(new URL(req.url).pathname.split("/").pop() || "").replace(/\.pdf$/i, "");
-  if (!NOMBRE.test(f)) return json({ error: "Manual no encontrado" }, 404);
+  const esForm = FORMULARIO.test(f);
+  if (!NOMBRE.test(f) && !esForm) return json({ error: "Manual no encontrado" }, 404);
   const raices = [process.env.LAMBDA_TASK_ROOT, process.cwd(), join(process.cwd(), "..")].filter(Boolean) as string[];
   for (const r of raices) {
     try {
-      const b = await readFile(join(r, "netlify", "privado", "sistemas", f + ".pdf"));
+      const b = await readFile(join(r, "netlify", "privado", esForm ? "formularios" : "sistemas", f + ".pdf"));
       return new Response(b, { headers: { "content-type": "application/pdf", "content-disposition": `inline; filename="${f}.pdf"`, "cache-control": "private, no-store", "x-robots-tag": "noindex, nofollow", "x-content-type-options": "nosniff" } });
     } catch { /* prueba la siguiente ubicación */ }
   }

@@ -45,7 +45,7 @@ with sync_playwright() as p:
         # el trabajador no ve importes
         page.click("#logout"); page.wait_for_selector("#login-form")
         if not page.is_visible("#f-eq"): page.click("#login-modo")
-        page.fill("#eq-u", usr); page.fill("#eq-p", "445566"); page.click("#login-btn"); page.wait_for_selector("#s-fichar:not([hidden]), #tabsrow:not([hidden])", timeout=15000); page.wait_for_timeout(1500)
+        page.fill("#eq-u", usr); page.fill("#eq-p", "445566"); page.click("#login-btn"); page.wait_for_selector("#s-fichar:not([hidden]), #tabsrow:not([hidden])", state="attached", timeout=15000); page.wait_for_timeout(1500)
         check("el trabajador no ve ningún importe de coste", "Coste de personal" not in page.inner_text("body") and "€/h" not in page.inner_text("body"))
         check("sin errores de consola", not errores, str(errores[:3]))
     b.close()

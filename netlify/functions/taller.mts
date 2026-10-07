@@ -319,6 +319,13 @@ export default async (req: Request, context: Context) => {
     if (f1.cliente.nombre.length < 2) return json({ error: "Falta el nombre del cliente." }, 400);
     if (!f1.vehiculo.matricula) return json({ error: "Falta la matrícula." }, 400);
     if (!f1.recibidoPor) f1.recibidoPor = q.nombre;
+    // Actualización 46 · antiduplicados: no se abre una 2.ª orden para una matrícula que ya está en el taller (solo el gerente puede forzarlo)
+    if (!(body.confirmarDuplicado === true && q.admin)) {
+      const so = store("ordenes"), { blobs } = await so.list({ prefix: "o/" }), norm = (m: unknown) => String(m || "").toUpperCase().replace(/[\s-]/g, "");
+      const abiertas = ((await Promise.all(blobs.map((b) => so.get(b.key, { type: "json" }).catch(() => null)))).filter(Boolean) as any[]).filter((x) => !["entregado", "cancelado"].includes(x.estado));
+      const dup = abiertas.find((x) => norm(x.vehiculo?.matricula) === norm(f1.vehiculo.matricula));
+      if (dup) return json({ error: `Ese coche (${f1.vehiculo.matricula}) ya está en el taller con la orden abierta ${dup.num || ""}. Ábrela en la pestaña Taller en lugar de crear otra.`, duplicado: true, token: dup.token }, 409);
+    }
     const o: any = {
       token, creado: t, actualizado: t, lead: str(body.lead, 40),
       cliente: { nombre: f1.cliente.nombre, telefono: f1.cliente.telefono, email: f1.cliente.email, idioma: body.idioma === "en" ? "en" : "es" },

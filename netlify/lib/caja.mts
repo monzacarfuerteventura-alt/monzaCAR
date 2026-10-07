@@ -76,6 +76,10 @@ export async function crearMovimiento(q: Quien, body: any, origin: string): Prom
     const concepto = str(body.concepto, 200), ref = str(body.ref, 40);
     if (concepto.length < 3) return err("Escribe el concepto.", 400);
     if (tipo === "egreso" && !ref) return err("Escribe el nº de factura, ticket u orden asociada (o del vale firmado).", 400);
+    // Actualización 46: el cajón solo guarda efectivo físico; y el mismo apunte repetido en 90 s no se guarda dos veces
+    if (body.metodo && body.metodo !== "efectivo") return err("El cajón solo guarda efectivo (billetes y monedas). Los pagos por transferencia o tarjeta NO pasan por la caja: se apuntan en Finanzas.", 400);
+    { const dup = (await movsDe(t.id)).find((x) => !x.anulado && x.tipo === tipo && x.importe === importe && x.categoria === categoria && x.concepto.toLowerCase() === concepto.toLowerCase() && Date.now() - Date.parse(x.t) < 90_000);
+      if (dup) return err("Este mismo movimiento (mismo importe y concepto) ya se registró hace un momento. No se ha duplicado. Si es otro distinto, cambia el concepto.", 409); }
     const foto = esFoto(body.foto) ? body.foto : "", sinTicket = tipo === "egreso" && !foto && body.sinTicket === true;
     if (tipo === "egreso" && !foto && !sinTicket) return err("Haz una foto del ticket o la factura. Sin comprobante no se puede sacar dinero.", 400);
     if (foto && !(await store("monzacar-fotos").get(foto, { type: "arrayBuffer" }).catch(() => null))) return err("La foto no se ha subido bien. Hazla otra vez.", 400);

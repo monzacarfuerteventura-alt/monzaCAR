@@ -456,3 +456,64 @@ Todo viene APAGADO: subirla no envía nada a ningún portal.
 - **IMPORTANTE:** si fijaste la nave en tu casa para probar, **vuelve a fijarla en la nave real** (de pie en la puerta) y comprueba con «Comprobar dónde estoy».
 - **Archivos:** `netlify/lib/presencia.mts`, `netlify/functions/jornada.mts`, `public/admin.html`, `tools/pruebas/e2e-presencia.mjs`, `tools/pruebas/e2e-presencia-panel.py`, `CLAUDE.md`, `CLAUDE-INDICE.md`, `LEEME.md`. Deben salir **8 archivos** en `git status` (todos modificados `M`).
 
+
+
+## Actualización 46 · Panel guiado (7-10-2026)
+Objetivo: que cualquier empleado nuevo sepa usar el panel y que la web impida los duplicados, sin quitar ninguna función.
+- **Botones**: 3 grandes (Nueva Entrada, Factura Rápida, Control de Caja) + «Más opciones / Utilidades». Lo secundario sigue existiendo, solo está en el desplegable.
+- **Asistente de 4 pasos** (Recepción → Asignación → Facturación → Cobro y cierre). «Factura directa / En persona» emite la factura (número F-AAAA-NNNN definitivo) sin ficha técnica, checklist ni presupuesto.
+- **Caja**: el cajón solo guarda efectivo. La transferencia suma al acumulado de ingresos pero se muestra aparte («Dinero abonado por Transferencia (En Cuenta Bancaria, NO presente en el cajón físico de caja)»).
+- **Anular**: nada se borra (ley de facturación: numeración correlativa y registro encadenado). Se anula con motivo, los totales se recalculan solos y queda en el libro. Una factura emitida por error se corrige con rectificativa (ya existía).
+- **Antiduplicados**: caja, gastos, ingresos, cobros y recepciones.
+- **Agenda**: sin alta manual; se rellena desde el CRM.
+
+
+## Actualización 51 · Las 5 fichas con su motivo, PDF por ficha y manual profesional
+- Al recibir un coche («Proceso completo») sale la lista de las 5 fichas (Recepción, Inspección 360°, Factura, Tiempos, Calidad) con **por qué se hace cada una**, su estado y botones **Rellenar** y **PDF**. También desde cualquier ficha: botón «Las 5 fichas».
+- Cada ficha se descarga en PDF por separado («Descargar PDF de esta ficha»), con el nombre del archivo ya puesto.
+- Manual de 2 páginas en `docs/Guia-rapida-Volcano-Cars.pdf` y `docs/guia-rapida-taller.md`.
+
+## Actualización 50 · Dos vías (Taller / Venta de coches) y guía rápida
+- Barra lateral dividida en 🔧 Taller y 🚗 Venta de coches; etiquetas de estado de colores (En venta, Reservado, Vendido, estados de la orden); importes en fuente monoespaciada; efectivo con luz verde y banco/TPV con luz azul en Finanzas.
+- Guía de 1 página en `docs/guia-rapida-taller.md` y `docs/Guia-rapida-Volcano-Cars.pdf`.
+
+## Actualización 49 · Cierre de caja con PIN de gerente y paleta Ctrl+K con acciones
+- Cerrar la caja con CUALQUIER diferencia (aunque sea 1 céntimo) exige explicación y la autorización de un gerente (PIN). Queda anotado quién autorizó.
+- Al cerrar, panel verde «Caja cuadrada al céntimo» (o rojo si hubo diferencia) con resumen imprimible y descargable. El empleado no ve la cifra esperada (cierre ciego).
+- Ctrl+K: ahora también cobra (escribe «cobrar» + matrícula), salta a la caja, apunta cobros/salidas y cierra la caja. Atajos: `g e` entrada, `g f` factura, `g c` caja.
+- Colores con significado (verde efectivo, azul banco, ámbar pendiente, rojo desfase), avisos flotantes con icono y vibración en el móvil.
+- Pruebas: `tools/pruebas/e2e-arqueo.py` (15).
+
+## Actualización 48 · Rediseño general del panel (ordenador y móvil)
+- Nuevos `public/panel-diseno.css` (sistema de diseño: colores, tipografía, botones, campos, tarjetas, diálogos, movimiento) y `public/panel-shell.js`.
+- **Ordenador:** barra lateral por grupos (Operación, Ventas, Dinero, Soporte) con avisos, buscador **Ctrl+K** (órdenes, matrículas, clientes, coches y secciones), menú **«+ Nuevo»** (tecla N), las 3 acciones rápidas en una sola fila, y la configuración (precios, financiación, multipublicación, reservas) debajo de las listas.
+- **Móvil:** cabecera mínima, títulos más medidos, botones de 44 px; la barra inferior de la 47 se mantiene.
+- No se quitó ninguna función: solo cambia cómo se ve. Pruebas: `tools/pruebas/e2e-shell.py` (13).
+
+## Actualización 47 · Panel como app en el móvil (sin quitar nada)
+- Nuevo `public/panel-app.js`: en pantallas ≤720 px el panel pasa a **barra inferior** (Inicio · Taller · «+» · Caja · Más), botón **«+»** (Nueva entrada, Factura rápida, Control de caja y utilidades) y hoja **«Más»** (todas las secciones, Ver web, Seguridad, Salir). En ordenador sigue igual.
+- Fichas (FORM-01 a FORM-04 y Factura): cabecera compacta con «⋯» (imprimir/PDF/presupuesto), pestañas en una fila deslizable con el nombre entero, semáforo con botones de 50 px, barra «Guardar/Firmar» más baja, «Emisor» de la factura plegado.
+- Arreglo en ordenador: la 6.ª pestaña de la ficha («Auditoría») ya no cae sola a una 2.ª fila.
+- Panel instalable (`admin.webmanifest`): «Añadir a pantalla de inicio» lo abre a pantalla completa.
+- Pruebas: `python3 tools/pruebas/e2e-app.py` (42) y `e2e-guiado.py` (41, ahora con viewport de ordenador). Reiniciar `servidor-local.mjs` entre pruebas.
+
+
+## Actualización 52 · Factura Rápida completa y fichas en blanco (7-10-2026)
+- Factura Rápida / Cobro Directo: formulario FORM-14 completo (cliente con DNI, dirección, CP y correo; vehículo con VIN y km de entrada/salida; líneas con tipo, referencia, cantidad, precio, descuento; descuento global; IGIC 7 %, 0 % o «otro»; observaciones). No exige recepción ni inspección.
+- Fichas en blanco para imprimir (recepción, inspección 360°, tiempos, calidad y factura) sin textos grises; los mecánicos las rellenan a mano y el gerente las pasa al sistema.
+- Numeración: orden VC-AAAA-NNNN; factura F-AAAA-NNNN (la asigna el sistema, es distinta de la orden).
+- Prueba nueva: tools/pruebas/e2e-blanco.py (33).
+
+## Actualización 53 · PDF original de la factura, pulido y compactación (7-10-2026)
+- Botón «Original PDF» de la factura en las 5 fichas, en la ficha de taller y en la Factura Rápida.
+- Recuadros y botones con borde luminoso, sombras y relieve; panel más compacto; sin desenfoque en móvil.
+
+## Actualización 54 · tus fichas en PDF y vida en el panel (7-10-2026)
+- Fichas en blanco = tus PDF (recepción, inspección, tiempos, calidad y factura). Sin botón «Original PDF» ni fichas generadas.
+- Paleta Volcano Cars y efectos: línea de lava, foco de luz en tarjetas, onda al pulsar, ítem activo con brasa, entrada escalonada.
+
+## Actualización 55 · 6 fichas vectoriales con presupuesto (7-10-2026)
+- Fichas del taller regeneradas como PDF vectorial A4 a sangre, sin textos grises; nueva ficha FORM-15 Presupuesto (3.ª) y factura al final (6.ª).
+- Pestaña «Presupuesto» en la ficha de cada orden. Intervalos del panel en pausa con la pestaña oculta.
+- FORM-01: barra «Conformidad del cliente» en gris oscuro (sin naranja). Nuevas pruebas de estrés: tools/pruebas/e2e-estres.py, e2e-doble-factura.py, e2e-formularios-web.py.
+- Coches: botones «Factura de venta (PDF)» (FORM-16, garantía 12 meses) y «Parte de reserva (PDF)» (FORM-17, reserva válida 48 h, sin importes). FORM-01: recuadro «Motivo de entrada» en blanco. Cabecera de la ficha del taller sin apretarse en escritorio.

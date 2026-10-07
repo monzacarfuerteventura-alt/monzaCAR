@@ -1,0 +1,567 @@
+/* =====================================================================================================
+   PANEL · SISTEMA DE DISEÑO (actualización 48)
+   Capa visual única para TODO el panel (admin.html y sus scripts). No cambia ninguna función: solo cómo se ve.
+   Se carga la última (antes de </head>) y todo cuelga de `body.vc-ui` para ganar a los estilos antiguos.
+   Referentes: Linear / Vercel / Stripe Dashboard (ordenador) y las apps de taller de EE. UU. (Tekmetric, Shopmonkey) en móvil.
+   Estructura:  1 fichas de color y medidas · 2 base · 3 estructura de ordenador (barra lateral) · 4 cabeceras de página
+                5 botones, campos, tarjetas · 6 componentes · 7 diálogos, avisos, cajón · 8 movimiento · 9 tableta · 10 móvil
+   ===================================================================================================== */
+
+/* ---------- 1 · fichas de color y medidas ---------- */
+:root{
+  --ground:#0B0B0A; --surface:#141413; --surface-2:#1B1B19; --surface-3:#232320;
+  --line:#262521; --line-2:#34332E;
+  --ink:#F4F1EB; --muted:#A09B91; --faint:#6F6B63;
+  --accent:#E8572B; --accent-2:#FF7A4D; --accent-soft:rgba(232,87,43,.14); --accent-line:rgba(232,87,43,.45);
+  --ok:#41C47F; --ok-soft:rgba(65,196,127,.13); --warn:#F2B53D; --warn-soft:rgba(242,181,61,.13); --info:#6CA6FF; --info-soft:rgba(108,166,255,.13);
+  --bad:#F5948C; --bad-soft:rgba(245,148,140,.13);
+  --r-s:9px; --r-m:12px; --r-l:16px; --r-xl:22px;
+  --side-w:248px; --top-h:60px;
+  --sombra-1:0 1px 0 rgba(255,255,255,.035) inset,0 1px 2px rgba(0,0,0,.4);
+  --sombra-2:0 12px 32px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.3);
+  --curva:cubic-bezier(.2,.8,.2,1);
+}
+
+/* ---------- 2 · base ---------- */
+body.vc-ui{
+  background:radial-gradient(1100px 520px at 78% -8%,rgba(232,87,43,.075),transparent 62%),radial-gradient(800px 400px at 0% 100%,rgba(108,166,255,.035),transparent 60%),var(--ground);
+  background-attachment:fixed;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;
+  font-size:15px;line-height:1.5;letter-spacing:-.003em;
+}
+body.vc-ui ::selection{background:var(--accent);color:#fff}
+body.vc-ui *{scrollbar-width:thin;scrollbar-color:#3a3934 transparent}
+body.vc-ui ::-webkit-scrollbar{width:10px;height:10px}
+body.vc-ui ::-webkit-scrollbar-thumb{background:#34332e;border-radius:9px;border:2px solid transparent;background-clip:content-box}
+body.vc-ui ::-webkit-scrollbar-thumb:hover{background:#4a4943;background-clip:content-box;border:2px solid transparent}
+body.vc-ui :focus-visible{outline:2px solid var(--accent-2);outline-offset:2px;border-radius:6px}
+body.vc-ui h1,body.vc-ui h2,body.vc-ui h3{letter-spacing:-.01em}
+body.vc-ui .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+body.vc-ui .hint{color:var(--muted)}
+
+/* ---------- 3 · estructura de ordenador: barra lateral + barra superior ---------- */
+#vc-side,#vc-search-btn,#vc-pal{display:none}
+@media (min-width:721px){
+  body.vc-shell{padding-left:var(--side-w)}
+  body.vc-shell #tabsrow{visibility:hidden!important;position:absolute!important;left:0;top:0;width:1px;height:1px;overflow:hidden;margin:0!important;padding:0!important}
+  body.vc-shell .top{background:rgba(11,11,10,.82);-webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3);border-bottom:1px solid var(--line);z-index:20}
+  body.vc-shell .top .wrap.bar{max-width:none;margin:0;padding:0 28px;height:var(--top-h)}
+  body.vc-shell .top .logo,body.vc-shell .top .tag{display:none}
+  body.vc-shell main.wrap{max-width:1360px;margin:0 auto;padding:26px 32px 90px}
+  body.vc-shell #vc-side{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:var(--side-w);padding:14px 12px 12px;z-index:30;
+    background:linear-gradient(180deg,#101010 0%,#0B0B0A 100%);border-right:1px solid var(--line);overflow-y:auto;overscroll-behavior:contain}
+  .vs-logo{display:flex;align-items:center;gap:10px;padding:4px 8px 16px;color:var(--ink);text-decoration:none}
+  .vs-logo svg{height:30px;width:auto;display:block}
+  .vs-logo small{font:700 10px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-top:2px}
+  .vs-new{display:flex;align-items:center;gap:10px;width:100%;border:0;border-radius:11px;background:linear-gradient(180deg,#F0602F,#D9481C);color:#fff;padding:11px 14px;font:700 14.5px var(--body);cursor:pointer;
+    box-shadow:0 6px 18px rgba(217,72,28,.35),0 1px 0 rgba(255,255,255,.25) inset;margin-bottom:6px;transition:transform .15s var(--curva),box-shadow .15s}
+  .vs-new:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(217,72,28,.45),0 1px 0 rgba(255,255,255,.25) inset}
+  .vs-new svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.4;stroke-linecap:round}
+  .vs-new kbd{margin-left:auto}
+  .vs-grp{font:800 10.5px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);padding:18px 10px 7px}
+  .vs-it{position:relative;display:flex;align-items:center;gap:11px;width:100%;border:0;background:none;color:var(--muted);padding:9px 10px;border-radius:10px;font:600 14.5px/1.2 var(--body);cursor:pointer;text-align:left;transition:background .12s,color .12s}
+  .vs-it svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+  .vs-it:hover{background:rgba(255,255,255,.05);color:var(--ink)}
+  .vs-it[aria-current="true"]{background:var(--accent-soft);color:var(--ink)}
+  .vs-it[aria-current="true"]::before{content:"";position:absolute;left:-12px;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--accent)}
+  .vs-it[aria-current="true"] svg{stroke:var(--accent-2)}
+  .vs-n{margin-left:auto;min-width:20px;height:20px;border-radius:99px;background:var(--accent);color:#fff;font:800 11px/20px var(--body);text-align:center;padding:0 6px}
+  .vs-sp{flex:1}
+  .vs-foot{border-top:1px solid var(--line);margin-top:12px;padding-top:12px;display:grid;gap:2px}
+  .vs-live{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);padding:2px 10px 8px}
+  .vs-live i{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(65,196,127,.18)}
+  .vs-live.off i{background:var(--bad);box-shadow:0 0 0 3px rgba(245,148,140,.18)}
+  kbd{font:600 11px/1 var(--body);color:var(--muted);border:1px solid var(--line-2);border-bottom-width:2px;border-radius:6px;padding:3px 6px;background:rgba(255,255,255,.04)}
+
+  /* buscador de la barra superior */
+  body.vc-shell #vc-search-btn{display:flex;align-items:center;gap:10px;flex:0 1 460px;min-width:200px;height:38px;border:1px solid var(--line-2);border-radius:11px;background:rgba(255,255,255,.035);color:var(--muted);padding:0 12px;
+    font:500 14px var(--body);cursor:pointer;transition:border-color .15s,background .15s}
+  body.vc-shell #vc-search-btn:hover{border-color:#4a4943;background:rgba(255,255,255,.06);color:var(--ink)}
+  #vc-search-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;flex:none}
+  #vc-search-btn kbd{margin-left:auto}
+  body.vc-shell .top #topacts{margin-left:auto}
+  body.vc-shell .top #topacts>a.btn{display:none}
+}
+/* menú rápido «+ Nuevo» */
+.vs-menu{position:fixed;z-index:80;min-width:300px;background:var(--surface-2);border:1px solid var(--line-2);border-radius:14px;box-shadow:var(--sombra-2);padding:8px;animation:vc-pop .14s var(--curva)}
+.vs-menu button{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;background:none;color:var(--ink);padding:10px;border-radius:10px;cursor:pointer;font:600 14.5px var(--body)}
+.vs-menu button:hover{background:rgba(255,255,255,.06)}
+.vs-menu button i{font-style:normal;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:18px;color:#fff;flex:none}
+.vs-menu button small{display:block;font-weight:500;color:var(--muted);font-size:12.5px}
+.vs-menu .a i{background:#D9481C}.vs-menu .b i{background:#1F7A55}.vs-menu .c i{background:#34332E}
+.vs-menu hr{border:0;border-top:1px solid var(--line);margin:6px 4px}
+@keyframes vc-pop{from{opacity:0;transform:translateY(-4px) scale(.98)}to{opacity:1;transform:none}}
+
+/* ---------- 4 · cabeceras de página ---------- */
+body.vc-ui main h1,body.vc-ui main .head h1,body.vc-ui main .head h2{font-family:var(--body);font-weight:750;font-size:28px;line-height:1.15;letter-spacing:-.022em;text-transform:none;margin:0}
+body.vc-ui main .head{align-items:flex-end;margin-bottom:20px;gap:14px}
+body.vc-ui main .head p,body.vc-ui main .head .sub{color:var(--muted);margin:6px 0 0;font-size:14.5px;max-width:70ch}
+body.vc-ui main .head a{color:var(--accent-2)}
+body.vc-ui .eyebrow,body.vc-ui .d2-eyebrow{font:800 11px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-2)}
+
+/* ---------- 5 · botones, campos, tarjetas ---------- */
+body.vc-ui .btn{border-radius:var(--r-m);font-weight:650;font-size:14.5px;padding:10px 16px;letter-spacing:-.005em;transition:transform .12s var(--curva),background .15s,border-color .15s,box-shadow .15s,opacity .15s;-webkit-tap-highlight-color:transparent}
+body.vc-ui .btn:active{transform:scale(.97)}
+body.vc-ui .btn.b-sm{padding:7px 12px;font-size:13.5px;border-radius:var(--r-s)}
+body.vc-ui .btn.b-ghost{background:rgba(255,255,255,.025);border:1px solid var(--line-2);color:var(--ink)}
+body.vc-ui .btn.b-ghost:hover{background:rgba(255,255,255,.07);border-color:#4a4943}
+body.vc-ui .btn.b-brand{background:#F4F1EB;color:#141413;box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 1px 2px rgba(0,0,0,.4)}
+body.vc-ui .btn.b-brand:hover{background:#fff;transform:translateY(-1px)}
+body.vc-ui .btn.b-acc{background:linear-gradient(180deg,#F0602F,#D9481C);color:#fff;box-shadow:0 1px 0 rgba(255,255,255,.22) inset,0 4px 14px rgba(217,72,28,.3)}
+body.vc-ui .btn.b-acc:hover{filter:brightness(1.08);transform:translateY(-1px)}
+body.vc-ui .btn.b-bad{background:var(--bad-soft);border:1px solid rgba(245,148,140,.4);color:var(--bad)}
+body.vc-ui .btn:disabled{opacity:.5}
+body.vc-ui .in,body.vc-ui input.in,body.vc-ui select.in,body.vc-ui textarea.in{background:#0E0E0D;border:1px solid var(--line-2);border-radius:var(--r-m);padding:10px 12px;font-size:15px;color:var(--ink);transition:border-color .15s,box-shadow .15s,background .15s}
+body.vc-ui .in:hover{border-color:#4a4943}
+body.vc-ui .in:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px var(--accent-soft);outline:0;background:#0A0A09}
+body.vc-ui .in::placeholder{color:var(--faint)}
+body.vc-ui label,body.vc-ui .field>span:first-child{font-size:12.5px;font-weight:700;letter-spacing:.01em}
+body.vc-ui .card{background:linear-gradient(180deg,rgba(255,255,255,.022),rgba(255,255,255,0) 40%),var(--surface);border:1px solid var(--line);border-radius:var(--r-l);box-shadow:var(--sombra-1)}
+body.vc-ui .chipb,body.vc-ui .chip{border-radius:999px;border:1px solid var(--line-2);background:rgba(255,255,255,.03);color:var(--ink);font-weight:650;transition:background .15s,border-color .15s}
+body.vc-ui .chipb:hover{background:rgba(255,255,255,.08)}
+body.vc-ui .chipb[aria-pressed="true"],body.vc-ui .chipb.on,body.vc-ui .chipb[aria-selected="true"]{background:#F4F1EB;color:#141413;border-color:#F4F1EB}
+
+/* ---------- 6 · componentes ---------- */
+/* segmentados (pestañas internas) */
+body.vc-ui .tabs{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:4px}
+body.vc-ui .tabs button{border-radius:9px;font-weight:650}
+body.vc-ui .tabs button[aria-selected="true"]{background:var(--surface-3);box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 1px 3px rgba(0,0,0,.4)}
+
+/* aviso de carga con brillo */
+.vc-skel{position:relative;overflow:hidden;color:transparent!important;border-radius:var(--r-m);min-height:84px;background:var(--surface-2)}
+.vc-skel *{visibility:hidden}
+.vc-skel::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.07) 50%,transparent 80%);transform:translateX(-100%);animation:vc-shim 1.3s infinite}
+@keyframes vc-shim{to{transform:translateX(100%)}}
+
+/* ---------- 7 · diálogos, avisos ---------- */
+body.vc-ui dialog{border:1px solid var(--line-2);border-radius:var(--r-xl);background:var(--surface);color:var(--ink);box-shadow:var(--sombra-2);padding:0}
+body.vc-ui dialog::backdrop{background:rgba(5,5,5,.66);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+body.vc-ui dialog[open]{animation:vc-pop .18s var(--curva)}
+body.vc-ui .toast{border-radius:14px;background:#F4F1EB;color:#141413;font-weight:650;box-shadow:var(--sombra-2)}
+
+/* ---------- 8 · movimiento ---------- */
+@media (prefers-reduced-motion:no-preference){
+  body.vc-ui main>section:not([hidden]){animation:vc-in .28s var(--curva)}
+  @keyframes vc-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+}
+@media (prefers-reduced-motion:reduce){body.vc-ui *,body.vc-ui *::before,body.vc-ui *::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ---------- 9 · tableta (721–1179 px): barra lateral de solo iconos ---------- */
+@media (min-width:721px) and (max-width:1179px){
+  :root{--side-w:76px}
+  .vs-logo small,.vs-it span,.vs-grp,.vs-live span,.vs-new span,.vs-new kbd,.vs-n{display:none}
+  .vs-it{justify-content:center;padding:11px}.vs-new{justify-content:center;padding:11px}.vs-live{justify-content:center}
+  .vs-it .vs-n{display:block;position:absolute;top:2px;right:6px;min-width:16px;height:16px;line-height:16px;font-size:10px;padding:0 4px}
+  body.vc-shell main.wrap{padding:20px 20px 80px}
+  body.vc-shell #vc-search-btn kbd,body.vc-shell #vc-search-btn span{display:none}
+}
+
+/* ---------- paleta de comandos ---------- */
+#vc-pal-w{position:fixed;inset:0;z-index:90;background:rgba(5,5,5,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:flex;justify-content:center;align-items:flex-start;padding:12vh 16px 0;animation:vc-pop .14s var(--curva)}
+.vp-box{width:min(640px,100%);background:var(--surface-2);border:1px solid var(--line-2);border-radius:18px;box-shadow:var(--sombra-2);overflow:hidden}
+.vp-in{display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid var(--line)}
+.vp-in svg{width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;flex:none}
+.vp-in input{flex:1;background:none;border:0;outline:0;color:var(--ink);font:500 17px var(--body);padding:18px 0}
+.vp-l{max-height:min(52vh,420px);overflow-y:auto;padding:8px}
+.vp-l button{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;background:none;color:var(--ink);padding:9px 10px;border-radius:11px;cursor:pointer;font:600 14.5px var(--body)}
+.vp-l button[aria-selected="true"],.vp-l button:hover{background:var(--accent-soft)}
+.vp-i{width:34px;height:34px;border-radius:10px;background:var(--surface-3);display:grid;place-items:center;flex:none}
+.vp-i svg{width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.vp-t{min-width:0;flex:1}.vp-t small{display:block;color:var(--muted);font-weight:500;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vp-0{padding:28px;text-align:center;color:var(--muted)}
+
+/* ---------- ordenador: acciones rápidas compactas y configuración al final ---------- */
+@media (min-width:721px){
+  body.vc-shell .gd-bar{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 18px;align-items:center}
+  body.vc-shell .gd-big{flex:0 1 auto;min-height:52px;padding:9px 16px 9px 10px;border-radius:13px;gap:11px;box-shadow:0 1px 0 rgba(255,255,255,.14) inset,0 6px 16px -8px rgba(0,0,0,.6)}
+  body.vc-shell .gd-big i{width:34px;height:34px;font-size:22px;border-radius:10px}
+  body.vc-shell .gd-big b{font-size:14.5px}
+  body.vc-shell .gd-big small{display:none}
+  body.vc-shell .gd-bar .gd-mas{grid-column:auto;margin-left:auto}
+  body.vc-shell .gd-mas>summary{background:rgba(255,255,255,.03);border:1px solid var(--line-2);border-radius:12px;padding:10px 14px;font-weight:650}
+  body.vc-shell .gd-menu{background:var(--surface-2);border:1px solid var(--line-2);border-radius:14px;box-shadow:var(--sombra-2)}
+  body.vc-shell #s-ordenes:not([hidden]){display:flex;flex-direction:column}
+  body.vc-shell #s-ordenes>*{order:2}
+  body.vc-shell #s-ordenes>.head,body.vc-shell #s-ordenes>[id^="t-"]{order:1}
+  body.vc-shell #s-ordenes>#pt-cfg,body.vc-shell #s-ordenes>#sv-lib{order:5}
+}
+@media (min-width:721px){
+  body.vc-shell .gd-bar{flex-wrap:nowrap}
+  body.vc-shell .gd-big{padding:8px 13px 8px 9px;gap:9px}
+  body.vc-shell .gd-big b{font-size:13.5px;white-space:nowrap}
+  body.vc-shell .gd-mas>summary{white-space:nowrap}
+}
+@media (min-width:721px) and (max-width:1279px){body.vc-shell .gd-bar{flex-wrap:wrap}}
+
+/* ---------- 10 · móvil (≤720px): cabecera mínima, títulos medidos, acciones en fila ---------- */
+@media (max-width:720px){
+  body.vc-ui .top .wrap.bar{height:54px;padding:0 14px}
+  body.vc-ui .top .logo svg{height:26px}
+  body.vc-ui .top .tag{display:none}
+  body.vc-ui .top #topacts>a.btn,body.vc-ui .top #btn-seg{display:none}
+  body.vc-ui .top #topacts{margin-left:auto;gap:8px}
+  body.vc-ui main.wrap{padding-top:14px}
+  body.vc-ui main h1,body.vc-ui main .head h1,body.vc-ui main .head h2{font-size:24px}
+  body.vc-ui main .head{margin-bottom:14px}
+  body.vc-ui main .head p,body.vc-ui main .head .sub{font-size:13.5px;margin-top:4px}
+  body.vc-ui .head .btn,body.vc-ui .head .tabs{max-width:100%}
+  body.vc-ui .card{border-radius:14px}
+  body.vc-ui .btn{min-height:44px}
+  body.vc-ui .btn.b-sm{min-height:38px}
+}
+
+/* Coches: primero la lista, la configuración (financiación, multipublicación, reservas) después */
+body.vc-ui #s-list:not([hidden]){display:flex;flex-direction:column}
+body.vc-ui #s-list>*{order:5}
+body.vc-ui #s-list>.head{order:1}
+body.vc-ui #s-list>#stats{order:2}
+body.vc-ui #s-list>#list{order:3}
+body.vc-ui #s-list>#list+*{order:5}
+
+body.vc-ui .vp-in input{border:0!important;box-shadow:none!important;background:none!important;outline:0!important;border-radius:0!important}
+
+/* =====================================================================================================
+   PALETA «SAAS 2026» (petición del 7-10-2026): fondos profundos, bordes finos y colores con significado fijo
+     verde = efectivo / dato exacto · azul = banco / transferencia · ámbar = pendiente · rojo = desfase / bloqueo
+   ===================================================================================================== */
+:root{
+  --ground:#0A0A0C; --surface:#141418; --surface-2:#1A1A1F; --surface-3:#222228;
+  --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.14);
+  --ink:#F5F5F7; --muted:#A1A1AA; --faint:#71717A;
+  --ok:#10B981; --ok-soft:rgba(16,185,129,.14); --info:#3B82F6; --info-soft:rgba(59,130,246,.14);
+  --warn:#F59E0B; --warn-soft:rgba(245,158,11,.14); --bad:#EF4444; --bad-soft:rgba(239,68,68,.14);
+  --body:"Geist","Figtree",system-ui,-apple-system,"SF Pro Display","Segoe UI",sans-serif;
+}
+body.vc-ui{background:radial-gradient(1100px 520px at 78% -8%,rgba(232,87,43,.06),transparent 62%),var(--ground)}
+body.vc-ui .card,body.vc-ui .t-sec{border-color:var(--line)}
+body.vc-ui .in{background:#0D0D10;border-color:var(--line-2)}
+body.vc-shell #vc-side,body.vc-shell .top{border-color:var(--line)}
+
+/* etiquetas (badges) con esquinas redondeadas y color con significado */
+body.vc-ui .badge,body.vc-ui .pill,body.vc-ui .est,body.vc-ui .chip-est{border-radius:999px;font-weight:700;letter-spacing:.01em;padding:3px 10px}
+body.vc-ui .cj-kpi.mal b,body.vc-ui .vr-d{color:var(--bad)}
+body.vc-ui .cj-ambar{color:var(--warn)}
+
+/* avisos emergentes (toasts) */
+body.vc-ui .toast{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:100;max-width:min(92vw,520px);padding:12px 18px 12px 46px;border-radius:14px;
+  background:rgba(24,24,28,.92);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:var(--ink);border:1px solid var(--line-2);box-shadow:0 18px 40px rgba(0,0,0,.55);font-weight:600;font-size:14.5px}
+body.vc-ui .toast::before{content:"i";position:absolute;left:14px;top:50%;margin-top:-12px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:800 13px var(--body);background:var(--info-soft);color:var(--info)}
+body.vc-ui .toast[data-k="ok"]{border-color:rgba(16,185,129,.45)}body.vc-ui .toast[data-k="ok"]::before{content:"✓";background:var(--ok-soft);color:var(--ok)}
+body.vc-ui .toast[data-k="bad"]{border-color:rgba(239,68,68,.5)}body.vc-ui .toast[data-k="bad"]::before{content:"!";background:var(--bad-soft);color:var(--bad)}
+body.vc-ui .toast.vc-t-in{animation:vc-toast .32s var(--curva)}
+@keyframes vc-toast{from{opacity:0;transform:translate(-50%,14px) scale(.96)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
+@media (min-width:721px){body.vc-ui .toast{bottom:28px}}
+
+/* resultado del cierre de caja */
+dialog.vc-res{width:min(520px,calc(100% - 24px));padding:24px;border:1px solid var(--line-2);border-radius:22px;background:var(--surface);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.7)}
+dialog.vc-res::backdrop{background:rgba(5,5,6,.7);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+dialog.vc-res.ok{border-color:rgba(16,185,129,.55);box-shadow:0 0 0 1px rgba(16,185,129,.25),0 30px 80px rgba(0,0,0,.7),0 0 70px rgba(16,185,129,.12)}
+dialog.vc-res.bad{border-color:rgba(239,68,68,.55);box-shadow:0 0 0 1px rgba(239,68,68,.25),0 30px 80px rgba(0,0,0,.7)}
+.vr-h{display:flex;gap:14px;align-items:center;margin-bottom:16px}.vr-h h2{margin:0;font:750 21px var(--body);letter-spacing:-.015em;text-transform:none}.vr-h p{margin:3px 0 0;color:var(--muted);font-size:14px}
+.vr-i{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font:800 24px var(--body);flex:none;animation:vc-pop .4s var(--curva)}
+dialog.vc-res.ok .vr-i{background:var(--ok-soft);color:var(--ok)}dialog.vc-res.bad .vr-i{background:var(--bad-soft);color:var(--bad)}
+.vr-t{width:100%;border-collapse:collapse;margin:6px 0}.vr-t td{padding:9px 2px;border-bottom:1px solid var(--line);font-size:14.5px}.vr-t td:first-child{color:var(--muted)}.vr-t td:last-child{text-align:right}
+dialog.vc-res details{margin:8px 0;color:var(--muted)}dialog.vc-res summary{cursor:pointer;padding:6px 0}
+.vr-a{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:18px}
+
+/* significado fijo de color en el dinero */
+body.vc-ui .cj-kpi:first-child b,body.vc-ui .mov-ing .imp,body.vc-ui .cj-mov .ing{color:var(--ok)}
+.vp-l kbd{margin-left:auto}
+
+body.vc-ui dialog.vc-res{padding:24px}
+body.vc-ui .vr-d.z{color:var(--ok)}
+
+/* ---------- dos vías: Taller y Venta de coches ---------- */
+@media (min-width:721px){
+  .vs-grp.vs-t::before,.vs-grp.vs-v::before{content:"";display:inline-block;width:8px;height:8px;border-radius:3px;margin-right:8px;vertical-align:0}
+  .vs-grp.vs-t{color:#F08A62}.vs-grp.vs-t::before{background:#E8572B;box-shadow:0 0 10px rgba(232,87,43,.7)}
+  .vs-grp.vs-v{color:#A78BFA}.vs-grp.vs-v::before{background:#8B5CF6;box-shadow:0 0 10px rgba(139,92,246,.7)}
+}
+body.vc-ui #s-ordenes:not([hidden]){--lane:#E8572B}
+body.vc-ui #s-list:not([hidden]),body.vc-ui #s-leads:not([hidden]){--lane:#8B5CF6}
+body.vc-ui #s-ordenes>.head,body.vc-ui #s-list>.head,body.vc-ui #s-leads>.head{position:relative;padding-left:16px}
+body.vc-ui #s-ordenes>.head::before,body.vc-ui #s-list>.head::before,body.vc-ui #s-leads>.head::before{content:"";position:absolute;left:0;top:4px;bottom:4px;width:4px;border-radius:4px;background:var(--lane);box-shadow:0 0 14px var(--lane)}
+
+/* números financieros en tipografía monoespaciada */
+body.vc-ui .num,body.vc-ui .cj-kpi b,body.vc-ui .fn-canal b,body.vc-ui .mov-imp{font-family:"Geist Mono","JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+/* etiquetas de estado de alto contraste */
+body.vc-ui .t-pipe.mini>b{border-radius:999px;padding:3px 10px;font-weight:750;font-size:12.5px;border:1px solid var(--line-2);background:rgba(255,255,255,.04)}
+body.vc-ui .t-pipe.mini[data-k="rec"]>b{color:var(--info);background:var(--info-soft);border-color:rgba(59,130,246,.4)}
+body.vc-ui .t-pipe.mini[data-k="ins"]>b{color:var(--warn);background:var(--warn-soft);border-color:rgba(245,158,11,.4)}
+body.vc-ui .t-pipe.mini[data-k="rep"]>b{color:#F08A62;background:rgba(232,87,43,.14);border-color:rgba(232,87,43,.45)}
+body.vc-ui .t-pipe.mini[data-k="cal"]>b{color:#A78BFA;background:rgba(139,92,246,.14);border-color:rgba(139,92,246,.4)}
+body.vc-ui .t-pipe.mini[data-k="fin"]>b{color:var(--ok);background:var(--ok-soft);border-color:rgba(16,185,129,.4)}
+body.vc-ui .row.lux>div:nth-child(2)>b::after{display:inline-block;margin-left:8px;border-radius:999px;padding:2px 9px;font:750 11px/1.5 var(--body);vertical-align:2px;border:1px solid var(--line-2)}
+body.vc-ui .row.lux.disponible>div:nth-child(2)>b::after{content:"En venta";color:var(--ok);background:var(--ok-soft);border-color:rgba(16,185,129,.4)}
+body.vc-ui .row.lux.reservado>div:nth-child(2)>b::after{content:"Reservado";color:var(--warn);background:var(--warn-soft);border-color:rgba(245,158,11,.4)}
+body.vc-ui .row.lux.vendido>div:nth-child(2)>b::after{content:"Vendido";color:var(--muted);background:rgba(255,255,255,.05)}
+
+/* luces funcionales: verde = efectivo en cajón · azul = banco / TPV · rojo = desfase */
+body.vc-ui .fn-canal.efectivo{border-color:rgba(16,185,129,.5);box-shadow:0 0 0 1px rgba(16,185,129,.12),0 0 28px -6px rgba(16,185,129,.35)}
+body.vc-ui .fn-canal.efectivo b{color:var(--ok)}
+body.vc-ui .fn-canal.transferencia,body.vc-ui .fn-canal.tarjeta,body.vc-ui .fn-canal.financiacion{border-color:rgba(59,130,246,.45);box-shadow:0 0 0 1px rgba(59,130,246,.1),0 0 28px -8px rgba(59,130,246,.3)}
+body.vc-ui .fn-canal.transferencia b,body.vc-ui .fn-canal.tarjeta b,body.vc-ui .fn-canal.financiacion b{color:var(--info)}
+body.vc-ui .gd-a{box-shadow:0 1px 0 rgba(255,255,255,.22) inset,0 8px 28px -6px rgba(232,87,43,.55)}
+
+body.vc-ui #s-ordenes:not([hidden]),body.vc-ui #s-list:not([hidden]){gap:16px}
+
+/* ---------- las 5 fichas de la orden ---------- */
+dialog.vc-fichas{width:min(720px,calc(100% - 20px));max-height:calc(100dvh - 24px);padding:22px;overflow:auto;border:1px solid var(--line-2);border-radius:22px;background:var(--surface);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.7)}
+dialog.vc-fichas::backdrop{background:rgba(5,5,6,.7);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.vf-h{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px}.vf-h small{color:var(--accent-2);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:11px}
+.vf-h h2{margin:2px 0 4px;font:750 22px var(--body);letter-spacing:-.015em;text-transform:none}.vf-h p{margin:0;color:var(--muted);font-size:14px}
+.vf-l{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.vf-l li{display:grid;grid-template-columns:30px 1fr auto auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:11px 12px;background:var(--surface-2)}
+.vf-l li.ok{border-color:rgba(16,185,129,.4)}.vf-l li.rojo{border-color:rgba(239,68,68,.45)}.vf-l li.ambar,.vf-l li.curso{border-color:rgba(245,158,11,.4)}
+.vf-n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--surface-3);font-weight:800;font-size:13px}
+.vf-l li.ok .vf-n{background:var(--ok-soft);color:var(--ok)}
+.vf-l em{font-style:normal;color:var(--faint);font-size:11.5px;font-weight:700;margin-left:6px}.vf-l small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px;line-height:1.4}
+.vf-e{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap}.vf-b{display:flex;gap:6px}
+.vf-f{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px}
+@media (max-width:720px){.vf-l li{grid-template-columns:28px 1fr}.vf-e{grid-column:2}.vf-b{grid-column:1/-1}.vf-b .btn{flex:1}}
+
+body.vc-ui dialog.vc-fichas{padding:22px}
+@media (max-width:720px){body.vc-ui dialog.vc-fichas{padding:16px}}
+
+/* =====================================================================================================
+   PULIDO 52 · diálogos con borde luminoso y sombras en capas · botones con relieve · panel más compacto · más rápido
+   (va al final: gana a lo anterior; nada se elimina)
+   ===================================================================================================== */
+body.vc-ui{--glow-b:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.04) 28%,rgba(217,72,28,.28) 62%,rgba(255,255,255,.07));--sombra-d:0 1px 0 rgba(255,255,255,.07) inset,0 0 0 1px rgba(0,0,0,.55),0 18px 40px -8px rgba(0,0,0,.7),0 40px 90px -20px rgba(0,0,0,.65)}
+/* diálogos: borde degradado fino + resplandor naranja suave arriba + sombra profunda */
+body.vc-ui dialog.vc-fichas,body.vc-ui dialog.vc-res,body.vc-ui dialog.gd-dlg,body.vc-ui dialog.t-dlg{
+  border:1px solid transparent;border-radius:18px;color:var(--ink);
+  background:radial-gradient(120% 70% at 50% -10%,rgba(217,72,28,.13),transparent 60%) padding-box,linear-gradient(180deg,#1b1b1f,#111114) padding-box,var(--glow-b) border-box;
+  box-shadow:var(--sombra-d);scrollbar-width:thin;scrollbar-color:#3a3a40 transparent}
+body.vc-ui dialog.vc-fichas{width:min(680px,calc(100% - 16px));padding:16px 18px}
+body.vc-ui dialog.vc-fichas .vf-h{padding-bottom:10px;margin-bottom:10px;border-bottom:1px solid rgba(255,255,255,.06)}
+body.vc-ui dialog.vc-fichas .vf-h small{display:inline-block;padding:3px 8px;border-radius:999px;background:var(--accent-soft);border:1px solid rgba(217,72,28,.35);letter-spacing:.07em;font-size:10.5px}
+body.vc-ui dialog.vc-fichas .vf-h h2{font-size:19px;margin:6px 0 2px}body.vc-ui dialog.vc-fichas .vf-h p{font-size:12.5px}
+body.vc-ui .vf-l{gap:6px}
+body.vc-ui .vf-l li{padding:8px 10px;border-radius:12px;gap:10px;position:relative;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.012));box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 6px 14px -8px rgba(0,0,0,.7);transition:transform .16s var(--curva),box-shadow .16s,border-color .16s}
+body.vc-ui .vf-l li:hover{transform:translateY(-1px);box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 12px 22px -10px rgba(0,0,0,.8);border-color:rgba(255,255,255,.18)}
+body.vc-ui .vf-l li::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:0 3px 3px 0;background:var(--line-2)}
+body.vc-ui .vf-l li.ok::before{background:var(--ok);box-shadow:0 0 10px var(--ok)}body.vc-ui .vf-l li.rojo::before{background:var(--bad);box-shadow:0 0 10px var(--bad)}body.vc-ui .vf-l li.ambar::before,body.vc-ui .vf-l li.curso::before{background:var(--warn);box-shadow:0 0 10px var(--warn)}
+body.vc-ui .vf-l small{font-size:11.5px;line-height:1.3;margin-top:1px}
+body.vc-ui .vf-n{width:24px;height:24px;font-size:12px;box-shadow:0 1px 0 rgba(255,255,255,.1) inset}
+body.vc-ui .vf-e{font-size:11px;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+body.vc-ui .vf-f{margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.06)}
+/* asistente y resto de diálogos */
+body.vc-ui dialog.gd-dlg,body.vc-ui dialog.t-dlg{padding:0}
+body.vc-ui dialog::backdrop{background:radial-gradient(70% 60% at 50% 40%,rgba(30,12,6,.55),rgba(4,4,5,.82))}
+/* botones: relieve, brillo al pasar, pulsado */
+body.vc-ui .btn{padding:7px 13px;font-size:13.5px;border-radius:10px;position:relative;touch-action:manipulation}
+body.vc-ui .btn.b-sm{padding:5px 10px;font-size:12.5px;border-radius:8px}
+body.vc-ui .btn.b-ghost{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 1px 2px rgba(0,0,0,.5)}
+body.vc-ui .btn.b-ghost:hover{background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.04));border-color:#5a5952;box-shadow:0 1px 0 rgba(255,255,255,.12) inset,0 6px 14px -6px rgba(0,0,0,.8)}
+body.vc-ui .btn.b-brand{background:linear-gradient(180deg,#fff,#E6E2DA);box-shadow:0 1px 0 #fff inset,0 -1px 0 rgba(0,0,0,.12) inset,0 2px 6px rgba(0,0,0,.45)}
+body.vc-ui .btn.b-brand:hover{background:linear-gradient(180deg,#fff,#EFEBE3);box-shadow:0 1px 0 #fff inset,0 8px 18px -6px rgba(255,255,255,.25)}
+body.vc-ui .btn.b-acc{background:linear-gradient(180deg,#F56A38,#CF4318);border:1px solid rgba(255,160,120,.35);box-shadow:0 1px 0 rgba(255,255,255,.3) inset,0 -1px 0 rgba(0,0,0,.2) inset,0 6px 16px -4px rgba(217,72,28,.55)}
+body.vc-ui .btn.b-acc:hover{filter:none;background:linear-gradient(180deg,#FF7444,#D9481C);box-shadow:0 1px 0 rgba(255,255,255,.35) inset,0 10px 24px -4px rgba(217,72,28,.7)}
+body.vc-ui .btn:active{transform:translateY(0) scale(.97);box-shadow:0 1px 2px rgba(0,0,0,.6) inset}
+/* tarjetas, campos y etiquetas: más densos y con borde luminoso fino */
+body.vc-ui .card{padding:12px 14px;border-radius:14px;box-shadow:0 1px 0 rgba(255,255,255,.04) inset,0 8px 20px -12px rgba(0,0,0,.75)}
+body.vc-ui .in,body.vc-ui input.in,body.vc-ui select.in,body.vc-ui textarea.in{padding:7px 10px;font-size:14px;border-radius:9px;box-shadow:0 1px 2px rgba(0,0,0,.55) inset}
+body.vc-ui label,body.vc-ui .field>span:first-child{font-size:11.5px}
+body.vc-ui .field{margin-bottom:0}
+body.vc-ui .gd-dlg h3.gd-sec,body.vc-ui .gd-sec{margin:8px 0 0}
+/* densidad en ordenador */
+@media (min-width:721px){
+  body.vc-ui{font-size:14px}
+  body.vc-ui main{padding-top:10px}
+  body.vc-ui main .head{margin-bottom:8px}body.vc-ui main .head h1,body.vc-ui main .head h2{font-size:22px}body.vc-ui main .head p,body.vc-ui main .head .sub{font-size:13px;margin-top:3px}
+  body.vc-shell .vs-it{padding:6px 9px;font-size:13px;gap:9px}
+  body.vc-ui .row,body.vc-ui .row.lux{padding-top:8px;padding-bottom:8px}
+  body.vc-ui .gd-big{padding:10px 14px}body.vc-ui .gd-big b{font-size:14px}body.vc-ui .gd-big small{font-size:11.5px}
+}
+/* móvil: toques seguros (44 px) pero tarjetas y huecos más justos */
+@media (max-width:720px){
+  body.vc-ui .card{padding:10px 12px}
+  body.vc-ui .btn{padding:9px 13px;min-height:42px}body.vc-ui .btn.b-sm{min-height:38px}
+  body.vc-ui .in,body.vc-ui input.in,body.vc-ui select.in{min-height:42px;font-size:16px}
+  body.vc-ui dialog.vc-fichas{padding:12px 12px}
+  /* sin desenfoque (muy caro en móvil): fondo opaco */
+  body.vc-ui dialog::backdrop,dialog.vc-res::backdrop,dialog.vc-fichas::backdrop,#vc-pal-w{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  body.vc-ui .top{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:#0B0B0A}
+}
+/* rapidez: listas largas solo pintan lo visible, toque sin espera, transiciones solo de lo necesario */
+body.vc-ui a,body.vc-ui button,body.vc-ui .row,body.vc-ui [role=button],body.vc-ui input,body.vc-ui select{touch-action:manipulation}
+body.vc-ui main>section:not([hidden]){animation-duration:.14s}
+body.vc-ui dialog[open]{animation-duration:.12s}
+
+/* =====================================================================================================
+   VIDA 54 · paleta VOLCANO CARS (Grafito #1B1B1A · Magma #D9481C · Hueso #F2EFEA · Hormigón #DCD8D1) e interactividad
+   Solo transform/opacity (baratas). En móvil y en modo ligero (html.lite) se apagan los efectos de ratón y fondo.
+   ===================================================================================================== */
+:root{--magma:#D9481C;--magma-2:#F0602F;--magma-3:#FF8A5C;--grafito:#1B1B1A;--hueso:#F2EFEA;--hormigon:#DCD8D1;--accent:#E8572B;--accent-2:#FF7A4D;--accent-line:rgba(240,96,47,.5)}
+body.vc-ui{--ink:#F2EFEA;--muted:#A8A39A;
+  background:radial-gradient(900px 480px at 85% -10%,rgba(217,72,28,.16),transparent 62%),radial-gradient(700px 420px at -5% 105%,rgba(220,216,209,.045),transparent 60%),#0C0C0B}
+::selection{background:rgba(240,96,47,.4);color:#fff}
+*{scrollbar-width:thin;scrollbar-color:#3b3a35 transparent}
+body.vc-ui :focus-visible{outline:2px solid var(--magma-2);outline-offset:2px;border-radius:6px}
+/* título de cada sección: barra magma que respira */
+body.vc-ui main .head{position:relative}
+body.vc-ui main .head h1,body.vc-ui main .head h2{background:linear-gradient(90deg,#F2EFEA 60%,#DCD8D1);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+body.vc-ui main .head::before{content:"";position:absolute;left:-12px;top:4px;bottom:4px;width:3px;border-radius:3px;background:linear-gradient(180deg,var(--magma-3),var(--magma));box-shadow:0 0 14px rgba(240,96,47,.6)}
+/* línea de lava bajo la barra superior */
+body.vc-shell .top{position:sticky}
+body.vc-shell .top::after,body.vc-ui .top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:linear-gradient(90deg,transparent,var(--magma) 30%,var(--magma-3) 50%,var(--magma) 70%,transparent);background-size:200% 100%;opacity:.75;animation:vc-lava 7s linear infinite}
+@keyframes vc-lava{to{background-position:-200% 0}}
+/* barra lateral: ítem activo con brasa */
+body.vc-shell .vs-it{transition:background .18s,color .18s,transform .18s var(--curva)}
+body.vc-shell .vs-it:hover{background:rgba(242,239,234,.06);transform:translateX(2px);color:var(--hueso)}
+body.vc-shell .vs-it[aria-current="page"],body.vc-shell .vs-it.on{background:linear-gradient(90deg,rgba(217,72,28,.28),rgba(217,72,28,.04));color:#fff;box-shadow:inset 3px 0 0 var(--magma-2),0 0 22px -6px rgba(217,72,28,.6)}
+body.vc-shell .vs-it .vs-ic,body.vc-shell .vs-it svg{transition:transform .2s var(--curva),filter .2s}
+body.vc-shell .vs-it:hover svg{transform:scale(1.12);filter:drop-shadow(0 0 6px rgba(240,96,47,.6))}
+/* logo */
+body.vc-ui .top img[src*="logo"],#vc-side img{transition:filter .3s,transform .3s var(--curva)}
+body.vc-ui .top img[src*="logo"]:hover,#vc-side img:hover{filter:drop-shadow(0 0 10px rgba(240,96,47,.7));transform:scale(1.03)}
+/* tarjetas: foco de luz que sigue al cursor (variables --mx/--my puestas por panel-shell.js) y elevación */
+body.vc-ui .card,body.vc-ui .gd-big,body.vc-ui .d2-card,body.vc-ui .t-sec{position:relative;transition:transform .2s var(--curva),box-shadow .2s,border-color .2s}
+body.vc-ui .card::after,body.vc-ui .gd-big::after,body.vc-ui .d2-card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .25s;
+  background:radial-gradient(260px circle at var(--mx,50%) var(--my,0%),rgba(240,96,47,.16),transparent 65%)}
+@media (hover:hover){
+  body.vc-ui .card:hover,body.vc-ui .d2-card:hover{transform:translateY(-2px);border-color:rgba(240,96,47,.38);box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 16px 30px -14px rgba(0,0,0,.85),0 0 0 1px rgba(240,96,47,.12)}
+  body.vc-ui .card:hover::after,body.vc-ui .gd-big:hover::after,body.vc-ui .d2-card:hover::after{opacity:1}
+  body.vc-ui .gd-big:hover{transform:translateY(-3px) scale(1.01)}
+}
+/* tres botones grandes con degradado de marca */
+body.vc-ui .gd-big.gd-a{background:linear-gradient(135deg,#E2521F,#B93912);border-color:rgba(255,160,120,.4);box-shadow:0 10px 26px -10px rgba(217,72,28,.7),0 1px 0 rgba(255,255,255,.25) inset}
+body.vc-ui .gd-big.gd-b{background:linear-gradient(135deg,#1F3A2C,#14261D);border-color:rgba(16,185,129,.45);box-shadow:0 10px 26px -12px rgba(16,185,129,.55),0 1px 0 rgba(255,255,255,.1) inset}
+body.vc-ui .gd-big.gd-c{background:linear-gradient(135deg,#2B2B2A,#1B1B1A);border-color:rgba(220,216,209,.3);box-shadow:0 10px 26px -12px rgba(0,0,0,.8),0 1px 0 rgba(255,255,255,.1) inset}
+/* onda al pulsar (la crea panel-shell.js) */
+.vc-rip{position:absolute;border-radius:50%;pointer-events:none;background:rgba(255,255,255,.35);transform:scale(0);animation:vc-rip .55s ease-out forwards}
+@keyframes vc-rip{to{transform:scale(1);opacity:0}}
+body.vc-ui .btn,body.vc-ui .gd-big,body.vc-ui .gd-opt{overflow:hidden}
+/* entrada escalonada de las tarjetas de cada pestaña */
+@media (prefers-reduced-motion:no-preference){
+  body.vc-ui main>section:not([hidden]) .card,body.vc-ui main>section:not([hidden]) .d2-card{animation:vc-up .38s var(--curva) both}
+  body.vc-ui main>section:not([hidden]) .card:nth-child(2){animation-delay:.04s}body.vc-ui main>section:not([hidden]) .card:nth-child(3){animation-delay:.08s}
+  body.vc-ui main>section:not([hidden]) .card:nth-child(4){animation-delay:.12s}body.vc-ui main>section:not([hidden]) .card:nth-child(n+5){animation-delay:.16s}
+  @keyframes vc-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+}
+/* estados vivos: punto que late (en curso / nuevo) */
+body.vc-ui .t-pipe .on,body.vc-ui .badge-live,body.vc-ui .vs-n{animation:vc-latido 2.2s ease-in-out infinite}
+@keyframes vc-latido{0%,100%{box-shadow:0 0 0 0 rgba(240,96,47,.5)}50%{box-shadow:0 0 0 6px rgba(240,96,47,0)}}
+/* mensajes (toasts) con borde de marca */
+body.vc-ui .toast{border-color:rgba(240,96,47,.35);box-shadow:0 14px 34px -10px rgba(0,0,0,.85),0 0 24px -8px rgba(217,72,28,.5)}
+/* interruptores y chips con respuesta */
+body.vc-ui .chipb:active,body.vc-ui .chip:active{transform:scale(.94)}
+body.vc-ui .chipb[aria-pressed="true"],body.vc-ui .chipb.on{background:linear-gradient(180deg,#F2EFEA,#DCD8D1);box-shadow:0 0 0 2px rgba(240,96,47,.35)}
+/* móvil y modo ligero: sin efectos de fondo ni foco de ratón */
+@media (max-width:720px){body.vc-ui .top::after{animation:none}body.vc-ui .card::after,body.vc-ui .gd-big::after{display:none}body.vc-ui main .head::before{left:-8px}}
+html.lite body.vc-ui .top::after,html.lite body.vc-ui .t-pipe .on,html.lite body.vc-ui .vs-n{animation:none}
+@media (prefers-reduced-motion:reduce){body.vc-ui .top::after{animation:none}}
+@media (min-width:721px){body.vc-ui .gd-big b{white-space:normal;line-height:1.15;font-size:13px;overflow:visible;text-overflow:clip}body.vc-ui .gd-big small{display:none}body.vc-ui .gd-big i{width:34px;height:34px}}
+
+/* ACTUALIZACIÓN 55 · cabecera de la ficha en escritorio: el coche ya no se aprieta; los botones pasan a su propia fila */
+@media (min-width:761px){
+  .t-fhead{grid-template-columns:auto auto minmax(200px,1fr)}
+  .t-fhead .t-facts{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-start}
+  .t-fhead .t-fcar b{white-space:normal}
+}
+
+/* =====================================================================================================
+   ACTUALIZACIÓN 55 · secciones plegables · fichas que se iluminan · guía con la paleta y la tipografía de Volcano Cars
+   Paleta: Grafito #1B1B1A · Magma #D9481C · Hueso #F2EFEA · Hormigón #DCD8D1 · Tipografía de títulos: la misma de los PDF (condensada, versales)
+   Solo transform/opacity en las animaciones; se apagan con «reducir movimiento» y en modo ligero.
+   ===================================================================================================== */
+/* --- plegables --- */
+.vc-fold{display:inline-grid;place-items:center;width:30px;height:30px;margin-left:10px;vertical-align:middle;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));color:var(--hueso);cursor:pointer;padding:0;transition:transform .18s,background .18s,border-color .18s,box-shadow .18s}
+.vc-fold:hover{border-color:var(--magma-2);box-shadow:0 0 0 3px rgba(240,96,47,.18)}
+.vc-fold:active{transform:scale(.92)}
+.vc-fold svg{transition:transform .2s}
+.vc-fold[aria-expanded="false"] svg{transform:rotate(-90deg)}
+.vc-fold[aria-expanded="false"]{background:linear-gradient(180deg,rgba(240,96,47,.3),rgba(217,72,28,.14));border-color:rgba(240,96,47,.55)}
+body.vc-ui main .head[data-fold]>div:first-child>h1{display:inline-block;vertical-align:middle;overflow:visible}
+body.vc-ui main .head.vc-plegado{align-items:center}
+body.vc-ui main .head.vc-plegado>div:first-child>:not(h1):not(.vc-fold){display:none!important}
+body.vc-ui main .head.vc-plegado>*:not(:first-child){display:none!important}
+body.vc-ui main .head.vc-plegado>div:first-child{flex:none;min-width:0}body.vc-ui main .head.vc-plegado h1{white-space:nowrap}
+body.vc-ui main .head.vc-plegado{margin-bottom:6px}
+.t-fid{display:flex;align-items:center;flex-wrap:wrap;gap:0 6px}.t-fid small{flex-basis:100%}.t-fid .vc-fold{margin-left:2px;width:26px;height:26px;border-radius:8px}
+#tf.vc-ficha-plegada .t-facts,#tf.vc-ficha-plegada .t-fases{display:none}
+#tf.vc-ficha-plegada .t-fhead{margin-bottom:6px}
+@media (max-width:760px){.vc-fold{width:34px;height:34px}}
+
+/* --- barra de fichas completadas: 1/6 … 6/6 --- */
+.fch-prog{display:flex;align-items:center;gap:12px;margin:0 0 10px;padding:8px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015))}
+.fch-prog-n{font:800 13px var(--display,system-ui);font-stretch:85%;letter-spacing:.04em;color:var(--hormigon);white-space:nowrap}
+.fch-prog-n b{font-size:24px;color:var(--hueso);margin-right:1px;font-variant-numeric:tabular-nums}
+.fch-prog-b{flex:1;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px;min-width:0}
+.fch-seg{position:relative;display:block;height:26px;padding:0;border:0;border-radius:8px;background:rgba(255,255,255,.07);cursor:pointer;overflow:hidden;color:var(--muted);transition:transform .15s,box-shadow .25s}
+.fch-seg i{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(180deg,#FF8A5C,#D9481C 70%,#B8380F);transform:scaleX(0);transform-origin:left;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.fch-seg small{position:relative;z-index:1;display:grid;place-items:center;height:100%;font:800 12px var(--body,system-ui);letter-spacing:.04em}
+.fch-seg.on{box-shadow:0 0 0 1px rgba(255,138,92,.6),0 0 16px -2px rgba(240,96,47,.7);color:#fff}
+.fch-seg.on i{transform:scaleX(1)}
+.fch-seg:hover{transform:translateY(-1px)}.fch-seg:active{transform:scale(.96)}
+.fch-prog-t{font-size:12.5px;font-weight:700;color:var(--muted);white-space:nowrap}
+.fch-prog.completo{border-color:rgba(255,138,92,.55);box-shadow:0 0 28px -8px rgba(240,96,47,.7)}
+.fch-prog.completo .fch-prog-t{color:var(--magma-3)}
+.fch-prog.completo .fch-seg.on::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.45) 50%,transparent 70%);transform:translateX(-120%);animation:segBrillo 2.6s ease-in-out infinite}
+.fch-prog.anim .fch-seg.on i{animation:segEntra .6s calc(var(--i)*120ms) both cubic-bezier(.2,.8,.2,1)}
+.fch-seg.nueva{animation:segPop .9s ease-out 1}
+@keyframes segEntra{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes segPop{0%{transform:scale(1)}30%{transform:scale(1.18);box-shadow:0 0 0 6px rgba(255,138,92,.45),0 0 26px 4px rgba(240,96,47,.8)}100%{transform:scale(1)}}
+@keyframes segBrillo{0%,60%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+.t-tabs button.hecha{border-color:rgba(240,96,47,.65);box-shadow:0 0 0 1px rgba(240,96,47,.25),0 6px 22px -8px rgba(240,96,47,.65);background:linear-gradient(180deg,rgba(240,96,47,.16),rgba(217,72,28,.05)),var(--surface)}
+.t-tabs button.hecha::after{content:"✓";position:absolute;top:-6px;right:-5px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font:900 11px/1 var(--body,system-ui);background:linear-gradient(180deg,#FF8A5C,#D9481C);color:#fff;box-shadow:0 0 12px rgba(240,96,47,.8)}
+.t-tabs button{position:relative}
+.t-tabs button.hecha[aria-selected="true"]{border-color:#fff;background:linear-gradient(180deg,#F2EFEA,#DCD8D1);color:#1B1B1A;box-shadow:0 0 0 1px #fff,0 8px 26px -6px rgba(240,96,47,.8)}.t-tabs button.hecha[aria-selected="true"] small{color:#5a564f;opacity:1}
+@media (max-width:640px){.fch-prog{gap:8px;padding:7px 9px}.fch-prog-t{display:none}.fch-seg{height:24px}}
+
+/* --- recuadro «Las 6 fichas»: se ilumina al completarlas --- */
+.vf-prog{display:flex;align-items:center;gap:5px;margin-top:10px}
+.vf-prog i{flex:1;max-width:46px;height:7px;border-radius:4px;background:rgba(255,255,255,.1);transition:background .3s,box-shadow .3s}
+.vf-prog i.on{background:linear-gradient(90deg,#FF8A5C,#D9481C);box-shadow:0 0 10px rgba(240,96,47,.75);animation:vfEnc .5s calc(var(--i)*90ms) both}
+.vf-prog b{margin-left:6px;font:800 13px var(--body,system-ui);color:var(--hormigon);font-variant-numeric:tabular-nums}
+.vf-l li.hecha{border-color:rgba(240,96,47,.6)!important;background:linear-gradient(90deg,rgba(240,96,47,.16),rgba(240,96,47,.03) 60%),var(--surface-2,#1b1b1a);box-shadow:0 0 0 1px rgba(240,96,47,.18),0 10px 26px -12px rgba(240,96,47,.7)}
+.vf-l li.hecha::before{background:linear-gradient(180deg,#FF8A5C,#D9481C)!important;box-shadow:0 0 12px rgba(240,96,47,.85)}
+.vf-l li.hecha .vf-n{background:linear-gradient(180deg,#FF8A5C,#D9481C)!important;color:#fff!important}
+@keyframes vfEnc{from{opacity:0;transform:scaleX(.3)}to{opacity:1;transform:scaleX(1)}}
+
+/* --- guía (Ayuda): ruta de aprendizaje, módulos numerados, secciones plegables --- */
+.ay-ruta{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;margin:0 0 16px;padding:18px 20px;border-radius:18px;position:relative;overflow:hidden;color:var(--hueso);
+  background:radial-gradient(520px 200px at 95% -20%,rgba(217,72,28,.5),transparent 70%),linear-gradient(180deg,#1f1e1c,#141413);border:1px solid rgba(255,255,255,.1);box-shadow:0 1px 0 rgba(255,255,255,.07) inset,0 18px 40px -22px #000}
+.ay-ruta::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,#FF8A5C,#D9481C)}
+.ay-ruta-t small{display:block;font:800 11.5px var(--body,system-ui);letter-spacing:.16em;text-transform:uppercase;color:#FF8A5C}
+.ay-ruta-t h2{margin:4px 0 6px;font-family:var(--display,system-ui);font-stretch:82%;font-weight:900;text-transform:uppercase;font-size:clamp(22px,4vw,30px);line-height:1;letter-spacing:.005em;color:var(--hueso)}
+.ay-ruta-t p{margin:0;color:var(--hormigon);font-size:14px;max-width:56ch}
+.ay-meter{display:grid;justify-items:end;gap:6px;min-width:190px}
+.ay-meter b{font-family:var(--display,system-ui);font-stretch:80%;font-weight:900;font-size:46px;line-height:.9;color:#FF8A5C;font-variant-numeric:tabular-nums}
+.ay-meter b small{font-size:20px;color:var(--hormigon);margin-left:2px}
+.ay-meter span{font:700 12px var(--body,system-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--hormigon)}
+.ay-seg{display:flex;gap:3px;width:100%}.ay-seg i{flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,.14);transition:background .3s,box-shadow .3s}
+.ay-seg i.on{background:linear-gradient(90deg,#FF8A5C,#D9481C);box-shadow:0 0 8px rgba(240,96,47,.7)}
+.ay-meter.completo b{color:#fff;text-shadow:0 0 18px rgba(240,96,47,.9)}
+@media (max-width:640px){.ay-ruta{grid-template-columns:1fr;padding:16px}.ay-meter{justify-items:start}}
+.ay-nav{counter-reset:ayn;background:linear-gradient(180deg,#1b1b1a,#151514);border-color:rgba(255,255,255,.1)}
+.ay-nav button{counter-increment:ayn;position:relative;transition:background .18s,transform .15s}
+.ay-nav button:hover{transform:translateX(2px);background:rgba(240,96,47,.08)}
+.ay-nav button[aria-current="true"]{background:linear-gradient(90deg,rgba(217,72,28,.28),rgba(217,72,28,.04));box-shadow:inset 3px 0 0 var(--magma)}
+.ay-nav button.visto small::after{content:"  ✓ visto";color:#FF8A5C;font-weight:800}
+.ay-nav button.visto::after{content:"";position:absolute;right:10px;top:50%;width:8px;height:8px;margin-top:-4px;border-radius:50%;background:#FF8A5C;box-shadow:0 0 10px rgba(240,96,47,.9)}
+.ay-mod{background:linear-gradient(180deg,#1d1c1a,#171716);border-color:rgba(255,255,255,.1);box-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 22px 44px -28px #000}
+.ay-mh small{color:#FF8A5C;letter-spacing:.16em}
+.ay-mh h2{font-stretch:80%;font-weight:900;letter-spacing:.005em;color:var(--hueso)}
+.ay-ico{background:linear-gradient(180deg,rgba(240,96,47,.25),rgba(217,72,28,.08));border:1px solid rgba(240,96,47,.35)}
+.ay-visto[aria-pressed="true"]{background:linear-gradient(180deg,#FF8A5C,#D9481C);border-color:transparent;color:#fff;box-shadow:0 0 18px -4px rgba(240,96,47,.8)}
+details.ay-s{display:block;border:1px solid rgba(255,255,255,.1);border-radius:12px;background:rgba(0,0,0,.18);overflow:hidden}
+details.ay-s>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0;background:#141413;border-left:3px solid var(--magma)}
+details.ay-s>summary::-webkit-details-marker{display:none}
+details.ay-s>summary::after{content:"";flex:none;width:9px;height:9px;margin-right:14px;border-right:2px solid var(--hormigon);border-bottom:2px solid var(--hormigon);transform:rotate(45deg);transition:transform .2s}
+details.ay-s[open]>summary::after{transform:rotate(-135deg)}
+details.ay-s>summary:hover{background:#1a1918}
+details.ay-s>summary h3{margin:0;padding:11px 14px;flex:1;font-family:var(--display,system-ui);font-stretch:82%;font-weight:800;font-size:15px;text-transform:uppercase;letter-spacing:.05em;color:var(--hueso)}
+details.ay-s>summary h3 i{border-radius:5px;width:24px;height:24px;background:linear-gradient(180deg,#F0602F,#D9481C);font-size:13px}
+details.ay-s>:not(summary){margin:0;padding:0 14px}
+details.ay-s>:nth-child(2){margin-top:12px}details.ay-s>:last-child{margin-bottom:14px}
+.ay-cap button i{background:linear-gradient(180deg,#F0602F,#D9481C);color:#fff}
+@media (prefers-reduced-motion:reduce){.fch-seg,.fch-seg i,.vf-prog i,.fch-prog.completo .fch-seg.on::after,.fch-seg.nueva{animation:none!important;transition:none!important}}
+html.lite .fch-seg i,html.lite .vf-prog i,html.lite .fch-seg.nueva{animation:none!important}
+
+/* ACTUALIZACIÓN 55 · tabla de la guía legible en móvil */
+.ay-tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ay-t{min-width:480px}
+.ay-t td:first-child,.ay-t th:first-child{white-space:nowrap}

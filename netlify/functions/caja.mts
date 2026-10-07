@@ -1,7 +1,7 @@
 import type { Config } from "@netlify/functions";
 import { createHash } from "node:crypto";
 import { store, json, mismoOrigen } from "../lib/shared.mts";
-import { quien, leerEquipo, hoyCanarias, horaCanarias } from "../lib/taller.mts";
+import { quien, leerEquipo, hoyCanarias, horaCanarias, pinOk } from "../lib/taller.mts";
 import { herramientasPendientes } from "../lib/almacen.mts";
 import { s, str, cent, eur, esFoto, rid, ahora, leerDesglose, libro, alerta, listar, movsDe, teorico, turnoAbierto, leerMov, crearMovimiento, TXT_CAT, type Conteo, type Turno, type Mov } from "../lib/caja.mts";
 import { exigirJornada } from "../lib/jornada.mts";
@@ -105,13 +105,29 @@ export default async (req: Request) => {
       // Cierre ciego: no se dice cuánto falta o sobra, ni cuánto debería haber.
       return json({ error: "La caja NO cuadra. Vuelve a contar billete a billete y moneda a moneda. Si está bien contado, escribe qué ha pasado: sin explicación no se puede cerrar.", descuadre: true, intentos: t.intentosCierre.length }, 409);
     }
-    t.cierre = { t: ahora(), uid: q.uid, nombre: q.nombre, desglose, contado, teorico: calc.teorico, diferencia: dif, justificacion: dif ? just : "", intentos: t.intentosCierre };
+    // Con cualquier diferencia (aunque sea 0,01 €) hace falta la autorización del gerente: él mismo, o el PIN de un gerente del equipo.
+    let autorizo = "";
+    if (dif !== 0) {
+      if (q.admin) autorizo = q.nombre;
+      else {
+        const fallos = ((await s().get("pin-ger-fallos", { type: "json" }).catch(() => null)) as number[] | null) || [], rec = fallos.filter((x) => Date.now() - x < 600000);
+        if (rec.length >= 5) return json({ error: "Demasiados PIN erróneos. Espera 10 minutos o que cierre el gerente.", pinGerente: true }, 429);
+        const gerente = (await leerEquipo()).find((x) => x.activo && x.rol === "gerente" && body.pinGerente && pinOk(String(body.pinGerente), x.pin));
+        if (!gerente) {
+          await s().setJSON("pin-ger-fallos", [...rec, Date.now()]); t.intentosCierre.pop();
+          return json({ error: body.pinGerente ? "PIN de gerente incorrecto." : "Hay diferencia en la caja: hace falta el PIN de un gerente para cerrar.", descuadre: true, pinGerente: true }, 403);
+        }
+        await s().delete("pin-ger-fallos").catch(() => {}); autorizo = gerente.nombre;
+      }
+    }
+    t.cierre = { t: ahora(), uid: q.uid, nombre: q.nombre, desglose, contado, teorico: calc.teorico, diferencia: dif, justificacion: dif ? just : "", intentos: t.intentosCierre, ...(autorizo ? { autorizo } : {}) } as any;
     await s().setJSON("t/" + t.id, t); await s().delete("abierto");
     await s().setJSON("ultimo-cierre", { turno: t.id, contado, desglose, t: t.cierre.t, nombre: q.nombre });
-    await libro(q, "cierre", { contado, teorico: calc.teorico, diferencia: dif, justificacion: t.cierre.justificacion, recuentos: t.intentosCierre.length }, t.id);
+    await libro(q, "cierre", { contado, teorico: calc.teorico, diferencia: dif, justificacion: t.cierre.justificacion, recuentos: t.intentosCierre.length, ...(autorizo ? { autorizo } : {}) }, t.id);
     const sinTk = movs.filter((m) => m.sinTicket && !m.foto && !m.anulado).length;
     if (dif) await alerta("rojo", "descuadre", `${dif < 0 ? "FALTAN" : "SOBRAN"} ${eur(Math.abs(dif))} en el cierre de ${q.nombre}`, [["Turno", t.fecha], ["Abrió", t.apertura.nombre + " · " + horaCanarias(new Date(t.apertura.t))], ["Cerró", q.nombre + " · " + horaCanarias()], ["Debería haber", eur(calc.teorico)], ["Contado", eur(contado)], ["Diferencia", eur(dif)], ["Explicación", just], ["Recuentos", String(t.intentosCierre.length)]], t.id, "", origin);
-    return json({ ok: true, descuadre: dif !== 0, sinTicket: sinTk });
+    const ver = q.admin || dif === 0;
+    return json({ ok: true, descuadre: dif !== 0, sinTicket: sinTk, resumen: { turno: t.id, fecha: t.fecha, abrio: t.apertura.nombre, abrioHora: horaCanarias(new Date(t.apertura.t)), cerro: q.nombre, cerroHora: horaCanarias(), contado, desglose, recuentos: t.intentosCierre.length, ...(ver ? { teorico: calc.teorico, diferencia: dif } : {}), ...(autorizo ? { autorizo } : {}) } });
   }
 
   // ======================= solo el gerente =======================

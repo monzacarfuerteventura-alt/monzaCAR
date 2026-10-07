@@ -28,7 +28,7 @@ with sync_playwright() as p:
         check("el presupuesto de la orden existe", pr["s"] == 200, str(pr))
         page.evaluate("t=>{ORDENES=[];}", t) if False else None
         page.evaluate("async t=>{ await abrirFichas(t,'f5'); }", t); page.wait_for_selector("#tf .fc-l", timeout=10000)
-        check("la pestaña Factura está entre Inspección y Tiempos", page.evaluate("[...document.querySelectorAll('.t-tabs [data-ttabb]')].map(b=>b.dataset.ttabb).join()") == "f1,f2,f5,f3,f4,audit")
+        check("la pestaña Factura es la 6.ª (después de Calidad)", page.evaluate("[...document.querySelectorAll('.t-tabs [data-ttabb]')].map(b=>b.dataset.ttabb).join()") == "f1,f2,pre,f3,f4,f5,audit")
         check("se rellena sola desde el presupuesto (2 líneas)", page.locator("#tf .fc-l").count() == 2)
         check("cliente y matrícula vienen de la recepción", page.input_value('[data-fc="cliente.nombre"]') == "Ana Pérez" and page.input_value('[data-fc="vehiculo.matricula"]') == mat)
         check("IGIC 7 % preseleccionado y total 149,80 €", "149,80" in page.inner_text("#fc-tot"), page.inner_text("#fc-tot"))
@@ -46,7 +46,7 @@ with sync_playwright() as p:
         page.wait_for_selector(".t-lock", timeout=8000); check("emitida: queda bloqueada con su número", "Factura emitida" in page.inner_text("#tf"))
         check("los campos quedan deshabilitados", page.locator('[data-fc="cliente.nombre"]').is_disabled())
         check("el estado de la pestaña es «Emitida»", "Emitida" in page.inner_text('[data-ttabb="f5"]'))
-        page.evaluate("()=>{window.print=()=>{window.__imp=1}}"); page.click('[data-tprint="uno"]'); page.wait_for_function("window.__imp===1", timeout=6000)
+        page.evaluate("()=>{window.print=()=>{window.__imp=1}}"); page.locator("#tf .app-more").click() if page.is_visible("#tf .app-more") else None; page.click('[data-tprint="uno"]'); page.wait_for_function("window.__imp===1", timeout=6000)
         html = page.inner_html("#t-print"); check("la impresión trae emisor, cliente, líneas y total", all(x in html for x in ("MAYLIN Y YERAY", "B93975647", "Ana Pérez", "Pastillas de freno", "TOTAL")) and "BORRADOR" not in html)
         page.click('[data-fclib="ver"]'); page.wait_for_function("/Todo correcto/.test(document.querySelector('#fc-lib').textContent)", timeout=8000); check("«Comprobar integridad» dice que todo cuadra", True)
         with page.expect_download(timeout=8000) as dl: page.click('[data-fclib="csv"]')
