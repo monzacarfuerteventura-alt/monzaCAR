@@ -19,6 +19,7 @@ import { exigirJornada } from "../lib/jornada.mts";
   POST /api/caja/anular/:mov            → anula un movimiento (nunca se borra) con motivo
   POST /api/caja/ajuste/:turno          → ajuste en un turno cerrado, con motivo
   POST /api/caja/revisar/:turno         → el gerente da por revisado un descuadre
+  POST /api/caja/corregir/:turno        → el gerente da un descuadre por CORREGIDO (p. ej. era una prueba): deja de contar en el faltante, pero queda en el libro
   POST /api/caja/alertas-vistas
   Nada se borra ni se edita: todo queda en el libro, encadenado con huellas SHA-256.
   Los importes se guardan en céntimos (enteros) para no perder ni un céntimo por redondeos.
@@ -143,8 +144,8 @@ export default async (req: Request) => {
     const porEmp: Record<string, { nombre: string; turnos: number; faltante: number; sobrante: number; neto: number; descuadres: number; recuentos: number; sinTicket: number }> = {};
     const emp = (uid: string, nombre: string) => (porEmp[uid] ||= { nombre, turnos: 0, faltante: 0, sobrante: 0, neto: 0, descuadres: 0, recuentos: 0, sinTicket: 0 });
     for (const f of filas) {
-      if (f.cierre) { const e = emp(f.cierre.uid, f.cierre.nombre); e.turnos++; e.neto += f.cierre.diferencia; if (f.cierre.diferencia < 0) e.faltante += -f.cierre.diferencia; if (f.cierre.diferencia > 0) e.sobrante += f.cierre.diferencia; if (f.cierre.diferencia) e.descuadres++; e.recuentos += Math.max(0, f.cierre.intentos.length - 1); }
-      if (f.apertura.diferencia) { const e = emp(f.apertura.uid, f.apertura.nombre); e.descuadres++; e.neto += f.apertura.diferencia; if (f.apertura.diferencia < 0) e.faltante += -f.apertura.diferencia; else e.sobrante += f.apertura.diferencia; }
+      if (f.cierre && !(f.cierre as any).corregida) { const e = emp(f.cierre.uid, f.cierre.nombre); e.turnos++; e.neto += f.cierre.diferencia; if (f.cierre.diferencia < 0) e.faltante += -f.cierre.diferencia; if (f.cierre.diferencia > 0) e.sobrante += f.cierre.diferencia; if (f.cierre.diferencia) e.descuadres++; e.recuentos += Math.max(0, f.cierre.intentos.length - 1); }
+      if (f.apertura.diferencia && !(f.apertura as any).corregida) { const e = emp(f.apertura.uid, f.apertura.nombre); e.descuadres++; e.neto += f.apertura.diferencia; if (f.apertura.diferencia < 0) e.faltante += -f.apertura.diferencia; else e.sobrante += f.apertura.diferencia; }
       for (const m of f.movimientos) if (m.sinTicket && !m.foto && !m.anulado) emp(m.por, m.porNombre).sinTicket++;
     }
     const alertas = (await listar<any>("alerta/")).sort((a, b) => b.t.localeCompare(a.t)).slice(0, 60);
@@ -198,6 +199,20 @@ export default async (req: Request) => {
     const nota = str(body.nota, 400); if (nota.length < 3) return json({ error: "Escribe una nota de la revisión." }, 400);
     t.revision = { t: ahora(), nota }; await s().setJSON("t/" + t.id, t);
     await libro(q, "revision", { nota, diferencia: t.cierre?.diferencia ?? null }, t.id);
+    return json({ ok: true });
+  }
+
+  if (accion === "corregir" && req.method === "POST") {
+    const t = (await s().get("t/" + id, { type: "json" }).catch(() => null)) as Turno | null; if (!t) return json({ error: "Turno no encontrado." }, 404);
+    const donde = body.donde === "apertura" ? "apertura" : body.donde === "cierre" ? "cierre" : "";
+    const motivo = str(body.motivo, 300); if (motivo.length < 5) return json({ error: "Escribe el motivo de la corrección (mínimo 5 letras)." }, 400);
+    const parte: any = donde === "apertura" ? t.apertura : donde === "cierre" ? t.cierre : null;
+    if (!parte) return json({ error: "Ese turno no tiene ese descuadre." }, 400);
+    if (!parte.diferencia) return json({ error: "Ahí no hay ningún descuadre que corregir." }, 409);
+    if (parte.corregida) return json({ error: "Ese descuadre ya estaba corregido." }, 409);
+    parte.corregida = { t: ahora(), uid: q.uid, nombre: q.nombre, motivo, importe: parte.diferencia };
+    await s().setJSON("t/" + t.id, t);
+    await libro(q, "descuadre-corregido", { donde, importe: parte.diferencia, motivo }, t.id);
     return json({ ok: true });
   }
 

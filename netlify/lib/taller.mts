@@ -66,7 +66,7 @@ export type F1 = {
 };
 export type F2 = {
   mecanico: string; items: Record<string, { e: Estado4; nota: string; extra: string; fotos: string[] }>;
-  horasEst: number; recomendacion: string; rechazoFirmado: boolean; firma: { uid: string; nombre: string; t: string } | null; cerrada: boolean; inicio: string;
+  horasEst: number; recomendacion: string; rechazoFirmado: boolean; autorizaRojos?: boolean; autorizaNombre?: string; firma: { uid: string; nombre: string; t: string } | null; cerrada: boolean; inicio: string;
 };
 export type Evento = { tipo: "inicio" | "pausa" | "reanudar" | "fin"; t: string; por: string; motivo: string; nota: string; auto?: string; corr?: { t0: string; por: string; motivo: string; en: string }[] };
 export type F3 = {
@@ -167,7 +167,7 @@ export async function guardarOrden(f: Fichas, o: any, cambioEstado?: { estado: s
   o.num = f.num;
   o.fichas = {
     f1: f.f1 ? { cerrada: f.f1.cerrada, danos: f.f1.danos.length, tipo: f.f1.tipoEntrada } : null,
-    f2: r2 ? { ...r2, rechazoFirmado: !!f.f2?.rechazoFirmado, mecanico: f.f2?.mecanico || "" } : null,
+    f2: r2 ? { ...r2, rechazoFirmado: !!f.f2?.rechazoFirmado, autorizaRojos: !!f.f2?.autorizaRojos, mecanico: f.f2?.mecanico || "" } : null,
     f3: f.f3 && c ? { mecanico: f.f3.mecanico, estado: c.estado, netoMin: c.netoMin, estMin: f.f3.estMin, desvPct: c.desvPct, desvMin: c.desvMin, exige: c.exigeJustificacion, justificada: c.justificada, aprobada: c.aprobada, desde: [...f.f3.eventos].sort((a, b) => a.t.localeCompare(b.t)).pop()?.t || "" } : null,
     f4: f.f4 ? { resultado: f.f4.resultado, destino: f.f4.destino, firmada: !!f.f4.firma, cierre: !!f.f4.cierreGerente, intentos: f.f4.intentos } : null,
     f5: f.f5 ? { emitida: !!f.f5.cerrada } : null, // sin importes: el equipo del taller no los ve

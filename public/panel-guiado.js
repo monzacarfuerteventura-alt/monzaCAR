@@ -92,7 +92,7 @@
     if (gerente) {
       l.push(["ingreso", "+ Otro ingreso"], ["gasto", "− Nuevo gasto"], ["emitidas", "Excel emitidas"], ["recibidas", "Excel recibidas"], ["pdf", "PDF asesoría"]);
     }
-    l.push(["blanco", "Fichas en blanco (PDF)"], ["cliente", "+ Nuevo cliente (CRM)"], ["cita", "+ Apuntar cita (cliente que llama)"], ["informe", "Informe PDF del mes"], ["ayuda", "Ayuda paso a paso"]);
+    l.push(["blanco", "Fichas en blanco (PDF)"], ["cliente", "+ Nuevo cliente (CRM)"], ["informe", "Informe PDF del mes"], ["ayuda", "Ayuda paso a paso"]);
     return l;
   }
   function pintarBarra() {

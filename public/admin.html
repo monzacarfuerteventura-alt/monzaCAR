@@ -2519,6 +2519,19 @@ html,body{max-width:100%;overflow-x:hidden}
       <div class="acts"><button class="btn b-brand b-sm" type="button" id="ay-pdf">Descargar PDF</button></div>
     </div>
     <div id="ay"></div>
+  <details class="card" id="glosario17" style="margin-top:22px;padding:14px 18px">
+    <summary style="cursor:pointer;font-weight:800;min-height:44px;display:flex;align-items:center">¿Qué significan las siglas? (FORM, TIN, arqueo ciego…)</summary>
+    <dl style="margin:10px 0 0;display:grid;gap:10px;font-size:14.5px;line-height:1.45">
+      <div><dt><b>FORM-01 … FORM-14</b></dt><dd style="margin:2px 0 0;color:var(--muted)">Las fichas del taller y la oficina, numeradas: 01 recepción del coche, 02 inspección de 360°, 03 tiempos de trabajo, 04 control de calidad antes de entregar, 14 factura de la reparación. Cada una tiene su firma y queda guardada.</dd></div>
+      <div><dt><b>Sistema 01, MO-00</b></dt><dd style="margin:2px 0 0;color:var(--muted)">Procedimientos de trabajo del taller (cómo se hace cada tarea). Sirven de guía y de comprobación.</dd></div>
+      <div><dt><b>TIN y TAE</b></dt><dd style="margin:2px 0 0;color:var(--muted)">Los dos intereses de una financiación. El TIN es el interés que cobra el banco; la TAE incluye también las comisiones y es el que mejor compara dos ofertas.</dd></div>
+      <div><dt><b>Arqueo ciego</b></dt><dd style="margin:2px 0 0;color:var(--muted)">Al cerrar la caja cuentas el dinero sin ver cuánto debería haber; después el sistema lo compara. Así nadie “cuadra” la cifra a ojo.</dd></div>
+      <div><dt><b>Descuadre</b></dt><dd style="margin:2px 0 0;color:var(--muted)">La diferencia entre lo que contaste y lo que debería haber en caja.</dd></div>
+      <div><dt><b>Huella</b></dt><dd style="margin:2px 0 0;color:var(--muted)">Un código único de cada factura o anotación, calculado con la anterior. Si alguien cambiara algo después, el código dejaría de cuadrar y se vería.</dd></div>
+      <div><dt><b>IGIC</b></dt><dd style="margin:2px 0 0;color:var(--muted)">El impuesto indirecto de Canarias (el “IVA” de las islas). El general es el 7 %.</dd></div>
+      <div><dt><b>Factura rectificativa (R-…)</b></dt><dd style="margin:2px 0 0;color:var(--muted)">La factura que corrige otra ya emitida. La original no se borra: la rectificativa la cita.</dd></div>
+    </dl>
+  </details>
   </section>
 
   <!-- JORNADA: pantalla de fichaje del equipo y registro del gerente (tools/jornada) -->
@@ -2685,19 +2698,6 @@ html,body{max-width:100%;overflow-x:hidden}
       </div>
     </form>
   </section>
-  <details class="card" id="glosario17" style="margin-top:28px;padding:14px 18px">
-    <summary style="cursor:pointer;font-weight:800;min-height:44px;display:flex;align-items:center">¿Qué significan las siglas? (FORM, TIN, arqueo ciego…)</summary>
-    <dl style="margin:10px 0 0;display:grid;gap:10px;font-size:14.5px;line-height:1.45">
-      <div><dt><b>FORM-01 … FORM-14</b></dt><dd style="margin:2px 0 0;color:var(--muted)">Las fichas del taller y la oficina, numeradas: 01 recepción del coche, 02 inspección de 360°, 03 tiempos de trabajo, 04 control de calidad antes de entregar, 14 factura de la reparación. Cada una tiene su firma y queda guardada.</dd></div>
-      <div><dt><b>Sistema 01, MO-00</b></dt><dd style="margin:2px 0 0;color:var(--muted)">Procedimientos de trabajo del taller (cómo se hace cada tarea). Sirven de guía y de comprobación.</dd></div>
-      <div><dt><b>TIN y TAE</b></dt><dd style="margin:2px 0 0;color:var(--muted)">Los dos intereses de una financiación. El TIN es el interés que cobra el banco; la TAE incluye también las comisiones y es el que mejor compara dos ofertas.</dd></div>
-      <div><dt><b>Arqueo ciego</b></dt><dd style="margin:2px 0 0;color:var(--muted)">Al cerrar la caja cuentas el dinero sin ver cuánto debería haber; después el sistema lo compara. Así nadie “cuadra” la cifra a ojo.</dd></div>
-      <div><dt><b>Descuadre</b></dt><dd style="margin:2px 0 0;color:var(--muted)">La diferencia entre lo que contaste y lo que debería haber en caja.</dd></div>
-      <div><dt><b>Huella</b></dt><dd style="margin:2px 0 0;color:var(--muted)">Un código único de cada factura o anotación, calculado con la anterior. Si alguien cambiara algo después, el código dejaría de cuadrar y se vería.</dd></div>
-      <div><dt><b>IGIC</b></dt><dd style="margin:2px 0 0;color:var(--muted)">El impuesto indirecto de Canarias (el “IVA” de las islas). El general es el 7 %.</dd></div>
-      <div><dt><b>Factura rectificativa (R-…)</b></dt><dd style="margin:2px 0 0;color:var(--muted)">La factura que corrige otra ya emitida. La original no se borra: la rectificativa la cita.</dd></div>
-    </dl>
-  </details>
 </main>
 
 <div class="drawer" id="drawer" hidden><div class="dw-bg" id="dw-bg"></div><div class="dw-body" id="dw-body" role="dialog" aria-modal="true" aria-label="Ficha"></div></div>
@@ -2721,7 +2721,8 @@ html,body{max-width:100%;overflow-x:hidden}
   <div class="g2"><div class="field"><label for="ct-nombre">Nombre *</label><input class="in" id="ct-nombre" required maxlength="80" autocomplete="off"></div><div class="field"><label for="ct-tel">Teléfono *</label><input class="in" id="ct-tel" type="tel" required maxlength="30"></div></div>
   <div class="g2"><div class="field"><label for="ct-tipo">Qué viene a hacer</label><select class="in" id="ct-tipo"><option value="taller">Taller (reparación, revisión…)</option><option value="coche">Ver o probar un coche</option></select></div><div class="field" id="ct-cochebox" hidden><label for="ct-coche">Coche que quiere ver</label><select class="in" id="ct-coche"></select></div></div>
   <div class="g2" id="ct-tbox"><div class="field"><label for="ct-vcoche">Su coche</label><input class="in" id="ct-vcoche" maxlength="120" placeholder="Ej. Seat Ibiza 2015"></div><div class="field"><label for="ct-mat">Matrícula</label><input class="in" id="ct-mat" maxlength="14"></div></div>
-  <div class="g2"><div class="field"><label for="ct-dia">Día</label><select class="in" id="ct-dia"></select></div><div class="field"><label for="ct-hora">Hora</label><select class="in" id="ct-hora"></select></div></div>
+  <label class="ct-ahora" style="display:flex;gap:10px;align-items:center;min-height:44px;font-weight:700;cursor:pointer"><input type="checkbox" id="ct-ahora" style="width:20px;height:20px"> <span>Ahora mismo: el cliente está aquí <small id="ct-ahora-h" style="font-weight:600;color:var(--muted)"></small></span></label>
+  <div class="g2" id="ct-diahora"><div class="field"><label for="ct-dia">Día</label><select class="in" id="ct-dia"></select></div><div class="field"><label for="ct-hora">Hora</label><select class="in" id="ct-hora"></select></div></div>
   <div class="field"><label for="ct-msg">Qué necesita (opcional)</label><textarea class="in" id="ct-msg" rows="2" maxlength="1500" style="min-height:0"></textarea></div>
   <p class="hint" id="ct-aviso" style="margin:0" hidden></p>
   <div style="display:flex;gap:8px;justify-content:flex-end"><button type="button" class="btn b-ghost" id="ct-cancel">Cancelar</button><button class="btn b-acc" id="ct-ok">Apuntar cita</button></div>
@@ -2755,7 +2756,11 @@ let ME = null; // quién ha entrado: el gerente (contraseña) o alguien del equi
 let CARS = [], editing = null, fotos = [], uploading = 0, INTERES = {}, VIENDO = {};
 let video = null, vSubiendo = false, vNuevo = null, vAbort = null;
 
-function toast(t){ const el=$("#toast"); el.textContent=t; el.hidden=false; el.classList.remove("vc-t-in"); void el.offsetWidth; el.classList.add("vc-t-in"); const mal=/no se puede|error|incorrect|no cuadra|falta|denegad|demasiad|permiso|no tienes/i.test(t); el.dataset.k=mal?"bad":/guardad|cread|hech|abiert|cerrad|anulad|enviad|copiad|listo|cuadra:/i.test(t)?"ok":""; vcFeedback(mal?"bad":"ok"); clearTimeout(toast.t); toast.t=setTimeout(()=>el.hidden=true,3000); }
+function toast(t){ const el=$("#toast");
+  /* los <dialog> abiertos viven en la «capa superior» del navegador y tapan todo lo demás: el aviso se coloca DENTRO del diálogo abierto para que se vea encima del difuminado */
+  const dlgAb=[...document.querySelectorAll("dialog[open]")].pop(), dest=dlgAb||document.body; if(el.parentNode!==dest) dest.appendChild(el);
+  el.textContent=t; el.hidden=false; el.classList.remove("vc-t-in"); void el.offsetWidth; el.classList.add("vc-t-in"); const mal=/no se puede|error|incorrect|no cuadra|falta|denegad|demasiad|permiso|no tienes/i.test(t); el.dataset.k=mal?"bad":/guardad|cread|hech|abiert|cerrad|anulad|enviad|copiad|listo|cuadra:/i.test(t)?"ok":""; vcFeedback(mal?"bad":"ok"); clearTimeout(toast.t); toast.t=setTimeout(()=>el.hidden=true,3000); }
+document.addEventListener("close",e=>{ if(e.target&&e.target.tagName==="DIALOG"){ const el=$("#toast"); if(el&&el.parentNode!==document.body) document.body.appendChild(el); } },true);
 function vcFeedback(k){ try{ if(navigator.vibrate) navigator.vibrate(k==="bad"?[30,40,30]:12); }catch(e){} }
 const TABS={dash:"s-dash",leads:"s-leads",ordenes:"s-ordenes",caja:"s-caja",fin:"s-fin",alm:"s-alm",agenda:"s-agenda",coches:"s-list"};
 function show(id){ ["s-login","s-list","s-form","s-leads","s-agenda","s-dash","s-ordenes","s-guia","s-ficha","s-caja","s-fin","s-alm"].forEach(x=>$("#"+x).hidden = x!==id); $("#topacts").hidden = id==="s-login";
@@ -3871,16 +3876,19 @@ function ctTipo(){ const c=$("#ct-tipo").value==="coche"; $("#ct-cochebox").hidd
 const ultimos9=t=>String(t||"").replace(/\D/g,"").slice(-9);
 function ctDuplicado(){ const t=ultimos9($("#ct-tel").value), av=$("#ct-aviso"); const x=t.length>=9?LEADS.find(l=>ultimos9(l.telefono)===t):null;
   av.hidden=!x; if(x) av.textContent="Ojo: ya hay un cliente con este teléfono ("+x.nombre+"). Se creará otra ficha; puedes abrir la suya desde el CRM."; }
-$("#cita-nueva").onclick=()=>{ $("#f-cita").reset(); $("#ct-coche").innerHTML='<option value="">—</option>'+CARS.filter(c=>c.estado==="disponible"||c.estado==="reservado").map(c=>`<option value="${esc(c.id)}">${esc(c.marca+" "+c.modelo+" "+(c.version||""))}</option>`).join(""); $("#ct-aviso").hidden=true; ctTipo(); $("#dlg-cita").showModal(); };
+$("#cita-nueva").onclick=()=>{ $("#f-cita").reset(); $("#ct-coche").innerHTML='<option value="">—</option>'+CARS.filter(c=>c.estado==="disponible"||c.estado==="reservado").map(c=>`<option value="${esc(c.id)}">${esc(c.marca+" "+c.modelo+" "+(c.version||""))}</option>`).join(""); $("#ct-aviso").hidden=true; ctTipo(); ctAhora(); $("#dlg-cita").showModal(); };
+function ctHoraAhora(){ const d=new Date(); const f=new Intl.DateTimeFormat("es-ES",{timeZone:"Atlantic/Canary",hour:"2-digit",minute:"2-digit",hour12:false}).format(d); return f.replace(/^24/,"00"); }
+function ctAhora(){ const on=$("#ct-ahora").checked; $("#ct-diahora").hidden=on; $("#ct-ahora-h").textContent=on?"· hoy a las "+ctHoraAhora():""; }
+$("#ct-ahora").onchange=ctAhora;
 $("#ct-tipo").onchange=ctTipo; $("#ct-dia").onchange=ctHoras; $("#ct-tel").addEventListener("input",ctDuplicado);
 $("#ct-cancel").onclick=()=>$("#dlg-cita").close();
 $("#f-cita").addEventListener("submit",async e=>{
   e.preventDefault(); const btn=$("#ct-ok"); btn.disabled=true;
   try{
-    if(!$("#ct-dia").value||!$("#ct-hora").value) throw new Error("Elige un día y una hora libres.");
+    const ahora=$("#ct-ahora").checked; if(!ahora&&(!$("#ct-dia").value||!$("#ct-hora").value)) throw new Error("Elige un día y una hora libres, o marca «Ahora mismo».");
     const tipo=$("#ct-tipo").value, car=CARS.find(c=>c.id===$("#ct-coche").value);
     if(tipo==="coche"&&!car) throw new Error("Elige el coche que quiere ver.");
-    const body={manual:true,tipo,nombre:$("#ct-nombre").value,telefono:$("#ct-tel").value,canal:"telefono",mensaje:$("#ct-msg").value,cita:{fecha:$("#ct-dia").value,hora:$("#ct-hora").value},
+    const body={manual:true,tipo,nombre:$("#ct-nombre").value,telefono:$("#ct-tel").value,canal:"telefono",mensaje:$("#ct-msg").value,cita:ahora?{fecha:hoyC(),hora:ctHoraAhora(),ahora:true}:{fecha:$("#ct-dia").value,hora:$("#ct-hora").value},
       vehiculo:tipo==="taller"?{coche:$("#ct-vcoche").value,matricula:$("#ct-mat").value}:{},coche:car?{id:car.id,titulo:`${car.marca} ${car.modelo} ${car.version||""}`.trim(),precio:car.precio}:null};
     const x=await api("/api/solicitudes",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});
     LEADS.unshift(x); conocidas&&conocidas.add(x.id); $("#dlg-cita").close(); contadores(); renderLeads(); renderAgenda(); toast("Cita apuntada: "+fecha(x.cita.fecha)+" a las "+x.cita.hora);
@@ -4285,7 +4293,7 @@ function tTiempo(o){ const f3=o.fichas&&o.fichas.f3; if(!f3||f3.estado==="sin") 
   return `<span class="t-tm"><b class="num">${tH(neto)}</b>${f3.estMin?`<small>de ${tH(f3.estMin)}</small>`:""}${pct!=null?`<em class="${mal?"mal":pct>0?"sube":"baja"}">${tPct(pct)}</em>`:""}</span>`; }
 function tAlertasLocal(){
   return ORDENES.filter(o=>o.estado!=="entregado").flatMap(o=>{ const f=o.fichas||{}, out=[], coche=[o.vehiculo.coche,(o.vehiculo.matricula||"").toUpperCase()].filter(Boolean).join(" · ");
-    if(f.f2&&f.f2.rojos>0&&!f.f2.rechazoFirmado&&!(o.presupuesto&&o.presupuesto.estado==="aceptado")) out.push({nivel:"rojo",token:o.token,tab:"f2",txt:`${coche}: ${f.f2.rojos} punto${f.f2.rojos>1?"s":""} en ROJO sin presupuesto aceptado`});
+    if(f.f2&&f.f2.rojos>0&&!f.f2.rechazoFirmado&&!f.f2.autorizaRojos&&!(o.presupuesto&&o.presupuesto.estado==="aceptado")) out.push({nivel:"rojo",token:o.token,tab:"f2",txt:`${coche}: ${f.f2.rojos} punto${f.f2.rojos>1?"s":""} en ROJO sin presupuesto aceptado`});
     if(f.f3&&f.f3.exige&&!f.f3.justificada) out.push({nivel:"rojo",token:o.token,tab:"f3",txt:`${coche}: desviación de ${tPct(f.f3.desvPct)} sin justificar`});
     else if(f.f3&&f.f3.exige&&!f.f3.aprobada) out.push({nivel:"ambar",token:o.token,tab:"f3",txt:`${coche}: falta el visto bueno del gerente a los tiempos`});
     if(o.estado==="calidad"&&!(f.f4&&f.f4.firmada&&f.f4.resultado!=="rechazado")) out.push({nivel:"ambar",token:o.token,tab:"f4",txt:`${coche}: terminado, pendiente de control de calidad`});
@@ -4416,7 +4424,7 @@ function tVacias(){
   const o=TF.orden, f=TF.fichas;
   const f1=tClone(f.f1)||{fecha:"",hora:"",cliente:{nombre:o.cliente.nombre||"",doc:"",telefono:o.cliente.telefono||"",email:o.cliente.email||"",titular:"",contacto:"whatsapp"},recibidoPor:ME?ME.nombre:"",entregaPrometida:o.entrega||"",tipoEntrada:"",
     vehiculo:{matricula:o.vehiculo.matricula||"",marcaModelo:o.vehiculo.coche||"",vin:"",anioColor:"",km:o.vehiculo.km||"",kmFoto:"",itv:"",combustible:"",nivel:"",testigos:""},motivo:"",inventario:{},llaves:"",danos:[],fotosDanos:[],sinDanos:false,autorizoHasta:"",avisosWhatsApp:true,avisosITV:false,firmaCliente:"",firmadoCliente:"",firmaTaller:null,cerrada:false};
-  const f2=tClone(f.f2)||{mecanico:"",items:{},horasEst:0,recomendacion:"",rechazoFirmado:false,firma:null,cerrada:false,inicio:""};
+  const f2=tClone(f.f2)||{mecanico:"",items:{},horasEst:0,recomendacion:"",rechazoFirmado:false,autorizaRojos:false,autorizaNombre:"",firma:null,cerrada:false,inicio:""};
   const f3=tClone(f.f3)||{mecanico:"",tarifa:TF.config.tarifa,estMin:0,tipo:"reparacion",hoja:"1 de 1",eventos:[],justificacion:null,vistoBueno:null,retrabajos:[]};
   let f4=tClone(f.f4)||{destino:f1.tipoEntrada==="compra"||f1.tipoEntrada==="retoma"?"venta":"cliente",items:{},notas:{},resultado:"",motivo:"",firma:null,cierreGerente:null,intentos:0};
   if(f4.firma&&f4.resultado==="rechazado"&&tNuevoIntento()){ f4={...f4,firma:null,resultado:"",motivo:""}; for(const k in f4.items) if(f4.items[k]==="no") f4.items[k]=""; }
@@ -4447,17 +4455,23 @@ function tEstadoFicha(k){ const f=TF.fichas;
   if(k==="f4"){ if(!f.f4||!f.f4.firma) return ["","Pendiente"]; return f.f4.resultado==="rechazado"?["rojo","Rechazado"]:["ok",f.f4.cierreGerente?"Cerrada":"Aprobado"]; }
   return ["",String(f.audit.length)];
 }
+/* ACTUALIZACIÓN 55 · las fichas se iluminan al completarse (1/6 … 6/6) */
+const T_SEIS=["f1","f2","pre","f3","f4","f5"];
+function tHecha(k){ const f=TF.fichas; if(k==="f1") return !!(f.f1&&f.f1.cerrada); if(k==="f2") return !!(f.f2&&f.f2.cerrada); try{ return tEstadoFicha(k)[0]==="ok"; }catch(_){ return false; } }
+function tProgreso(claves){ const hs=claves.map(tHecha), key=(TF.fichas&&TF.fichas.num)||(TF.orden&&TF.orden.token)||"", mem=(tProgreso.prev=tProgreso.prev||{}), prev=mem[key];
+  mem[key]=hs; return {hs,n:hs.filter(Boolean).length,total:claves.length,nuevas:hs.map((h,i)=>!!(h&&prev&&!prev[i])),primera:!prev}; }
 function tCabecera(){
   const o=TF.orden, f=TF.fichas, i=tFase(o.estado);
   const tabs=[["f1","FORM-01","Recepción"],["f2","FORM-02","Inspección 360°"],["pre","FORM-15","Presupuesto"],["f3","FORM-03","Tiempos"],["f4","FORM-04","Calidad · 30 pts"],...(typeof fcTab==="function"?fcTab():[]),["audit","","Auditoría"]];
   return `<div class="t-fhead">
     <button type="button" class="btn b-ghost b-sm" data-tvolver>← Taller</button>
-    <div class="t-fid"><small>Orden</small><b class="num">${esc(f.num||"—")}</b></div>
+    <div class="t-fid"><small>Orden</small><b class="num">${esc(f.num||"—")}</b>${typeof vcPlegBtn==="function"?vcPlegBtn("ficha"):""}</div>
     <div class="t-fcar"><span class="mat">${esc((o.vehiculo.matricula||"—").toUpperCase())}</span><b>${esc(o.vehiculo.coche||"Coche")}</b><small>${esc(o.cliente.nombre)}${o.cliente.telefono?" · "+esc(o.cliente.telefono):""}</small></div>
     <div class="t-facts"><button type="button" class="btn b-ghost b-sm" data-tprint="uno">Descargar PDF de esta ficha</button><button type="button" class="btn b-brand b-sm" data-tprint="todas">PDF de toda la orden</button><button type="button" class="btn b-ghost b-sm" data-tpanel>Las 6 fichas</button>${tBlancoBtn(TF_TAB)}<button type="button" class="btn b-ghost b-sm" data-tdrawer>Presupuesto y cliente</button></div>
   </div>
   <ol class="t-fases">${T_FASES.map((x,k)=>`<li class="${k<i?"hecho":k===i?"act":""}"><i>${k<i?"✓":k+1}</i><span>${x[1]}${k===i&&T_SUB[o.estado]?`<small>${T_SUB[o.estado]}</small>`:""}</span></li>`).join("")}</ol>
-  <nav class="t-tabs" role="tablist">${tabs.map(([k,n,t])=>{ const [c,s]=tEstadoFicha(k); return `<button type="button" role="tab" data-ttabb="${k}" aria-selected="${TF_TAB===k}">${n?`<small>${n}</small>`:""}<b>${t}</b><em class="t-st ${c}">${esc(s)}</em></button>`; }).join("")}</nav>`;
+  ${(()=>{ const cl=T_SEIS.filter(k=>tabs.some(x=>x[0]===k)), pg=tProgreso(cl); return `<div class="fch-prog${pg.n===pg.total?" completo":""}${pg.primera?" anim":""}" role="img" aria-label="${pg.n} de ${pg.total} fichas completadas"><span class="fch-prog-n"><b>${pg.n}</b>/${pg.total}</span><div class="fch-prog-b">${cl.map((k,j)=>{ const tt=tabs.find(x=>x[0]===k); return `<button type="button" class="fch-seg${pg.hs[j]?" on":""}${pg.nuevas[j]?" nueva":""}" data-tseg="${k}" style="--i:${j}" title="${tt[2]}: ${pg.hs[j]?"completada":"pendiente"}"><i></i><small>${j+1}</small></button>`; }).join("")}</div><span class="fch-prog-t">${pg.n===pg.total?"¡Orden completa!":pg.n===0?"Ninguna ficha completada todavía":pg.n+(pg.n===1?" ficha completada":" fichas completadas")}</span></div>`; })()}
+  <nav class="t-tabs" role="tablist">${tabs.map(([k,n,t],ix)=>{ const [c,s]=tEstadoFicha(k), h=T_SEIS.includes(k)&&tHecha(k); return `<button type="button" role="tab" data-ttabb="${k}" class="${h?"hecha":""}" aria-selected="${TF_TAB===k}">${n?`<small>${n}</small>`:""}<b>${t}</b><em class="t-st ${c}">${esc(s)}</em></button>`; }).join("")}</nav>`;
 }
 function tRender(){
   $("#tf").innerHTML=`<div id="tf-head">${tCabecera()}</div><div id="tf-body"></div><div class="t-save" id="tf-save" hidden></div>`;
@@ -4604,6 +4618,7 @@ function tFaltaF2(){ const f=TW.f2, out=[], sin=F2_IDS.filter(id=>!(f.items[id]&
   if(sin.length) out.push(`${sin.length} punto${sin.length>1?"s":""} sin revisar (usa NA si no aplica): ${sin.slice(0,8).map(x=>x.toUpperCase()).join(", ")}${sin.length>8?"…":""}`);
   const sn=F2_IDS.filter(id=>f.items[id]&&["a","r"].includes(f.items[id].e)&&!(f.items[id].nota||"").trim()); if(sn.length) out.push("Nota en cada Ámbar o Rojo: faltan "+sn.map(x=>x.toUpperCase()).join(", "));
   if(!tNum(f.horasEst)) out.push("Horas estimadas de trabajo"); if(!f.recomendacion) out.push("Recomendación");
+  if(f.autorizaRojos&&!(f.autorizaNombre||"").trim()) out.push("Nombre del cliente que autoriza reparar con los ROJOS");
   return out; }
 function tFila2(id,t,extra,lock){ const it=TW.f2.items[id]||{}, e=it.e||"";
   return `<div class="t-f2r e-${e||"x"}" data-trow="${id}"><span class="t-f2l"><b>${id.toUpperCase()}</b>${t}</span>
@@ -4626,6 +4641,8 @@ function tF2(){
   ${tSec("✓","Resultado de la inspección","",`<div class="t-g3"><div class="field"><label>Horas estimadas de trabajo <b class="t-req">*</b></label><input class="in num" data-f="horasEst" value="${x.horasEst?tEsc(String(x.horasEst).replace(".",",")):""}" inputmode="decimal" placeholder="Ej. 2,5" ${lock?"disabled":""}><small class="hint">Pasa a FORM-03 como tiempo estimado.</small></div>
     <div class="field t-span2"><label>Recomendación <b class="t-req">*</b></label>${lock?`<div class="in t-ro">${esc(T_RECO[x.recomendacion]||"—")}</div>`:tSeg("recomendacion",Object.entries(T_RECO).map(([k,t])=>[k,t]))}</div></div>
     ${r.rojos?`<label class="t-chk"><input type="checkbox" data-f="rechazoFirmado" ${x.rechazoFirmado?"checked":""} ${lock?"disabled":""}><span>El cliente <b>rechaza por escrito</b> reparar los puntos en ROJO (se guarda el papel firmado en la carpeta)</span></label>`:""}
+    <label class="t-chk"><input type="checkbox" data-f="autorizaRojos" ${x.autorizaRojos?"checked":""} ${lock?"disabled":""}><span><b>El cliente autoriza reparar el vehículo con los puntos en ROJO existentes</b> y queda bajo su responsabilidad.</span></label>
+    ${x.autorizaRojos?`<div class="field"><label>Nombre y apellidos del cliente que autoriza <b class="t-req">*</b></label><input class="in" data-f="autorizaNombre" value="${tEsc(x.autorizaNombre||"")}" maxlength="80" ${lock?"disabled":""} autocomplete="off"><small class="hint">Firma en la hoja impresa (cliente y mecánico). Aquí queda la marca y el nombre.</small></div>`:""}
     ${r.rojos?`<div class="msg bad" style="font-weight:600">Hay ${r.rojos} punto${r.rojos>1?"s":""} en ROJO: no se entrega el coche sin reparar o sin rechazo firmado. Al firmar, la orden pasa a «Presupuesto».</div>`:""}
     ${f&&f.firma?tFirmaBox(f.firma,"Inspección firmada"):""}`)}
   <div class="t-faltan msg bad" id="tf-faltan" hidden></div>`;
@@ -4743,7 +4760,7 @@ $("#tf").addEventListener("input",e=>{ const t=e.target;
   else if(t.matches("[data-tjf]")) TW.j[t.dataset.tjf]=t.value;
 });
 $("#tf").addEventListener("change",async e=>{ const t=e.target;
-  if(t.matches("select[data-f],input[type=checkbox][data-f],input[type=date][data-f]")){ tCampo(t); if(t.dataset.f==="sinDanos") return; if(t.dataset.f==="avisosITV"||t.dataset.f==="vehiculo.itv"){ tRenderBody(true); return; } }
+  if(t.matches("select[data-f],input[type=checkbox][data-f],input[type=date][data-f]")){ tCampo(t); if(t.dataset.f==="sinDanos") return; if(t.dataset.f==="avisosITV"||t.dataset.f==="vehiculo.itv"||t.dataset.f==="autorizaRojos"){ tRenderBody(true); return; } }
   if(t.matches("[data-tj]")){ const s=new Set(TW.j.codigos); t.checked?s.add(t.dataset.tj):s.delete(t.dataset.tj); TW.j.codigos=[...s].sort(); return; }
   if(t.matches("[data-tjf]")){ TW.j[t.dataset.tjf]=t.value; return; }
   if(t.matches("[data-tfoto]")){ const campo=t.dataset.tfoto, files=[...t.files]; t.value=""; if(!files.length) return; toast("Subiendo "+files.length+" foto"+(files.length>1?"s":"")+"…");
@@ -4756,7 +4773,7 @@ $("#tf").addEventListener("toggle",e=>{ const d=e.target; if(d.matches&&d.matche
 $("#tf").addEventListener("click",async e=>{
   const t=e.target, q=s=>t.closest(s);
   if(q("[data-tvolver]")){ if(TDIRTY) await tGuardar(false,true); try{ sessionStorage.removeItem("vc_tf"); }catch(_){} TF=null; abrirTab("ordenes"); return; }
-  const tb=q("[data-ttabb]"); if(tb){ if(TDIRTY) await tGuardar(false,true); TF_TAB=tb.dataset.ttabb; tRenderHead(); tRenderBody(); return; }
+  const tb=q("[data-ttabb],[data-tseg]"); if(tb){ if(TDIRTY) await tGuardar(false,true); TF_TAB=tb.dataset.ttabb||tb.dataset.tseg; tRenderHead(); tRenderBody(); return; }
   if(q("[data-tpanel]")){ tPanelFichas(TF.orden.token); return; }
   const pr=q("[data-tprint]"); if(pr){ if(TDIRTY) await tGuardar(false,true); tImprimir(pr.dataset.tprint==="uno"&&TF_TAB!=="audit"?[TF_TAB]:["f1","f2",...(TF.orden.presupuesto&&(TF.orden.presupuesto.lineas||[]).length?["pre"]:[]),"f3","f4"]); return; }
   if(q("[data-tdrawer]")){ const o=ORDENES.find(z=>z.token===TF.orden.token); if(o) _tAbrirOrdenDrawer(o.token); return; }
@@ -4970,11 +4987,11 @@ const T_PORQUE=[["f1","FORM-01","Recepción del vehículo","Deja por escrito có
 async function tPdfFicha(token,k){ try{ const [r]=await Promise.all([tApi("fichas/"+token),TEQ.length?null:tCargarEquipo(),typeof alCargarOrden==="function"?alCargarOrden(token):null]); const prev=TF; TF=r; tImprimir([k]); TF=prev; toast("En el cuadro de impresión elige «Guardar como PDF»"); }catch(err){ toast(err.message); } }
 async function tPanelFichas(token){
   let r; try{ [r]=await Promise.all([tApi("fichas/"+token),TEQ.length?null:tCargarEquipo(),typeof alCargarOrden==="function"?alCargarOrden(token):null]); }catch(err){ toast(err.message); return; }
-  const prev=TF; TF=r; const est={}; T_PORQUE.forEach(([k])=>{ try{ est[k]=tEstadoFicha(k); }catch(_){ est[k]=["","—"]; } }); TF=prev;
+  const prev=TF; TF=r; const est={}, HEC={}; T_PORQUE.forEach(([k])=>{ try{ est[k]=tEstadoFicha(k); HEC[k]=tHecha(k); }catch(_){ est[k]=["","—"]; HEC[k]=false; } }); const NHEC=Object.values(HEC).filter(Boolean).length; TF=prev;
   document.getElementById("vc-fichas")?.remove();
   const d=document.createElement("dialog"); d.id="vc-fichas"; d.className="vc-fichas";
-  d.innerHTML=`<div class="vf-h"><div><small>Orden ${esc(r.fichas.num||"")} · ${esc((r.orden.vehiculo.matricula||"").toUpperCase())}</small><h2>Las 6 fichas de este coche</h2><p>Cada una tiene su motivo. Rellénalas en este orden y descarga el PDF de las que necesites.</p></div><button type="button" class="btn b-ghost b-sm" data-vf="x" aria-label="Cerrar">✕</button></div>
-  <ol class="vf-l">${T_PORQUE.map(([k,f,t,por],i)=>{ const [c,e]=est[k]; return `<li class="${c||"vacia"}"><span class="vf-n">${i+1}</span><div><b>${t}</b> <em>${f}</em><small>${por}</small></div><span class="vf-e">${esc(e)}</span><div class="vf-b"><button type="button" class="btn b-brand b-sm" data-vf="r" data-k="${k}">Rellenar</button><button type="button" class="btn b-ghost b-sm" data-vf="p" data-k="${k}">PDF</button></div></li>`; }).join("")}</ol>
+  d.innerHTML=`<div class="vf-h"><div><small>Orden ${esc(r.fichas.num||"")} · ${esc((r.orden.vehiculo.matricula||"").toUpperCase())}</small><h2>Las 6 fichas de este coche</h2><p>Cada una tiene su motivo. Rellénalas en este orden: se van iluminando al completarlas.</p><div class="vf-prog" role="img" aria-label="${NHEC} de ${T_PORQUE.length} fichas completadas">${T_PORQUE.map(([k],j)=>`<i class="${HEC[k]?"on":""}" style="--i:${j}"></i>`).join("")}<b>${NHEC}/${T_PORQUE.length}</b></div></div><button type="button" class="btn b-ghost b-sm" data-vf="x" aria-label="Cerrar">✕</button></div>
+  <ol class="vf-l">${T_PORQUE.map(([k,f,t,por],i)=>{ const [c,e]=est[k]; return `<li class="${c||"vacia"}${HEC[k]?" hecha":""}" style="--i:${i}"><span class="vf-n">${HEC[k]?"✓":i+1}</span><div><b>${t}</b> <em>${f}</em><small>${por}</small></div><span class="vf-e">${esc(e)}</span><div class="vf-b"><button type="button" class="btn b-brand b-sm" data-vf="r" data-k="${k}">Rellenar</button><button type="button" class="btn b-ghost b-sm" data-vf="p" data-k="${k}">PDF</button></div></li>`; }).join("")}</ol>
   <div class="vf-f"><button type="button" class="btn b-ghost" data-vf="b">Fichas en blanco (PDF)</button><button type="button" class="btn b-ghost" data-vf="t">PDF de toda la orden</button><button type="button" class="btn b-acc" data-vf="r" data-k="f1">Empezar por la recepción</button></div>`;
   document.body.appendChild(d); d.showModal();
   d.addEventListener("click",async e=>{ const b=e.target.closest("[data-vf]"); if(!b) return; const a=b.dataset.vf;
@@ -5002,7 +5019,8 @@ function tP2(){ const x=TF.fichas.f2; if(!x) return '<p class="tp-vacio">Sin rel
   return `${tpKV([[["Mecánico",esc(tNombre(x.mecanico))],["Inicio",esc(tFH(x.inicio))],["Rojos",`<b class="tp-r">${r.rojos}</b>`],["Ámbar",`<b class="tp-a">${r.ambar}</b>`],["Horas est.",esc(String(x.horasEst).replace(".",","))]]])}
   <div class="tp-cols">${F2_SECCIONES.map(([S,t,sub,items])=>`<table class="tp-t tp-sem"><thead><tr><th colspan="3">${S} · ${t}</th></tr></thead><tbody>${items.map(([id,tt])=>{ const it=x.items[id]||{}; return `<tr class="e-${it.e||"x"}"><td>${id.toUpperCase()}</td><td>${tt}${it.extra?` <i>(${esc(it.extra)})</i>`:""}${it.nota?`<small>${esc(it.nota)}</small>`:""}</td><td class="c"><b>${L[it.e]||""}</b></td></tr>`; }).join("")}</tbody></table>`).join("")}</div>
   ${tpKV([[["Recomendación",esc(T_RECO[x.recomendacion]||"")],["Rechazo firmado de los ROJOS",x.rechazoFirmado?"Sí":"No"]]])}
-  <div class="tp-2">${tpFirma("Firma del mecánico",x.firma)}<div></div></div>`; }
+  <p class="tp-aut"><span class="tp-box">${x.autorizaRojos?"☒":"☐"}</span> El cliente <b>autoriza reparar el vehículo con los puntos en ROJO existentes</b> y queda bajo su responsabilidad.${x.autorizaRojos&&x.autorizaNombre?` Autoriza: <b>${esc(x.autorizaNombre)}</b>.`:""}</p>
+  <div class="tp-2">${tpFirma("Firma del cliente",null)}${tpFirma("Firma del mecánico",x.firma)}</div>`; }
 function tP3(){ const x=TF.fichas.f3; if(!x) return '<p class="tp-vacio">Sin fichajes.</p>'; const c=tCalc(x,TF.config), tn={inicio:"Inicio",pausa:"Pausa",reanudar:"Reanudar",fin:"Fin"};
   return `${tpKV([[["Mecánico",esc(tNombre(x.mecanico))],["Tipo",esc(T_TIPO3[x.tipo]||"")],["Tarifa",eur(c.tarifa)+"/h"],["Hoja",esc(x.hoja)]],[["Estimado",x.estMin?tMin(x.estMin):"—"],["Neto real",tMin(c.netoMin)],["Pausas",tMin(c.pausasMin)],["Desviación",x.estMin?tPct(c.desvPct)+" ("+tMin(c.desvMin)+")":"—"]]])}
   <h4>Fichajes</h4><table class="tp-t"><thead><tr><th>Fichaje</th><th>Fecha y hora</th><th>Quién</th><th>Motivo / nota / corrección</th></tr></thead><tbody>${[...x.eventos].sort((a,b)=>a.t.localeCompare(b.t)).map(e=>`<tr><td>${tn[e.tipo]}</td><td>${esc(tFH(e.t))}</td><td>${esc(tNombre(e.por))}</td><td>${esc(e.motivo)}${e.nota?" · "+esc(e.nota):""}${(e.corr||[]).map(k=>`<small>Corregida por ${esc(tNombre(k.por))}: antes ${esc(tFH(k.t0))} · ${esc(k.motivo)}</small>`).join("")}</td></tr>`).join("")||'<tr><td colspan="4">&nbsp;</td></tr>'}</tbody></table>
@@ -5206,7 +5224,7 @@ $("#cj").addEventListener("change",async e=>{ const f=e.target.closest("[data-cj
    CUADRO DE MANDO DEL PROPIETARIO (solo gerente)
    ===================================================================== */
 function cjPanel(){
-  const r=CJR, cerr=r.turnos.filter(t=>t.cierre), difs=cerr.map(t=>t.cierre.diferencia).concat(r.turnos.filter(t=>t.apertura.diferencia).map(t=>t.apertura.diferencia));
+  const r=CJR, cerr=r.turnos.filter(t=>t.cierre), difs=cerr.filter(t=>!t.cierre.corregida).map(t=>t.cierre.diferencia).concat(r.turnos.filter(t=>t.apertura.diferencia&&!t.apertura.corregida).map(t=>t.apertura.diferencia));
   const falt=difs.filter(d=>d<0).reduce((a,d)=>a-d,0), sobr=difs.filter(d=>d>0).reduce((a,d)=>a+d,0), nDesc=difs.filter(Boolean).length;
   const salidas=r.turnos.flatMap(t=>t.movimientos.filter(m=>m.tipo==="egreso"&&!m.anulado)), cobros=r.turnos.flatMap(t=>t.movimientos.filter(m=>m.tipo==="ingreso"&&!m.anulado));
   const sinTk=r.turnos.reduce((a,t)=>a+t.sinTicket,0), nuevas=r.alertas.filter(a=>!a.vista).length, A=r.ahora;
@@ -5217,7 +5235,7 @@ function cjPanel(){
     <div class="cj-ph-acts"><div class="mesnav"><button type="button" data-cjmes="-1" aria-label="Mes anterior">‹</button><b>${esc(nombreMes(CJ_MES))}</b><button type="button" data-cjmes="1" aria-label="Mes siguiente" ${CJ_MES>=hoyC().slice(0,7)?"disabled":""}>›</button></div><button type="button" class="btn b-ghost b-sm" data-cjlibro>Libro de registro</button><button type="button" class="btn b-ghost b-sm" data-cjcsv>Excel</button></div></div>
   <div class="cj-kpis">
     <div class="cj-kpi dest"><small>Efectivo teórico en el local ahora</small><b class="num">${cjE(A.teorico)}</b><span>${A.abierta?`Caja abierta por ${esc(A.nombre)}: fondo ${cjE(A.base)} + cobros ${cjE(A.ingresos)} − salidas ${cjE(A.egresos)}`:A.desde?`Caja cerrada: lo contado en el último cierre (${esc(A.nombre)}, ${esc(fechaHora(A.desde))})`:"La caja no se ha abierto todavía"}</span>${r.horasAbierta>14?`<em>Lleva ${Math.floor(r.horasAbierta)} h abierta sin cerrar</em>`:""}</div>
-    <div class="cj-kpi ${falt?"mal":""}"><small>Faltante del mes</small><b class="num">${cjE(falt)}</b><span>${nDesc} descuadre${nDesc===1?"":"s"}${sobr?` · sobrante ${cjE(sobr)}`:""}</span></div>
+    <div class="cj-kpi ${falt?"mal":""}"><small>Faltante del mes</small><b class="num">${cjE(falt)}</b><span>${nDesc} descuadre${nDesc===1?"":"s"}${sobr?` · sobrante ${cjE(sobr)}`:""}</span>${nDesc?`<button type="button" class="btn b-ghost b-sm" data-cjcorregir style="margin-top:8px">Corregir descuadres</button>`:`<em style="color:var(--ok,#1F7A55)">Todo cuadra</em>`}</div>
     <div class="cj-kpi"><small>Cobros · salidas del mes</small><b class="num">${cjE(cobros.reduce((a,m)=>a+m.importe,0))}</b><span>salidas ${cjE(salidas.reduce((a,m)=>a+m.importe,0))} (${salidas.length})</span></div>
     <div class="cj-kpi ${sinTk?"mal":""}"><small>Salidas sin ticket</small><b class="num">${sinTk}</b><span>${sinTk?"Pendientes de justificar":"Todas con comprobante"}</span></div>
   </div>
@@ -5250,7 +5268,7 @@ function cjTurno(id){
       <tr><td><b>Debería haber</b></td><td class="n num"><b>${cjE(k.teorico)}</b></td></tr>
       ${c?`<tr><td><b>Contado al cerrar</b> (${esc(c.nombre)}, ${esc(tHora(c.t))})</td><td class="n num"><b>${cjE(c.contado)}</b></td></tr><tr class="${c.diferencia?"cj-fdesc":""}"><td><b>Diferencia</b></td><td class="n num"><b class="${c.diferencia<0?"cj-rojo":c.diferencia>0?"cj-ambar":"cj-verde"}">${cjD(c.diferencia)}</b></td></tr>`:""}
     </tbody></table>
-    ${t.apertura.diferencia?`<div class="msg bad" style="margin-top:10px">Apertura con diferencia de ${esc(cjD(t.apertura.diferencia))}: «${esc(t.apertura.justificacion)}»</div>`:""}
+    ${t.apertura.diferencia?`<div class="msg bad" style="margin-top:10px">Apertura con diferencia de ${esc(cjD(t.apertura.diferencia))}: «${esc(t.apertura.justificacion)}»</div>`:""}${t.apertura.corregida?`<div class="msg" style="margin-top:6px">✓ Descuadre de apertura corregido por ${esc(t.apertura.corregida.nombre)}: «${esc(t.apertura.corregida.motivo)}»</div>`:""}${c&&c.corregida?`<div class="msg" style="margin-top:6px">✓ Descuadre de cierre corregido por ${esc(c.corregida.nombre)}: «${esc(c.corregida.motivo)}»</div>`:""}
     ${c&&c.justificacion?`<div class="msg bad" style="margin-top:10px">Explicación de ${esc(c.nombre)}: «${esc(c.justificacion)}»</div>`:""}</section>
     ${c?`<section class="dw-box"><h3>Conteos del cierre</h3>${c.intentos.map((x,i)=>`<div class="cj-int"><b>${i+1}º · ${esc(tHora(x.t))} · ${cjE(x.contado)}</b>${desg(x.desglose)}</div>`).join("")}${c.intentos.length>1?'<p class="hint">Varios recuentos: el empleado volvió a contar porque no cuadraba. Compara los importes.</p>':""}</section>`:""}
     <section class="dw-box"><h3>Movimientos (${t.movimientos.length})</h3>${t.movimientos.length?t.movimientos.map(m=>`<div class="cj-mov ${m.tipo} ${m.anulado?"anulado":""}"><i>${m.tipo==="egreso"?"−":"+"}</i><div><b>${esc(m.concepto)}</b><small>${esc(tHora(m.t))} · ${esc(CJ_TXT[m.categoria]||m.categoria)}${m.ref?" · "+esc(m.ref):""} · registra ${esc(m.porNombre)}${m.tipo==="egreso"?" · se lo lleva "+esc(m.responsableNombre):""}${m.ajuste?" · AJUSTE DEL GERENTE":""}</small>
@@ -5273,6 +5291,24 @@ $("#dw-body").addEventListener("click",async e=>{ if(!DW||DW.tipo!=="caja") retu
       const r=await api("/api/caja/ajuste/"+aj.dataset.cjajuste,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({tipo:$("#cj-at").value,importe:String(imp),concepto:$("#cj-ac").value,motivo:$("#cj-am").value})});
       toast("Ajuste guardado. Nueva diferencia: "+cjD(r.diferencia)); await cjCargar(true); cjTurno(DW.id); return; }
   }catch(err){ toast(err.message); } });
+
+/* ---------- corregir descuadres (p. ej. eran pruebas) ---------- */
+function cjCorregir(){
+  const l=[]; for(const t of (CJR?CJR.turnos:[])){
+    if(t.apertura.diferencia&&!t.apertura.corregida) l.push({t,donde:"apertura",dif:t.apertura.diferencia,quien:t.apertura.nombre,hora:t.apertura.t,just:t.apertura.justificacion});
+    if(t.cierre&&t.cierre.diferencia&&!t.cierre.corregida) l.push({t,donde:"cierre",dif:t.cierre.diferencia,quien:t.cierre.nombre,hora:t.cierre.t,just:t.cierre.justificacion}); }
+  DW={tipo:"cjcorr",id:"x"};
+  abrirDrawer(`<div class="dw-head"><div><span class="tipo">Caja</span><h2 class="dw-nombre" style="margin:0">Corregir descuadres</h2></div><button class="x" type="button" data-cerrar aria-label="Cerrar">✕</button></div>
+    <section class="dw-box"><p class="hint" style="margin:0">Si un descuadre no es real (una prueba, un error al contar que ya está aclarado), márcalo como <b>corregido</b>: deja de sumar en el faltante del mes y en Finanzas. No se borra: queda en el libro de registro con tu nombre y el motivo.</p></section>
+    ${l.length?l.map((x,i)=>`<section class="dw-box" data-cjcorr="${i}"><h3>${esc(fechaLarga(x.t.fecha))} · ${x.donde==="apertura"?"al abrir":"al cerrar"} · <span class="${x.dif<0?"cj-rojo":"cj-ambar"}">${esc(cjD(x.dif))}</span></h3>
+      <p class="hint" style="margin:0 0 8px">${esc(x.quien)}, ${esc(tHora(x.hora))}${x.just?` · «${esc(x.just)}»`:""}</p>
+      <div class="quick"><input class="in" id="cj-corm-${i}" placeholder="Motivo (p. ej. «Era una prueba del sistema»)" maxlength="300" style="flex:1 1 220px"><button type="button" class="btn b-brand b-sm" data-cjcorrok="${i}">Dar por corregido</button></div></section>`).join(""):'<section class="dw-box"><p>No queda ningún descuadre por corregir este mes. ✓</p></section>'}`);
+  window.__cjCorr=l;
+}
+$("#dw-body").addEventListener("click",async e=>{ if(!DW||DW.tipo!=="cjcorr") return; const b=e.target.closest("[data-cjcorrok]"); if(!b) return;
+  const i=+b.dataset.cjcorrok, x=(window.__cjCorr||[])[i]; if(!x) return; const m=($("#cj-corm-"+i).value||"").trim(); if(m.length<5) return toast("Escribe el motivo (mínimo 5 letras)");
+  b.disabled=true; try{ await api("/api/caja/corregir/"+x.t.id,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({donde:x.donde,motivo:m})}); toast("Descuadre corregido"); await cjCargar(true); cjCorregir(); }catch(err){ toast(err.message); b.disabled=false; } });
+document.addEventListener("click",e=>{ if(e.target.closest("[data-cjcorregir]")) cjCorregir(); });
 
 /* ---------- libro de registro ---------- */
 async function cjLibro(){
@@ -5372,7 +5408,7 @@ function fnPintar(){
   <div class="fn-grid">
     <section class="card"><h3>Cobrado por canal</h3><p class="hint">Todo lo que ha entrado en ${esc(etq.toLowerCase())}, <b>sumado al acumulado de ingresos</b>. Ojo: solo el <b>efectivo</b> está en el cajón; lo demás está en el banco.</p>
       <div class="fn-canales">${FN_COBRO.map(([c,t])=>`<div class="fn-canal ${c}"><small>${t}</small><b class="num">${cjE(r.porCanal[c]||0)}</b><span>${canalTot?fnPctTxt(fnPct(r.porCanal[c]||0,canalTot)):"—"}</span><em>${c==="efectivo"?"En el cajón":"En el banco"}</em></div>`).join("")}</div>
-      <div class="gd-canal-res"><div class="gd-efe"><b>💵 Efectivo físico en cajón</b><span class="num">${cjE(r.porCanal.efectivo||0)}</span><small>Es lo único que cuenta el arqueo y el cierre ciego de caja.</small></div><div class="gd-banco"><b>🏦 Dinero abonado por Transferencia (En Cuenta Bancaria, NO presente en el cajón físico de caja)</b><span class="num">${cjE(r.porCanal.transferencia||0)}</span><small>Entra en el acumulado de ingresos, pero no se cuenta con billetes.</small></div><div class="gd-banco"><b>💳 Tarjeta / TPV y 🤝 Financiación (en el banco, NO en el cajón)</b><span class="num">${cjE((r.porCanal.tarjeta||0)+(r.porCanal.financiacion||0))}</span></div></div>
+      <div class="gd-canal-res"><div class="gd-efe"><b>💵 Efectivo físico en cajón</b><span class="num">${cjE(k.efectivoNeto!=null?k.efectivoNeto:(r.porCanal.efectivo||0)-(r.porPago.efectivo||0))}</span><small>Cobrado en efectivo ${cjE(r.porCanal.efectivo||0)} − pagado en efectivo ${cjE(r.porPago.efectivo||0)}${r.internos.length?` − retiros y banco ${cjE(r.internos.reduce((a,x)=>a+x.importe,0))}`:""}${k.descuadres?` ${cjD(k.descuadres)} de descuadres`:""}. Es lo único que cuenta el arqueo y el cierre ciego de caja.</small></div><div class="gd-banco"><b>🏦 Dinero abonado por Transferencia (En Cuenta Bancaria, NO presente en el cajón físico de caja)</b><span class="num">${cjE(r.porCanal.transferencia||0)}</span><small>Entra en el acumulado de ingresos, pero no se cuenta con billetes.</small></div><div class="gd-banco"><b>💳 Tarjeta / TPV y 🤝 Financiación (en el banco, NO en el cajón)</b><span class="num">${cjE((r.porCanal.tarjeta||0)+(r.porCanal.financiacion||0))}</span></div></div>
       <p class="hint" style="margin-top:10px">Pagado: efectivo ${cjE(r.porPago.efectivo||0)} · banco (tarjeta, transferencia, domiciliación) ${cjE(pagoTot-(r.porPago.efectivo||0))}</p></section>
     <section class="card"><h3>Cuenta de efectivo</h3><p class="hint">Solo <b>billetes y monedas del cajón</b>, conciliada con los cierres ciegos de caja. No incluye transferencias ni TPV.</p>
       <div class="fn-efe"><b class="num">${cjE(r.efectivo.teorico)}</b><span>${r.efectivo.abierta?`Teórico ahora: caja abierta por ${esc(r.efectivo.nombre)}`:r.efectivo.desde?`Contado en el último cierre (${esc(r.efectivo.nombre)}, ${esc(fechaHora(r.efectivo.desde))})`:"La caja no se ha abierto todavía"}</span></div>
@@ -7152,6 +7188,12 @@ const AY_MODS=[
    [3,"Zona central","Aquí trabajas: listas, formularios y fichas."],
    [4,"Panel lateral","Se desliza desde la derecha con la ficha completa de un cliente, una orden o un ajuste. Ciérralo con la ✕."]]},
  pasos:[
+  {t:"Plegar y desplegar las cabeceras (el panel se acuerda)",r:["ger","rec","mec","cal","caj"],p:[
+   "Junto al título de cada pestaña (Taller, Coches, Caja…) hay una <b>flecha ▾</b>.",
+   "Púlsala para <b>plegar</b> la cabecera: se esconden el texto de ayuda y los botones y te queda más sitio para trabajar.",
+   "Vuelve a pulsarla para <b>desplegarla</b>. Dentro de una orden del taller, la flecha pliega los botones y las fases.",
+   "El panel <b>se acuerda</b> de lo que dejaste en cada sección, también al volver mañana."],
+   tip:"Pliega lo que ya has leído: el panel carga menos cosas y va más ligero, sobre todo en el móvil."},
   {t:"Entrar como gerente (con contraseña)",r:["ger"],p:[
    "Abre <b>volcanocars.com/admin</b> en el ordenador o el móvil.",
    "Escribe tu <b>contraseña</b> y pulsa <b>Entrar</b>.",
@@ -7290,6 +7332,11 @@ const AY_MODS=[
    "Si necesita más tiempo: <b>«Alargar 48 h»</b>.",
    "Si no compra: pulsa <b>«Liberar»</b> (el coche vuelve a estar disponible) y, cuando le devuelvas el dinero, <b>«Ya le he devuelto los 50 €»</b>."],
    tip:"Las reservas liberadas con la devolución pendiente siguen en la lista para que no se olvide."},
+  {t:"Imprimir la factura de venta y el parte de reserva (PDF)",r:["ger"],p:[
+   "En <b>Tus coches</b>, arriba, pulsa <b>«Factura de venta (PDF)»</b>: es el documento de entrega con la <b>garantía legal de 12 meses</b>, el precio final con impuestos, el cambio de nombre y la entrega gratis.",
+   "Pulsa <b>«Parte de reserva (PDF)»</b> (también está dentro de <b>Reservas online</b>): lleva el sello <b>VEHÍCULO RESERVADO</b>, la validez de <b>48 horas</b> y las <b>4 devoluciones</b> de la web. No lleva importes.",
+   "Imprímelos en blanco y rellénalos a mano con el cliente delante; los dos se abren en otra pestaña y son PDF vectorial (nítidos al imprimir)."],
+   ojo:"La garantía legal de 12 meses cubre cualquier defecto que el coche ya tuviera, no solo el motor: la ley no permite reducirla a un particular. Para empresas y autónomos se puede pactar otra en la casilla del propio documento."},
   {t:"Avisar a la lista de espera de un coche",r:["ger"],p:["Cuando un coche reservado vuelve a estar libre, abre <b>Listas de espera</b>.","Pulsa <b>«Avisar por WhatsApp»</b> en cada persona.","Quítala de la lista cuando ya esté avisada."]},
   {t:"Cambiar las condiciones de financiación",r:["ger"],p:["Abre <b>«Financiación en la web»</b> → <b>Cambiar</b>.","Copia las condiciones exactas de la financiera: TIN, comisión, plazos, entrada, importe mínimo y antigüedad máxima.","Marca si quieres enseñar la calculadora y el «desde X €/mes» en las tarjetas, y guarda."],ojo:"Pon solo condiciones reales de la financiera: la web calcula con ellas la TAE y el ejemplo que exige la ley."}],
  estados:{t:"Estados de un coche",c:["Estado","Qué ve el cliente","Cuándo ponerlo"],f:[
@@ -7299,7 +7346,7 @@ const AY_MODS=[
 
 /* ------------------------------------------------------------------ */
 {id:"taller",ico:"🛠️",titulo:"Taller (Sistema 01)",tab:"ordenes",roles:AY_TODOS,
- objetivo:"Llevar cada coche que entra al taller de principio a fin con su orden VC-año-número y sus 4 fichas: recepción, inspección 360°, tiempos y calidad.",
+ objetivo:"Llevar cada coche que entra al taller de principio a fin con su orden VC-año-número y sus 6 fichas: recepción, inspección 360°, presupuesto, tiempos, calidad y factura.",
  cuando:["Entra un coche de un cliente, uno comprado para vender o una retoma.","Vas a empezar, pausar o terminar un trabajo.","Hay que revisar un coche antes de entregarlo."],
  flujo:["Recepcionado · FORM-01","En inspección · FORM-02","Presupuesto aceptado","Factura · FORM-14","En trabajo · FORM-03","Control de calidad · FORM-04","Listo → Entregado"],
  mapa:{filas:[[[1,"Vistas: En marcha / Mis trabajos · Órdenes · Tablero · Avisos de ITV",2],[2,"Buscar · Equipo y ajustes · + Nueva recepción",1]],[[3,"Avisos del taller (rojo / ámbar)",1]],[[4,"Coches y trabajos según la vista elegida",1]]],
@@ -7311,6 +7358,12 @@ const AY_MODS=[
   zonas:[[1,"Cabecera","«Presupuesto y cliente» (solo gerente) abre el presupuesto, el enlace del cliente, las fotos y los mensajes."],[2,"Fases","Dónde está el coche. Avanza sola al firmar cada ficha."],[3,"Pestañas","Cada una muestra si está sin empezar, en curso o firmada."],[5,"Barra de guardado","Todo se guarda solo mientras escribes. <b>Firmar</b> cierra la ficha: después solo el gerente puede reabrirla."]]},
  pasos:[
   {t:"Asistente de 4 pasos: recibir un coche o cobrar al momento",r:["rec","ger","mec","cal","caj"],p:["Pulsa el botón grande naranja <b>«+ Nueva Entrada / Recepción de Coche»</b> (o el verde <b>«+ Factura Rápida / Cobro Directo»</b> si el cliente paga ya).","<b>Paso 1:</b> busca al cliente o escribe su nombre y la matrícula. Si el coche ya está en el taller o el teléfono ya existe, el panel te avisa y <b>no deja duplicarlo</b>.","<b>Paso 2:</b> elige <b>Taller</b> o <b>Venta de coches</b>.","<b>Paso 3:</b> elige <b>Factura directa / En persona</b> (sin ficha técnica ni presupuesto) o el <b>Proceso completo</b>.","<b>Paso 4:</b> elige cómo paga (Efectivo, Tarjeta o Transferencia) y pulsa <b>«Cobrar y cerrar»</b>. Sale un cuadro verde ✅ que confirma la factura y el cobro."],tip:"El efectivo entra en el cajón; la tarjeta y la transferencia van al banco y NO cuentan en el cierre de caja."},
+  {t:"Las 6 fichas se iluminan al completarlas",r:["rec","ger","mec","cal","caj"],p:[
+   "Dentro de cada orden verás una <b>barra de 6 segmentos</b> debajo de las fases: 1 Recepción · 2 Inspección · 3 Presupuesto · 4 Tiempos · 5 Calidad · 6 Factura.",
+   "Cada ficha que completas <b>se ilumina</b> en la barra y en su pestaña (con una marca ✓). Toca un segmento para ir a esa ficha.",
+   "El contador <b>n/6</b> te dice cuántas llevas. Con las 6 iluminadas la orden está completa.",
+   "El recuadro <b>«Las 6 fichas»</b> también se ilumina a medida que avanzas."],
+   tip:"Una ficha cuenta como completa cuando está firmada o cerrada: recepción e inspección firmadas, presupuesto aceptado, tiempos terminados, calidad aprobada y factura emitida."},
   {t:"Recibir un coche (FORM-01 Recepción)",r:["rec","ger","mec"],p:[
    "Pulsa <b>«+ Nueva recepción»</b>. Si el cliente pidió cita en la web, elígelo en el desplegable; si no, escribe <b>nombre</b>*, teléfono, <b>matrícula</b>* y modelo.",
    "Aquí solo se reciben <b>reparaciones de clientes</b> (los coches del negocio entran por <b>Coches propios</b>). Pulsa <b>«Crear y abrir FORM-01»</b>.",
@@ -7505,6 +7558,16 @@ const AY_MODS=[
 
 /* ---------- estado ---------- */
 let AY_ROL="", AY_BUSQ="", AY_MOD="inicio";
+/* ACTUALIZACIÓN 55 · ruta de aprendizaje: lo que ya has visto se guarda en este dispositivo */
+const AYV_KEY="vc_ay_vistos55";
+const ayVistos=()=>{ try{ return JSON.parse(localStorage.getItem(AYV_KEY)||"{}")||{}; }catch(_){ return {}; } };
+function ayMarcar(id,v){ const o=ayVistos(); if(v) o[id]=1; else delete o[id]; try{ localStorage.setItem(AYV_KEY,JSON.stringify(o)); }catch(_){} ayRefrescar(); }
+function ayRefrescar(){ const o=ayVistos(), ids=[...document.querySelectorAll("#s-ayuda .ay-nav [data-aymod]")].map(b=>b.dataset.aymod), n=ids.filter(i=>o[i]).length;
+  document.querySelectorAll("#s-ayuda .ay-nav [data-aymod]").forEach(b=>b.classList.toggle("visto",!!o[b.dataset.aymod]));
+  document.querySelectorAll("#s-ayuda .ay-seg i").forEach((i,j)=>i.classList.toggle("on",!!o[ids[j]]));
+  const b=$("#s-ayuda .ay-meter b"); if(b) b.innerHTML=`${n}<small>/${ids.length}</small>`; const t=$("#s-ayuda .ay-meter span"); if(t) t.textContent=n===ids.length?"¡Panel dominado!":"módulos vistos";
+  const m=$("#s-ayuda .ay-meter"); if(m){ m.setAttribute("aria-label",`${n} de ${ids.length} módulos vistos`); m.classList.toggle("completo",n===ids.length); }
+  document.querySelectorAll("#s-ayuda [data-ayvisto]").forEach(x=>{ const v=!!o[x.dataset.ayvisto]; x.setAttribute("aria-pressed",String(v)); x.textContent=v?"✓ Visto":"Marcar como visto"; }); }
 const ayMods=()=>AY_MODS.filter(m=>!AY_ROL||m.roles.includes(AY_ROL));
 const ayPasos=m=>m.pasos.filter(p=>(!AY_ROL||p.r.includes(AY_ROL))&&(!AY_BUSQ||ayTxt(p).includes(AY_BUSQ)));
 const ayTxt=p=>(p.t+" "+p.p.join(" ")+" "+(p.tip||"")+" "+(p.ojo||"")).replace(/<[^>]+>/g,"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
@@ -7532,18 +7595,19 @@ function ayVideo(m){ const v=typeof AY_VID!=="undefined"&&AY_VID[m.id]; if(!v) r
     <ol class="ay-cap" aria-label="Capítulos del vídeo">${v.pasos.map((p,i)=>`<li><button type="button" data-ayseek="${p.t}" aria-label="Capítulo ${i+1}: ${esc(p.txt)}, minuto ${ayT(p.t)}"><i>${i+1}</i><span>${esc(p.txt)}</span></button></li>`).join("")}</ol>
   </section>`;
 }
+const ayF=(m,n,todo,conVideo)=>{ const id="ay:"+m.id+":"+n, g=window.vcPleg; return `data-fold="${id}"${todo||(g&&g.has(id)?!g.es(id):!conVideo)?" open":""}`; };
 function ayModulo(m,todo){
   const ps=ayPasos(m); if(AY_BUSQ&&!ps.length) return "";
   const puede=m.tab&&puedeTab(m.tab);
   const vid=!todo&&!AY_BUSQ?ayVideo(m):"";
-  const texto=`${AY_BUSQ?"":`<section class="ay-s"><h3><i>1</i>Para qué sirve</h3><p class="ay-obj"><b>Objetivo principal:</b> ${esc(m.objetivo)}</p>
-      <p class="ay-sub">Cuándo usar esta sección</p><ul class="ay-cuando">${m.cuando.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>${m.flujo?`<p class="ay-sub">El recorrido</p>${ayFlujo(m.flujo)}`:""}</section>
-    <section class="ay-s"><h3><i>2</i>Mapa de la pantalla</h3>${ayMapa(m,m.mapa)}${m.extra?`<p class="ay-sub">${esc(m.extra.t)}</p>${ayMapa({titulo:m.extra.t},m.extra)}`:""}</section>`}
-    <section class="ay-s"><h3><i>3</i>Guías paso a paso</h3>${ps.length?ps.map(ayPaso).join(""):'<p class="hint">No hay guías para este puesto en esta sección.</p>'}</section>
-    ${AY_BUSQ?"":`<section class="ay-s"><h3><i>4</i>${esc(m.estados.t)}</h3>${ayTabla(m.estados)}</section>`}`;
+  const texto=`${AY_BUSQ?"":`<details class="ay-s" ${ayF(m,1,todo,!!vid)}><summary><h3><i>1</i>Para qué sirve</h3></summary><p class="ay-obj"><b>Objetivo principal:</b> ${esc(m.objetivo)}</p>
+      <p class="ay-sub">Cuándo usar esta sección</p><ul class="ay-cuando">${m.cuando.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>${m.flujo?`<p class="ay-sub">El recorrido</p>${ayFlujo(m.flujo)}`:""}</details>
+    <details class="ay-s" ${ayF(m,2,todo,!!vid)}><summary><h3><i>2</i>Mapa de la pantalla</h3></summary>${ayMapa(m,m.mapa)}${m.extra?`<p class="ay-sub">${esc(m.extra.t)}</p>${ayMapa({titulo:m.extra.t},m.extra)}`:""}</details>`}
+    <details class="ay-s" ${ayF(m,3,todo,!!vid)}><summary><h3><i>3</i>Guías paso a paso</h3></summary>${ps.length?ps.map(ayPaso).join(""):'<p class="hint">No hay guías para este puesto en esta sección.</p>'}</details>
+    ${AY_BUSQ?"":`<details class="ay-s" ${ayF(m,4,todo,!!vid)}><summary><h3><i>4</i>${esc(m.estados.t)}</h3></summary>${ayTabla(m.estados)}</details>`}`;
   return `<article class="ay-mod" id="ay-${m.id}">
-    <header class="ay-mh"><span class="ay-ico" aria-hidden="true">${m.ico}</span><div><small>Módulo</small><h2>${esc(m.titulo)}</h2></div>${puede&&!todo?`<button type="button" class="btn b-ghost b-sm" data-ayir="${m.tab}">Abrir ${esc(m.titulo.split(" ")[0])} →</button>`:""}</header>
-    ${vid||texto}
+    <header class="ay-mh"><span class="ay-ico" aria-hidden="true">${m.ico}</span><div><small>Módulo</small><h2>${esc(m.titulo)}</h2></div>${todo?"":`<button type="button" class="btn b-ghost b-sm ay-visto" data-ayvisto="${m.id}" aria-pressed="${!!ayVistos()[m.id]}">${ayVistos()[m.id]?"✓ Visto":"Marcar como visto"}</button>`}${puede&&!todo?`<button type="button" class="btn b-ghost b-sm" data-ayir="${m.tab}">Abrir ${esc(m.titulo.split(" ")[0])} →</button>`:""}</header>
+    ${vid}${texto}
   </article>`;
 }
 function ayVidEnlazar(auto){ const v=$("#ay-v"); if(!v) return; const bs=[...document.querySelectorAll("[data-ayseek]")];
@@ -7552,7 +7616,8 @@ function ayVidEnlazar(auto){ const v=$("#ay-v"); if(!v) return; const bs=[...doc
     const aviso=$("#ay-vwarn");
     if(!v.dataset.reintento){ v.dataset.reintento="1"; v.src=`/ayuda/videos/${v.dataset.id}.mp4?v=${v.dataset.v||"0"}&r=${Date.now()}`; v.load(); if(auto) v.play().catch(()=>{}); return; }
     if(aviso){ aviso.hidden=false; aviso.textContent=`Este vídeo debería durar ${ayT(esp)} pero tu navegador tiene guardada otra versión. Pulsa Ctrl + F5 para recargar la página.`; } });
-  v.addEventListener("timeupdate",()=>{ let k=-1; bs.forEach((b,i)=>{ if(v.currentTime>=+b.dataset.ayseek-0.05) k=i; });
+  v.addEventListener("ended",()=>ayMarcar(v.dataset.id,true));
+  v.addEventListener("timeupdate",()=>{ if(!v._ayv&&v.duration>0&&v.currentTime/v.duration>=.85){ v._ayv=1; ayMarcar(v.dataset.id,true); } let k=-1; bs.forEach((b,i)=>{ if(v.currentTime>=+b.dataset.ayseek-0.05) k=i; });
     if(k!==v._ayk){ v._ayk=k; bs.forEach((b,i)=>b.classList.toggle("on",i===k)); const on=bs[k], l=on&&on.closest(".ay-cap"); if(l&&on&&l.scrollWidth>l.clientWidth){ try{ l.scrollTo({left:on.offsetLeft-l.clientWidth/2+on.offsetWidth/2,behavior:"smooth"}); }catch(_){} } } });
   /* el vídeo lleva la voz dentro: se intenta con sonido; si el navegador no lo deja, queda en pausa con sus controles (nunca se silencia solo) */
   if(auto){ v.muted=false; const pr=v.play(); if(pr&&pr.catch) pr.catch(()=>{ v.pause(); }); if(innerWidth<860) v.scrollIntoView({behavior:"smooth",block:"center"}); }
@@ -7562,10 +7627,13 @@ function ayPintar(){
   if(ME&&ME.equipo&&!ayPintar.ya){ ayPintar.ya=1; AY_ROL={recepcion:"rec",mecanico:"mec",calidad:"cal"}[ME.rol]||""; }
   const ms=ayMods(); if(!ms.some(m=>m.id===AY_MOD)) AY_MOD=ms[0]?ms[0].id:"inicio";
   const cuerpo=AY_BUSQ?ms.map(m=>ayModulo(m)).join("")||'<div class="empty">Ninguna guía contiene esas palabras. Prueba con otra (por ejemplo «ticket», «firma», «reserva»).</div>':ayModulo(ms.find(m=>m.id===AY_MOD)||ms[0]);
-  box.innerHTML=`<div class="ay-top">
+  const VIS=ayVistos(), nVis=ms.filter(m=>VIS[m.id]).length;
+  box.innerHTML=`<div class="ay-ruta"><div class="ay-ruta-t"><small>Tu ruta de aprendizaje</small><h2>Aprende el panel paso a paso</h2><p>Un vídeo corto por pestaña, explicado con voz. Lo que marques como visto se queda guardado en este dispositivo.</p></div>
+      <div class="ay-meter${nVis===ms.length?" completo":""}" role="img" aria-label="${nVis} de ${ms.length} módulos vistos"><b>${nVis}<small>/${ms.length}</small></b><div class="ay-seg">${ms.map((m,j)=>`<i class="${VIS[m.id]?"on":""}" style="--i:${j}"></i>`).join("")}</div><span>${nVis===ms.length?"¡Panel dominado!":"módulos vistos"}</span></div></div>
+    <div class="ay-top">
       <div class="ay-rol" role="group" aria-label="Tu puesto"><span>¿Quién eres?</span><button type="button" class="chipb" data-ayrol="" aria-pressed="${!AY_ROL}">Todos</button>${AY_ROLES.map(([k,t])=>`<button type="button" class="chipb" data-ayrol="${k}" aria-pressed="${AY_ROL===k}">${t}</button>`).join("")}</div>
     </div>
-    <div class="ay-grid"><nav class="ay-nav" aria-label="Secciones de la ayuda">${ms.map(m=>`<button type="button" data-aymod="${m.id}" aria-current="${!AY_BUSQ&&m.id===AY_MOD}"><span aria-hidden="true">${m.ico}</span>${esc(m.titulo)}<small>${typeof AY_VID!=="undefined"&&AY_VID[m.id]?`▶ vídeo ${ayT(AY_VID[m.id].dur)}`:`${ayPasos(m).length} guía${ayPasos(m).length===1?"":"s"}`}</small></button>`).join("")}</nav>
+    <div class="ay-grid"><nav class="ay-nav" aria-label="Secciones de la ayuda">${ms.map(m=>`<button type="button" data-aymod="${m.id}" class="${VIS[m.id]?"visto":""}" aria-current="${!AY_BUSQ&&m.id===AY_MOD}"><span aria-hidden="true">${m.ico}</span>${esc(m.titulo)}<small>${typeof AY_VID!=="undefined"&&AY_VID[m.id]?`▶ vídeo ${ayT(AY_VID[m.id].dur)}`:`${ayPasos(m).length} guía${ayPasos(m).length===1?"":"s"}`}</small></button>`).join("")}</nav>
       <div class="ay-body">${cuerpo}</div></div>`;
   ayVidEnlazar(ayPintar.auto); ayPintar.auto=0;
 }
@@ -7580,6 +7648,7 @@ function ayAbrir(mod,auto){ ayPintar.auto=!!auto; show("s-ayuda"); history.repla
 document.addEventListener("click",e=>{ const t=e.target;
   const r=t.closest("[data-ayrol]"); if(r){ AY_ROL=r.dataset.ayrol; ayPintar(); return; }
   const m=t.closest("[data-aymod]"); if(m){ AY_MOD=m.dataset.aymod; AY_BUSQ=""; ayPintar.auto=1; ayPintar(); const b=$("#s-ayuda .ay-body"); if(b&&innerWidth<860) b.scrollIntoView({behavior:"smooth",block:"start"}); return; }
+  const vs=t.closest("[data-ayvisto]"); if(vs){ ayMarcar(vs.dataset.ayvisto,!ayVistos()[vs.dataset.ayvisto]); return; }
   const ir=t.closest("[data-ayir]"); if(ir){ abrirTab(ir.dataset.ayir); return; }
   const h=t.closest("[data-ayuda]"); if(h){ e.preventDefault(); ayAbrir(h.dataset.ayuda,true); return; }
   const sk=t.closest("[data-ayseek]"); if(sk){ const v=$("#ay-v"); if(v){ v.currentTime=+sk.dataset.ayseek; v.play().catch(()=>{}); } return; }

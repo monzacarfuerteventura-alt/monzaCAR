@@ -253,7 +253,7 @@ export function limpiar(input: any, manual = false): { s?: Solicitud; error?: st
     s.primerContacto = ahora;
     s.historial = [{ t: ahora, estado: "contactado" }];
     s.actividad = [{ t: ahora, tipo: "sistema", txt: "Cliente apuntado a mano (" + s.origen.canal + ")" }];
-    return { s };
+    if (!(input.cita && typeof input.cita === "object")) return { s }; // sin cita: listo. Con cita (cliente que llama o está en el mostrador): sigue y la apunta
   }
   const ci = input.cita && typeof input.cita === "object" ? input.cita : null;
   if (ci) {

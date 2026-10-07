@@ -517,3 +517,19 @@ Objetivo: que cualquier empleado nuevo sepa usar el panel y que la web impida lo
 - Pestaña «Presupuesto» en la ficha de cada orden. Intervalos del panel en pausa con la pestaña oculta.
 - FORM-01: barra «Conformidad del cliente» en gris oscuro (sin naranja). Nuevas pruebas de estrés: tools/pruebas/e2e-estres.py, e2e-doble-factura.py, e2e-formularios-web.py.
 - Coches: botones «Factura de venta (PDF)» (FORM-16, garantía 12 meses) y «Parte de reserva (PDF)» (FORM-17, reserva válida 48 h, sin importes). FORM-01: recuadro «Motivo de entrada» en blanco. Cabecera de la ficha del taller sin apretarse en escritorio.
+
+
+### Añadido en la actualización 55 (después)
+- Factura de venta (FORM-16): garantía legal de 12 meses para consumidores (cubre el motor y cualquier otra parte; la ley no permite recortarla) y casilla de garantía pactada para empresas/autónomos (solo motor, motor y caja…).
+- Parte de reserva (FORM-17): ahora 2 hojas, con las 4 devoluciones de la reserva y las 4 reglas de la prueba a domicilio, tal como están en la web.
+- Secciones del panel plegables/desplegables; se recuerda en cada dispositivo.
+- Las 6 fichas se iluminan 1/6 … 6/6 según se completan.
+- Guía con ruta de aprendizaje, «visto» guardado y paleta/tipografía VOLCANOCARS.
+
+
+## Actualización 56 · correcciones (7-10-2026)
+- Caja: «Corregir descuadres» (pruebas o errores ya aclarados) sin borrar nada.
+- Finanzas: el efectivo del cajón descuenta lo pagado en efectivo.
+- Cita «Ahora mismo» con la hora real; arreglado que «Apuntar cita» no guardaba la cita.
+- Los avisos salen por encima del difuminado; glosario solo en Ayuda; menú sin «Apuntar cita» repetido.
+- FORM-02: autorización con ROJOS + firmas de cliente y mecánico.

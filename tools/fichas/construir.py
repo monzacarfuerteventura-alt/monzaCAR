@@ -147,7 +147,8 @@ def form02():
     p2 = idrow(("Matrícula", (11, 11)), ("Mecánico", (10, 11))).replace('width:30%">VC', 'width:20%">VC') + blk("D") + blk("E") + blk("F") + blk("G")
     p2 += sec("!", "Resumen y decisión", "con algún ROJO el coche no se entrega ni se vende hasta corregirlo o rechazo firmado", o=True)
     p2 += kv([[("Puntos ROJO", ""), ("Puntos ÁMBAR", "")]], (16, 16, 16, 16)).replace('<th style="width:16%">Puntos ÁMBAR</th><td style="width:16%"></td>', '<th style="width:16%">Puntos ÁMBAR</th><td style="width:16%"></td><th style="width:18%">Horas estimadas</th><td style="width:18%"><span class="ln s" style="min-width:8mm"></span> h <span class="ln s" style="min-width:8mm"></span> min</td>')
-    p2 += '<table class="kv"><tr><th style="width:15%">Recomendación</th><td>' + cb("Reparar") + cb("Reparar con reservas") + cb("No recomendable (si es compra)") + '</td><th style="width:9%">Firma</th><td style="width:24%"></td></tr></table>'
+    p2 += '<table class="kv"><tr><th style="width:15%">Recomendación</th><td>' + cb("Reparar") + cb("Reparar con reservas") + cb("No recomendable (si es compra)") + '</td></tr></table>'
+    p2 += '<table class="kv"><tr><th style="width:15%">Autorización</th><td colspan="3">' + cb("El cliente AUTORIZA reparar el vehículo con los puntos en ROJO existentes y queda bajo su responsabilidad.") + '</td></tr><tr><th>Firma del cliente</th><td style="height:calc(15mm*var(--d,1));width:35%;vertical-align:top;font-size:7.5pt;color:#6b665e">Nombre:</td><th style="width:15%">Firma del mecánico</th><td style="width:35%;vertical-align:top;font-size:7.5pt;color:#6b665e">Nombre:</td></tr></table>'
     return [pagina("FORM-02", "Inspección de entrada 360°", "Checklist del mecánico · semáforo OK / Ámbar / Rojo", 2, p1, pag=" · pág. 1/2"),
             pagina("FORM-02", "Inspección de entrada 360°", "Checklist del mecánico · semáforo OK / Ámbar / Rojo", 2, p2, pag=" · pág. 2/2")]
 # ---------- FORM-15 Presupuesto (nuevo) ----------

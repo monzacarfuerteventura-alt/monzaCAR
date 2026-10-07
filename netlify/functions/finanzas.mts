@@ -157,8 +157,8 @@ async function resumen(desde: string, hasta: string) {
     recibidas.push({ id: "caja-" + m.id, origen: "caja", fecha: diaDe(m.t), categoria: cl?.categoria || "sin-clasificar", categoriaTxt: c?.txt || "Sin clasificar (salida de caja)", grupo: c?.grupo || "", area: cl?.area || "general", proveedor: cl?.proveedor || "", concepto: m.concepto, factura: m.ref, base, impuestoPct: pct, impuesto: m.importe - base, total: m.importe, metodo: "efectivo", adjunto: m.foto ? { key: m.foto, tipo: m.foto.endsWith(".pdf") ? "pdf" : "foto" } : null, coche: m.coche || "", cajaMov: m.id, sinClasificar: !cl, sinTicket: m.sinTicket && !m.foto, por: m.porNombre });
   }
   // Descuadres de caja (cuenta de efectivo): lo que falta es pérdida; lo que sobra, ingreso
-  const descuadres = turnos.filter((t) => t.cierre && t.cierre.diferencia).map((t) => ({ turno: t.id, fecha: t.fecha, importe: t.cierre!.diferencia, quien: t.cierre!.nombre, justificacion: t.cierre!.justificacion }))
-    .concat(turnos.filter((t) => t.apertura.diferencia).map((t) => ({ turno: t.id, fecha: t.fecha, importe: t.apertura.diferencia, quien: t.apertura.nombre, justificacion: t.apertura.justificacion })));
+  const descuadres = turnos.filter((t) => t.cierre && t.cierre.diferencia && !(t.cierre as any).corregida).map((t) => ({ turno: t.id, fecha: t.fecha, importe: t.cierre!.diferencia, quien: t.cierre!.nombre, justificacion: t.cierre!.justificacion }))
+    .concat(turnos.filter((t) => t.apertura.diferencia && !(t.apertura as any).corregida).map((t) => ({ turno: t.id, fecha: t.fecha, importe: t.apertura.diferencia, quien: t.apertura.nombre, justificacion: t.apertura.justificacion })));
 
   // ================= PERIODO =================
   const E = emitidas.filter((d) => dentro(d.fecha)), R = recibidas.filter((d) => dentro(d.fecha)), C = cobros.filter((c) => dentro(c.fecha)), D = descuadres.filter((d) => dentro(d.fecha)), I = internos.filter((x) => dentro(x.fecha));
@@ -166,6 +166,8 @@ async function resumen(desde: string, hasta: string) {
   const porCanal: Record<string, number> = Object.fromEntries(COBROS.map((k) => [k, 0])); for (const c of C) porCanal[c.metodo] = (porCanal[c.metodo] || 0) + c.importe;
   const porPago: Record<string, number> = Object.fromEntries(PAGOS.map((k) => [k, 0])); for (const g of R) porPago[g.metodo] = (porPago[g.metodo] || 0) + g.total;
   const descNeto = sum(D, "importe");
+  // Efectivo que debe quedar en el cajón en el periodo: lo cobrado en efectivo MENOS lo pagado en efectivo y lo retirado/llevado al banco (los descuadres ya sumados con su signo)
+  const efectivoNeto = (porCanal.efectivo || 0) - (porPago.efectivo || 0) - sum(I, "importe") + descNeto;
   // Gastos que son inversión en coches aún en stock (se imputan cuando el coche se vende)
   const esStock = (g: any) => g.coche && carDe.get(g.coche) && carDe.get(g.coche)!.estado !== "vendido" && !ventas.some((v) => v.coche === g.coche);
   const Rgasto = R.filter((g) => !esStock(g)), Rstock = R.filter(esStock);
@@ -194,7 +196,7 @@ async function resumen(desde: string, hasta: string) {
   const serie = dias.map((d) => ({ fecha: d, cobrado: sum(C.filter((c) => c.fecha === d), "importe"), pagado: sum(R.filter((g) => g.fecha === d)) }));
   return {
     desde, hasta,
-    kpis: { cobrado, pagado, flujo: cobrado - pagado + descNeto, facturado: sum(E), facturadoBase: sum(E, "base"), gastosBase: sum(Rgasto, "base"), resultado: taller.neto + venta.neto, porCobrar: porCobrar.reduce((a, x) => a + x.pendiente, 0), descuadres: descNeto, invertidoStock: sum(Rstock, "base"), sinClasificar: recibidas.filter((g) => g.sinClasificar).length, ventasSinDatos: porCoche.filter((x) => x.estimado || x.sinCoste).length },
+    kpis: { efectivoNeto, cobrado, pagado, flujo: cobrado - pagado + descNeto, facturado: sum(E), facturadoBase: sum(E, "base"), gastosBase: sum(Rgasto, "base"), resultado: taller.neto + venta.neto, porCobrar: porCobrar.reduce((a, x) => a + x.pendiente, 0), descuadres: descNeto, invertidoStock: sum(Rstock, "base"), sinClasificar: recibidas.filter((g) => g.sinClasificar).length, ventasSinDatos: porCoche.filter((x) => x.estimado || x.sinCoste).length },
     porCanal, porPago, porCategoria, taller, venta, coches: porCoche.sort((a, b) => b.fecha.localeCompare(a.fecha)), stock, efectivo, internos: I, descuadres: D,
     emitidas: E.sort((a, b) => b.fecha.localeCompare(a.fecha)), recibidas: R.sort((a, b) => b.fecha.localeCompare(a.fecha)), cobros: C.sort((a, b) => b.fecha.localeCompare(a.fecha)),
     porCobrar: porCobrar.sort((a, b) => a.fecha.localeCompare(b.fecha)), sinClasificar: recibidas.filter((g) => g.sinClasificar), serie,

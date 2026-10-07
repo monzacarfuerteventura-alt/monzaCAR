@@ -97,7 +97,7 @@ function faltaF1(f: F1): string {
 function limpiarF2(x: any, prev: F2 | null, q: Quien): F2 {
   const items: F2["items"] = {};
   for (const id of F2_IDS) { const i = x?.items?.[id] || {}; items[id] = { e: uno(i.e, ["ok", "a", "r", "na"]) as any, nota: str(i.nota, 300), extra: str(i.extra, 80), fotos: (Array.isArray(i.fotos) ? i.fotos : []).filter(esFoto).slice(0, 6) }; }
-  return { mecanico: prev?.mecanico || q.uid, items, horasEst: num(x?.horasEst, 200), recomendacion: uno(x?.recomendacion, ["reparar", "reservas", "no-recomendable"]), rechazoFirmado: !!x?.rechazoFirmado, firma: prev?.firma || null, cerrada: prev?.cerrada || false, inicio: prev?.inicio || new Date().toISOString() };
+  return { mecanico: prev?.mecanico || q.uid, items, horasEst: num(x?.horasEst, 200), recomendacion: uno(x?.recomendacion, ["reparar", "reservas", "no-recomendable"]), rechazoFirmado: !!x?.rechazoFirmado, autorizaRojos: !!x?.autorizaRojos, autorizaNombre: !!x?.autorizaRojos ? str(x?.autorizaNombre, 80) : "", firma: prev?.firma || null, cerrada: prev?.cerrada || false, inicio: prev?.inicio || new Date().toISOString() };
 }
 function faltaF2(f: F2): string {
   const sin = F2_IDS.filter((id) => !f.items[id].e);
@@ -196,7 +196,7 @@ async function resumen(desde: string, hasta: string) {
       else if (c?.exigeJustificacion && !c.aprobada) alertas.push({ tipo: "visto-bueno", nivel: "ambar", token: f.token, num: f.num, txt: `${coche}: desviación justificada, falta el visto bueno del gerente` });
     }
     const r2 = resumenF2(f.f2), p = o.presupuesto;
-    if (r2 && r2.rojos > 0 && o.estado !== "entregado" && !(p && p.estado === "aceptado") && !f.f2?.rechazoFirmado)
+    if (r2 && r2.rojos > 0 && o.estado !== "entregado" && !(p && p.estado === "aceptado") && !f.f2?.rechazoFirmado && !f.f2?.autorizaRojos)
       alertas.push({ tipo: "rojo", nivel: "rojo", token: f.token, num: f.num, txt: `${coche}: ${r2.rojos} punto${r2.rojos > 1 ? "s" : ""} en ROJO sin presupuesto aceptado ni rechazo firmado` });
     if (o.estado === "calidad" && !(f.f4 && f.f4.firma)) alertas.push({ tipo: "calidad", nivel: "ambar", token: f.token, num: f.num, txt: `${coche}: terminado, pendiente de control de calidad (FORM-04)` });
     if (f.f4?.resultado === "rechazado" && o.estado !== "entregado" && c?.estado === "fin") alertas.push({ tipo: "rechazo", nivel: "rojo", token: f.token, num: f.num, txt: `${coche}: calidad rechazada, vuelve a taller` });

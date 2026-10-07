@@ -48,7 +48,11 @@ export default async (req: Request, context: Context) => {
       const { s: sol, error } = limpiar(input, true);
       if (error || !sol) return json({ error }, 400);
       // Cita apuntada a mano (el cliente llamó): se comprueba y se ocupa el hueco igual que si la reservara en la web
-      if (sol.cita) {
+      // Cliente que está en el mostrador AHORA: la cita es de hoy, a la hora real del servidor (p. ej. 13:25), sin hora de antelación y sin ocupar un hueco de la web
+      if (sol.cita && input.cita && input.cita.ahora === true) {
+        const n = ahoraCanarias(), hh = String(Math.floor(n.minutos / 60)).padStart(2, "0"), mm = String(n.minutos % 60).padStart(2, "0");
+        sol.cita.fecha = n.fecha; sol.cita.hora = `${hh}:${mm}`; sol.dia = n.fecha; sol.franja = sol.cita.hora;
+      } else if (sol.cita) {
         if (!huecoValido(sol.cita.fecha, sol.cita.hora, await bloqueos())) return json({ error: "Esa hora no está disponible (cerrado, pasada o con menos de 2 horas de margen). Elige otra.", ocupada: true }, 409);
         if (!(await ocuparHueco(sol.cita.agenda, sol.cita.fecha, sol.cita.hora, sol.id))) return json({ error: "Esa hora ya está ocupada. Elige otra.", ocupada: true }, 409);
       }
