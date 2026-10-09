@@ -79,7 +79,7 @@ export type F4 = {
   resultado: string; motivo: string; firma: { uid: string; nombre: string; t: string } | null; cierreGerente: { t: string; por: string } | null; intentos: number;
 };
 // ---------- factura de reparación (FORM-14) ----------
-export const EMISOR = { razon: "MAYLIN Y YERAY S.L.", nif: "B93975647", direccion: "CALLE VALLE LARGO 8", cp: "35610 - Polígono Industrial Costa de Antigua", telefono: "643 56 60 98", email: "volcanocars2026@gmail.com" };
+export const EMISOR = { razon: "MAYLIN Y YERAY S.L.", nif: "B93975647", direccion: "CALLE VALLE LARGO 8", cp: "35610 - Polígono Industrial Costa de Antigua", telefono: "643 56 60 98", email: "volcanocars2026@gmail.com", registro: "Registro Mercantil de Fuerteventura, hoja IF-10512", inscripcion: "1.ª · IRUS 1000478998399" };
 export type F5Linea = { tipo: "MO" | "REC" | "OTRO"; ref: string; desc: string; cant: number; precio: number; dto: number };
 export type F5 = {
   fechaOperacion: string;

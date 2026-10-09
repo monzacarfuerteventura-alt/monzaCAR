@@ -533,3 +533,7 @@ Objetivo: que cualquier empleado nuevo sepa usar el panel y que la web impida lo
 - Cita «Ahora mismo» con la hora real; arreglado que «Apuntar cita» no guardaba la cita.
 - Los avisos salen por encima del difuminado; glosario solo en Ayuda; menú sin «Apuntar cita» repetido.
 - FORM-02: autorización con ROJOS + firmas de cliente y mecánico.
+
+
+## Actualización 59-2 · icono de la empresa (favicon) para Google
+Acumulativa: incluye la 59-1 (y con ella la 57 y la 58). Genera iconos de 16, 32, 48, 96, 180, 192 y 512 px con el logo del volcán, los enlaza con `?v=2` en todas las páginas (también las legales, 404 y las plantillas del servidor) y cumple la regla de Google (múltiplo de 48 px). El manifiesto ya apunta a iconos que existen.

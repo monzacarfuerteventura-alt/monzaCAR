@@ -1,6 +1,6 @@
 # CLAUDE-INDICE.md · Inventario completo del código (GENERADO, no editar a mano)
 
-Generado con `python3 tools/indice.py` el 2026-10-07. Lo lee Claude junto a `CLAUDE.md`. Contiene qué hace cada archivo, sus rutas, almacenes de datos y funciones exportadas; para ver el código exacto, abrir el archivo.
+Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLAUDE.md`. Contiene qué hace cada archivo, sus rutas, almacenes de datos y funciones exportadas; para ver el código exacto, abrir el archivo.
 
 
 ## 1. Funciones de servidor (`netlify/functions`)
@@ -237,12 +237,12 @@ Generado con `python3 tools/indice.py` el 2026-10-07. Lo lee Claude junto a `CLA
 
 ## 3. Páginas HTML (`public`)
 
-- **public/404.html** (34 líneas, 1 KB): Página no encontrada | Volcano Cars
+- **public/404.html** (36 líneas, 1 KB): Página no encontrada | Volcano Cars
 - **public/admin.html** (9513 líneas, 1147 KB): Panel Volcano Cars
   - vistas: v-empty, v-up, v-cancel, v-bar, v-ok, v-change, v-rm, v-err
   - pestañas del panel: agenda, alm, ayuda, caja, coches, dash, fin, jornada, leads, ordenes, resp
   - scripts: /cartel-fichaje.js, /panel-app.js, /panel-guiado.js, /panel-mejoras.js, /panel-plus.js, /panel-precios.js, /panel-shell.js, /panel-sistemas.js
-- **public/aviso-legal.html** (87 líneas, 9 KB): Aviso legal · Volcano Cars
+- **public/aviso-legal.html** (96 líneas, 10 KB): Aviso legal · Volcano Cars
   - scripts: /medicion.js, /origen.js
 - **public/chapa-y-pintura-fuerteventura/index.html** (79 líneas, 15 KB): Chapa y pintura en Fuerteventura | Volcano Cars
   - scripts: /medicion.js, /origen.js, /precios-taller.js
@@ -251,11 +251,11 @@ Generado con `python3 tools/indice.py` el 2026-10-07. Lo lee Claude junto a `CLA
 - **public/comprar/index.html** (3201 líneas, 359 KB): Coches de ocasión en Fuerteventura | Volcano Cars
   - vistas: v-inicio, v-comprar, v-taller, v-contacto
   - scripts: /conversion.js, /mejoras.js, /piloto-web.js, /script-ia.js, /taller-ui.js
-- **public/condiciones.html** (134 líneas, 16 KB): Condiciones de venta, taller y garantía · Volcano Cars
+- **public/condiciones.html** (143 líneas, 17 KB): Condiciones de venta, taller y garantía · Volcano Cars
   - scripts: /medicion.js, /origen.js
 - **public/contacto/index.html** (85 líneas, 14 KB): Contacto y cómo llegar | Volcano Cars Fuerteventura
   - scripts: /medicion.js, /origen.js
-- **public/cookies.html** (72 líneas, 8 KB): Política de cookies · Volcano Cars
+- **public/cookies.html** (79 líneas, 8 KB): Política de cookies · Volcano Cars
   - scripts: /medicion.js
 - **public/en/index.html** (3206 líneas, 360 KB): Used cars and car workshop in Fuerteventura | Volcano Cars
   - vistas: v-inicio, v-comprar, v-taller, v-contacto
@@ -265,11 +265,11 @@ Generado con `python3 tools/indice.py` el 2026-10-07. Lo lee Claude junto a `CLA
 - **public/index.html** (3205 líneas, 360 KB): Coches de ocasión y taller en Fuerteventura | Volcano Cars
   - vistas: v-inicio, v-comprar, v-taller, v-contacto
   - scripts: /conversion.js, /mejoras.js, /piloto-web.js, /script-ia.js, /taller-ui.js
-- **public/itv-fuerteventura/index.html** (95 líneas, 16 KB): ITV en Fuerteventura: guía y cómo aprobar | Volcano Cars
+- **public/itv-fuerteventura/index.html** (95 líneas, 17 KB): ITV en Fuerteventura: guía y cómo aprobar | Volcano Cars
   - scripts: /medicion.js, /origen.js, /precios-taller.js
 - **public/pre-itv-fuerteventura/index.html** (78 líneas, 13 KB): Pre-ITV en Fuerteventura | Volcano Cars
   - scripts: /medicion.js, /origen.js, /precios-taller.js
-- **public/privacidad.html** (107 líneas, 17 KB): Política de privacidad · Volcano Cars
+- **public/privacidad.html** (116 líneas, 18 KB): Política de privacidad · Volcano Cars
   - scripts: /medicion.js, /origen.js
 - **public/reserva.html** (135 líneas, 17 KB): Tu reserva · Volcano Cars
   - scripts: /conversion.js
@@ -379,7 +379,7 @@ Generado con `python3 tools/indice.py` el 2026-10-07. Lo lee Claude junto a `CLA
 - **tools/docs/QA-MATRIZ.md** (nota, 30 líneas): 
 - **tools/factura/factura.js** (100 líneas): FORM-14 · FACTURA DE REPARACIÓN (ficha «f5» de Taller, entre FORM-02 y FORM-03) Se rellena sola desde el presupuesto y los datos de recepción; el gerente o recepción la revisan y la emiten. Emitida queda bloqueada; si hay que corregir, el gerente la reabre con motivo y la nueva emisión sale como rectificativa (-R1, -R2…). El mecánico no ve importes. Este módulo solo AÑADE: engancha con las funciones de taller.js (tCa…
 - **tools/factura/inyectar.py** (21 líneas): FACTURA-CSS-INICIO
-- **tools/fichas/construir.py** (318 líneas): (sin descripción)
+- **tools/fichas/construir.py** (333 líneas): (sin descripción)
 - **tools/finanzas/finanzas.js** (309 líneas): FINANZAS · Ingresos y egresos globales (solo el gerente) Integrado con Taller (presupuestos aceptados), Coches (vendidos) y Caja. Fuente: tools/finanzas/finanzas.js → python3 tools/finanzas/inyectar.py
 - **tools/finanzas/inyectar.py** (21 líneas): FINANZAS-CSS-INICIO
 - **tools/fuentes-locales.mjs** (70 líneas): Generado al publicar por tools/fuentes-locales.mjs
@@ -479,4 +479,4 @@ Generado con `python3 tools/indice.py` el 2026-10-07. Lo lee Claude junto a `CLA
 - `public/vfx/`: 72 archivos
 
 ---
-Total de líneas de código indexadas: 56518.
+Total de líneas de código indexadas: 56569.

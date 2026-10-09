@@ -68,10 +68,24 @@ tr.r td{height:calc(6.6mm*var(--d,1))}.chk tr.r td{height:calc(4.9mm*var(--d,1))
 .ban{background:#D9481C;color:#fff;text-align:center;font:700 19pt/1 "DejaVu Sans Condensed",Carlito,sans-serif;letter-spacing:.14em;padding:4mm 0;margin-top:calc(2.4mm*var(--d,1))}
 .casos{display:grid;grid-template-columns:1fr 1fr;border:.28mm solid #8c8780;border-top:0}.caso{display:flex;gap:2.4mm;padding:calc(2mm*var(--d,1)) 2.4mm;border-right:.28mm solid #8c8780;border-bottom:.28mm solid #8c8780;font-size:8.9pt;line-height:1.28}.caso:nth-child(2n){border-right:0}.caso:nth-last-child(-n+2){border-bottom:0}.caso i{font-style:normal;flex:none;width:6mm;height:6mm;border-radius:1mm;background:#D9481C;color:#fff;display:grid;place-items:center;font:700 9.5pt Carlito,sans-serif}.caso b{display:block;font-size:9.6pt;margin-bottom:.8mm}.caso p{margin:0}
 .pt{margin:0;padding:0;list-style:none}.pt li{border:.28mm solid #8c8780;border-top:0;padding:calc(1.5mm*var(--d,1)) 2.4mm calc(1.5mm*var(--d,1)) 7mm;position:relative;font-size:9pt;line-height:1.28}.pt li::before{content:"";position:absolute;left:2.4mm;top:calc(2.4mm*var(--d,1));width:2.4mm;height:2.4mm;background:#D9481C;border-radius:.5mm}.pt li b{font-weight:700}
+
+.rt th,.rt td{border:.6mm solid #1B1B1A}
+.rt thead th{font-size:8.6pt;padding:1.4mm .8mm}
+.chk.rt tr.r td{height:7.8mm;font-size:10.2pt}
+.firmas.f3 td{height:15mm}
+.rt td.ev{padding-left:2.2mm;font-size:10.4pt}
+.rt td.hh{text-align:center;font-size:15pt;color:#1B1B1A;letter-spacing:.12em;font-weight:400}
+.rt tr.pa td.ev{font-weight:700}
+.rt tr.cn1 td.ev,.rt tr.cn2 td.ev{position:relative;padding-left:8.5mm}
+.rt tr.cn1 td.ev::after{content:"";position:absolute;left:2.6mm;width:1.5mm;top:50%;bottom:-.7mm;background:#D9481C;z-index:2}
+.rt tr.cn2 td.ev::before{content:"";position:absolute;left:2.6mm;width:1.5mm;top:-.7mm;height:calc(50% + .75mm);background:#D9481C;z-index:2}
+.rt tr.cn2 td.ev::after{content:"";position:absolute;left:4.1mm;top:calc(50% - 1.7mm);width:0;height:0;border-left:2.6mm solid #D9481C;border-top:1.7mm solid transparent;border-bottom:1.7mm solid transparent;z-index:2}
 """
 def cb(t="", cls="o"): return f'<span class="{cls}"><span class="cb"></span>{E(t)}</span>'
 def ln(c="", w=""): return f'<span class="ln {w}"></span>{c}'
 def sec(n, t, sub="", o=False): return f'<div class="sec{" o" if o else ""}"><i>{n}</i><b>{E(t)}</b>{f"<small>{E(sub)}</small>" if sub else ""}</div>'
+REG_MERC = "Fuerteventura · hoja IF-10512"
+REG_INSC = "1.ª · IRUS 1000478998399"
 PIE_BASE = "Manual SOP-01 Recepción, inspección y control de tiempos"
 def pagina(form, titulo, sub, hoja, cuerpo, ver="1.2", pag="", base=None, de=6):
     return f'''<section class="pag"><header class="cab"><div class="lg">{LOGO}</div><div class="tt"><h1>{E(titulo)}</h1><p>{E(sub)}</p><span class="pill">{form}</span></div></header>{cuerpo}
@@ -179,14 +193,14 @@ def form03():
         [("Tiempo estimado", '<span class="ln s"></span> h <span class="ln s"></span> min'), ("Hoja", '<span class="ln s"></span> de <span class="ln s"></span>')],
         [("Tipo de trabajo", cb("Inspección") + cb("Mantenimiento") + cb("Reparación") + cb("Preparación para venta"))]])
     c += sec(2, "Registro de tiempos", "hora exacta del reloj, sin redondear")
-    ev = ["Entrada del vehículo (FORM-01)", "INICIO de trabajo", "Pausa 1: inicio", "Pausa 1: fin", "Pausa 2: inicio", "Pausa 2: fin", "Pausa 3: inicio", "Pausa 3: fin", "Pausa 4: inicio", "Pausa 4: fin", "FIN de trabajo", "Salida a control de calidad"]
-    f = '<table class="chk"><thead><tr><th style="width:30%">Evento</th><th style="width:11%;background:#5b5752;text-align:center">Fecha</th><th style="width:11%;background:#5b5752;text-align:center">Hora exacta</th><th style="background:#5b5752">Motivo de la pausa / nota</th><th style="width:11%;background:#5b5752">Iniciales</th></tr></thead><tbody>'
-    for e in ev:
-        hl = e.startswith("INICIO") or e.startswith("FIN")
-        f += f'<tr class="r{" hl" if hl else ""}"><td style="{"font-weight:700;" if hl else ""}background:{"#FBE7E0" if hl else "inherit"}">{e}</td><td style="text-align:center">/</td><td style="text-align:center">:</td><td></td><td></td></tr>'
-    c += f + '</tbody></table><p class="nota">Motivos típicos de pausa: recambio pendiente · otro coche urgente · comida · espera de autorización del cliente. Más de 4 pausas o varios días → hoja adicional.</p>'
+    ev = [("Entrada del vehículo (FORM-01)", ""), ("INICIO de trabajo", "hl"), ("PAUSA 1", "pa"), ("INICIO (después de la pausa 1)", "in"), ("PAUSA 2", "pa"), ("INICIO (después de la pausa 2)", "in"), ("PAUSA 3", "pa"), ("INICIO (después de la pausa 3)", "in cn1"), ("FIN de trabajo", "hl cn2"), ("Salida a control de calidad", "")]
+    f = '<table class="chk rt"><thead><tr><th style="width:31%">Evento</th><th style="width:15%;background:#5b5752;text-align:center">Fecha</th><th style="width:13%;background:#5b5752;text-align:center">Hora exacta</th><th style="background:#5b5752">Motivo de la pausa / nota</th><th style="width:10%;background:#5b5752">Iniciales</th></tr></thead><tbody>'
+    for e, k in ev:
+        hl = "hl" in k
+        f += f'<tr class="r {k}"><td class="ev" style="{"font-weight:700;" if hl or "in" in k.split() else ""}background:{"#FBE7E0" if hl else "inherit"}">{e}</td><td class="hh">&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;/</td><td class="hh">:</td><td></td><td></td></tr>'
+    c += f + '</tbody></table><p class="nota">Cada PAUSA se cierra con un INICIO. Motivos típicos: recambio pendiente · otro coche urgente · comida · autorización del cliente. Más de 3 pausas → hoja adicional.</p>'
     c += sec(3, "Cálculo")
-    c += '<div class="tx" style="padding:1.8mm 3mm"><b>Tiempo neto</b> = (hora fin − hora inicio) − suma de pausas &nbsp;·&nbsp; <b>Desviación %</b> = (tiempo real − tiempo estimado) ÷ tiempo estimado × 100</div>'
+    c += '<div class="tx" style="padding:1.8mm 3mm"><b>Tiempo neto</b> = (FIN − primer INICIO) − suma de pausas (cada pausa = hora del INICIO siguiente − hora de la PAUSA) &nbsp;·&nbsp; <b>Desviación %</b> = (tiempo real − tiempo estimado) ÷ tiempo estimado × 100</div>'
     hm = '<span class="ln s"></span> h <span class="ln s"></span> min'
     c += kv([[("Tiempo total en taller", hm), ("Suma de pausas", hm)], [("TIEMPO NETO TRABAJADO", hm), ("Tiempo estimado", hm)],
              [("Desviación", '<span class="ln s"></span> min / <span class="ln s"></span> %'), ("Mano de obra a facturar", '<span class="ln s"></span> h × <span class="ln s"></span> € = <span class="ln s"></span> €')]], (23, 27, 23, 27))
@@ -196,7 +210,7 @@ def form03():
     for i in range(0, 9, 2): jt += f'<tr><td>{cb(J[i])}</td><td>{cb(J[i+1]) if i+1<9 else ""}</td></tr>'
     c += jt + '</table>'
     c += kv([[("Explicación breve", "")], [("¿Cliente avisado y sobrecoste autorizado?", cb("Sí") + cb("No") + cb("No aplica"))], [("¿Qué cambiamos para que no se repita?", "")]], (28, 0, 0, 0)).replace('<td colspan="3">', '<td colspan="3" style="height:7.4mm">')
-    c += firmas("Firma del mecánico", "Visto bueno del gerente", "Fecha")
+    c += firmas("Firma del mecánico", "Visto bueno del gerente", "Fecha").replace('class="firmas"', 'class="firmas f3"')
     return [pagina("FORM-03", "Control de tiempos y mano de obra", "Registro de horas por vehículo", 4, c)]
 # ---------- FORM-04 calidad ----------
 def form04():
@@ -224,7 +238,7 @@ def form04():
 def form14():
     num = '<table class="idr"><tr><th style="width:17%">Nº de factura</th><td style="width:25%">F&nbsp;-&nbsp;<span class="ln s"></span>&nbsp;-&nbsp;<span class="ln s"></span></td><th style="width:14%">Fecha emisión</th><td style="width:14%"></td><th style="width:16%">Fecha operación</th><td></td></tr><tr><th>Nº de orden</th><td colspan="5">' + ORDEN + '</td></tr></table>'
     c = num + '<p class="nota"><b>El nº de factura es correlativo (F-AAAA-NNNN), lo asigna el sistema al emitir y no se repite. No es el nº de la orden de trabajo (VC-AAAA-NNNN).</b> Un error no se tacha: se emite factura rectificativa.</p>'
-    c += sec(1, "Datos del emisor", "quien factura") + kv([[("Razón social", "MAYLIN Y YERAY S.L."), ("NIF / CIF", "B93975647")], [("Dirección", "CALLE VALLE LARGO 8"), ("CP / localidad", "35610 - Polígono Industrial Costa de Antigua")], [("Teléfono", "643 56 60 98"), ("Correo electrónico", "volcanocars2026@gmail.com")]])
+    c += sec(1, "Datos del emisor", "quien factura") + kv([[("Razón social", "MAYLIN Y YERAY S.L."), ("NIF / CIF", "B93975647")], [("Dirección", "CALLE VALLE LARGO 8"), ("CP / localidad", "35610 - Polígono Industrial Costa de Antigua")], [("Teléfono", "643 56 60 98"), ("Correo electrónico", "volcanocars2026@gmail.com")], [("Registro Mercantil", REG_MERC), ("Inscripción", REG_INSC)]])
     c += sec(2, "Datos del cliente") + kv([[("Nombre / empresa", ""), ("DNI / NIE / CIF", "")], [("Dirección", ""), ("CP / localidad", "")], [("Teléfono", ""), ("Correo electrónico", "")]])
     c += sec(3, "Datos del vehículo") + kv([[("Matrícula", ""), ("Marca / modelo", "")], [("Bastidor (VIN)", ""), ("Kilometraje", 'entrada <span class="ln s"></span> km &nbsp; salida <span class="ln s"></span> km')]])
     c += sec(4, "Detalle de la reparación", "una línea por concepto · MO = mano de obra (horas de FORM-03 × tarifa) · REC = recambio") + lineas(9)
@@ -236,7 +250,7 @@ VENTA = "Venta de coches de ocasión"
 def form16():
     num = '<table class="idr"><tr><th style="width:17%">Nº de factura</th><td style="width:25%">F&nbsp;-&nbsp;<span class="ln s"></span>&nbsp;-&nbsp;<span class="ln s"></span></td><th style="width:14%">Fecha emisión</th><td style="width:14%"></td><th style="width:16%">Fecha de entrega</th><td></td></tr></table>'
     c = num + '<p class="nota"><b>El nº de factura es correlativo (F-AAAA-NNNN), lo asigna el sistema al emitir y no se repite.</b> Un error no se tacha: se emite factura rectificativa.</p>'
-    c += sec(1, "Vendedor") + kv([[("Razón social", "MAYLIN Y YERAY S.L. (Volcano Cars)"), ("NIF / CIF", "B93975647")], [("Dirección", "CALLE VALLE LARGO 8"), ("CP / localidad", "35610 - Polígono Industrial Costa de Antigua")], [("Teléfono", "643 56 60 98"), ("Correo electrónico", "volcanocars2026@gmail.com")]])
+    c += sec(1, "Vendedor") + kv([[("Razón social", "MAYLIN Y YERAY S.L. (Volcano Cars)"), ("NIF / CIF", "B93975647")], [("Dirección", "CALLE VALLE LARGO 8"), ("CP / localidad", "35610 - Polígono Industrial Costa de Antigua")], [("Teléfono", "643 56 60 98"), ("Correo electrónico", "volcanocars2026@gmail.com")], [("Registro Mercantil", REG_MERC), ("Inscripción", REG_INSC)]])
     c += sec(2, "Comprador") + kv([[("Nombre / empresa", ""), ("DNI / NIE / CIF", "")], [("Dirección", ""), ("CP / localidad", "")], [("Teléfono", ""), ("Correo electrónico", "")], [("Tipo de comprador", cb("Particular (consumidor)") + cb("Empresa o autónomo para su actividad"))]])
     c += sec(3, "Vehículo vendido") + kv([[("Matrícula", ""), ("Marca / modelo / versión", "")], [("Bastidor (VIN)", ""), ("Año / color", "")], [("Kilometraje en la entrega", '<span style="float:right">km</span>'), ("ITV en vigor hasta", "")], [("Combustible", cb("Gasolina") + cb("Diésel") + cb("Híbrido") + cb("Eléctrico") + cb("GLP"))]])
     c += sec(4, "Precio", "el precio es final, con todos los impuestos incluidos") + '<table class="tot" style="margin-top:0"><tr><th style="width:62%;text-align:left">Precio del vehículo (base imponible)</th><td>€</td></tr><tr><th style="text-align:left">Impuesto (IGIC / REBU según régimen) <span class="ln s" style="min-width:8mm"></span> %</th><td>€</td></tr><tr><th style="text-align:left">Cambio de titularidad en Tráfico · Entrega a domicilio</th><td style="text-align:center">incluidos · 0 €</td></tr><tr class="t"><th style="text-align:left">TOTAL A PAGAR</th><td>€</td></tr></table>'
@@ -255,17 +269,18 @@ def bullets(items): return '<ul class="pt">' + ''.join(f'<li>{x}</li>' for x in 
 def form17():
     c = '<table class="idr"><tr><th style="width:15%">Nº de reserva</th><td style="width:14%"></td><th style="width:19%">Fecha y hora de confirmación</th><td style="width:17%"></td><th style="width:15%">Válida hasta (48 h)</th><td></td></tr></table>'
     c += '<div class="ban">VEHÍCULO RESERVADO</div>'
-    c += sec(1, "Cliente que reserva") + kv([[("Nombre y apellidos", ""), ("DNI / NIE / Pasaporte", "")], [("Teléfono", ""), ("Correo electrónico", "")]])
-    c += sec(2, "Vehículo reservado") + kv([[("Marca / modelo / versión", ""), ("Matrícula", "")], [("Año / color", ""), ("Kilometraje", '<span style="float:right">km</span>')], [("Bastidor (VIN)", ""), ("Reservado en", cb("la web (online)") + cb("el taller"))], [("Pago de la reserva", cb("Tarjeta") + cb("Transferencia") + cb("Bizum") + cb("Efectivo") + ' &nbsp; confirmado: ' + cb("Sí") + cb("Pendiente"))]])
-    c += sec(3, "Qué significa esta reserva", "tal y como figura en la web de Volcano Cars", o=True) + bullets([
+    c += sec(1, "Datos del emisor", "quien recibe la reserva") + kv([[("Razón social", "MAYLIN Y YERAY S.L. (Volcano Cars)"), ("NIF / CIF", "B93975647")], [("Dirección", "CALLE VALLE LARGO 8, 35610 - Polígono Industrial Costa de Antigua"), ("Teléfono", "643 56 60 98")], [("Registro Mercantil", REG_MERC), ("Inscripción", REG_INSC)]])
+    c += sec(2, "Cliente que reserva") + kv([[("Nombre y apellidos", ""), ("DNI / NIE / Pasaporte", "")], [("Teléfono", ""), ("Correo electrónico", "")]])
+    c += sec(3, "Vehículo reservado") + kv([[("Marca / modelo / versión", ""), ("Matrícula", "")], [("Año / color", ""), ("Kilometraje", '<span style="float:right">km</span>')], [("Bastidor (VIN)", ""), ("Reservado en", cb("la web (online)") + cb("el taller"))], [("Pago de la reserva", cb("Tarjeta") + cb("Transferencia") + cb("Bizum") + cb("Efectivo") + ' &nbsp; confirmado: ' + cb("Sí") + cb("Pendiente"))]])
+    c += sec(4, "Qué significa esta reserva", "tal y como figura en la web de Volcano Cars", o=True) + bullets([
         "<b>El coche queda apartado a tu nombre durante 48 horas</b> desde que confirmamos la reserva. Mientras dure, nadie más puede comprarlo ni reservarlo.",
         "<b>No es una señal de arras:</b> no te obliga a comprar ni tiene penalización. Tampoco es una factura ni el contrato de compraventa: la factura se emite al formalizar la compra, que se firma en nuestras instalaciones.",
         "<b>Transferencia o Bizum:</b> el coche aparece como reservado al subir el justificante; si en 12 horas no hemos recibido el dinero, la reserva se anula y te avisamos.",
         "<b>Si dos personas pagan a la vez,</b> el coche es para quien completó antes el pago; a la otra persona le devolvemos todo.",
         "<b>Si compras,</b> tu coche lleva 12 meses de garantía legal, cambio de nombre hecho y entrega gratis a domicilio en Fuerteventura."])
-    c += sec(4, "Seguimiento de la reserva") + kv([[("Ampliada", cb("No") + cb("Sí, hasta"), ), ("Fecha y hora", "")], [("Resultado", cb("Ha comprado") + cb("Reserva liberada (se devuelve lo pagado)") + cb("Pendiente"))], [("Observaciones", '<div data-grow style="min-height:9mm"></div>')]])
+    c += sec(5, "Seguimiento de la reserva") + kv([[("Ampliada", cb("No") + cb("Sí, hasta"), ), ("Fecha y hora", "")], [("Resultado", cb("Ha comprado") + cb("Reserva liberada (se devuelve lo pagado)") + cb("Pendiente"))], [("Observaciones", '<div data-grow style="min-height:9mm"></div>')]])
     p1 = pagina("FORM-17", "Parte de reserva de vehículo", "Justificante de que el coche está apartado para ti", 1, c, ver="1.1", base=VENTA, de=2)
-    d = sec(5, "Devoluciones: las 4 situaciones de la reserva", "tal y como figuran en la web de Volcano Cars (condiciones, apartado 5)", o=True)
+    d = sec(6, "Devoluciones: las 4 situaciones de la reserva", "tal y como figuran en la web de Volcano Cars (condiciones, apartado 5)", o=True)
     caso = lambda l, t, x: f'<div class="caso"><i>{l}</i><div><b>{t}</b><p>{x}</p></div></div>'
     d += '<div class="casos">' + caso("A", "No compras el coche", "100 % reembolsable por el motivo que sea: te devolvemos todo lo pagado por el mismo medio de pago en un máximo de 14 días naturales desde que nos lo pidas. Por ley tienes 14 días naturales para desistir sin dar explicaciones; en la práctica te lo devolvemos siempre que nos lo pidas, aunque hayan pasado, mientras no hayas comprado el coche.") \
         + caso("B", "Compras el coche", "Lo pagado en la reserva se descuenta del precio final, a cuenta del precio, y consta en la factura.") \

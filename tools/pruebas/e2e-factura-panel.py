@@ -47,7 +47,7 @@ with sync_playwright() as p:
         check("los campos quedan deshabilitados", page.locator('[data-fc="cliente.nombre"]').is_disabled())
         check("el estado de la pestaña es «Emitida»", "Emitida" in page.inner_text('[data-ttabb="f5"]'))
         page.evaluate("()=>{window.print=()=>{window.__imp=1}}"); page.locator("#tf .app-more").click() if page.is_visible("#tf .app-more") else None; page.click('[data-tprint="uno"]'); page.wait_for_function("window.__imp===1", timeout=6000)
-        html = page.inner_html("#t-print"); check("la impresión trae emisor, cliente, líneas y total", all(x in html for x in ("MAYLIN Y YERAY", "B93975647", "Ana Pérez", "Pastillas de freno", "TOTAL")) and "BORRADOR" not in html)
+        html = page.inner_html("#t-print"); check("la impresión trae emisor, cliente, líneas y total", all(x in html for x in ("MAYLIN Y YERAY", "B93975647", "IF-10512", "1000478998399", "Ana Pérez", "Pastillas de freno", "TOTAL")) and "BORRADOR" not in html)
         page.click('[data-fclib="ver"]'); page.wait_for_function("/Todo correcto/.test(document.querySelector('#fc-lib').textContent)", timeout=8000); check("«Comprobar integridad» dice que todo cuadra", True)
         with page.expect_download(timeout=8000) as dl: page.click('[data-fclib="csv"]')
         check("«Descargar listado» baja un CSV", dl.value.suggested_filename.endswith(".csv"))
