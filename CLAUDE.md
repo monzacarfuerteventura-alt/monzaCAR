@@ -172,3 +172,6 @@ Valoración si se encargara en España (estimación de Claude, no presupuesto re
 (orientativo 10–20 % del coste). Referencias de mercado 2026: web corporativa 1.500–8.000 €; panel interno 8.000–25.000 €;
 plataforma multi-rol (portal clientes + admin) 25.000–60.000 €+. Una web de plantilla equivalente a la parte pública costaría 1.500–8.000 €.
 Limitaciones: esto es una estimación por tamaño y alcance; no se ha probado en vivo cada función; el valor real de mercado depende de quién lo haga.
+
+## 10. HANDOFF (9-10-2026)
+Otro Claude continúa este proyecto. **Publicaciones de redes sociales EN PAUSA por orden del dueño** (piloto `marketing-piloto` no activar; nada se programa ni publica sin su petición). Material de redes: `public/ig/` + `calendario.json` (en el ZIP `VolcanoCars-REDES.zip`). Siguiente actualización web: **57** (la 56 está en master, commit 9d4dc40; el ZIP 59-2 enviado antes sigue pendiente de que lo suba). Vídeos de la serie: ver `volcano-video/CLAUDE.md` §10–§11.
