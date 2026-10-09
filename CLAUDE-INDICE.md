@@ -48,7 +48,7 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
 - **financiacion.mts** (91 líneas): FINANCIACIÓN (calculadora de cuotas de la web) - GET /api/financiacion → condiciones que usa la calculadora (público) - PUT /api/financiacion → el panel cambia las condiciones (requiere sesión) Las condiciones son las que te dé la entidad financiera con la que trabajes (TIN, comisión, plazos, importe mínimo y antigüedad máxima del coche). La web calcula con ellas la cuota, la TAE y el ejemplo representativo que exige…
   - rutas: `"/api/financiacion"`
   - almacenes: monzacar
-- **finanzas.mts** (375 líneas): GESTIÓN DE INGRESOS Y EGRESOS GLOBALES (solo el gerente) Ingresos automáticos, sin duplicar trabajo: · Taller: cada presupuesto ACEPTADO por el cliente es una factura emitida. Los cobros salen de «Registrar cobro» o, solos, de los cobros de caja que el equipo enlaza a esa orden. · Venta de coches: cada coche marcado «Vendido» es una venta. Con «Registrar la venta» se anotan precio final, coste de compra y forma de pa…
+- **finanzas.mts** (388 líneas): GESTIÓN DE INGRESOS Y EGRESOS GLOBALES (solo el gerente) Ingresos automáticos, sin duplicar trabajo: · Taller: cada presupuesto ACEPTADO por el cliente es una factura emitida. Los cobros salen de «Registrar cobro» o, solos, de los cobros de caja que el equipo enlaza a esa orden. · Venta de coches: cada coche marcado «Vendido» es una venta. Con «Registrar la venta» se anotan precio final, coste de compra y forma de pa…
   - rutas: `["/api/finanzas/:accion", "/api/finanzas/:accion/:id", "/api/finanzas/:accion/:id/:sub"]`
   - almacenes: finanzas, monzacar, monzacar-fotos, ordenes
 - **fotos-cliente.mts** (62 líneas): FOTOS DEL CLIENTE · «Presupuesto por foto» del taller - POST /api/fotos-cliente → la web sube una foto del daño (JPEG ya reducido en el móvil, máx. 3 MB) - GET /api/fotos-cliente/:clave → solo el panel la puede ver (son fotos privadas del cliente) La foto queda «suelta» hasta que se envía la solicitud; las que nadie usa se borran solas a las 24 h (lo hace la tarea programada de las reservas).
@@ -136,9 +136,9 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
   - almacenes: ordenes, solicitudes
 - **trampa.mts** (22 líneas): TRAMPAS: rutas que ninguna persona visita, solo los robots que buscan fallos (WordPress, .env, phpMyAdmin…). Quien las pide queda bloqueado 24 h para intentar entrar al panel.
   - rutas: `[  "/wp-login.php", "/wp-admin", "/wp-admin/*", "/xmlrpc.php", "/wp-content/*", "/wp-includes/*", "/wp-json/*",  "/.env", "/.env.*", "/.git/*", "/config.php", "/phpmyadmin", "/phpmyadmin/*", "/pma/*", "/administrator/*",  "/admin.php", "/login.php", "/server-status", "/.aws/*", "/cgi-bin/*", "/vendor/phpunit/*", "/owa/*", "/boaform/*",  ]`
-- **vehiculos.mts** (356 líneas): COCHES PROPIOS · control interno (solo panel; nada de esto es público) GET /api/vehiculos/estado → fichas (los importes solo los ve el gerente) y ajustes GET /api/vehiculos/ficha/:id → una ficha completa POST /api/vehiculos/crear → alta de un coche que entra (gerente o recepción) POST /api/vehiculos/editar/:id → datos del coche (compra, precio previsto y enlace: solo gerente) POST /api/vehiculos/fase/:id → cambio de …
+- **vehiculos.mts** (377 líneas): COCHES PROPIOS · control interno (solo panel; nada de esto es público) GET /api/vehiculos/estado → fichas (los importes solo los ve el gerente) y ajustes GET /api/vehiculos/ficha/:id → una ficha completa POST /api/vehiculos/crear → alta de un coche que entra (gerente o recepción) POST /api/vehiculos/editar/:id → datos del coche (compra, precio previsto y enlace: solo gerente) POST /api/vehiculos/fase/:id → cambio de …
   - rutas: `["/api/vehiculos/:accion", "/api/vehiculos/:accion/:id", "/api/vehiculos/:accion/:id/:sub", "/api/vehiculos/:accion/:id/:sub/:dato"]`
-  - almacenes: monzacar
+  - almacenes: finanzas, monzacar
   - variables: MAX_ACT
 - **vendidos.mts** (142 líneas): COCHES VENDIDOS Y ENTREGADOS · /coches-vendidos Prueba social real y local: cada coche que ha encontrado dueño, cuánto tardó en venderse y, cuando el cliente lo autoriza, la foto de la entrega y su opinión tal como la dijo. - Las opiniones NO se marcan con datos estructurados de «Review»: Google no permite reseñas de un negocio sobre sí mismo en su propia web (serían «autopromoción»). Las reseñas públicas están en la…
   - rutas: `["/coches-vendidos", "/coches-vendidos/"]`
@@ -230,15 +230,15 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
   - exporta: TIPOS, ZONAS_ALERTA, ETIQUETA_VIP, ESTADOS, CONSENTIMIENTO_VERSION, RETENCION, HORAS, AGENDAS, HORIZONTE, Solicitud, ACTIVIDAD, MOTIVOS, str, fechaISO, ahoraCanarias, sumarDias, diaSemana, bloqueos, huecoValido, ocupados, ocuparHueco, FOTOS_CLIENTE, esFotoCliente, fotosExisten, marcarFotosUsadas, borrarFotos, liberar, limpiar, dentroDelLimite, eurTxt, fechaBonita, avisar, mensajeVIP, mensajeAlerta
 - **taller.mts** (182 líneas): TALLER · Manual SOP-01 (Recepción, inspección y control de tiempos) Equipo con PIN, fichas FORM-01..04, fichajes que no se pueden tocar sin el gerente y auditoría.
   - exporta: Rol, ROLES, Persona, Config, CONFIG_DEFECTO, tstore, leerConfig, leerEquipo, hashPin, pinOk, crearSesionEquipo, Quien, quien, Estado4, Marca, F1, F2, Evento, F3, F4, EMISOR, F5Linea, F5, totalesF5, Fichas, MOTIVOS_PAUSA, Tramo, tramos, estadoTiempo, calculo, F2_SECCIONES, F2_IDS, resumenF2, F4_A, F4_B, F4_C, F4_D, hoyCanarias, horaCanarias, guardarOrden
-- **vehiculos.mts** (130 líneas): Para Finanzas: por cada coche de la web enlazado a una ficha, su reacondicionamiento interno y su compra.
-  - exporta: v, FASES, Fase, FASE_TXT, Actualizacion, Hora, Coste, PiezaV, Ficha, Cfg, rid, ahora, leerCfg, leerFicha, guardarFicha, listarFichas, siguienteRef, minTotal, costeHoras, costePiezas, costeOtros, costePendiente, costeReacond, desglose, costesPorCoche, anotarPieza, devolverPieza, TIPOS_TAREA, TipoTarea, Tarea, leerTarea, guardarTarea, listarTareas, calculoTarea, etiquetaTarea, tareaEnMarcha, tareaAutoPausar, tareaAutoReanudar
+- **vehiculos.mts** (155 líneas): * Nombre con el que Finanzas y Caja conocen a una ficha: el coche de la web enlazado o, si no está enlazada, * «vp-» + el id de la ficha (coche propio interno). Así TODO coche propio cuenta en Finanzas, esté o no en la web.
+  - exporta: v, FASES, Fase, FASE_TXT, Actualizacion, Hora, Coste, PiezaV, Ficha, Cfg, rid, ahora, leerCfg, leerFicha, guardarFicha, listarFichas, siguienteRef, minTotal, costeHoras, costePiezas, costeOtros, costePendiente, costeReacond, desglose, VP_PREFIJO, idFinanzas, esIdPropio, costesPorCoche, propiosSinEnlazar, anotarPieza, devolverPieza, TIPOS_TAREA, TipoTarea, Tarea, leerTarea, guardarTarea, listarTareas, calculoTarea, etiquetaTarea, tareaEnMarcha …
 - **ventas.mts** (55 líneas): MOTOR DE VENTAS (método Chris Voss) · reglas comunes a WhatsApp, Messenger e Instagram Funciones puras (sin red ni base de datos) para poder probarlas y usarlas desde cualquier canal: · sanear(texto) filtro de salida: ninguna respuesta del agente sale con una frase prohibida · enHorario(ahora, ...) ¿está una persona atendiendo? L–V 08:00–16:00 hora de Canarias, sin días cerrados · primeraGestion(...) fuera de horario…
   - exporta: HORA_GESTION, PROHIBIDAS, sanear, tieneProhibidas, esLaborable, enHorario, primeraGestion
 
 ## 3. Páginas HTML (`public`)
 
 - **public/404.html** (36 líneas, 1 KB): Página no encontrada | Volcano Cars
-- **public/admin.html** (9513 líneas, 1147 KB): Panel Volcano Cars
+- **public/admin.html** (9522 líneas, 1149 KB): Panel Volcano Cars
   - vistas: v-empty, v-up, v-cancel, v-bar, v-ok, v-change, v-rm, v-err
   - pestañas del panel: agenda, alm, ayuda, caja, coches, dash, fin, jornada, leads, ordenes, resp
   - scripts: /cartel-fichaje.js, /panel-app.js, /panel-guiado.js, /panel-mejoras.js, /panel-plus.js, /panel-precios.js, /panel-shell.js, /panel-sistemas.js
@@ -416,6 +416,8 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
 - **tools/pruebas/e2e-plegables.py** (77 líneas): (sin descripción)
 - **tools/pruebas/e2e-presencia-panel.py** (105 líneas): (sin descripción)
 - **tools/pruebas/e2e-presencia.mjs** (193 líneas): PRUEBA DEL ANTITRAMPA DEL FICHAJE (actualización 44) Ejecuta las funciones reales de netlify/functions con un almacén en memoria. Uso: bun tools/pruebas/e2e-presencia.mjs (necesita el @netlify/blobs de pruebas, ver LEEME.md)
+- **tools/pruebas/e2e-propios-finanzas.mjs** (158 líneas): PRUEBA «COCHE PROPIO SIN ENLAZAR → FINANZAS Y CAJA AL CÉNTIMO» (actualización 60) Ejecuta las funciones reales de netlify/functions con un almacén en memoria y recorre el panel con cada puesto: Gerente (contraseña), Lestter (puesto Gerente con PIN), Calidad, Recepción y Mecánico. Uso (en el ordenador del desarrollador, con bun): bun tools/pruebas/e2e-propios-finanzas.mjs Necesita un @netlify/blobs de pruebas en node_…
+- **tools/pruebas/e2e-propios-venta-panel.py** (59 líneas): (sin descripción)
 - **tools/pruebas/e2e-seguridad.mjs** (32 líneas): Prueba de seguridad: bloqueo del PIN por usuario y manuales privados. Uso: bun tools/pruebas/e2e-seguridad.mjs
 - **tools/pruebas/e2e-shell.py** (39 líneas): (sin descripción)
 - **tools/pruebas/e2e-tareas-panel.py** (78 líneas): (sin descripción)
@@ -479,4 +481,4 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
 - `public/vfx/`: 72 archivos
 
 ---
-Total de líneas de código indexadas: 56569.
+Total de líneas de código indexadas: 56854.

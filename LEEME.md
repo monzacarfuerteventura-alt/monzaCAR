@@ -537,3 +537,12 @@ Objetivo: que cualquier empleado nuevo sepa usar el panel y que la web impida lo
 
 ## Actualización 59-2 · icono de la empresa (favicon) para Google
 Acumulativa: incluye la 59-1 (y con ella la 57 y la 58). Genera iconos de 16, 32, 48, 96, 180, 192 y 512 px con el logo del volcán, los enlaza con `?v=2` en todas las páginas (también las legales, 404 y las plantillas del servidor) y cumple la regla de Google (múltiplo de 48 px). El manifiesto ya apunta a iconos que existen.
+
+## Actualización 60 · coches propios sin enlazar cuentan en Finanzas y Caja
+Solo cambia el panel y el servidor de Finanzas/Coches propios (la web pública NO cambia). Antes, un coche que entra dañado por **Taller → Coches propios** y no estaba enlazado a un coche de la web no aparecía en Finanzas: ni lo invertido (compra + piezas + horas + costes), ni la venta, ni el cobro en caja. Ahora cuenta como un coche más, con los céntimos exactos:
+- Entra dañado: «+ Coche que entra» (compra y precio previsto los pone el gerente). Las piezas se cargan desde el Inventario (descuentan stock) y las horas y costes se anotan en la ficha. Finanzas lo muestra en «En stock: lo invertido».
+- Al venderlo: «Marcar como vendido» abre «Registrar la venta» de Finanzas (precio final, IGIC, comprador, nº de factura y forma de cobro). Si cobras en efectivo entra en la Caja; si es transferencia o tarjeta, no toca el cajón. Al guardar, la ficha queda «Vendido» con el mismo precio.
+- La **compra** sale siempre de la ficha (una sola cifra): en Finanzas no se edita para estos coches.
+- Beneficio = base de venta − compra − (piezas + horas + costes aprobados), igual en la ficha y en Finanzas.
+Reglas de seguridad: un coche con venta o gastos ya anotados no se puede enlazar después a la web; la venta no se registra hasta que el coche está «Listo para venta».
+

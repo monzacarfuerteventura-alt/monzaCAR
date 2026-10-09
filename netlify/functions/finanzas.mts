@@ -2,7 +2,7 @@ import type { Config } from "@netlify/functions";
 import { createHash } from "node:crypto";
 import { store, json, mismoOrigen, type Car } from "../lib/shared.mts";
 import { quien, hoyCanarias, leerConfig, type Quien } from "../lib/taller.mts";
-import { costesPorCoche } from "../lib/vehiculos.mts";
+import { costesPorCoche, propiosSinEnlazar, esIdPropio, leerFicha, guardarFicha } from "../lib/vehiculos.mts";
 import { todosLosRegistros } from "../lib/facturas.mts";
 import { anotarSeguro } from "../lib/libro.mts";
 import { str, cent, eur, esFoto, rid, ahora, listar as listarCaja, movsDe, turnoAbierto, crearMovimiento, leerMov, libro as libroCaja, s as sCaja, teorico, type Turno, type Mov } from "../lib/caja.mts";
@@ -84,11 +84,14 @@ async function porCaja(q: Quien, datos: any, origin: string) {
 }
 
 async function resumen(desde: string, hasta: string) {
-  const [ords, cars, gastos, ingresosM, ventas, costes, clasif, cobrosT, cfg, propios] = await Promise.all([
+  const [ords, carsWeb, gastos, ingresosM, ventas, costes, clasif, cobrosT, cfg, propios, sinEnlazar] = await Promise.all([
     (async () => { const s = store("ordenes"); const { blobs } = await s.list({ prefix: "o/" }); return (await Promise.all(blobs.map((b) => s.get(b.key, { type: "json" })))).filter(Boolean) as any[]; })(),
     (async () => ((await store("monzacar").get("coches", { type: "json" }).catch(() => null)) as Car[] | null) || [])(),
-    lista<Gasto>("gasto/"), lista<Ingreso>("ingreso/"), lista<Venta>("venta/"), lista<any>("coste/"), lista<any>("clasif/"), lista<{ token: string; cobros: Cobro[] }>("cobro-taller/"), leerConfig(), costesPorCoche(),
+    lista<Gasto>("gasto/"), lista<Ingreso>("ingreso/"), lista<Venta>("venta/"), lista<any>("coste/"), lista<any>("clasif/"), lista<{ token: string; cobros: Cobro[] }>("cobro-taller/"), leerConfig(), costesPorCoche(), propiosSinEnlazar(),
   ]);
+  // Los coches propios sin enlazar a la web (vp-…) cuentan como un coche más: stock invertido, venta, cobros y beneficio al céntimo
+  // (si su venta ya está apuntada en Finanzas deja de contar como stock aunque la ficha aún no esté cerrada)
+  const cars = [...carsWeb, ...sinEnlazar.map((c) => (ventas.some((v) => v.coche === c.id) ? { ...c, estado: "vendido" as const } : c))];
   // Actualización 11: presupuesto aceptado -> factura emitida (FORM-14). Cada orden toma el número y el importe de su última factura (F o R).
   const facDeOrden = new Map<string, any>();
   for (const r of ((await todosLosRegistros().catch(() => [])) as any[])) if (r.serie !== "H" && r.orden) facDeOrden.set(r.orden, r);
@@ -125,7 +128,7 @@ async function resumen(desde: string, hasta: string) {
     const c = carDe.get(id), v = ventas.find((x) => x.coche === id), co = costeDe.get(id);
     const caja = movs.filter((m) => m.tipo === "ingreso" && m.coche === id && !usadosCaja.has(m.id));
     const total = v ? v.importe : Math.round((c?.precio || 0) * 100), igic = v ? v.igicPct : 0, base = Math.round(total / (1 + igic / 100));
-    const compra = v?.costeCompra ?? co?.compra ?? propios.get(id)?.compra ?? 0;
+    const compra = esIdPropio(id) && propios.has(id) ? propios.get(id)!.compra : (v?.costeCompra ?? co?.compra ?? propios.get(id)?.compra ?? 0);
     // Reacondicionamiento = gastos apuntados a este coche + piezas, horas y costes aprobados de su ficha en Taller → Coches propios
     const reac = gastos.filter((g) => !g.anulado && g.coche === id).reduce((a, g) => a + g.base, 0) + (propios.get(id)?.reac || 0);
     const cobrado = [...(v?.cobros || []).filter((x) => !x.anulado).map((x) => ({ ...x, origen: "finanzas" })), ...caja.map((m) => ({ id: m.id, fecha: diaDe(m.t), metodo: "efectivo", importe: m.importe, cajaMov: m.id, nota: "Cobrado en caja por " + m.porNombre, origen: "caja" }))];
@@ -319,7 +322,8 @@ export default async (req: Request) => {
       const cars = ((await store("monzacar").get("coches", { type: "json" }).catch(() => null)) as Car[] | null) || [], car = cars.find((x) => x.id === id2);
       const v = (await f().get("venta/" + id2, { type: "json" }).catch(() => null)) as Venta | null;
       if (!v) return json({ error: "Primero registra los datos de la venta de este coche." }, 409);
-      concepto = `Cobro venta · ${car ? car.marca + " " + car.modelo : id2}`; ref = v.factura;
+      const fp = esIdPropio(id2) ? await leerFicha(id2.slice(3)) : null;
+      concepto = `Cobro venta · ${car ? car.marca + " " + car.modelo : fp ? fp.marca + " " + fp.modelo : id2}`; ref = v.factura;
       { const ya = (v.cobros || []).filter((x: any) => !x.anulado).reduce((n: number, x: any) => n + (x.importe || 0), 0);
         if ((v.cobros || []).some((x: any) => !x.anulado && x.importe === importe && x.metodo === metodo && hace(x.t) < RECIENTE)) return json({ error: DUP_COBRO, duplicado: true }, 409);
         if (v.importe > 0 && ya + importe > v.importe + 1 && !body.confirmarExceso) return json({ error: `Con este cobro se pasa del precio de venta (${eur(v.importe)}; ya cobrado ${eur(ya)}). Revisa el importe.`, exceso: true }, 409); }
@@ -335,19 +339,28 @@ export default async (req: Request) => {
 
   // ---------- datos de la venta de un coche ----------
   if (accion === "venta" && req.method === "POST") {
-    const cars = ((await store("monzacar").get("coches", { type: "json" }).catch(() => null)) as Car[] | null) || [], car = cars.find((x) => x.id === id);
+    const cars = ((await store("monzacar").get("coches", { type: "json" }).catch(() => null)) as Car[] | null) || [];
+    // Coche propio sin enlazar a la web (vp-…): la venta se anota aquí igual que la de un coche de la web, y su compra la fija la ficha
+    const ficha = esIdPropio(id) ? await leerFicha(id.slice(3)) : null;
+    if (esIdPropio(id) && (!ficha || ficha.coche)) return json({ error: "Coche propio no encontrado (o ya está enlazado a un coche de la web: registra su venta desde ese coche)." }, 404);
+    const car = ficha ? ({ marca: ficha.marca, modelo: ficha.modelo } as Car) : cars.find((x) => x.id === id);
     if (!car) return json({ error: "Coche no encontrado." }, 404);
     const importe = cent(body.importe); if (!Number.isFinite(importe) || importe <= 0) return json({ error: "Escribe el precio final de venta." }, 400);
-    const costeCompra = cent(body.costeCompra); if (!Number.isFinite(costeCompra) || costeCompra < 0) return json({ error: "Escribe lo que costó comprar el coche (0 si no lo sabes aún)." }, 400);
+    const costeCompra = ficha ? ficha.compra : cent(body.costeCompra);
+    if (!Number.isFinite(costeCompra) || costeCompra < 0) return json({ error: "Escribe lo que costó comprar el coche (0 si no lo sabes aún)." }, 400);
+    if (ficha && ficha.fase !== "listo" && ficha.fase !== "vendido") return json({ error: "Este coche aún no está «Listo para venta». Pasa antes por la reparación y el control de calidad." }, 409);
     const d = fecha(body.fecha) || hoyCanarias(); if (d > hoyCanarias()) return json({ error: "La fecha no puede ser futura." }, 400);
     const prev = (await f().get("venta/" + id, { type: "json" }).catch(() => null)) as Venta | null;
     const v: Venta = { coche: id, fecha: d, importe, igicPct: Math.min(30, Math.max(0, Number(String(body.igicPct ?? 0).replace(",", ".")) || 0)), comprador: str(body.comprador, 120), factura: str(body.factura, 40), costeCompra, nota: str(body.nota, 300), cobros: prev?.cobros || [], t: ahora() };
     await f().setJSON("venta/" + id, v);
+    // Si la ficha ya estaba «Vendido», su base de venta sigue al precio de Finanzas (una sola cifra)
+    if (ficha && ficha.vendido) { ficha.vendido.base = Math.round(importe / (1 + v.igicPct / 100)); await guardarFicha(ficha); }
     await f().setJSON("coste/" + id, { coche: id, compra: costeCompra, t: ahora() });
     await libro(q, prev ? "venta-editada" : "venta", { coche: `${car.marca} ${car.modelo}`, importe, costeCompra });
     return json({ ok: true, venta: v });
   }
   if (accion === "coste" && req.method === "POST") {
+    if (esIdPropio(id)) return json({ error: "La compra de un coche propio se cambia en su ficha (Taller → Coches propios → Editar datos): así hay una sola cifra y Finanzas y la ficha siempre coinciden." }, 409);
     const compra = cent(body.compra); if (!Number.isFinite(compra) || compra < 0) return json({ error: "Escribe el coste de compra." }, 400);
     await f().setJSON("coste/" + id, { coche: id, compra, proveedor: str(body.proveedor, 120), t: ahora() });
     await libro(q, "coste-compra", { coche: id, compra });

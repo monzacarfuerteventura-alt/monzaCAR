@@ -6,7 +6,7 @@
 // Las piezas salen del Inventario (descuento de stock con su movimiento); las horas y otros costes se anotan aquí;
 // Finanzas suma todo al «reacondicionamiento» del coche cuando la ficha está enlazada a un coche de la web.
 // =====================================================================
-import { store } from "./shared.mts";
+import { store, type Car } from "./shared.mts";
 
 export const v = () => store("vehiculos");
 export const FASES = ["entrada", "reparacion", "calidad", "listo", "vendido"] as const;
@@ -60,15 +60,40 @@ export const desglose = (f: Ficha) => {
   return { horas, piezas, otros, pendiente: costePendiente(f), reacondicionamiento: reac, compra: f.compra, total: f.compra + reac, previsto, beneficio: previsto ? previsto - f.compra - reac : null };
 };
 
-/** Para Finanzas: por cada coche de la web enlazado a una ficha, su reacondicionamiento interno y su compra. */
+/**
+ * Nombre con el que Finanzas y Caja conocen a una ficha: el coche de la web enlazado o, si no está enlazada,
+ * «vp-» + el id de la ficha (coche propio interno). Así TODO coche propio cuenta en Finanzas, esté o no en la web.
+ */
+export const VP_PREFIJO = "vp-";
+export const idFinanzas = (f: Pick<Ficha, "id" | "coche">) => f.coche || VP_PREFIJO + f.id;
+export const esIdPropio = (id: string) => /^vp-[a-z0-9]{12}$/.test(String(id || ""));
+
+/** Para Finanzas: por cada coche propio (enlazado a la web o no), su reacondicionamiento interno y su compra. */
 export async function costesPorCoche(): Promise<Map<string, { reac: number; compra: number }>> {
   const m = new Map<string, { reac: number; compra: number }>();
   for (const f of await listarFichas().catch(() => [] as Ficha[])) {
-    if (!f.coche) continue;
-    const x = m.get(f.coche) || { reac: 0, compra: 0 };
-    x.reac += costeReacond(f); x.compra += f.compra; m.set(f.coche, x);
+    const k = idFinanzas(f);
+    const x = m.get(k) || { reac: 0, compra: 0 };
+    x.reac += costeReacond(f); x.compra += f.compra; m.set(k, x);
   }
   return m;
+}
+
+/**
+ * Los coches propios SIN enlazar, con la forma de un coche de la web, solo para que Finanzas los cuente (stock invertido,
+ * ventas, beneficio). Nunca se publican ni salen en /inventario.json: esto solo vive dentro del resumen de Finanzas.
+ * El precio es el previsto (o, si ya se vendió, la base de venta), siempre en euros con los céntimos exactos.
+ */
+export async function propiosSinEnlazar(): Promise<Car[]> {
+  return (await listarFichas().catch(() => [] as Ficha[])).filter((f) => !f.coche).map((f) => {
+    const cent = f.vendido ? f.vendido.base : f.precioPrevisto;
+    return {
+      id: idFinanzas(f), marca: f.marca, modelo: f.modelo, version: [f.version, f.matricula].filter(Boolean).join(" · "), anio: f.anio, km: f.km,
+      combustible: "", cambio: "", cv: null, puertas: null, color: f.color, etiqueta: "", precio: cent / 100, descripcion: "", equipamiento: [], fotos: [],
+      estado: f.fase === "vendido" ? "vendido" : "disponible", destacado: false, creado: f.creado, actualizado: f.actualizado,
+      ...(f.vendido ? { vendidoEn: f.vendido.fecha + "T12:00:00Z" } : {}),
+    } as Car;
+  });
 }
 
 /** Lo llama el Inventario cuando una pieza sale para un coche propio (o vuelve). El movimiento del almacén sigue siendo la fuente de verdad. */

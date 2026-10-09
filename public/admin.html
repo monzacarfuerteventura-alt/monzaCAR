@@ -5480,7 +5480,7 @@ function fnCoches(){
   return `<section class="card"><h3>Coches: beneficio por unidad</h3>
    ${v.length?`<div class="tabla-wrap"><table class="tabla fn-t"><thead><tr><th>Vendido</th><th>Coche</th><th class="n">Venta</th><th class="n">Compra</th><th class="n">Reacond.</th><th class="n">Beneficio</th><th></th></tr></thead><tbody>${v.map(c=>`<tr><td class="num">${esc(tF(c.fecha))}</td><td><b>${esc(c.nombre)}</b>${c.estimado?'<small class="cj-ambar">precio estimado</small>':""}${c.sinCoste?'<small class="cj-ambar">falta coste de compra</small>':""}</td><td class="n num">${cjE(c.base)}</td><td class="n num">${cjE(c.compra)}</td><td class="n num">${cjE(c.reacondicionamiento)}</td><td class="n num"><b class="${c.beneficio<0?"cj-rojo":"cj-verde"}">${cjD(c.beneficio)}</b><small>${c.base?fnPctTxt(fnPct(c.beneficio,c.base)):""}</small></td><td class="n"><button type="button" class="chipb" data-fnventa="${esc(c.coche)}">Editar</button></td></tr>`).join("")}</tbody></table></div>`:'<p class="hint">Ningún coche vendido en este periodo.</p>'}
    <h4 class="fn-h4">En stock: lo invertido</h4>
-   ${s.length?`<div class="tabla-wrap"><table class="tabla fn-t"><thead><tr><th>Coche</th><th class="n">Precio anunciado</th><th class="n">Compra</th><th class="n">Reacond.</th><th class="n">Margen si se vende al anunciado</th><th></th></tr></thead><tbody>${s.map(c=>{ const m=c.precio-c.compra-c.reacondicionamiento; return `<tr><td><b>${esc(c.nombre)}</b></td><td class="n num">${cjE(c.precio)}</td><td class="n num">${c.compra?cjE(c.compra):'<span class="cj-ambar">sin dato</span>'}</td><td class="n num">${cjE(c.reacondicionamiento)}</td><td class="n num">${c.compra?`<b class="${m<0?"cj-rojo":""}">${cjD(m)}</b>`:"—"}</td><td class="n"><button type="button" class="chipb" data-fncoste="${esc(c.coche)}" data-txt="${esc(c.nombre)}" data-v="${c.compra}">Coste de compra</button></td></tr>`; }).join("")}</tbody></table></div><p class="hint">La compra de coches para stock no es un gasto del negocio: se descuenta de su venta al calcular el beneficio.</p>`:'<p class="hint">No hay coches en stock.</p>'}</section>`;
+   ${s.length?`<div class="tabla-wrap"><table class="tabla fn-t"><thead><tr><th>Coche</th><th class="n">Precio anunciado</th><th class="n">Compra</th><th class="n">Reacond.</th><th class="n">Margen si se vende al anunciado</th><th></th></tr></thead><tbody>${s.map(c=>{ const m=c.precio-c.compra-c.reacondicionamiento; return `<tr><td><b>${esc(c.nombre)}</b></td><td class="n num">${cjE(c.precio)}</td><td class="n num">${c.compra?cjE(c.compra):'<span class="cj-ambar">sin dato</span>'}</td><td class="n num">${cjE(c.reacondicionamiento)}</td><td class="n num">${c.compra?`<b class="${m<0?"cj-rojo":""}">${cjD(m)}</b>`:"—"}</td><td class="n">${/^vp-/.test(c.coche)?'<small class="hint">Coche propio: su ficha</small>':`<button type="button" class="chipb" data-fncoste="${esc(c.coche)}" data-txt="${esc(c.nombre)}" data-v="${c.compra}">Coste de compra</button>`}</td></tr>`; }).join("")}</tbody></table></div><p class="hint">La compra de coches para stock no es un gasto del negocio: se descuenta de su venta al calcular el beneficio.</p>`:'<p class="hint">No hay coches en stock.</p>'}</section>`;
 }
 
 /* ---------- diálogos ---------- */
@@ -5568,13 +5568,17 @@ function fnCobro(tipo,ref,pend,txt){
       d.close(); toast("Cobro registrado"+(met==="efectivo"?" y sumado a la caja":"")); fnCargar(); }catch(err){ fnErr(err.message); }
     $("#fn-ok").disabled=false; };
 }
-async function fnVenta(id){
-  if(!FN_CARS) try{ FN_CARS=await api("/api/coches?todos=1"); }catch(_){ FN_CARS=CARS||[]; }
-  const c=(FN_CARS||[]).find(x=>x.id===id)||(CARS||[]).find(x=>x.id===id); if(!c) return toast("Coche no encontrado");
+async function fnVenta(id,alTerminar){
+  let c=null, vpf=null; /* vpf: ficha de un coche propio sin enlazar a la web (id «vp-…»); su compra la fija la ficha */
+  if(/^vp-/.test(id)){ try{ vpf=await api("/api/vehiculos/ficha/"+encodeURIComponent(id.slice(3))); }catch(err){ return toast(err.message); }
+    c={marca:vpf.marca,modelo:vpf.modelo,version:[vpf.version,vpf.matricula].filter(Boolean).join(" · "),precio:(vpf.precioPrevisto||0)/100}; }
+  else { if(!FN_CARS) try{ FN_CARS=await api("/api/coches?todos=1"); }catch(_){ FN_CARS=CARS||[]; }
+    c=(FN_CARS||[]).find(x=>x.id===id)||(CARS||[]).find(x=>x.id===id); }
+  if(!c) return toast("Coche no encontrado");
   const v=FN&&FN.coches.find(x=>x.coche===id);
-  const d=fnDlg(`<form id="f-fn" novalidate><h2>Registrar la venta</h2><p class="hint"><b>${esc(c.marca+" "+c.modelo+" "+(c.version||""))}</b> · anunciado a ${cjE(Math.round(c.precio*100))}. Con estos datos se calcula el beneficio real del coche.</p>
+  const d=fnDlg(`<form id="f-fn" novalidate><h2>Registrar la venta</h2><p class="hint"><b>${esc(c.marca+" "+c.modelo+" "+(c.version||""))}</b> · ${vpf?"precio previsto (sin IGIC) ":"anunciado a "}${cjE(Math.round(c.precio*100))}. Con estos datos se calcula el beneficio real del coche.${vpf?" Es un coche propio interno: su compra, piezas y horas salen de su ficha.":""}</p>
     <div class="t-g2"><div class="field"><label for="fn-importe">Precio final de venta (€) *</label><input class="in num cj-imp" id="fn-importe" inputmode="decimal" value="${v&&!v.estimado?(v.precio/100).toFixed(2).replace(".",","):String(c.precio).replace(".",",")}"></div>
-    <div class="field"><label for="fn-compra">Lo que costó comprarlo (€) *</label><input class="in num cj-imp" id="fn-compra" inputmode="decimal" value="${v&&v.compra?(v.compra/100).toFixed(2).replace(".",","):""}" placeholder="0,00"></div></div>
+    <div class="field"><label for="fn-compra">Lo que costó comprarlo (€) *</label><input class="in num cj-imp" id="fn-compra" inputmode="decimal" ${vpf?"readonly ":""}value="${vpf?(vpf.compra/100).toFixed(2).replace(".",","):v&&v.compra?(v.compra/100).toFixed(2).replace(".",","):""}" placeholder="0,00">${vpf?'<small class="hint">Viene de la ficha del coche. Para cambiarla: Taller → Coches propios → Editar datos.</small>':""}</div></div>
     <div class="t-g2"><div class="field"><label for="fn-fecha">Fecha de venta</label><input class="in" type="date" id="fn-fecha" value="${v?v.fecha:hoyC()}" max="${hoyC()}"></div><div class="field"><label for="fn-imp">Impuesto incluido en el precio</label><select class="in" id="fn-imp"><option value="0">Sin desglosar (REBU u otro: lo ve tu gestoría)</option><option value="7">7 % IGIC</option><option value="21">21 % IVA</option></select></div></div>
     <div class="t-g2"><div class="field"><label for="fn-cli">Comprador</label><input class="in" id="fn-cli" maxlength="120"></div><div class="field"><label for="fn-fact">Nº de factura o contrato</label><input class="in" id="fn-fact" maxlength="40"></div></div>
     ${!v||v.estimado?`<div class="field"><label>Forma de pago de lo cobrado ahora</label>${fnSeg("fn-met",[...FN_COBRO,["","Aún sin cobrar"]],"")}<small class="hint">El reacondicionamiento (gastos con este coche) se descuenta solo.</small></div><div class="msg bad" id="fn-aviso" hidden>Ojo: en España los pagos en efectivo de 1.000 € o más entre una empresa y un particular no están permitidos (Ley 11/2021). Confírmalo con tu gestoría.</div>`:""}
@@ -5587,7 +5591,7 @@ async function fnVenta(id){
     try{ await api("/api/finanzas/venta/"+encodeURIComponent(id),{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({importe:String(imp),costeCompra:String(compra),fecha:$("#fn-fecha").value,igicPct:$("#fn-imp").value,comprador:$("#fn-cli").value,factura:$("#fn-fact").value})});
       const met=$("#fn-met")?fnSegVal("fn-met"):""; let aviso="";
       if(met){ try{ await fnCobroPost(`/api/finanzas/cobro/venta/${encodeURIComponent(id)}`,{importe:String(imp),metodo:met,fecha:$("#fn-fecha").value}); }catch(err){ aviso=" · el cobro no se pudo guardar: "+err.message; } }
-      d.close(); toast("Venta registrada"+aviso); if(!$("#s-fin").hidden) fnCargar(); }catch(err){ fnErr(err.message); }
+      d.close(); toast("Venta registrada"+aviso); if(!$("#s-fin").hidden) fnCargar(); if(typeof alTerminar==="function") await alTerminar(); }catch(err){ fnErr(err.message); }
     $("#fn-ok").disabled=false; };
 }
 function fnClasificar(mov,txt,imp){
@@ -8151,7 +8155,7 @@ function vpForm(f){
     <div class="t-g2"><div class="field"><label for="vp-col">Color</label><input class="in" id="vp-col" maxlength="30" value="${esc(g("color"))}"></div><div class="field"><label for="vp-vin">Bastidor (VIN)</label><input class="in" id="vp-vin" maxlength="24" value="${esc(g("vin"))}"></div></div>
     <div class="field"><label for="vp-dan">Daños / trabajo a hacer</label><textarea class="in" id="vp-dan" rows="3" maxlength="1000">${esc(g("danos"))}</textarea></div>
     ${adm?`<div class="t-g2"><div class="field"><label for="vp-com">Coste del coche (€)</label><input class="in num" id="vp-com" inputmode="decimal" value="${f?(f.compra/100).toFixed(2).replace(".",","):""}"></div><div class="field"><label for="vp-pre">Precio de venta previsto (€, sin IGIC)</label><input class="in num" id="vp-pre" inputmode="decimal" value="${f&&f.precioPrevisto?(f.precioPrevisto/100).toFixed(2).replace(".",","):""}"></div></div>
-      ${f?`<div class="field"><label for="vp-web">Coche de la web al que corresponde (opcional)</label><select class="in" id="vp-web"><option value="">Sin enlazar (interno)</option>${VP.coches.map(c=>`<option value="${esc(c.id)}" ${c.id===f.coche?"selected":""}>${esc(c.txt)}</option>`).join("")}${f.coche&&!VP.coches.some(c=>c.id===f.coche)?`<option value="${esc(f.coche)}" selected>${esc(f.cocheTxt||f.coche)}</option>`:""}</select><small class="hint">Solo sirve para que Finanzas calcule el beneficio cuando lo vendas. No publica nada.</small></div>`:""}`:'<p class="hint">El precio de compra y el de venta los pone el gerente.</p>'}
+      ${f?`<div class="field"><label for="vp-web">Coche de la web al que corresponde (opcional)</label><select class="in" id="vp-web"><option value="">Sin enlazar (interno)</option>${VP.coches.map(c=>`<option value="${esc(c.id)}" ${c.id===f.coche?"selected":""}>${esc(c.txt)}</option>`).join("")}${f.coche&&!VP.coches.some(c=>c.id===f.coche)?`<option value="${esc(f.coche)}" selected>${esc(f.cocheTxt||f.coche)}</option>`:""}</select><small class="hint">No publica nada. Si lo dejas sin enlazar, Finanzas y Caja lo cuentan igual como coche interno.</small></div>`:""}`:'<p class="hint">El precio de compra y el de venta los pone el gerente.</p>'}
     <div class="msg bad" id="vp-err" hidden></div>
     <div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-vpcancel>Cancelar</button><button type="submit" class="btn b-acc" id="vp-ok">Guardar</button></div></form>`);
   $("#f-vp").onsubmit=async e=>{ e.preventDefault();
@@ -8163,19 +8167,24 @@ function vpForm(f){
     catch(err){ vpErr(err.message); $("#vp-ok").disabled=false; } };
 }
 function vpFaseDlg(fase){
-  const f=vpFicha(), txt=VP.fases.find(x=>x[0]===fase)[1], pideNota=(f.fase==="calidad"&&fase==="reparacion")||(f.fase==="listo"&&fase==="reparacion"), pideVenta=fase==="vendido"&&!f.coche;
+  const f=vpFicha(), txt=VP.fases.find(x=>x[0]===fase)[1], pideNota=(f.fase==="calidad"&&fase==="reparacion")||(f.fase==="listo"&&fase==="reparacion"), pideVenta=fase==="vendido"&&!f.coche, moverFase=async()=>{ const b={fase,nota:($("#vp-nota")?$("#vp-nota").value:"").trim()}; const r=await vpPost("fase/"+f.id,b); vpPon(r.ficha); toast("Fase cambiada: "+txt); vpPintar(); };
   const d=vpDlg(`<form id="f-vp" novalidate><h2>Pasar a «${esc(txt)}»</h2>
     ${fase==="listo"?'<p class="hint">Confirma que has revisado el coche. Esto es solo un estado interno: no lo publica en la web.</p>':""}
     ${pideNota?'<p class="hint">Explica qué hay que repetir o por qué se reabre.</p>':""}
-    ${pideVenta?'<div class="field"><label for="vp-base">Precio de venta final (€, sin IGIC) *</label><input class="in num" id="vp-base" inputmode="decimal"></div>':fase==="vendido"?'<p class="hint">Este coche está enlazado con la web: márcalo «Vendido» en Coches y registra la venta en Finanzas antes. El beneficio real sale de Finanzas.</p>':""}
+    ${pideVenta?'<p class="hint">Se abrirá el registro de la venta en Finanzas (precio final, comprador y cobro). Así la caja y Finanzas cuadran con esta ficha al céntimo.</p>':fase==="vendido"?'<p class="hint">Este coche está enlazado con la web: márcalo «Vendido» en Coches y registra la venta en Finanzas antes. El beneficio real sale de Finanzas.</p>':""}
     <div class="field"><label for="vp-nota">Nota ${pideNota?"*":"(opcional)"}</label><textarea class="in" id="vp-nota" rows="2" maxlength="400"></textarea></div>
     <div class="msg bad" id="vp-err" hidden></div>
     <div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-vpcancel>Cancelar</button><button type="submit" class="btn b-acc" id="vp-ok">Confirmar</button></div></form>`);
   $("#f-vp").onsubmit=async e=>{ e.preventDefault(); const nota=$("#vp-nota").value.trim();
     if(pideNota&&nota.length<8) return vpErr("Explícalo con algo más de detalle (mínimo 8 letras).");
-    const b={fase,nota}; if(pideVenta){ b.base=$("#vp-base").value; if(!(vpNum(b.base)>0)) return vpErr("Escribe el precio de venta."); }
     $("#vp-ok").disabled=true;
-    try{ const r=await vpPost("fase/"+f.id,b); vpPon(r.ficha); d.close(); toast("Fase cambiada: "+txt); vpPintar(); }catch(err){ vpErr(err.message); $("#vp-ok").disabled=false; } };
+    try{
+      if(pideVenta){ let fx=null; try{ fx=await api("/api/vehiculos/ficha/"+encodeURIComponent(f.id)); }catch(_){}
+        if(fx&&fx.ventaFinanzas===false){ d.close(); fnVenta("vp-"+f.id,async()=>{ try{ await moverFase(); }catch(e2){ toast(e2.message); } }); return; } }
+      await moverFase(); d.close(); }
+    catch(err){
+      if(pideVenta&&/Primero registra la venta/.test(err.message)){ d.close(); fnVenta("vp-"+f.id,async()=>{ try{ await moverFase(); }catch(e2){ toast(e2.message); } }); return; }
+      vpErr(err.message); $("#vp-ok").disabled=false; } };
 }
 function vpHorasDlg(){
   const f=vpFicha();

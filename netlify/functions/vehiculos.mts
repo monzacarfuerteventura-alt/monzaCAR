@@ -6,7 +6,7 @@ import { anotar, leerLibro } from "../lib/libro.mts";
 import {
   FASES, FASE_TXT, rid, ahora, leerCfg, leerFicha, guardarFicha, listarFichas, siguienteRef, desglose, minTotal, v,
   TIPOS_TAREA, leerTarea, guardarTarea, listarTareas, calculoTarea, etiquetaTarea, type Tarea, type TipoTarea,
-  type Ficha, type Fase,
+  type Ficha, type Fase, idFinanzas,
 } from "../lib/vehiculos.mts";
 
 /*
@@ -93,7 +93,10 @@ export default async (req: Request) => {
   }
   if (accion === "ficha" && req.method === "GET") {
     const f = await leerFicha(id); if (!f) return json({ error: "Ficha no encontrada." }, 404);
-    return json(vista(f, q.admin, txtCoche((await nombresCoches()).get(f.coche))));
+    const out = vista(f, q.admin, txtCoche((await nombresCoches()).get(f.coche)));
+    // Solo gerente y solo coches sin enlazar: ¿ya está su venta anotada en Finanzas? (el panel lo usa para abrir el registro de la venta sin dar error)
+    if (q.admin && !f.coche) out.ventaFinanzas = !!(await store("finanzas").get("venta/" + idFinanzas(f)).catch(() => null));
+    return json(out);
   }
   if (accion === "tareas" && req.method === "GET") {
     const todas = (await listarTareas()).sort((a, b) => b.creada.localeCompare(a.creada));
@@ -242,6 +245,19 @@ export default async (req: Request) => {
           const car = (await nombresCoches()).get(cid); if (!car) return json({ error: "Ese coche de la web ya no existe." }, 404);
           if ((await listarFichas()).some((x) => x.id !== f.id && x.coche === cid)) return json({ error: "Ese coche de la web ya está enlazado a otra ficha." }, 409);
         }
+        if (cid && !f.coche) {
+          // Pasar de «interno» a «enlazado» cambiaría el nombre con el que Finanzas y Caja conocen al coche: solo si aún no hay dinero apuntado
+          const fs = store("finanzas"), vp = idFinanzas(f);
+          const venta = await fs.get("venta/" + vp, { type: "json" }).catch(() => null);
+          const { blobs } = await fs.list({ prefix: "gasto/" });
+          const gastos = (await Promise.all(blobs.map((b) => fs.get(b.key, { type: "json" }).catch(() => null)))).filter((g: any) => g && !g.anulado && g.coche === vp);
+          if (venta || gastos.length) return json({ error: "Este coche ya tiene " + (venta ? "su venta" : "gastos") + " anotados en Finanzas como coche interno. Para que todo siga cuadrando no se puede enlazar ahora con un coche de la web." }, 409);
+        }
+        if (!cid && f.coche) {
+          const fs = store("finanzas"), vp = f.coche;
+          const venta = await fs.get("venta/" + vp, { type: "json" }).catch(() => null);
+          if (venta) return json({ error: "La venta de este coche ya está en Finanzas con el coche de la web. No se puede desenlazar." }, 409);
+        }
         f.coche = cid;
       }
     }
@@ -268,8 +284,13 @@ export default async (req: Request) => {
       const base = cent(body.base);
       const car = f.coche ? (await nombresCoches()).get(f.coche) : undefined;
       if (car && car.estado !== "vendido") return json({ error: "Este coche está enlazado a la web y aún no figura como vendido. Márcalo «Vendido» en Coches y registra la venta en Finanzas primero." }, 409);
-      if (!car && (!Number.isFinite(base) || base <= 0)) return json({ error: "Escribe el precio de venta (sin IGIC) para calcular el beneficio." }, 400);
-      f.vendido = { fecha: fecha(body.fecha) || hoyCanarias(), base: car ? f.precioPrevisto : base };
+      // Coche sin enlazar a la web: su venta se registra ANTES en Finanzas (precio, comprador, cobro en caja…) y de ahí sale la base
+      let vf: any = null;
+      if (!f.coche) {
+        vf = await store("finanzas").get("venta/" + idFinanzas(f), { type: "json" }).catch(() => null);
+        if (!vf) return json({ error: "Primero registra la venta en Finanzas (precio final, comprador y cobro). Así la caja y Finanzas cuadran con esta ficha." }, 409);
+      }
+      f.vendido = { fecha: vf ? vf.fecha : fecha(body.fecha) || hoyCanarias(), base: vf ? Math.round(vf.importe / (1 + (Number(vf.igicPct) || 0) / 100)) : car ? f.precioPrevisto : base };
     }
     if ((a === "calidad" && b === "reparacion") && nota.length < 8) return json({ error: "Explica qué hay que repetir (mínimo 8 letras)." }, 400);
     if (a === "listo" && b === "reparacion" && !q.admin) return json({ error: "Reabrir un coche «Listo» lo hace el gerente." }, 403);
