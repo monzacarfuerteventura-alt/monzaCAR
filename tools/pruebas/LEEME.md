@@ -10,4 +10,4 @@ Necesitan **bun** y un `node_modules/@netlify/blobs` de pruebas (almacén en mem
    coordenadas repetidas, mismo móvil, WiFi del taller, desactivar/activar y lo que ve el gerente.
 4. Con `bun tools/pruebas/servidor-local.mjs` **recién arrancado** (datos limpios), `python3 tools/pruebas/e2e-presencia-panel.py` → lo mismo pulsando
    en el panel (Chromium móvil con GPS simulado: en casa, sin permiso y en la nave).
-
+5. Con `bun tools/pruebas/servidor-local.mjs` recién arrancado, `python3 tools/pruebas/e2e-presupuesto-ficha.py` → actualización 61: la hoja de presupuesto FORM-15 se rellena en la ficha (traer de la inspección, totales, borrador oculto al cliente, envío, bloqueo al aceptar), escritorio y móvil.

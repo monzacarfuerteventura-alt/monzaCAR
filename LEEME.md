@@ -546,3 +546,15 @@ Solo cambia el panel y el servidor de Finanzas/Coches propios (la web pública N
 - Beneficio = base de venta − compra − (piezas + horas + costes aprobados), igual en la ficha y en Finanzas.
 Reglas de seguridad: un coche con venta o gastos ya anotados no se puede enlazar después a la web; la venta no se registra hasta que el coche está «Listo para venta».
 
+## Actualización 61 · el presupuesto se rellena en la ficha (FORM-15)
+Solo cambia el panel (la web pública y el servidor NO cambian). Acumulativa: incluye la 60.
+Antes, la pestaña «Presupuesto» de la ficha solo enseñaba un resumen y te mandaba al cajón del cliente. Ahora se rellena ahí mismo, como la recepción y la inspección:
+- Arriba vienen solos el cliente y el coche de la recepción.
+- «Traer de la inspección» copia los puntos en rojo y ámbar de FORM-02 (los rojos primero); tú pones el precio de cada uno.
+- «+ Mano de obra» añade la línea con las horas que estimó la inspección.
+- El total (base, IGIC y total) se calcula mientras escribes, igual que lo ve el cliente.
+- Como borrador se guarda solo y el cliente no lo ve. «Enviar al cliente» lo publica en su enlace; «Avisar por WhatsApp» le manda el aviso.
+- Si ya está enviado y lo cambias, hay que pulsar «Guardar cambios» o «Actualizar y reenviar» (así el cliente nunca ve una línea a medio escribir).
+- Si el cliente lo aceptó, queda bloqueado; «Reabrir» lo deja editable y tendrá que aceptarlo otra vez.
+El cajón «Presupuesto y cliente» sigue funcionando igual y enseña exactamente las mismas cifras.
+

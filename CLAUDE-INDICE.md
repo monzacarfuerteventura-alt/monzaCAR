@@ -238,7 +238,7 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
 ## 3. Páginas HTML (`public`)
 
 - **public/404.html** (36 líneas, 1 KB): Página no encontrada | Volcano Cars
-- **public/admin.html** (9522 líneas, 1149 KB): Panel Volcano Cars
+- **public/admin.html** (9611 líneas, 1161 KB): Panel Volcano Cars
   - vistas: v-empty, v-up, v-cancel, v-bar, v-ok, v-change, v-rm, v-err
   - pestañas del panel: agenda, alm, ayuda, caja, coches, dash, fin, jornada, leads, ordenes, resp
   - scripts: /cartel-fichaje.js, /panel-app.js, /panel-guiado.js, /panel-mejoras.js, /panel-plus.js, /panel-precios.js, /panel-shell.js, /panel-sistemas.js
@@ -416,6 +416,7 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
 - **tools/pruebas/e2e-plegables.py** (77 líneas): (sin descripción)
 - **tools/pruebas/e2e-presencia-panel.py** (105 líneas): (sin descripción)
 - **tools/pruebas/e2e-presencia.mjs** (193 líneas): PRUEBA DEL ANTITRAMPA DEL FICHAJE (actualización 44) Ejecuta las funciones reales de netlify/functions con un almacén en memoria. Uso: bun tools/pruebas/e2e-presencia.mjs (necesita el @netlify/blobs de pruebas, ver LEEME.md)
+- **tools/pruebas/e2e-presupuesto-ficha.py** (89 líneas): (sin descripción)
 - **tools/pruebas/e2e-propios-finanzas.mjs** (158 líneas): PRUEBA «COCHE PROPIO SIN ENLAZAR → FINANZAS Y CAJA AL CÉNTIMO» (actualización 60) Ejecuta las funciones reales de netlify/functions con un almacén en memoria y recorre el panel con cada puesto: Gerente (contraseña), Lestter (puesto Gerente con PIN), Calidad, Recepción y Mecánico. Uso (en el ordenador del desarrollador, con bun): bun tools/pruebas/e2e-propios-finanzas.mjs Necesita un @netlify/blobs de pruebas en node_…
 - **tools/pruebas/e2e-propios-venta-panel.py** (59 líneas): (sin descripción)
 - **tools/pruebas/e2e-seguridad.mjs** (32 líneas): Prueba de seguridad: bloqueo del PIN por usuario y manuales privados. Uso: bun tools/pruebas/e2e-seguridad.mjs
@@ -481,4 +482,4 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
 - `public/vfx/`: 72 archivos
 
 ---
-Total de líneas de código indexadas: 56854.
+Total de líneas de código indexadas: 57032.

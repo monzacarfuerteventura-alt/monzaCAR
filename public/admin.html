@@ -395,6 +395,22 @@ body.dw-open{overflow:hidden}
 .pl .x{width:34px;height:34px}
 @media (max-width:460px){.pl{grid-template-columns:1fr 54px 84px 30px}}
 .tot{margin:12px 0 4px;font-size:15px}
+/* FORM-15 · hoja de presupuesto rellenable en la ficha (actualización 61) */
+.tpre-l{display:grid;grid-template-columns:minmax(0,1fr) 72px 104px 96px 34px;gap:6px;align-items:center;margin-bottom:6px}
+.tpre-l .in{padding:9px 10px;font-size:15px;min-width:0}
+.tpre-l .x{width:34px;height:34px}
+.tpre-h{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.tpre-imp{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.tpre-ro{padding:9px 10px;border-radius:10px;background:var(--surface-2);font-size:15px;min-height:40px;overflow-wrap:anywhere}
+.tpre-tot{display:grid;gap:4px;justify-items:end;font-size:15px;font-variant-numeric:tabular-nums}
+.tpre-tot b.g{font-size:20px}
+.tpre-acc{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tpre-sv{font-size:13px;color:var(--muted)}.tpre-sv.pend{color:var(--accent)}
+@media (max-width:620px){
+  .tpre-h{display:none}
+  .tpre-l{grid-template-columns:minmax(0,1fr) 1fr 1fr 34px;grid-template-areas:"c c c x" "n p i i";padding-bottom:8px;border-bottom:1px dashed var(--line)}
+  .tpre-l [data-plc]{grid-area:c}.tpre-l [data-pln]{grid-area:n}.tpre-l [data-plp]{grid-area:p}.tpre-l .tpre-imp{grid-area:i}.tpre-l .x{grid-area:x}
+}
 .ofotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:10px}
 .ofoto{position:relative;display:grid;gap:4px}
 .ofoto img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block}
@@ -4498,7 +4514,7 @@ function tSaveBar(){ const s=$("#tf-save"); if(!s) return; const k=TF_TAB;
   s.innerHTML=`<span class="t-sv ${TDIRTY?"pend":""}">${TSAVING?"Guardando…":TDIRTY?"Cambios sin guardar":TSAVED?"Guardado a las "+TSAVED:"Se guarda solo mientras escribes"}</span><button type="button" class="btn b-ghost b-sm" data-tguardar>Guardar</button><button type="button" class="btn b-acc b-sm" data-tcerrar>${cerrar}</button>`;
 }
 async function tGuardar(cerrar,quieto){
-  const cual=cerrar?TF_TAB:(TDIRTY||(quieto?null:TF_TAB)); if(!["f1","f2","f4","f5"].includes(cual)){ TDIRTY=false; return; }
+  const cual=cerrar?TF_TAB:(TDIRTY||(quieto?null:TF_TAB)); if(cual==="pre"){ await tPreGuardar(!!quieto,false); return; } if(!["f1","f2","f4","f5"].includes(cual)){ TDIRTY=false; return; }
   if(!tEditable(cual)){ TDIRTY=false; return; }
   const body=tClone(TW[cual]); if(cerrar) body.cerrar=true;
   if(cual==="f1"&&cerrar){ const falta=tFaltaF1(); if(falta.length){ tFaltan(falta); return; } }
@@ -5034,13 +5050,86 @@ function tP4(){ const x=TF.fichas.f4; if(!x) return '<p class="tp-vacio">Pendien
   <div class="tp-cols">${secs.map(([S,t,items])=>`<table class="tp-t tp-sem"><thead><tr><th colspan="3">${S} · ${t}</th></tr></thead><tbody>${items.map(([id,tt])=>`<tr class="v-${x.items[id]||"x"}"><td>${id.toUpperCase()}</td><td>${tt}${x.notas[id]?`<small>${esc(x.notas[id])}</small>`:""}</td><td class="c"><b>${L[x.items[id]]||""}</b></td></tr>`).join("")}</tbody></table>`).join("")}</div>
   ${tpKV([[["Resultado",`<b>${esc(T_RES[x.resultado]||"")}</b>`],["Motivo / observaciones",esc(x.motivo)]]])}
   <div class="tp-2">${tpFirma("Control de calidad (persona distinta del mecánico)",x.firma)}${tpFirma("Cierre del gerente",x.cierreGerente?{nombre:tNombre(x.cierreGerente.por),t:x.cierreGerente.t}:null)}</div>`; }
-function tPre(){ const o=TF.orden, p=o.presupuesto, L=p&&p.lineas||[];
-  const base=Math.round(L.reduce((a,l)=>a+l.n*l.p,0)*100)/100, ig=p?Math.round(base*(p.igic/100)*100)/100:0;
-  const est=tEstadoFicha("pre")[1];
-  return `<section class="t-sec"><h3>Presupuesto · FORM-15 <em class="t-st ${tEstadoFicha("pre")[0]}">${esc(est)}</em></h3>
-  ${L.length?`<div class="t-tabla-wrap"><table class="t-tabla"><thead><tr><th>Concepto</th><th class="n">Cant.</th><th class="n">Precio ud.</th><th class="n">Importe</th></tr></thead><tbody>${L.map(l=>`<tr><td>${esc(l.c)}</td><td class="n num">${esc(String(l.n).replace(".",","))}</td><td class="n num">${eur(l.p)}</td><td class="n num">${eur(l.n*l.p)}</td></tr>`).join("")}</tbody></table></div>
-  <p class="hint">Base ${eur(base)} · IGIC ${esc(String(p.igic).replace(".",","))} % ${eur(ig)} · <b>Total ${eur(base+ig)}</b>${p.validez?" · válido hasta "+esc(tF(p.validez)):""}${p.nota?"<br>"+esc(p.nota):""}</p>`:`<p class="hint">Todavía no hay presupuesto para esta orden. Se prepara con lo que salga de la inspección.</p>`}
-  <div class="t-facts"><button type="button" class="btn b-acc b-sm" data-tdrawer>${L.length?"Abrir y editar el presupuesto":"Crear el presupuesto"}</button>${tBlancoBtn("pre")}</div></section>`; }
+/* ---------- FORM-15 · presupuesto rellenable (actualización 61) ----------
+   Se rellena aquí, como la recepción y la inspección. Guarda en la misma orden que el cajón del cliente
+   (PATCH /api/ordenes/:token), así que el enlace, el WhatsApp y las cifras son los mismos. */
+let TPRE=null;
+const tPreEst=()=>{ const p=TF&&TF.orden.presupuesto; return p?p.estado:"nuevo"; };
+const tPreR2=x=>Math.round(x*100)/100;
+function tPreTot(P){ const base=tPreR2(P.lineas.reduce((a,l)=>a+(l.n||0)*(l.p||0),0)), ig=tPreR2(base*(P.igic/100)); return {base,ig,total:tPreR2(base+ig)}; }
+function tPreInit(){ const o=TF.orden, p=o.presupuesto;
+  if(TPRE&&TPRE.token===o.token&&TPRE.sucio) return;
+  const v=new Date(Date.now()+15*864e5), val=p?p.validez:v.getFullYear()+"-"+String(v.getMonth()+1).padStart(2,"0")+"-"+String(v.getDate()).padStart(2,"0");
+  TPRE={token:o.token,sucio:false,lineas:(p&&p.lineas.length?p.lineas:[{c:"",n:1,p:0}]).map(l=>({c:l.c,n:l.n,p:l.p})),igic:p?p.igic:7,nota:p?p.nota:"",validez:val}; }
+function tPreSugeridas(){ const f2=TF.fichas.f2, out=[]; if(!f2||!f2.items) return out;
+  for(const [,,,items] of F2_SECCIONES) for(const [id,tt] of items){ const it=f2.items[id]; if(!it||(it.e!=="r"&&it.e!=="a")) continue;
+    const c=(tt+(it.nota?" — "+it.nota:"")).slice(0,160); if(!TPRE.lineas.some(l=>l.c.trim()===c)) out.push({c,e:it.e}); }
+  return out.sort((a,b)=>(a.e==="r"?0:1)-(b.e==="r"?0:1)); }
+function tPreLineaHTML(l,i,dis){ return `<div class="tpre-l" data-pl="${i}"><input class="in" data-plc placeholder="Trabajo o recambio (p. ej. Pastillas delanteras)" maxlength="160" value="${tEsc(l.c)}" aria-label="Concepto" ${dis}><input class="in num" data-pln inputmode="decimal" value="${tEsc(String(l.n).replace(".",","))}" aria-label="Cantidad" ${dis}><input class="in num" data-plp inputmode="decimal" placeholder="0,00" value="${l.p?tEsc(String(l.p).replace(".",",")):""}" aria-label="Precio sin IGIC" ${dis}><output class="tpre-imp num" data-pli>${eur(tPreR2((l.n||0)*(l.p||0)))}</output>${dis?"":`<button type="button" class="x" data-plx aria-label="Quitar línea">✕</button>`}</div>`; }
+function tPreWa(){ const o=TF.orden, n=(o.cliente.nombre||"").split(" ")[0], en=o.cliente.idioma==="en", l=linkOrden(o);
+  return `https://wa.me/${waNum(o.cliente.telefono)}?text=`+encodeURIComponent(en?`Hi ${n}, your quote is ready. You can review and approve it here: ${l}`:`Hola ${n}, ya tienes el presupuesto. Puedes revisarlo y aprobarlo aquí: ${l}`); }
+function tPre(){ tPreInit();
+  const o=TF.orden, p=o.presupuesto, P=TPRE, est=tPreEst(), bloq=est==="aceptado", dis=bloq?"disabled":"", T=tPreTot(P), sug=tPreSugeridas(), f2=TF.fichas.f2, hEst=f2&&f2.horasEst>0?f2.horasEst:0;
+  const [cls,txt]=tEstadoFicha("pre"), v=o.vehiculo||{}, c=o.cliente||{};
+  const sinMO=!P.lineas.some(l=>/^mano de obra/i.test(l.c.trim()));
+  return `<div id="tpre">
+  ${bloq?`<div class="t-lock"><span>🔒</span><div><b>Presupuesto aceptado${p.respuesta?" por "+esc(p.respuesta.nombre||"el cliente")+" el "+esc(tFH(p.respuesta.t)):""}</b><small>Para cambiarlo hay que reabrirlo: el cliente tendrá que aceptarlo otra vez.</small></div><button type="button" class="btn b-ghost b-sm" data-preabrir>Reabrir</button></div>`:""}
+  ${p&&p.respuesta&&est==="rechazado"?`<div class="msg bad" style="margin-bottom:12px">Rechazado por ${esc(p.respuesta.nombre||"el cliente")} el ${esc(tFH(p.respuesta.t))}${p.respuesta.comentario?`<br><small>«${esc(p.respuesta.comentario)}»</small>`:""}</div>`:""}
+  <section class="t-sec"><h3>Presupuesto · FORM-15 <em class="t-st ${cls}">${esc(txt)}</em></h3><p class="hint" style="margin:0">Trabajos, recambios y precio que el cliente autoriza antes de tocar el coche. Sin su aceptación no se repara.</p></section>
+  <fieldset class="t-fs" ${dis}>
+  ${tSec(1,"Cliente y vehículo","vienen de la recepción",`<div class="t-g3"><div class="field"><label>Cliente</label><div class="tpre-ro">${esc(c.nombre||"—")}</div></div><div class="field"><label>Teléfono</label><div class="tpre-ro">${esc(c.telefono||"—")}</div></div><div class="field"><label>Coche</label><div class="tpre-ro">${esc(v.coche||"—")}${v.matricula?" · "+esc(v.matricula.toUpperCase()):""}${v.km?" · "+esc(v.km)+" km":""}</div></div></div>`)}
+  ${tSec(2,"Trabajos y recambios","precios sin IGIC",`${hEst?`<p class="hint" style="margin:0">La inspección estimó <b>${esc(String(hEst).replace(".",","))} h</b> de trabajo${sug.length?` y dejó <b>${sug.length}</b> punto${sug.length>1?"s":""} en ámbar o rojo sin presupuestar`:""}.</p>`:sug.length?`<p class="hint" style="margin:0">La inspección dejó <b>${sug.length}</b> punto${sug.length>1?"s":""} en ámbar o rojo sin presupuestar.</p>`:""}
+    <div><div class="tpre-l tpre-h"><span>Concepto</span><span>Cant.</span><span>Precio ud.</span><span style="text-align:right">Importe</span><span></span></div>
+    <div data-plineas>${P.lineas.map((l,i)=>tPreLineaHTML(l,i,dis)).join("")}</div></div>
+    ${bloq?"":`<div class="tpre-acc"><button type="button" class="chipb" data-pladd="">+ Añadir línea</button>${hEst&&sinMO?`<button type="button" class="chipb" data-pladd="mo">+ Mano de obra (${esc(String(hEst).replace(".",","))} h)</button>`:""}${sug.length?`<button type="button" class="chipb" data-plsug>⬇ Traer de la inspección (${sug.length})</button>`:""}</div>`}`)}
+  ${tSec(3,"Condiciones","",`<div class="t-g2"><div class="field"><label>IGIC %</label><input class="in num" data-pigic inputmode="decimal" value="${tEsc(String(P.igic).replace(".",","))}"></div><div class="field"><label>Válido hasta</label><input class="in" type="date" data-pval value="${tEsc(P.validez)}"></div></div>
+    <div class="field"><label>Nota para el cliente <small>(garantía, plazos…)</small></label><textarea class="in" data-pnota rows="3" maxlength="1500">${tEsc(P.nota)}</textarea></div>`)}
+  ${tSec("✓","Total y envío","",`<div class="tpre-tot" data-ptot><span>Base ${eur(T.base)}</span><span>IGIC ${esc(String(P.igic).replace(".",","))} % ${eur(T.ig)}</span><b class="g">Total ${eur(T.total)}</b></div>
+    <p class="hint" style="margin:0" data-pestado>${est==="enviado"?"Enviado: el cliente lo ve y lo puede aceptar desde su enlace. Los cambios que guardes los ve al momento.":est==="rechazado"?"El cliente lo rechazó. Puedes ajustarlo y volver a enviarlo.":"Todavía no lo ve el cliente. Hasta que pulses «Enviar al cliente» es solo un borrador."}</p>`)}
+  </fieldset>
+  <div class="t-sec" style="margin-bottom:12px"><div class="tpre-acc">${bloq?"":`<button type="button" class="btn b-ghost b-sm" data-pguardar>${est==="enviado"||est==="rechazado"?"Guardar cambios":"Guardar borrador"}</button><button type="button" class="btn b-acc b-sm" data-penviar>${est==="enviado"||est==="rechazado"?"Actualizar y reenviar":"Enviar al cliente"}</button>`}${est==="enviado"?`<a class="btn b-wa b-sm" target="_blank" rel="noopener" data-pwa href="${tPreWa()}">${IC.wa}Avisar por WhatsApp</a>`:""}<button type="button" class="btn b-ghost b-sm" data-tdrawer>Enlace, fotos y mensajes del cliente</button>${tBlancoBtn("pre")}<span class="tpre-sv${TPRE.sucio?" pend":""}" data-psv>${TPRE.sucio?"Cambios sin guardar":p?"Guardado":"Sin guardar todavía"}</span></div></div></div>`; }
+function tPreLeer(){ const b=document.querySelector("#tpre"); if(!b||!TPRE) return;
+  TPRE.lineas=[...b.querySelectorAll(".tpre-l[data-pl]")].map(r=>({c:r.querySelector("[data-plc]").value,n:numES(r.querySelector("[data-pln]").value)||1,p:numES(r.querySelector("[data-plp]").value)}));
+  TPRE.igic=numES(b.querySelector("[data-pigic]").value); TPRE.nota=b.querySelector("[data-pnota]").value; TPRE.validez=b.querySelector("[data-pval]").value; }
+function tPreTotales(){ const b=document.querySelector("#tpre"); if(!b) return; const P=TPRE, T=tPreTot(P);
+  b.querySelectorAll(".tpre-l[data-pl]").forEach((r,i)=>{ const l=P.lineas[i]; if(l) r.querySelector("[data-pli]").textContent=eur(tPreR2((l.n||0)*(l.p||0))); });
+  b.querySelector("[data-ptot]").innerHTML=`<span>Base ${eur(T.base)}</span><span>IGIC ${esc(String(P.igic).replace(".",","))} % ${eur(T.ig)}</span><b class="g">Total ${eur(T.total)}</b>`; }
+function tPreEstadoTxt(){ const s=document.querySelector("#tpre [data-psv]"); if(!s) return; s.className="tpre-sv"+(TPRE.sucio?" pend":""); s.textContent=TPRE.sucio?"Cambios sin guardar":"Guardado a las "+(TSAVED||tHora(new Date().toISOString())); }
+function tPreCambio(){ tPreLeer(); tPreTotales(); TPRE.sucio=true; tMarcar(); tPreEstadoTxt(); }
+async function tPreGuardar(auto,enviar){
+  if(!TPRE||!TF||TPRE.token!==TF.orden.token){ TDIRTY=false; return false; }
+  const est=tPreEst(); if(est==="aceptado"){ TDIRTY=false; return false; }
+  if(auto&&(est==="enviado"||est==="rechazado")) return false; // lo que ya ve el cliente solo cambia al pulsar el botón
+  tPreLeer(); const lineas=TPRE.lineas.filter(l=>l.c.trim());
+  if(auto&&!lineas.length){ TDIRTY=false; return false; }
+  const ver=TVER, token=TF.orden.token;
+  try{ const o=await patchOrden(token,{presupuesto:{lineas,igic:TPRE.igic,nota:TPRE.nota,validez:TPRE.validez,...(enviar?{enviar:true}:{})}});
+    if(!TF||TF.orden.token!==token) return true;
+    TF.orden=Object.assign({},TF.orden,o); TSAVED=tHora(new Date().toISOString());
+    if(TVER===ver||enviar){ TPRE.sucio=false; TDIRTY=false; }
+    tRenderHead(); if(enviar){ TPRE=null; tRenderBody(true); } else tPreEstadoTxt();
+    if(typeof renderOrdenes==="function") renderOrdenes();
+    return true;
+  }catch(err){ toast(err.message); return false; }
+}
+$("#tf").addEventListener("input",e=>{ if(e.target.closest&&e.target.closest("#tpre")&&e.target.matches("[data-plc],[data-pln],[data-plp],[data-pigic],[data-pval],[data-pnota]")) tPreCambio(); });
+$("#tf").addEventListener("change",e=>{ if(e.target.closest&&e.target.closest("#tpre")&&e.target.matches("[data-pval]")) tPreCambio(); });
+$("#tf").addEventListener("click",async e=>{ const t=e.target, q=s=>t.closest(s); if(!q("#tpre")) return;
+  if(q("[data-pladd]")){ tPreLeer(); const mo=q("[data-pladd]").dataset.pladd==="mo", f2=TF.fichas.f2;
+    const nueva=mo?{c:"Mano de obra",n:(f2&&f2.horasEst)||1,p:0}:{c:"",n:1,p:0};
+    if(TPRE.lineas.length===1&&!TPRE.lineas[0].c.trim()) TPRE.lineas=[nueva]; else TPRE.lineas.push(nueva);
+    TPRE.sucio=true; tMarcar(); tRenderBody(true); const ls=document.querySelectorAll("#tpre .tpre-l[data-pl] [data-plc]"); (mo?document.querySelectorAll("#tpre [data-plp]")[TPRE.lineas.length-1]:ls[ls.length-1]).focus({preventScroll:true}); return; }
+  const lx=q("[data-plx]"); if(lx){ tPreLeer(); const i=+lx.closest(".tpre-l").dataset.pl; TPRE.lineas.splice(i,1); if(!TPRE.lineas.length) TPRE.lineas=[{c:"",n:1,p:0}]; TPRE.sucio=true; tMarcar(); tRenderBody(true); return; }
+  if(q("[data-plsug]")){ tPreLeer(); const s=tPreSugeridas(); if(!s.length) return;
+    const nuevas=s.map(x=>({c:x.c,n:1,p:0})); TPRE.lineas=(TPRE.lineas.length===1&&!TPRE.lineas[0].c.trim()?[]:TPRE.lineas).concat(nuevas); TPRE.sucio=true; tMarcar(); tRenderBody(true); toast(`${nuevas.length} punto${nuevas.length>1?"s":""} de la inspección añadido${nuevas.length>1?"s":""}: pon el precio de cada uno`); return; }
+  if(q("[data-pguardar]")){ clearTimeout(tMarcar.t); if(await tPreGuardar(false,false)) toast(tPreEst()==="enviado"?"Cambios guardados: el cliente ya los ve":"Borrador guardado (el cliente aún no lo ve)"); return; }
+  if(q("[data-penviar]")){ clearTimeout(tMarcar.t); tPreLeer(); const L=TPRE.lineas.filter(l=>l.c.trim()); if(!L.length) return toast("Añade al menos una línea");
+    const sinP=L.filter(l=>!l.p).length; if(sinP&&!confirm(`Hay ${sinP} línea${sinP>1?"s":""} sin precio (0,00 €). ¿Enviarlo así al cliente?`)) return;
+    const lead=TF.orden.lead; if(await tPreGuardar(false,true)){ toast("Presupuesto publicado en su enlace. Avísale por WhatsApp."); if(lead&&typeof loadLeads==="function") loadLeads(false); } return; }
+  if(q("[data-preabrir]")){ if(!confirm("El cliente ya aceptó este presupuesto. ¿Reabrirlo para cambiarlo? Tendrá que aceptarlo otra vez.")) return;
+    try{ const o=await patchOrden(TF.orden.token,{presupuesto:{reabrir:true}}); TF.orden=Object.assign({},TF.orden,o); TPRE=null; tRenderHead(); tRenderBody(true); toast("Presupuesto reabierto"); }catch(err){ toast(err.message); } return; }
+  const w=q("[data-pwa]"); if(w&&TF.orden.lead&&typeof actividad==="function") actividad(TF.orden.lead,"whatsapp","Presupuesto enviado por WhatsApp").catch(()=>{});
+});
 function tPpre(){ const p=TF.orden.presupuesto, L=p&&p.lineas||[]; if(!L.length) return '<p class="tp-vacio">Sin presupuesto.</p>';
   const base=Math.round(L.reduce((a,l)=>a+l.n*l.p,0)*100)/100, ig=Math.round(base*(p.igic/100)*100)/100;
   return `${tpKV([[["Estado",esc(tEstadoFicha("pre")[1])],["Validez",esc(p.validez?tF(p.validez):"")],["IGIC",esc(String(p.igic).replace(".",","))+" %"]]])}
