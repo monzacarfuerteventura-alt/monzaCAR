@@ -1,12 +1,12 @@
 import type { Config } from "@netlify/functions";
 import { createHash } from "node:crypto";
 import { store, json, mismoOrigen, type Car } from "../lib/shared.mts";
-import { quien, hoyCanarias, leerConfig, leerEquipo, tstore, tramos, type Quien, type F3, type Config } from "../lib/taller.mts";
+import { quien, hoyCanarias, leerConfig, leerEquipo, tstore, tramos, type Quien, type F3, type Config as ConfigTaller } from "../lib/taller.mts";
 import { listarA, type MovPieza } from "../lib/almacen.mts";
 import { costesPorCoche, propiosSinEnlazar, esIdPropio, leerFicha, guardarFicha } from "../lib/vehiculos.mts";
 import { todosLosRegistros } from "../lib/facturas.mts";
 import { anotarSeguro } from "../lib/libro.mts";
-import { str, cent, eur, esFoto, rid, ahora, listar as listarCaja, movsDe, turnoAbierto, crearMovimiento, leerMov, libro as libroCaja, s as sCaja, teorico, type Turno, type Mov } from "../lib/caja.mts";
+import { str, cent, eur, esFoto, rid, ahora, listar as listarCaja, turnoAbierto, crearMovimiento, leerMov, libro as libroCaja, s as sCaja, teorico, type Turno, type Mov } from "../lib/caja.mts";
 
 /*
   GESTIÓN DE INGRESOS Y EGRESOS GLOBALES (solo el gerente)
@@ -104,7 +104,7 @@ function piezasDeOrden(movs: MovPieza[], token: string) {
   return { coste, det };
 }
 // Horas netas trabajadas por cada persona (FORM-04) × tarifa. La suma es EXACTAMENTE la mano de obra que enseña FORM-04.
-function manoObraDe(f3: F3 | null, cfg: Config, nombre: (u: string) => string) {
+function manoObraDe(f3: F3 | null, cfg: ConfigTaller, nombre: (u: string) => string) {
   const tarifa = f3?.tarifa || cfg.tarifa;
   if (!f3 || !(f3.eventos || []).length) return { coste: 0, minutos: 0, tarifa, trabajadores: [] as { nombre: string; minutos: number; coste: number }[], sinHoras: true };
   const ultimo = Math.max(...f3.eventos.map((e) => Date.parse(e.t)));
@@ -119,20 +119,54 @@ function manoObraDe(f3: F3 | null, cfg: Config, nombre: (u: string) => string) {
   return { coste, minutos, tarifa, trabajadores: trab, sinHoras: !minutos };
 }
 
+// Caja para el resumen: turnos, movimientos de cada turno (mismo orden que movsDe: por hora) y caja abierta. Un solo listado de «m/» en vez de uno por turno.
+async function cajaParaResumen() {
+  const sc = sCaja();
+  const [turnos, porTurno, abierto, ultimoCierre] = await Promise.all([
+    listarCaja<Turno>("t/"),
+    (async () => {
+      const { blobs } = await sc.list({ prefix: "m/" });
+      const vals = await Promise.all(blobs.map((b) => sc.get(b.key, { type: "json" }).catch(() => null)));
+      const de = new Map<string, Mov[]>();
+      blobs.forEach((b, i) => { const m = vals[i] as Mov | null; if (!m) return; const t = b.key.split("/")[1] || ""; (de.get(t) || de.set(t, []).get(t)!).push(m); });
+      for (const l of de.values()) l.sort((a, b) => a.t.localeCompare(b.t));
+      return de;
+    })(),
+    turnoAbierto(),
+    sc.get("ultimo-cierre", { type: "json" }).catch(() => null) as Promise<any>,
+  ]);
+  return { turnos, movsDeTurno: (id: string) => porTurno.get(id) || [], abierto, ultimoCierre };
+}
+
 async function resumen(desde: string, hasta: string) {
-  const [ords, carsWeb, gastos, ingresosM, ventas, costes, clasif, cobrosT, cfg, propios, sinEnlazar] = await Promise.all([
+  // Act. 73 · Las lecturas van en DOS tandas en paralelo. Antes iban en cadena (órdenes → facturas → turnos → movimientos de cada turno →
+  // ajustes → equipo → almacén → fichas → caja): hasta 16 viajes al almacén uno detrás de otro; ahora 4. Los cálculos de abajo no cambian.
+  // Tanda 1 (la de siempre) + ajustes y equipo:
+  const [ords, carsWeb, gastos, ingresosM, ventas, costes, clasif, cobrosT, cfg, propios, sinEnlazar, aju, equipoT] = await Promise.all([
     (async () => { const s = store("ordenes"); const { blobs } = await s.list({ prefix: "o/" }); return (await Promise.all(blobs.map((b) => s.get(b.key, { type: "json" })))).filter(Boolean) as any[]; })(),
     (async () => ((await store("monzacar").get("coches", { type: "json" }).catch(() => null)) as Car[] | null) || [])(),
     lista<Gasto>("gasto/"), lista<Ingreso>("ingreso/"), lista<Venta>("venta/"), lista<any>("coste/"), lista<any>("clasif/"), lista<{ token: string; cobros: Cobro[] }>("cobro-taller/"), leerConfig(), costesPorCoche(), propiosSinEnlazar(),
+    leerAjustes(), leerEquipo().catch(() => []),
+  ]);
+  // Tanda 2: facturas emitidas, caja, movimientos del almacén y las fichas de los coches de taller entregados en el periodo (o en el mes en curso)
+  const hoyD = hoyCanarias(), mesIni = hoyD.slice(0, 8) + "01";
+  const desdeR = desde < mesIni ? desde : mesIni, hastaR = hasta > hoyD ? hasta : hoyD;
+  const entregadasR = ords.filter((o) => o.estado === "entregado").map((o) => {
+    const pe = [...(o.pasos || [])].reverse().find((x: any) => x.estado === "entregado"), dia = pe ? diaDe(pe.t) : diaDe(o.actualizado || o.creado);
+    return { o, dia };
+  }).filter((x) => !(x.dia < desdeR || x.dia > hastaR));
+  const [registros, cajaR, movsAlm, fichasEnt] = await Promise.all([
+    todosLosRegistros().catch(() => []) as Promise<any[]>, cajaParaResumen(), listarA<MovPieza>("m/").catch(() => [] as MovPieza[]),
+    Promise.all(entregadasR.map((x) => tstore().get("f/" + x.o.token, { type: "json" }).catch(() => null) as Promise<any>)),
   ]);
   // Los coches propios sin enlazar a la web (vp-…) cuentan como un coche más: stock invertido, venta, cobros y beneficio al céntimo
   // (si su venta ya está apuntada en Finanzas deja de contar como stock aunque la ficha aún no esté cerrada)
   const cars = [...carsWeb, ...sinEnlazar.map((c) => (ventas.some((v) => v.coche === c.id) ? { ...c, estado: "vendido" as const } : c))];
   // Actualización 11: presupuesto aceptado -> factura emitida (FORM-06). Cada orden toma el número y el importe de su última factura (F o R).
   const facDeOrden = new Map<string, any>();
-  for (const r of ((await todosLosRegistros().catch(() => [])) as any[])) if (r.serie !== "H" && r.orden) facDeOrden.set(r.orden, r);
-  const turnos = await listarCaja<Turno>("t/");
-  const movs = (await Promise.all(turnos.map((t) => movsDe(t.id)))).flat().filter((m) => !m.anulado);
+  for (const r of registros) if (r.serie !== "H" && r.orden) facDeOrden.set(r.orden, r);
+  const turnos = cajaR.turnos;
+  const movs = turnos.flatMap((t) => cajaR.movsDeTurno(t.id)).filter((m) => !m.anulado);
   const usadosCaja = new Set<string>([...gastos.map((g) => g.cajaMov), ...ingresosM.map((i) => i.cajaMov), ...ventas.flatMap((v) => v.cobros.map((c) => c.cajaMov)), ...cobrosT.flatMap((c) => c.cobros.map((x) => x.cajaMov))].filter(Boolean));
   const dentro = (d: string) => d >= desde && d <= hasta;
   const costeDe = new Map(costes.map((c) => [c.coche, c]));
@@ -220,15 +254,10 @@ async function resumen(desde: string, hasta: string) {
   const baseVentas = cochesVendidosPeriodo.reduce((a, x) => a + x.base, 0);
   const pesoT = ingT + baseVentas + ingV ? ingT / (ingT + baseVentas + ingV) : 0.5;
   // ===== Actualización 62 · coches de taller ENTREGADOS: precio final, base sin IGIC, piezas, mano de obra por trabajador y beneficio =====
-  const aju = await leerAjustes(), hoyD = hoyCanarias(), mesIni = hoyD.slice(0, 8) + "01";
-  const equipoT = await leerEquipo().catch(() => []), nombreDe = (u: string) => (u === "gerente" ? "Gerente" : equipoT.find((x) => x.id === u)?.nombre || "—");
-  const movsAlm = await listarA<MovPieza>("m/").catch(() => [] as MovPieza[]);
+  const nombreDe = (u: string) => (u === "gerente" ? "Gerente" : equipoT.find((x) => x.id === u)?.nombre || "—");
   const docT = new Map(emitidas.filter((d) => d.tipo === "taller").map((d) => [d.id, d]));
-  const desdeR = desde < mesIni ? desde : mesIni, hastaR = hasta > hoyD ? hasta : hoyD;
-  const entregadas = await Promise.all(ords.filter((o) => o.estado === "entregado").map(async (o) => {
-    const pe = [...(o.pasos || [])].reverse().find((x: any) => x.estado === "entregado"), dia = pe ? diaDe(pe.t) : diaDe(o.actualizado || o.creado);
-    if (dia < desdeR || dia > hastaR) return null;
-    const doc = docT.get("t-" + o.token), fi = (await tstore().get("f/" + o.token, { type: "json" }).catch(() => null)) as any;
+  const entregadas = entregadasR.map(({ o, dia }, i) => {
+    const doc = docT.get("t-" + o.token), fi = fichasEnt[i];
     const pz = piezasDeOrden(movsAlm, o.token), mo = manoObraDe(fi?.f3 || null, cfg, nombreDe);
     const base = doc ? doc.base : 0, total = doc ? doc.total : 0, descMO = aju.descontarMO ? mo.coste : 0, avisos: string[] = [];
     if (!doc) avisos.push("Sin factura ni presupuesto aceptado: no hay ingreso que contar.");
@@ -240,7 +269,7 @@ async function resumen(desde: string, hasta: string) {
       total, base, igic: total - base, igicPct: doc?.impuestoPct ?? cfg.igic, cobrado: doc?.cobrado || 0, pendiente: doc ? doc.total - doc.cobrado : 0,
       piezas: pz.coste, piezasDet: pz.det, manoObra: mo.coste, minutos: mo.minutos, tarifa: mo.tarifa, trabajadores: mo.trabajadores, descontadaMO: aju.descontarMO,
       beneficio: base - pz.coste - descMO, avisos };
-  }));
+  });
   const resAll = entregadas.filter(Boolean) as any[];
   const resultadoTaller = resAll.filter((x) => dentro(x.fecha)).sort((a, b) => b.fecha.localeCompare(a.fecha));
   const resTot = { coches: resultadoTaller.length, total: sum(resultadoTaller), base: sum(resultadoTaller, "base"), igic: sum(resultadoTaller, "igic"), piezas: sum(resultadoTaller, "piezas"), manoObra: sum(resultadoTaller, "manoObra"), beneficio: sum(resultadoTaller, "beneficio") };
@@ -255,9 +284,9 @@ async function resumen(desde: string, hasta: string) {
   if (descNeto < 0) porCategoria["descuadres"] = -descNeto;
   const cobrado = sum(C, "importe"), pagado = sum(R);
   // Efectivo (cuenta de caja): teórico ahora
-  const abierto = await turnoAbierto(); let efectivo: any;
-  if (abierto) { const c = teorico(abierto, await movsDe(abierto.id)); efectivo = { abierta: true, teorico: c.teorico, desde: abierto.apertura.t, nombre: abierto.apertura.nombre }; }
-  else { const u = (await sCaja().get("ultimo-cierre", { type: "json" }).catch(() => null)) as any; efectivo = { abierta: false, teorico: u?.contado || 0, desde: u?.t || "", nombre: u?.nombre || "" }; }
+  const abierto = cajaR.abierto; let efectivo: any;
+  if (abierto) { const c = teorico(abierto, cajaR.movsDeTurno(abierto.id)); efectivo = { abierta: true, teorico: c.teorico, desde: abierto.apertura.t, nombre: abierto.apertura.nombre }; }
+  else { const u = cajaR.ultimoCierre; efectivo = { abierta: false, teorico: u?.contado || 0, desde: u?.t || "", nombre: u?.nombre || "" }; }
   // Pendientes (de siempre, no solo del periodo)
   const porCobrar = emitidas.filter((d) => d.total - d.cobrado > 0).map((d) => ({ id: d.id, tipo: d.tipo, ref: d.ref, fecha: d.fecha, num: d.num, cliente: d.cliente, concepto: d.concepto, total: d.total, pendiente: d.total - d.cobrado, estimado: d.estimado }));
   const stock = cars.filter((c) => c.estado !== "vendido").map((c) => ({ coche: c.id, nombre: `${c.marca} ${c.modelo} ${c.version || ""}`.trim(), precio: Math.round(c.precio * 100), compra: costeDe.get(c.id)?.compra || propios.get(c.id)?.compra || 0, reacondicionamiento: gastos.filter((g) => !g.anulado && g.coche === c.id).reduce((a, g) => a + g.base, 0) + (propios.get(c.id)?.reac || 0) }));

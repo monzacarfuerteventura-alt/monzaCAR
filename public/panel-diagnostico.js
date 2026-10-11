@@ -1,5 +1,5 @@
 /* =====================================================================
-   PANEL · DIAGNÓSTICO DEL SERVIDOR (actualización 71)
+   PANEL · DIAGNÓSTICO DEL SERVIDOR (actualización 71; medición corregida en la 73)
    Antes, cualquier fallo del servidor salía como «Algo ha fallado (404)» sin decir cuál. Ahora el mensaje dice qué ruta falló y por qué,
    y hay un diagnóstico que prueba las rutas principales y dice cuáles responden (se abre con volcanocars.com/admin.html#diagnostico
    o con el botón «Diagnóstico» de las pantallas del ERP cuando fallan). Solo LEE: no cambia ningún dato.
@@ -37,9 +37,14 @@
   async function diagnostico() {
     const d = document.createElement("dialog"); d.className = "t-dlg fn-dlg erp-dlg"; d.innerHTML = '<div class="pe-in" style="padding:20px;display:grid;gap:12px"><h2 style="margin:0">Diagnóstico del servidor</h2><p class="hint">Probando las rutas principales (solo lectura)…</p><div id="dg-res"></div><div class="t-dlg-acts"><button class="btn b-ghost" type="button" id="dg-x">Cerrar</button></div></div>';
     document.body.appendChild(d); d.addEventListener("close", () => d.remove()); d.querySelector("#dg-x").onclick = () => d.close(); d.showModal();
-    const res = await Promise.all(RUTAS.map(async ([n, r]) => ({ n, ...(await probar(r)) })));
+    // Act. 73 · las rutas de funciones distintas se prueban a la vez; las de una MISMA función (las 4 del ERP), una detrás de otra.
+    // Antes iban las 9 a la vez: Netlify tenía que arrancar copias nuevas de la función del ERP (≈1 s cada una) y el tiempo que salía
+    // era el del arranque, no el de uso normal.
+    const grupos = new Map(); RUTAS.forEach((x, i) => { const g = x[1].split("/")[2]; (grupos.get(g) || grupos.set(g, []).get(g)).push([i, x]); });
+    const res = [];
+    await Promise.all([...grupos.values()].map(async (l) => { for (const [i, [n, r]] of l) res[i] = { n, ...(await probar(r)) }; }));
     const mal = res.filter((x) => !x.ok && x.estado !== 401 && x.estado !== 403 && x.estado !== 423);
-    d.querySelector("#dg-res").innerHTML = `<div class="msg ${mal.length ? "bad" : "ok"}">${mal.length ? mal.length + " ruta(s) NO responden. Hazme una captura de esta pantalla." : "Todas las rutas responden."}</div>${res.map((x) => `<div class="pe-lin"><b class="${x.ok ? "pe-bien" : "pe-mal"}">${x.ok ? "✓" : "✗"} ${x.estado || "—"}</b> · <b>${esc_(x.n)}</b><br><small>${esc_(x.ruta)}</small><div>${esc_(x.nota)} <small>(${x.tipo}, ${x.ms} ms)</small></div></div>`).join("")}<p class="hint">Hecho ${new Date().toLocaleString("es-ES", { timeZone: "Atlantic/Canary" })} · versión del panel 71</p>`;
+    d.querySelector("#dg-res").innerHTML = `<div class="msg ${mal.length ? "bad" : "ok"}">${mal.length ? mal.length + " ruta(s) NO responden. Hazme una captura de esta pantalla." : "Todas las rutas responden."}</div>${res.map((x) => `<div class="pe-lin"><b class="${x.ok ? "pe-bien" : "pe-mal"}">${x.ok ? "✓" : "✗"} ${x.estado || "—"}</b> · <b>${esc_(x.n)}</b><br><small>${esc_(x.ruta)}</small><div>${esc_(x.nota)} <small>(${x.tipo}, ${x.ms} ms)</small></div></div>`).join("")}<p class="hint">Tiempo medio: ${Math.round(res.reduce((a, x) => a + x.ms, 0) / res.length)} ms (la primera llamada a cada parte tarda más: el servidor la está arrancando). Hecho ${new Date().toLocaleString("es-ES", { timeZone: "Atlantic/Canary" })} · versión del panel 73</p>`;
     d.querySelector("p.hint").textContent = "Resultado:";
   }
   window.diagnosticoServidor = diagnostico;

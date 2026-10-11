@@ -34,7 +34,7 @@
     /* Taller: primero el trabajo (las órdenes); los ajustes de precios y sistemas quedan debajo, siguen ahí */
     body.app-on #s-ordenes:not([hidden]){display:flex;flex-direction:column}
     body.app-on #s-ordenes>.head{order:0}body.app-on #s-ordenes>#t-barra{order:1}body.app-on #s-ordenes>#ordenes{order:2}
-    body.app-on #s-ordenes>#pt-cfg,body.app-on #s-ordenes>#sv-lib{order:3}
+    body.app-on #s-ordenes>#pt-cfg{order:3}
 
     /* ---- barra inferior ---- */
     body.app-on:not(.app-nobar):not(.app-kb) #app-bar{display:grid}

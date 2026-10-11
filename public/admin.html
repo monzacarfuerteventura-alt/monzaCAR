@@ -2856,14 +2856,39 @@ function show(id){ ["s-login","s-list","s-form","s-leads","s-agenda","s-dash","s
    y la Caja si el gerente se la dio). Dashboard y Finanzas quedan para el gerente. */
 const PUEDE_TODO=()=>!ME||!ME.equipo||ME.rol==="gerente";
 function puedeTab(t){ if(PUEDE_TODO()) return true; if(t==="dash"||t==="fin") return false; if(t==="caja") return !!ME.caja; return true; }
+// Act. 73 · Lecturas repetidas: si dos partes del panel piden A LA VEZ la misma dirección (p. ej. Gestoría pedía dos veces el resumen de
+// Finanzas), viaja UNA sola petición y las dos reciben su copia. Solo lecturas sin opciones lanzadas con menos de 0,3 s de diferencia.
+// Mientras se está guardando algo NO se comparte nada (cada lectura va por su cuenta) y al empezar y al terminar un guardado se olvidan
+// las lecturas en curso: lo que se pinta después de guardar siempre es una lectura nueva.
+const API_VUELO=new Map(); let API_GUARDANDO=0;
 async function api(path, opts={}){
-  let r;
-  try{ r = await fetch(path, {...opts, headers:{...(opts.headers||{}), authorization:"Bearer "+PW}}); }
+  const soloLeer=!opts||!Object.keys(opts).length;
+  let r, txt="";
+  try{
+    if(soloLeer&&API_GUARDANDO){
+      const x=await fetch(path,{headers:{authorization:"Bearer "+PW}});
+      r=x; txt=await x.text().catch(()=>"");
+    }else if(soloLeer){
+      const k=PW+"\n"+path, ya=API_VUELO.get(k);
+      let v=ya&&Date.now()-ya.t<300?ya:null;
+      if(!v){
+        v={t:Date.now(), p:fetch(path,{headers:{authorization:"Bearer "+PW}}).then(async x=>({status:x.status, ok:x.ok, txt:await x.text().catch(()=>"")}))};
+        API_VUELO.set(k,v); const fin=()=>{ if(API_VUELO.get(k)===v) API_VUELO.delete(k); }; v.p.then(fin,fin);
+      }
+      r=await v.p; txt=r.txt;
+    }else{
+      API_VUELO.clear(); API_GUARDANDO++;
+      try{
+        r = await fetch(path, {...opts, headers:{...(opts.headers||{}), authorization:"Bearer "+PW}});
+        txt = await r.text().catch(()=>"");
+      }finally{ API_GUARDANDO--; API_VUELO.clear(); }
+    }
+  }
   catch(e){ throw new Error("Sin conexión. Lo que escribiste NO se ha guardado: comprueba la cobertura e inténtalo de nuevo."); }
   if(r.status===401){ logout("Tu sesión ha caducado. Vuelve a entrar."); throw new Error("La sesión ha caducado. Vuelve a entrar."); }
-  const data = await r.json().catch(()=>({}));
+  let data; try{ data=JSON.parse(txt); }catch(_){ data={}; }
   if(r.status===423&&typeof jBloquear==="function") jBloquear(data); // sin fichar: pantalla de fichaje
-  if(!r.ok) throw new Error(data.error || "Algo ha fallado ("+r.status+"). Inténtalo de nuevo.");
+  if(!r.ok) throw new Error((data&&data.error) || "Algo ha fallado ("+r.status+"). Inténtalo de nuevo.");
   return data;
 }
 

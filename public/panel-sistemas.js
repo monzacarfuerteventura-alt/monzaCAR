@@ -1,17 +1,17 @@
 /* =====================================================================
    VOLCANO CARS · PANEL: SISTEMAS VOLCANO CARS (MO-00 v3.0)  (panel-sistemas.js)
    ---------------------------------------------------------------------
-   Pestaña Taller → tarjeta «Sistemas Volcano Cars»:
-   · Biblioteca para el equipo: los 11 sistemas en su orden estricto
-     (S01 → S11) con su PDF, y el índice MO-00 con el orden de implantación.
-   · Formularios digitales que no existían en el panel:
+   Act. 73: la tarjeta «Sistemas Volcano Cars» ya NO está en Taller. Los manuales y los formularios se abren
+   desde la pestaña Documentación (panel-docs.js), que llama a window.VCSistemas.abrir("FORM-NN").
+   Este archivo conserva: (1) la apertura de los PDF con sesión (enlaces «#manual-…» de todo el panel) y
+   (2) los formularios digitales:
        FORM-07 Cascos y abonos (S02)       FORM-08 Ronda 5S y seguridad (S03)
        FORM-09 Hoja de preparación (S04)   FORM-12 Prueba a domicilio · fianza (S06)
        FORM-13 Registro de postventa (S07) FORM-14 Plan semanal de marketing (S08, gerente)
        FORM-15 Auditoría del viernes (S09, gerente)
    FORM-01 a FORM-06 (las fichas del taller, con la Factura de reparación) siguen dentro de cada orden (S01) y la Guía de venta (S05)
-   en su sitio: aquí solo se enlazan. Guarda en /api/sistemas (Netlify Blobs).
-   Usa las funciones del panel: api, toast, ME, PUEDE_TODO, abrirGuia.
+   en su sitio. Guarda en /api/sistemas (Netlify Blobs).
+   Usa las funciones del panel: api, toast, PUEDE_TODO.
    ===================================================================== */
 (() => {
   "use strict";
@@ -19,8 +19,7 @@
   const qa = (s, r = document) => [...r.querySelectorAll(s)];
   const E = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   const aviso = (t) => { try { toast(t); } catch (_) { alert(t); } };
-  const sec = q("#s-ordenes");
-  if (!sec || q("#sv-lib")) return;
+  if (window.VCSistemas) return;
   const esGerente = () => { try { return PUEDE_TODO(); } catch (_) { return true; } };
   const hoy = () => { try { return new Intl.DateTimeFormat("en-CA", { timeZone: "Atlantic/Canary" }).format(new Date()); } catch (_) { return new Date().toISOString().slice(0, 10); } };
   const n = (v) => { const x = Number(String(v ?? "").replace(/\s|€/g, "").replace(",", ".")); return Number.isFinite(x) ? x : NaN; };
@@ -28,12 +27,10 @@
   const dias = (a, b) => { if (!a) return NaN; const t0 = Date.parse(a + "T12:00:00Z"), t1 = b ? Date.parse(b + "T12:00:00Z") : Date.parse(hoy() + "T12:00:00Z"); return Math.round((t1 - t0) / 864e5); };
   const fch = (iso) => { if (!iso) return ""; try { return new Date(iso).toLocaleString("es-ES", { timeZone: "Atlantic/Canary", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }); } catch (_) { return iso; } };
   const fd = (d) => (d ? d.split("-").reverse().join("/") : "");
-  const V = "?v=1";
 
   /* ------------------------------------------------------------------
      LOS 11 SISTEMAS · orden estricto (mismo que el índice MO-00 v3.0)
      ------------------------------------------------------------------ */
-  const BLOQ = { A: "Taller", B: "Venta", C: "Cliente", D: "Dirección" };
   const SIS = [
     ["01", "A", "Taller: de la recepción a la entrega", "Recepción · Inspección · Presupuesto · Tiempos · Calidad · Factura y cobro", "VolcanoCars-S01-Taller-recepcion-a-entrega", ["FORM-01", "FORM-02", "FORM-04", "FORM-05", "FORM-06", "FORM-03"], "hecho"],
     ["02", "A", "Recambios, almacén, cascos y abonos", "Pedir · recibir · dar salida · devolver cascos · cobrar abonos", "VolcanoCars-S02-Recambios-almacen-cascos-abonos", ["FORM-07"], "nuevo"],
@@ -47,10 +44,6 @@
     ["10", "D", "Organización, puestos y matriz RACI", "Organigrama terminado y quién hace qué hoy", "VolcanoCars-S10-Organizacion-puestos-RACI", ["FORM-16"], "nuevo"],
     ["11", "D", "Cuadro de mando y métricas", "Los números que dirigen el negocio", "VolcanoCars-S11-Cuadro-de-mando-metricas", ["FORM-17"], "nuevo"],
   ];
-  const INDICE = "VolcanoCars-S00-Indice-MO-00-v3.0";
-  const HOJA32 = "VolcanoCars-S00-Hoja-v3.2-Fe-de-erratas";
-  const HOJA33 = "VolcanoCars-S00-Hoja-v3.3-Renumeracion-formularios"; // numeración vigente de los formularios (act. 72)
-  const FPDF = { "FORM-01": "Recepción", "FORM-02": "Orden de trabajo", "FORM-04": "Control de calidad", "FORM-05": "Acta de entrega", "FORM-06": "Factura de reparación", "FORM-03": "Presupuesto", "FORM-11": "Factura de venta", "FORM-10": "Parte de reserva" };
   // Los manuales ya no son públicos: se piden con la sesión y se abren en otra pestaña
   const pdf = (f) => `#manual-${f}`;
   document.addEventListener("click", async (e) => {
@@ -293,26 +286,8 @@
   /* ---------------- estilos ---------------- */
   const css = document.createElement("style");
   css.textContent = `
-  #sv-lib summary .sv-ic{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;margin-right:12px;flex-shrink:0;color:#fff;background:linear-gradient(135deg,#1B1B19,#3a3733);box-shadow:inset 0 0 0 1.5px #D9481C}
-  #sv-lib summary>span:first-child{display:flex;align-items:center}
-  #sv-lib .sv-in{padding:0 20px 20px;display:grid;gap:14px}
-  .sv-top{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-  .sv-bloq{display:grid;gap:8px}
-  .sv-bloq h4{margin:6px 0 0;font-size:11.5px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px}
-  .sv-bloq h4::after{content:"";flex:1;height:1px;background:var(--line)}
-  .sv-row{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px 14px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface)}
-  .sv-n{font-family:var(--display,inherit);font-stretch:80%;font-weight:900;font-size:26px;line-height:1;color:#D9481C;min-width:46px}
-  .sv-n small{display:block;font-size:9.5px;letter-spacing:.14em;color:var(--muted);font-weight:800}
-  .sv-t b{display:block;font-size:15px}
-  .sv-t b .sv-b{display:inline-block!important;width:auto!important;margin:0 0 0 6px!important;vertical-align:2px}
-  .sv-t>span{display:block;font-size:12.5px;color:var(--muted);margin-top:1px}
-  .sv-t .sv-fs{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
-  .sv-acts{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
   .sv-b{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px;background:var(--surface-2);color:var(--ink);vertical-align:1px}
   .sv-b.ok{background:var(--ok-soft,#E6F3EB);color:var(--ok,#1F8B4C)} .sv-b.mal{background:var(--bad-soft,#FCE4E0);color:var(--bad,#C0392B)} .sv-b.ama{background:#FDF1E2;color:#9A5410}
-  .sv-f{font:inherit;font-size:12px;font-weight:800;padding:3px 9px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
-  .sv-f.dig{border-color:#D9481C;color:#D9481C}
-  @media(max-width:640px){.sv-row{grid-template-columns:auto 1fr}.sv-acts{grid-column:1/-1;justify-content:flex-start}}
   /* ventana del formulario */
   .sv-ov{position:fixed;inset:0;z-index:90;background:rgba(10,10,9,.55);display:flex;justify-content:center;align-items:flex-start;overflow:auto;padding:24px 12px}
   .sv-win{width:min(820px,100%);background:var(--ground,#F7F5F1);border-radius:18px;box-shadow:0 30px 80px -20px rgba(0,0,0,.5);overflow:hidden}
@@ -351,51 +326,17 @@
   `;
   document.head.appendChild(css);
 
-  /* ---------------- la tarjeta (biblioteca) ---------------- */
-  const card = document.createElement("details");
-  card.className = "card fin-cfg"; card.id = "sv-lib";
-  const nuevos = SIS.filter((s) => s[6] === "nuevo").length;
-  card.innerHTML = `<summary><span><span class="sv-ic" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20V3H6.5A2.5 2.5 0 004 5.5v14z"/><path d="M4 19.5A2.5 2.5 0 006.5 22H20v-5M8 7h8M8 11h6"/></svg></span>
-    <span><b>Sistemas Volcano Cars</b><small>MO-00 v3.0 · 11 sistemas en orden (S01 → S11) · PDF para el equipo y formularios digitales</small></span></span><span class="fin-ab">Abrir</span></summary>
-    <div class="sv-in">
-      <div class="sv-top">
-        <a class="btn b-brand b-sm" href="${pdf(INDICE)}" target="_blank" rel="noopener">Índice MO-00 · orden de implantación ↗</a>
-        <a class="btn b-ghost b-sm" href="${pdf(HOJA33)}" target="_blank" rel="noopener">Hoja v3.3 · numeración de los formularios 01→17 ↗</a>
-        <a class="btn b-ghost b-sm" href="${pdf(HOJA32)}" target="_blank" rel="noopener">Hoja v3.2 · fe de erratas (números antiguos) ↗</a>
-        <span class="hint" style="margin:0">Se implanta uno detrás de otro: un sistema pasa cuando lleva <b>dos viernes seguidos en verde</b> (auditoría FORM-15).</span>
-      </div>
-      ${["A", "B", "C", "D"].map((b) => `<div class="sv-bloq"><h4>Bloque ${b} · ${BLOQ[b]}</h4>${SIS.filter((s) => s[1] === b).map(fila).join("")}</div>`).join("")}
-      <p class="hint" style="margin:0">Antes: «Manual SOP-01» = <b>S01</b> (las fichas FORM-01 a FORM-06 están en Documentación; los impresos con la numeración antigua valen igual: mira la Hoja v3.3) · «SOP-02 El método de venta» = <b>S05</b> · Guía de WhatsApp = parte del <b>S06</b>. SOP-10 (tasación y compras) eliminado. ${nuevos} sistemas nuevos.</p>
-    </div>`;
-  function fila(s) {
-    const [nn, , t, d, file, forms, est] = s;
-    const fbtn = forms.map((f) => (FORMS[f] ? `<button type="button" class="sv-f dig" data-form="${f}" ${FORMS[f].ger ? 'data-ger="1"' : ""}>${f} · ${E(FORMS[f].t)}</button>` : FPDF[f] ? `<a class="sv-f dig" href="${pdf(f)}" target="_blank" rel="noopener">${f} · ${E(FPDF[f])} ↗</a>` : `<span class="sv-b">${f}${f === "FORM-16" || f === "FORM-17" ? " · papel" : ""}</span>`)).join("");
-    let acts = file ? `<a class="btn b-ghost b-sm" href="${pdf(file)}" target="_blank" rel="noopener">PDF ↗</a>` : "";
-    if (nn === "01") acts += `<button type="button" class="btn b-ghost b-sm" data-ir="ordenes">Órdenes (FORM-01 a FORM-06)</button>`;
-    if (nn === "05") acts = `<button type="button" class="btn b-ghost b-sm" data-ir="guia">Abrir la Guía de venta</button>`;
-    if (nn === "06") acts += `<button type="button" class="btn b-ghost b-sm" data-ir="resp">Guía WhatsApp · Respuestas</button>`;
-    return `<div class="sv-row"><div class="sv-n"><small>S</small>${nn}</div>
-      <div class="sv-t"><b>${E(t)} ${est === "hecho" ? '<span class="sv-b ok">en marcha</span>' : ""}</b><span>${E(d)}</span><div class="sv-fs">${fbtn}</div></div>
-      <div class="sv-acts">${acts}</div></div>`;
-  }
-  // debajo de «Precios en la web» si existe; si no, bajo la cabecera del taller
-  const ancla = q("#pt-cfg") || q(".head", sec) || sec.firstElementChild;
-  ancla.insertAdjacentElement("afterend", card);
-
-  card.addEventListener("click", (e) => {
-    const b = e.target.closest("[data-form],[data-ir]"); if (!b) return;
-    if (b.dataset.form) {
-      if (b.dataset.ger && !esGerente()) { aviso("Este formulario es solo para el gerente."); return; }
-      abrir(b.dataset.form); return;
-    }
-    const ir = b.dataset.ir;
-    if (ir === "guia") { try { abrirGuia(); } catch (_) { location.hash = "guia"; } return; }
-    if (ir === "resp") { const t = q("#tab-resp"); if (t) t.click(); return; }
-    if (ir === "ordenes") { window.scrollTo({ top: q("#ordenes").getBoundingClientRect().top + scrollY - 80, behavior: "smooth" }); }
-  });
-  // el equipo no ve los botones de formularios del gerente
-  const ocultarGer = () => qa("#sv-lib [data-ger]").forEach((b) => (b.hidden = !esGerente()));
-  card.addEventListener("toggle", ocultarGer);
+  /* ---------------- puerta de entrada (act. 73) ----------------
+     Documentación abre cada formulario con VCSistemas.abrir("FORM-07"). Los del gerente (FORM-14 y FORM-15) solo los abre él. */
+  window.VCSistemas = {
+    formularios: Object.keys(FORMS),
+    soloGerente: (f) => !!(FORMS[f] && FORMS[f].ger),
+    abrir(f) {
+      if (!FORMS[f]) return false;
+      if (FORMS[f].ger && !esGerente()) { aviso("Este formulario es solo para el gerente."); return false; }
+      abrir(f); return true;
+    },
+  };
 
   /* ---------------- ventana de un formulario ---------------- */
   let OV = null, FORM = "", LISTA = [], ACT = null, YO = null;

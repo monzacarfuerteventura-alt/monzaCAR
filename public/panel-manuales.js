@@ -2,7 +2,8 @@
    VOLCANO CARS · PANEL: MANUALES EN SU SITIO  (panel-manuales.js · actualización 65)
    ---------------------------------------------------------------------
    · Pone, arriba de cada pantalla del panel, el botón «Manual Sxx» del sistema al que pertenece
-     (Taller → S01, Inventario → S02, Caja y Finanzas → S09, CRM y Agenda → S06, ...).
+     (Inventario → S02, Caja y Finanzas → S09, CRM y Agenda → S06, ...).
+     Act. 73: Taller ya no lleva botón de manual ni la tarjeta «Sistemas»: sus manuales están solo en Documentación.
    Los PDF se abren con la sesión del panel: el clic lo gestiona panel-sistemas.js (enlaces #manual-…).
    No cambia ningún dato ni ninguna pantalla existente: solo añade botones.
    ===================================================================== */
@@ -22,7 +23,7 @@
     S10: [P + "S10-Organizacion-puestos-RACI", "S10 · Organización"],
     S11: [P + "S11-Cuadro-de-mando-metricas", "S11 · Cuadro de mando"],
   };
-  const SECCIONES = { "s-dash": ["S11", "S08"], "s-leads": ["S06"], "s-ordenes": ["S01"], "s-alm": ["S02"], "s-caja": ["S09"], "s-fin": ["S09"],
+  const SECCIONES = { "s-dash": ["S11", "S08"], "s-leads": ["S06"], "s-alm": ["S02"], "s-caja": ["S09"], "s-fin": ["S09"],
     "s-agenda": ["S06"], "s-resp": ["S07"], "s-jornada": ["S10", "S03"], "s-fichar": ["S03"], "s-list": ["S05", "S04"] };
   const css = document.createElement("style");
   css.textContent = ".vm-bar{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 2px}.vm-bar a{text-decoration:none}";

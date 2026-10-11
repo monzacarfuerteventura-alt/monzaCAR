@@ -162,11 +162,15 @@ function laborables(desde: string, hasta: string, cerrados: Set<string>) {
   return out;
 }
 async function resumen(desde: string, hasta: string) {
-  const [cfg, equipo] = await Promise.all([leerConfig(), leerEquipo()]);
-  const cerrados = new Set(((await store("solicitudes").get("config/bloqueos", { type: "json" }).catch(() => null)) as string[] | null) || []);
-  const [lf, lo] = await Promise.all([tstore().list({ prefix: "f/" }), ordenes().list({ prefix: "o/" })]);
-  const fichas = (await Promise.all(lf.blobs.map((b) => tstore().get(b.key, { type: "json" }) as Promise<Fichas | null>))).filter(Boolean) as Fichas[];
-  const ords = new Map(((await Promise.all(lo.blobs.map((b) => ordenes().get(b.key, { type: "json" })))) as any[]).filter(Boolean).map((o) => [o.token, o]));
+  // Act. 73 · las cinco lecturas a la vez (antes en cadena: 5 viajes en serie; ahora 2)
+  const [cfg, equipo, bloqueos, fichas, ordsLista] = await Promise.all([
+    leerConfig(), leerEquipo(),
+    store("solicitudes").get("config/bloqueos", { type: "json" }).catch(() => null) as Promise<string[] | null>,
+    (async () => { const lf = await tstore().list({ prefix: "f/" }); return (await Promise.all(lf.blobs.map((b) => tstore().get(b.key, { type: "json" }) as Promise<Fichas | null>))).filter(Boolean) as Fichas[]; })(),
+    (async () => { const lo = await ordenes().list({ prefix: "o/" }); return ((await Promise.all(lo.blobs.map((b) => ordenes().get(b.key, { type: "json" })))) as any[]).filter(Boolean); })(),
+  ]);
+  const cerrados = new Set(bloqueos || []);
+  const ords = new Map(ordsLista.map((o) => [o.token, o]));
   const nombre = (uid: string) => uid === "gerente" ? "Gerente" : equipo.find((p) => p.id === uid)?.nombre || "—";
   const dentro = (t: number) => { const d = hoyCanarias(new Date(t)); return d >= desde && d <= hasta; };
   const porMec: Record<string, { uid: string; nombre: string; prodMin: number; pagadoMin: number; ordenes: number; desv: number[]; facturable: number; retrabajos: number }> = {};

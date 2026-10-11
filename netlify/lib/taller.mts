@@ -45,8 +45,10 @@ export type Quien = { uid: string; nombre: string; rol: Rol; admin: boolean; caj
 export async function quien(req: Request): Promise<Quien | null> {
   if (await isAdmin(req)) return { uid: "gerente", nombre: "Gerente", rol: "gerente", admin: true, caja: true };
   const s = leerSesionEquipo((req.headers.get("authorization") || "").replace(/^Bearer\s+/i, ""));
-  if (!s || s.iat < (await minIat())) return null;
-  const p = (await leerEquipo()).find((x) => x.id === s.uid && x.activo);
+  if (!s) return null;
+  const [min, equipo] = await Promise.all([minIat(), leerEquipo()]); // act. 73 · las dos lecturas a la vez
+  if (s.iat < min) return null;
+  const p = equipo.find((x) => x.id === s.uid && x.activo);
   if (!p) return null;
   return { uid: p.id, nombre: p.nombre, rol: p.rol, admin: p.rol === "gerente", caja: p.rol === "gerente" || !!p.caja };
 }

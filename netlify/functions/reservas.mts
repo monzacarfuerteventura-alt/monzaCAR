@@ -222,16 +222,26 @@ export default async (req: Request, context: Context) => {
     const verCobro = _q.admin || _q.rol === "recepcion"; // IBAN, Bizum y justificantes: solo recepción y gerente
     await caducar(origin, true).catch(() => {});
     const s = R();
-    const { blobs } = await s.list({ prefix: "r/" });
     const limiteT = Date.now() - 180 * 864e5;
-    const todas = ((await Promise.all(blobs.map((x) => s.get(x.key, { type: "json" }).catch(() => null)))) as (Reserva | null)[])
-      .filter((r): r is Reserva => !!r && (activa(r) || Date.parse(r.creado) > limiteT))
-      .sort((x, y) => y.creado.localeCompare(x.creado));
-    const { blobs: esp } = await s.list({ prefix: "espera/" });
-    const espera: Record<string, Espera[]> = {};
-    for (const x of esp) { const l = (await s.get(x.key, { type: "json" }).catch(() => null)) as Espera[] | null; if (l?.length) espera[x.key.slice(7)] = l; }
-    const coches = (await leerCoches()).map((c) => ({ id: c.id, titulo: titulo(c), anio: c.anio, estado: c.estado, precio: c.precio }));
-    return json({ reservas: todas, espera, coches, config: verCobro ? await leerConfig() : {}, publica: await configPublica(), stripe: stripeActivo(), horas: HORAS_RESERVA });
+    // Act. 73 · reservas, lista de espera, coches y configuración a la vez (antes en serie)
+    const [todas, espera, cochesT, cfgPriv, publica] = await Promise.all([
+      (async () => {
+        const { blobs } = await s.list({ prefix: "r/" });
+        return ((await Promise.all(blobs.map((x) => s.get(x.key, { type: "json" }).catch(() => null)))) as (Reserva | null)[])
+          .filter((r): r is Reserva => !!r && (activa(r) || Date.parse(r.creado) > limiteT))
+          .sort((x, y) => y.creado.localeCompare(x.creado));
+      })(),
+      (async () => {
+        const { blobs: esp } = await s.list({ prefix: "espera/" });
+        const listas = (await Promise.all(esp.map((x) => s.get(x.key, { type: "json" }).catch(() => null)))) as (Espera[] | null)[];
+        const out: Record<string, Espera[]> = {};
+        esp.forEach((x, i) => { const l = listas[i]; if (l?.length) out[x.key.slice(7)] = l; });
+        return out;
+      })(),
+      leerCoches(), verCobro ? leerConfig() : Promise.resolve({}), configPublica(),
+    ]);
+    const coches = cochesT.map((c) => ({ id: c.id, titulo: titulo(c), anio: c.anio, estado: c.estado, precio: c.precio }));
+    return json({ reservas: todas, espera, coches, config: cfgPriv, publica, stripe: stripeActivo(), horas: HORAS_RESERVA });
   }
 
   // ---------------- a partir de aquí: una reserva concreta ----------------

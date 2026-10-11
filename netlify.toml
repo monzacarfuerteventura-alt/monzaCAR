@@ -1,11 +1,14 @@
 [build]
-  # Descarga las fuentes a /fonts para no pedirlas a Google en cada visita (tools/fuentes-locales.mjs)
-  command = "node tools/fuentes-locales.mjs; node tools/minificar-html.mjs"
+  # 1.º comprueba que ninguna función se quedaría sin dirección (tools/comprobar-funciones.mjs, act. 73): si falla, NO se publica
+  #     y sigue en línea la versión anterior. 2.º descarga las fuentes a /fonts (tools/fuentes-locales.mjs) y minifica la copia publicada.
+  command = "node tools/comprobar-funciones.mjs && { node tools/fuentes-locales.mjs; node tools/minificar-html.mjs; }"
   publish = "public"
   functions = "netlify/functions"
 
-# Manuales internos (netlify/privado): los entrega /api/manual/… solo con sesión del panel
-[functions]
+# Manuales internos (netlify/privado): los entrega /api/manual/… solo con sesión del panel.
+# Act. 73: los PDF (8 MB) van SOLO dentro de la función «manuales». Antes iban dentro de las 55 funciones
+# (cada una pesaba 7,5 MB en vez de ~0,1 MB): arrancaban más despacio y cada publicación subía ~390 MB.
+[functions.manuales]
   included_files = ["netlify/privado/**"]
 
 # La dirección antigua de Netlify manda a la definitiva (una sola web para Google)
@@ -101,14 +104,17 @@
     Permissions-Policy = "camera=(self), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), serial=(), hid=(), browsing-topics=()"
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://www.google.com https://www.google.es https://www.googletagmanager.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://*.gstatic.com; media-src 'self' blob:; worker-src 'self' blob:; connect-src 'self' https://www.google.com https://www.googletagmanager.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://*.google-analytics.com https://*.analytics.google.com; frame-src https://www.google.com https://maps.google.com https://www.googletagmanager.com https://td.doubleclick.net https://bid.g.doubleclick.net; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; upgrade-insecure-requests"
 
-# Panel: todavía más estricto (solo habla con su propio servidor), sin caché y fuera de Google
+# Panel: todavía más estricto (solo habla con su propio servidor) y fuera de Google.
+# Act. 73 · Cache-Control «no-cache» (antes «no-store»): el navegador guarda la página del panel (360 KB comprimida; no lleva datos,
+# los datos llegan aparte con la sesión) pero SIEMPRE pregunta al servidor si ha cambiado antes de usarla. Si no ha cambiado no la
+# vuelve a descargar (abre mucho más rápido, sobre todo en el móvil); si se ha publicado una versión nueva, baja la nueva. Nunca sale una vieja.
 [[headers]]
   for = "/admin"
   [headers.values]
     Permissions-Policy = "camera=(self), microphone=(), geolocation=(self), payment=(), usb=(), bluetooth=(), serial=(), hid=(), browsing-topics=()"
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; frame-src 'none'; worker-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
     X-Robots-Tag = "noindex, nofollow, noarchive"
-    Cache-Control = "no-store"
+    Cache-Control = "no-cache"
     Referrer-Policy = "no-referrer"
 
 [[headers]]
@@ -117,7 +123,7 @@
     Permissions-Policy = "camera=(self), microphone=(), geolocation=(self), payment=(), usb=(), bluetooth=(), serial=(), hid=(), browsing-topics=()"
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self'; frame-src 'none'; worker-src 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
     X-Robots-Tag = "noindex, nofollow, noarchive"
-    Cache-Control = "no-store"
+    Cache-Control = "no-cache"
     Referrer-Policy = "no-referrer"
 
 # Enlace privado de seguimiento: que no se filtre a otras webs ni lo guarde Google

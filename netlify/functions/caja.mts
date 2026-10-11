@@ -38,8 +38,7 @@ export default async (req: Request) => {
 
   // ---------- estado de la caja (ciego para el equipo) ----------
   if (accion === "estado" && req.method === "GET") {
-    const t = await turnoAbierto();
-    const ultimo = (await s().get("ultimo-cierre", { type: "json" }).catch(() => null)) as any;
+    const [t, ultimo] = await Promise.all([turnoAbierto(), s().get("ultimo-cierre", { type: "json" }).catch(() => null) as Promise<any>]);
     if (!t) return json({ abierta: false, ultimoCierre: ultimo ? { t: ultimo.t, nombre: ultimo.nombre, ...(q.admin ? { contado: ultimo.contado } : {}) } : null, admin: q.admin });
     const movs = await movsDe(t.id), calc = teorico(t, movs);
     return json({
@@ -136,8 +135,9 @@ export default async (req: Request) => {
 
   if (accion === "resumen" && req.method === "GET") {
     const hoy = hoyCanarias(), desde = /^\d{4}-\d{2}-\d{2}$/.test(url.searchParams.get("desde") || "") ? url.searchParams.get("desde")! : hoy.slice(0, 8) + "01", hasta = /^\d{4}-\d{2}-\d{2}$/.test(url.searchParams.get("hasta") || "") ? url.searchParams.get("hasta")! : hoy;
-    const todos = await listar<Turno>("t/"), turnos = todos.filter((t) => t.fecha >= desde && t.fecha <= hasta).sort((a, b) => b.apertura.t.localeCompare(a.apertura.t));
-    const abierto = await turnoAbierto();
+    // Act. 73 · lecturas independientes a la vez (antes una detrás de otra)
+    const [todos, abierto, alertasTodas, ultimo, equipoTodo] = await Promise.all([listar<Turno>("t/"), turnoAbierto(), listar<any>("alerta/"), s().get("ultimo-cierre", { type: "json" }).catch(() => null) as Promise<any>, leerEquipo()]);
+    const turnos = todos.filter((t) => t.fecha >= desde && t.fecha <= hasta).sort((a, b) => b.apertura.t.localeCompare(a.apertura.t));
     const filas = await Promise.all(turnos.map(async (t) => { const movs = await movsDe(t.id), c = teorico(t, movs);
       return { ...t, calculo: c, movimientos: movs, sinTicket: movs.filter((m) => m.sinTicket && !m.foto && !m.anulado).length, abierto: !t.cierre }; }));
     // Descuadres por empleado (quien cierra responde del cierre; quien abre, de la apertura)
@@ -148,13 +148,12 @@ export default async (req: Request) => {
       if (f.apertura.diferencia && !(f.apertura as any).corregida) { const e = emp(f.apertura.uid, f.apertura.nombre); e.descuadres++; e.neto += f.apertura.diferencia; if (f.apertura.diferencia < 0) e.faltante += -f.apertura.diferencia; else e.sobrante += f.apertura.diferencia; }
       for (const m of f.movimientos) if (m.sinTicket && !m.foto && !m.anulado) emp(m.por, m.porNombre).sinTicket++;
     }
-    const alertas = (await listar<any>("alerta/")).sort((a, b) => b.t.localeCompare(a.t)).slice(0, 60);
-    const ultimo = (await s().get("ultimo-cierre", { type: "json" }).catch(() => null)) as any;
+    const alertas = alertasTodas.sort((a, b) => b.t.localeCompare(a.t)).slice(0, 60);
     let ahoraCaja: any;
-    if (abierto) { const c = teorico(abierto, await movsDe(abierto.id)); ahoraCaja = { abierta: true, ...c, desde: abierto.apertura.t, nombre: abierto.apertura.nombre, turno: abierto.id }; }
+    if (abierto) { const yaLeidos = filas.find((x) => x.id === abierto.id)?.movimientos, c = teorico(abierto, yaLeidos || (await movsDe(abierto.id))); ahoraCaja = { abierta: true, ...c, desde: abierto.apertura.t, nombre: abierto.apertura.nombre, turno: abierto.id }; }
     else ahoraCaja = { abierta: false, teorico: ultimo ? ultimo.contado : 0, desde: ultimo?.t || "", nombre: ultimo?.nombre || "" };
     const horasAbierta = abierto ? (Date.now() - Date.parse(abierto.apertura.t)) / 36e5 : 0;
-    const equipo = (await leerEquipo()).map((x) => ({ id: x.id, nombre: x.nombre, activo: x.activo, caja: !!x.caja, rol: x.rol }));
+    const equipo = equipoTodo.map((x) => ({ id: x.id, nombre: x.nombre, activo: x.activo, caja: !!x.caja, rol: x.rol }));
     return json({ desde, hasta, ahora: ahoraCaja, horasAbierta, turnos: filas, porEmpleado: Object.entries(porEmp).map(([uid, v]) => ({ uid, ...v })), alertas, equipo, categorias: TXT_CAT });
   }
 

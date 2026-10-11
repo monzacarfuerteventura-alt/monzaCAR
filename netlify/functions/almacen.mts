@@ -67,13 +67,14 @@ export default async (req: Request) => {
 
   // ================= LECTURA =================
   if (accion === "estado" && req.method === "GET") {
-    const [piezas, herr] = await Promise.all([listarA<Pieza>("p/"), listarA<Herramienta>("h/")]);
+    // Act. 73 · todo a la vez (el gerente necesita además alertas y movimientos: antes se leían después, en serie)
+    const [piezas, herr, alertasT, movsT] = await Promise.all([listarA<Pieza>("p/"), listarA<Herramienta>("h/"), q.admin ? listarA<any>("alerta/") : Promise.resolve([] as any[]), q.admin ? listarA<MovPieza>("m/") : Promise.resolve([] as MovPieza[])]);
     const activas = piezas.filter((p) => p.activo).sort((x, y) => x.nombre.localeCompare(y.nombre, "es"));
     const out: any = { piezas: activas.map((p) => publicaPieza(p, q.admin)), herramientas: herr.filter((h) => h.activo).sort((x, y) => x.nombre.localeCompare(y.nombre, "es")), categorias: { piezas: CAT_PIEZA, herramientas: CAT_HERR, unidades: UNIDADES }, puedeCatalogo: catalogo, admin: q.admin };
     if (q.admin) {
-      const alertas = (await listarA<any>("alerta/")).sort((x, y) => y.t.localeCompare(x.t)).slice(0, 40);
+      const alertas = alertasT.sort((x, y) => y.t.localeCompare(x.t)).slice(0, 40);
       const desde = new Date(Date.now() - 90 * 864e5).toISOString();
-      const movs = (await listarA<MovPieza>("m/")).filter((m) => m.t >= desde);
+      const movs = movsT.filter((m) => m.t >= desde);
       const cons: Record<string, { pieza: string; nombre: string; sku: string; cantidad: number; coste: number; unidad: string }> = {};
       for (const m of movs.filter((m) => m.tipo === "salida" || m.tipo === "devolucion")) { const p = piezas.find((x) => x.id === m.pieza); const c = (cons[m.pieza] ||= { pieza: m.pieza, nombre: m.nombre, sku: m.sku, cantidad: 0, coste: 0, unidad: p?.unidad || "ud" }); c.cantidad = redondeo(c.cantidad - m.cantidad); c.coste += Math.round(-m.cantidad * m.coste); }
       out.kpis = { valor: activas.reduce((s, p) => s + Math.max(0, p.stock) * p.coste, 0), valorVenta: activas.reduce((s, p) => s + Math.max(0, p.stock) * p.pvp, 0), referencias: activas.length, bajoMinimo: activas.filter((p) => p.stock <= p.minimo).length, agotadas: activas.filter((p) => p.stock <= 0).length };
@@ -84,10 +85,11 @@ export default async (req: Request) => {
   }
   if (accion === "orden" && req.method === "GET") {
     if (!/^[A-Za-z0-9]{16}$/.test(id)) return json({ error: "Orden no válida" }, 400);
-    const movs = (await listarA<MovPieza>("m/")).filter((m) => m.orden === id).sort((x, y) => x.t.localeCompare(y.t));
-    const herr = (await listarA<Herramienta>("h/")).filter((h) => h.uso?.orden === id);
-    const hist = (await listarA<any>("hm/")).filter((x) => x.orden === id).sort((x, y) => x.t.localeCompare(y.t));
-    const piezas = new Map((await listarA<Pieza>("p/")).map((p) => [p.id, p]));
+    const [movsT, herrT, histT, piezasT] = await Promise.all([listarA<MovPieza>("m/"), listarA<Herramienta>("h/"), listarA<any>("hm/"), listarA<Pieza>("p/")]); // act. 73 · a la vez
+    const movs = movsT.filter((m) => m.orden === id).sort((x, y) => x.t.localeCompare(y.t));
+    const herr = herrT.filter((h) => h.uso?.orden === id);
+    const hist = histT.filter((x) => x.orden === id).sort((x, y) => x.t.localeCompare(y.t));
+    const piezas = new Map(piezasT.map((p) => [p.id, p]));
     return json({ recambios: movs.map((m) => ({ ...m, coste: q.admin ? m.coste : undefined, pvp: piezas.get(m.pieza)?.pvp || 0, unidad: piezas.get(m.pieza)?.unidad || "ud", ubicacion: piezas.get(m.pieza)?.ubicacion || "" })), herramientas: herr, historial: hist });
   }
   if (accion === "mias" && req.method === "GET") return json((await listarA<Herramienta>("h/")).filter((h) => h.activo && h.estado === "uso" && h.uso?.uid === q.uid));

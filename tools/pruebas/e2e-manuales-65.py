@@ -19,8 +19,10 @@ with sync_playwright() as p:
         pg.fill("#pw",CLAVE); pg.click("#login-btn"); pg.wait_for_selector("#s-dash:not([hidden])",timeout=15000)
         pg.wait_for_timeout(800)
         n=pg.evaluate("document.querySelectorAll('.vm-bar a[href^=\"#manual-\"]').length")
-        check("botones de manual en las pantallas (>=14)", n>=14, n)
-        for sid,man in [("s-ordenes","S01-Taller"),("s-alm","S02-Recambios"),("s-caja","S09-Control"),("s-fin","S09-Control"),("s-leads","S06-Embudo"),("s-resp","S07-Postventa"),("s-jornada","S10-Organizacion"),("s-list","S05-Ventas")]:
+        check("botones de manual en las pantallas (>=13)", n>=13, n)
+        # act. 73: Taller ya no lleva botón de manual (sus manuales están solo en Documentación)
+        check("Taller sin botón de manual", pg.evaluate("!document.querySelector('#s-ordenes .vm-bar')"))
+        for sid,man in [("s-alm","S02-Recambios"),("s-caja","S09-Control"),("s-fin","S09-Control"),("s-leads","S06-Embudo"),("s-resp","S07-Postventa"),("s-jornada","S10-Organizacion"),("s-list","S05-Ventas")]:
             ok_=pg.evaluate("([s,m])=>{const e=document.getElementById(s);return !!e&&!![...e.querySelectorAll('.vm-bar a')].find(a=>a.getAttribute('href').includes(m))}",[sid,man])
             check(f"{sid} enlaza {man}", ok_)
         # abrir un manual: la petición con sesión devuelve PDF
@@ -35,9 +37,12 @@ with sync_playwright() as p:
         pg.evaluate("go&&go('ordenes')") if pg.evaluate("typeof go==='function'") else None
         pg.wait_for_timeout(1200)
         check("tarjeta de auditoría quitada de Taller", pg.evaluate("!document.getElementById('vm-aud')"))
-        pg.evaluate("document.getElementById('sv-lib').open=true")
-        check("biblioteca enlaza la Hoja v3.2", pg.evaluate("!!document.querySelector('#sv-lib a[href=\"#manual-VolcanoCars-S00-Hoja-v3.2-Fe-de-erratas\"]')"))
-        check("biblioteca lista FORM-03, 06, 10 y 11", pg.evaluate("['FORM-06','FORM-03','FORM-11','FORM-10'].every(f=>[...document.querySelectorAll('#sv-lib .sv-f')].some(b=>b.textContent.startsWith(f)))"))
+        # act. 73: la tarjeta «Sistemas Volcano Cars» ya NO está en Taller; todo se abre desde Documentación
+        check("tarjeta «Sistemas» quitada de Taller", pg.evaluate("!document.getElementById('sv-lib') && !/Sistemas Volcano Cars/.test(document.getElementById('s-ordenes').innerText)"))
+        pg.evaluate("abrirTab('docs')"); pg.wait_for_selector("#s-docs .dc-card")
+        check("Documentación enlaza la Hoja v3.2", pg.evaluate("!!document.querySelector('#s-docs a[href=\"#manual-VolcanoCars-S00-Hoja-v3.2-Fe-de-erratas\"]')"))
+        check("Documentación da el PDF de FORM-03, 06, 10 y 11", pg.evaluate("['FORM-06','FORM-03','FORM-11','FORM-10'].every(f=>!!document.querySelector('#s-docs a[href=\"#manual-'+f+'\"]'))"))
+        check("Documentación abre los 7 formularios digitales", pg.evaluate("['FORM-07','FORM-08','FORM-09','FORM-12','FORM-13','FORM-14','FORM-15'].every(f=>!!document.querySelector('#s-docs [data-dc-form=\"'+f+'\"]'))"))
         # validez 12 días hábiles
         tok=pg.evaluate("""async(m)=>{const r=await tApi("recepcion","POST",{cliente:{nombre:"Cliente V",telefono:"600111222"},vehiculo:{matricula:m,marcaModelo:"Seat Ibiza"},tipoEntrada:"reparacion",recibidoPor:"Test"}); ORDENES.unshift(r.orden); return r.orden.token;}""", __import__("random").choice("0123456789")*4+"ZZZ")
         pg.evaluate("t=>abrirFichas(t,'pre')",tok); pg.wait_for_selector("#tpre")
