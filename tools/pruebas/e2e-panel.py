@@ -68,7 +68,7 @@ with sync_playwright() as p:
     page.click('[data-rscanal="whatsapp"]'); page.wait_for_timeout(300)
     over = page.evaluate("(()=>{const f=document.querySelector('.rs-waform');return [...f.querySelectorAll('.field')].some(x=>x.getBoundingClientRect().right>f.getBoundingClientRect().right+1)||document.documentElement.scrollWidth>innerWidth})()")
     check("Respuestas · WhatsApp: ningún campo se corta", not over)
-    check("botones de sonido y guía por voz en la barra", page.is_visible("#vc-bsfx") and page.is_visible("#vc-bvoz"))
+    check("sin botones de sonido ni guía por voz en la barra (actualización 63)", not page.is_visible("#vc-bsfx") and not page.is_visible("#vc-bvoz"))
     page.click("#logout")
 
     print("\n3) Lestter · puesto Gerente con PIN")

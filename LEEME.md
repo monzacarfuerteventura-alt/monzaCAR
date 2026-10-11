@@ -546,6 +546,25 @@ Solo cambia el panel y el servidor de Finanzas/Coches propios (la web pública N
 - Beneficio = base de venta − compra − (piezas + horas + costes aprobados), igual en la ficha y en Finanzas.
 Reglas de seguridad: un coche con venta o gastos ya anotados no se puede enlazar después a la web; la venta no se registra hasta que el coche está «Listo para venta».
 
+## Actualización 63 · banner de pérdidas con volcán, resumen en la ficha y web más rápida
+Acumulativa: incluye 60, 61 y 62. Cambia el panel y la web pública.
+- Banner «HOY HAY / NO HAY PÉRDIDAS» enorme con volcán y lava (rojo = pérdidas, verde = no).
+- La ficha de un coche entregado muestra arriba el resumen completo (solo gerente).
+- Logo de Volcano Cars en tu chip de gerente. Quitados «Guía por voz» y el icono de sonido.
+- Barra lateral con letras grandes. Corregidas las líneas blancas de la factura tras «Recargar desde el presupuesto».
+- Web pública: el catálogo y la primera foto salen al instante (se guarda lo último visto en el navegador).
+- Auditoría: 100 vueltas rellenando todos los campos de las fichas sin errores de JavaScript ni de servidor.
+
+## Actualización 62 · resultado de cada coche de taller y pérdidas de hoy (solo gerente)
+Cambia el panel y el servidor de Finanzas. Acumulativa: incluye la 60 y la 61.
+- Al emitir la factura el panel pregunta cómo pagó el cliente (efectivo, transferencia, tarjeta o todavía no). El dinero entra en Finanzas en ese momento y, si es efectivo, en la Caja abierta.
+- Al irse el cliente, y en Finanzas → «Coches de taller entregados», ves: precio final, IGIC apartado (no es tuyo), precio sin IGIC, piezas del Inventario, lo gastado por cada trabajador (horas fichadas en Tiempos × tarifa) y el beneficio.
+- Interruptor «Descontar mano de obra»: encendido resta los trabajadores de cada coche (entonces los gastos fijos no deben incluir sueldos); apagado no los resta (se suponen dentro de los fijos).
+- Gastos fijos del taller: 9.000 € al mes entre 20 días laborables = 450 € por día (lun-vie). Se pueden cambiar.
+- Banner «Hoy hay / no hay pérdidas»: lo ganado por los coches entregados hoy frente a los 450 € del día.
+- Si un coche no tiene horas fichadas, la mano de obra sale 0 y se avisa.
+- Mecánico y recepción no ven nada de esto.
+
 ## Actualización 61 · el presupuesto se rellena en la ficha (FORM-15)
 Solo cambia el panel (la web pública y el servidor NO cambian). Acumulativa: incluye la 60.
 Antes, la pestaña «Presupuesto» de la ficha solo enseñaba un resumen y te mandaba al cajón del cliente. Ahora se rellena ahí mismo, como la recepción y la inspección:
@@ -558,3 +577,32 @@ Antes, la pestaña «Presupuesto» de la ficha solo enseñaba un resumen y te ma
 - Si el cliente lo aceptó, queda bloqueado; «Reabrir» lo deja editable y tendrá que aceptarlo otra vez.
 El cajón «Presupuesto y cliente» sigue funcionando igual y enseña exactamente las mismas cifras.
 
+## Actualización 64
+Página `/gracias/` real y no indexable; `docs/google-ads-plan.md` con el plan de Ads (5 €/día L–V).
+
+## Actualización 65
+Hoja v3.2 (PDF) con erratas, novedades del panel que los manuales no recogen y decisiones pendientes. Botón «Manual Sxx» arriba de cada pantalla del panel. Presupuesto nuevo: validez por defecto 12 días hábiles.
+
+## Actualización 66
+Tarjeta «Publicar en portales» en Coches: texto de anuncio listo por portal, ZIP de fotos, libreta de anuncios publicados y aviso de anuncios a retirar cuando un coche se vende. Función /api/portales (copia nocturna incluida).
+
+## Actualización 67
+Barra lateral grande; tarjeta de auditoría quitada; MAYLIN Y YERAY SL; formularios 01→17 en los manuales con la Hoja v3.2; página /gracias/ nueva con Remotion; panel minificado al publicar.
+
+## Actualización 68
+Pestaña Documentación en el panel (marca, modelo de ventas, fichas y manuales); página de gracias con el estilo de tu logo.
+
+## Actualización 69
+Manual de marca nuevo en Documentación: 15 páginas, sin contenido inventado.
+
+
+## Actualización 70 (10-10-2026) · ERP dentro del panel
+Ocho pestañas nuevas con el mismo formato del panel (nada de páginas aparte). No se ha eliminado ni cambiado nada de lo que ya funcionaba.
+- **Compras** (Dinero): pedidos al proveedor (solo para uso propio del taller), recepción que entra sola al Inventario, facturas de proveedor, pago que se apunta en Finanzas, lo que se debe y reposición.
+- **Banco**: importa el extracto sin duplicar y concilia con cobros, gastos y facturas de proveedor.
+- **Gestoría**: IGIC por trimestre y libros de facturas emitidas y recibidas en CSV para Excel.
+- **Contabilidad**: libro diario, mayor, sumas y saldos, pérdidas y ganancias y balance, generados desde Finanzas, más asientos manuales (apertura, nóminas, préstamos…). Ayuda para el gestor.
+- **Incentivos**: solo de lo que sobra tras los gastos fijos (máx. 15 %), con tope por persona.
+- **Margen y documentos** y **Clientes 360** (Venta de coches): margen real por coche, contrato, garantía y traspaso; historial de cada cliente y avisos pendientes (la ITV sigue siendo de Taller).
+- **Permisos** (Soporte): qué puestos usan Compras, Clientes 360 y Documentos, y desde qué importe un pedido necesita tu aprobación.
+Ya existía y se respeta: búsqueda Ctrl+K, aviso de pérdidas de hoy, avisos de ITV con permiso, registro de facturación encadenado.

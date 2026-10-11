@@ -228,7 +228,7 @@
   }
   // «Explicar al tocar»: al entrar en un campo, la voz lo explica
   document.addEventListener("focusin", (e) => {
-    if (!VOZ.tocar || VOZ.on) return; const el = e.target;
+    if (true || !VOZ.tocar || VOZ.on) return; const el = e.target;
     if (!el.matches || !el.matches("input,select,textarea") || /^(button|submit|hidden)$/.test(el.type)) return;
     decir(explicar(el));
   });
@@ -242,7 +242,7 @@
     bs.setAttribute("aria-pressed", String(sfxOn));
     bs.onclick = () => { sfxOn = !sfxOn; LS.set("vc_sfx", sfxOn ? "1" : "0"); bs.textContent = sfxOn ? "🔊" : "🔇"; bs.setAttribute("aria-pressed", String(sfxOn)); if (window.toast) window.toast(sfxOn ? "Sonidos activados" : "Sonidos desactivados"); };
     bv.onclick = (e) => { e.stopPropagation(); menuVoz(bv); };
-    top.prepend(bv); top.prepend(bs);
+    /* actualización 63: se quitan «Guía por voz» y el icono de sonido de la barra (a petición del gerente) */
   }
   function menuVoz(ancla) {
     let m = $("#vc-voz-menu");

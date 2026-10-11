@@ -1,0 +1,6 @@
+const B = "http://localhost:8097", O = { origin: B, "content-type": "application/json" };
+const l = await (await fetch(B + "/api/login", { method: "POST", headers: O, body: JSON.stringify({ clave: "demo" }) })).json(); const H = { ...O, authorization: "Bearer " + l.token };
+const post = async (p, b) => { const r = await fetch(B + p, { method: "POST", headers: H, body: JSON.stringify(b) }); return [r.status, await r.json().catch(() => ({}))]; };
+for (const [n, t, c, mat, itv] of [["Juan Pérez", "643566098", "Seat Ibiza", "1234ABC", "2026-11-02"], ["Ana García", "676960348", "Kia Rio", "5678DEF", "2026-10-28"], ["Luis Sosa", "628111222", "Toyota Yaris", "4455GHJ", ""]]) { const [s] = await post("/api/taller/recepcion", { cliente: { nombre: n, telefono: t }, vehiculo: { matricula: mat, marcaModelo: c, km: "84000", itv }, tipoEntrada: "mantenimiento" }); process.stdout.write(s + " "); }
+for (const [tipo, nombre, telefono, mensaje] of [["coche", "María Betancor", "611222333", "Me interesa el Toyota C-HR"], ["taller", "Carlos Medina", "699888777", "Cita para cambio de embrague"]]) { const r = await fetch(B + "/api/solicitudes", { method: "POST", headers: O, body: JSON.stringify({ tipo, nombre, telefono, mensaje, acepta: true }) }); process.stdout.write(r.status + " "); }
+console.log("recepciones ok");

@@ -199,6 +199,12 @@
     X-Robots-Tag = "noindex"
     Cache-Control = "public, max-age=2592000"
 
+# Página de gracias (public/gracias): vídeo y fotos del volcán hechos con Remotion, se piden con ?v=
+[[headers]]
+  for = "/gracias/volcan*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
 # Manuales de sistemas (public/sistemas): documentos internos del equipo, fuera de Google. Llevan ?v= en el enlace.
 [[headers]]
   for = "/sistemas/*"

@@ -1,0 +1,11 @@
+import {bundle} from "@remotion/bundler";
+import {renderMedia, renderStill, selectComposition} from "@remotion/renderer";
+const serveUrl = await bundle({entryPoint: "./src/index.jsx"});
+const browserExecutable = "/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell";
+const comp = await selectComposition({serveUrl, id: "Gracias", browserExecutable});
+await renderStill({composition: comp, serveUrl, frame: 40, output: "out/poster.png", browserExecutable, chromiumOptions:{args:["--no-sandbox"]}});
+await renderMedia({composition: comp, serveUrl, codec: "h264", outputLocation: "out/gracias.mp4", browserExecutable, crf: 30, chromiumOptions:{args:["--no-sandbox"]}, concurrency: 2});
+const cw = await selectComposition({serveUrl, id: "GraciasWide", browserExecutable});
+await renderStill({composition: cw, serveUrl, frame: 40, output: "out/poster-wide.png", browserExecutable, chromiumOptions:{args:["--no-sandbox"]}});
+await renderMedia({composition: cw, serveUrl, codec: "h264", outputLocation: "out/gracias-wide.mp4", browserExecutable, crf: 31, chromiumOptions:{args:["--no-sandbox"]}, concurrency: 2});
+console.log("ok");

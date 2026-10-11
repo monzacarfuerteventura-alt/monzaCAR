@@ -1,0 +1,31 @@
+const B = "http://localhost:8097", O = { origin: B, "content-type": "application/json" };
+const l = await (await fetch(B + "/api/login", { method: "POST", headers: O, body: JSON.stringify({ clave: "demo" }) })).json(); const H = { ...O, authorization: "Bearer " + l.token };
+const post = async (p, b, h = H) => { const r = await fetch(B + p, { method: "POST", headers: h, body: typeof b === "string" || b instanceof Uint8Array ? b : JSON.stringify(b) }); const j = await r.json().catch(() => ({})); if (r.status >= 400) console.log("  ✗", p, r.status, JSON.stringify(j).slice(0, 110)); return j; };
+const hoy = new Intl.DateTimeFormat("en-CA", { timeZone: "Atlantic/Canary" }).format(new Date()), dia = (n) => new Date(Date.now() - n * 864e5).toISOString().slice(0, 10);
+// inventario
+const piezas = {}; for (const [n, s, m, c, pv] of [["Pastillas delanteras", "P-001", 4, 15, "Recambios Sur"], ["Aceite 5W30 (5 L)", "A-5W30", 6, 25, "Aceites Atlántico"], ["Filtro de aceite", "F-OIL", 6, 6, "Recambios Sur"], ["Neumático 205/55 R16", "N-205", 4, 52, "Neumáticos Canarias"]]) { const r = await post("/api/almacen/pieza", { nombre: n, sku: s, unidad: "ud", minimo: String(m), coste: String(c), proveedor: pv }); piezas[s] = r.pieza.id; }
+await post("/api/almacen/entrada", { albaran: "INI", proveedor: "Recambios Sur", lineas: [{ pieza: piezas["P-001"], cantidad: "2", coste: "15" }, { pieza: piezas["F-OIL"], cantidad: "3", coste: "6" }, { pieza: piezas["A-5W30"], cantidad: "18", coste: "25" }, { pieza: piezas["N-205"], cantidad: "6", coste: "52" }] });
+// proveedores, pedidos, facturas
+const P = {}; for (const [n, pl] of [["Recambios Sur", 30], ["Aceites Atlántico", 45], ["Neumáticos Canarias", 30]]) P[n] = (await post("/api/erp/proveedor", { nombre: n, plazoDias: pl, telefono: "928 000 000" })).proveedor;
+const ped = async (pv, f, ls) => (await post("/api/erp/pedido", { proveedor: P[pv].id, fecha: f, lineas: ls })).pedido;
+const p1 = await ped("Recambios Sur", dia(9), [{ ref: "P-001", desc: "Pastillas delanteras", pieza: piezas["P-001"], n: 12, precio: 1500 }, { ref: "F-OIL", desc: "Filtro de aceite", pieza: piezas["F-OIL"], n: 20, precio: 600 }]);
+await post("/api/erp/pedido-estado/" + p1.id, { estado: "enviado" }); const a1 = (await post("/api/erp/albaran", { pedido: p1.id, numProv: "ALB-5521", fecha: dia(5), lineas: [{ i: 0, n: 12 }, { i: 1, n: 8 }] })).albaran;
+await post("/api/almacen/entrada", { albaran: "ALB-5521", proveedor: "Recambios Sur", lineas: [{ pieza: piezas["P-001"], cantidad: "12", coste: "15" }, { pieza: piezas["F-OIL"], cantidad: "8", coste: "6" }] }); await post("/api/erp/albaran-stock/" + a1.id, { ok: true });
+const p2 = await ped("Aceites Atlántico", dia(3), [{ ref: "A-5W30", desc: "Aceite 5W30 (5 L)", pieza: piezas["A-5W30"], n: 24, precio: 2500 }]); await post("/api/erp/pedido-estado/" + p2.id, { estado: "enviado" });
+await ped("Neumáticos Canarias", dia(1), [{ ref: "N-205", desc: "Neumático 205/55 R16", pieza: piezas["N-205"], n: 8, precio: 5200 }]);
+const pdf = await post("/api/fotos", new Uint8Array(Buffer.from("%PDF-1.4 demo")), { ...H, "content-type": "application/pdf" }); const key = pdf.key;
+await post("/api/erp/factura", { proveedor: P["Recambios Sur"].id, num: "RS-8812", fecha: dia(40), base: 31800, igicPct: 7, concepto: "Pastillas y filtros del mes pasado", albaranes: [a1.id] });
+await post("/api/erp/factura", { proveedor: P["Aceites Atlántico"].id, num: "AA-1034", fecha: dia(6), base: 64000, igicPct: 7, concepto: "Aceite 5W30 pedido de octubre" });
+// gastos e ingresos reales en Finanzas (para Gestoría y Banco)
+const g1 = await post("/api/finanzas/gasto", { fecha: dia(7), categoria: "recambios", area: "taller", proveedor: "Neumáticos Canarias", factura: "NC-77", concepto: "Neumáticos 205/55 R16 x16", base: "896.00", impuestoPct: "7", metodo: "transferencia", adjunto: key });
+await post("/api/finanzas/gasto", { fecha: dia(4), categoria: "luz", area: "general", proveedor: "Endesa", factura: "E-5530", concepto: "Luz del taller de septiembre", base: "210.00", impuestoPct: "7", metodo: "tarjeta", adjunto: key });
+for (const [f, c, con, b] of [[dia(8), "Juan Pérez", "Cambio de distribución Seat Ibiza", "420.00"], [dia(5), "Ana García", "Pastillas y discos Kia Rio", "260.00"], [dia(2), "Luis Sosa", "Revisión completa Toyota Yaris", "150.00"]]) await post("/api/finanzas/ingreso", { fecha: f, concepto: con, cliente: c, factura: "F-" + f.slice(0, 4) + "-" + f.slice(5, 7) + f.slice(8), area: "taller", base: b, impuestoPct: "7", metodo: "transferencia", adjunto: key });
+// banco: extracto con movimientos que cuadran con lo anterior
+const csv = `Fecha;Concepto;Importe;Saldo\n${dia(8).split("-").reverse().join("/")};TRANSFERENCIA JUAN PEREZ DISTRIBUCION;449,40;12.449,40\n${dia(7).split("-").reverse().join("/")};PAGO NEUMATICOS CANARIAS NC-77;-958,72;11.490,68\n${dia(5).split("-").reverse().join("/")};BIZUM ANA GARCIA;278,20;11.768,88\n${dia(4).split("-").reverse().join("/")};RECIBO ENDESA E-5530;-224,70;11.544,18\n${dia(3).split("-").reverse().join("/")};COMISION MANTENIMIENTO CUENTA;-4,50;11.539,68\n${dia(2).split("-").reverse().join("/")};TPV CIERRE DIARIO;575,00;12.114,68\n`;
+const mov = []; for (const ln of csv.trim().split("\n").slice(1)) { const [f, c, i, s] = ln.split(";"); const [d, m, y] = f.split("/"); const n = (x) => Math.round(parseFloat(x.replace(/\./g, "").replace(",", ".")) * 100); mov.push({ fecha: `${y}-${m}-${d}`, concepto: c, importe: n(i), saldo: n(s) }); }
+await post("/api/erp/banco-importar", { archivo: "extracto.csv", movs: mov });
+// permisos, asiento de apertura y un pedido grande de otra persona (para ver todo)
+await post("/api/erp/permisos", { roles: { compras: ["recepcion"], cli: ["recepcion"], mcar: ["recepcion"] }, pedidoMax: 30000 });
+await post("/api/erp/conta-asiento", { fecha: dia(200), concepto: "Asiento de apertura", tipo: "apertura", lineas: [{ cuenta: "572", debe: 1500000 }, { cuenta: "570", debe: 120000 }, { cuenta: "100", haber: 1620000 }] });
+await post("/api/erp/conta-asiento", { fecha: dia(3), concepto: "Nóminas del mes de septiembre", tipo: "manual", lineas: [{ cuenta: "640", debe: 180000 }, { cuenta: "572", haber: 180000 }] });
+console.log("sembrado ok");

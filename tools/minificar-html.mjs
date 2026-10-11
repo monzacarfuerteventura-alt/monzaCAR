@@ -2,13 +2,14 @@
 // En el repositorio el código sigue legible; aquí se minifica SOLO la copia que se publica:
 //   · los JavaScript y CSS sueltos de public/ (conversion.js, mejoras.js, taller-vfx.js…)
 //   · los <script> y <style> en línea de las páginas públicas (portada, /en, /comprar, /taller, SEO, legales)
+//   · (act. 67) también los scripts del panel: panel-*.js / panel-diseno.css
 // Si esbuild no está o algo falla, NO se toca ese archivo y la publicación sigue (siempre sale con código 0).
 import fs from "node:fs"; import path from "node:path";
 const PUB = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..", "public");
 let esbuild; try { esbuild = await import("esbuild"); } catch (e) { console.log("minificar: sin esbuild, se publica sin minificar"); process.exit(0); }
 const SALTAR = new Set(["admin.html", "reserva.html", "seguimiento.html", "404.html"]);       // panel y páginas privadas: no se tocan
-const JS_SUELTOS = ["conversion.js", "mejoras.js", "taller-vfx.js", "script-ia.js", "taller-ui.js", "piloto-web.js", "precios-taller.js", "medicion.js", "origen.js", "rendimiento.js"];
-const CSS_SUELTOS = ["conversion.css", "mejoras.css", "taller-vfx.css", "precios-taller.css", "rendimiento.css", "paginas.css", "tema.css", "taller.css"];
+const JS_SUELTOS = ["conversion.js", "mejoras.js", "taller-vfx.js", "script-ia.js", "taller-ui.js", "piloto-web.js", "precios-taller.js", "medicion.js", "origen.js", "rendimiento.js", "panel-app.js", "panel-guiado.js", "panel-manuales.js", "panel-mejoras.js", "panel-plus.js", "panel-portales.js", "panel-precios.js", "panel-shell.js", "panel-sistemas.js", "panel-ayuda.js", "cartel-fichaje.js"];
+const CSS_SUELTOS = ["panel-diseno.css", "conversion.css", "mejoras.css", "taller-vfx.css", "precios-taller.css", "rendimiento.css", "paginas.css", "tema.css", "taller.css"];
 let antes = 0, despues = 0, ok = 0, mal = 0;
 const min = async (code, loader) => { const r = await esbuild.transform(code, { loader, minify: true, legalComments: "none", target: "es2020" }); return r.code.trim(); };
 async function suelto(f, loader) {

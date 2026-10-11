@@ -1,0 +1,2 @@
+{"name":"remotion-gracias","private":true,"type":"module","scripts":{"render":"node render.mjs"},
+"dependencies":{"remotion":"4.0.534","@remotion/cli":"4.0.534","@remotion/bundler":"4.0.534","@remotion/renderer":"4.0.534","react":"18","react-dom":"18"}}

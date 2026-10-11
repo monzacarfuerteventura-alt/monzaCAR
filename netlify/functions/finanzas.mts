@@ -1,7 +1,8 @@
 import type { Config } from "@netlify/functions";
 import { createHash } from "node:crypto";
 import { store, json, mismoOrigen, type Car } from "../lib/shared.mts";
-import { quien, hoyCanarias, leerConfig, type Quien } from "../lib/taller.mts";
+import { quien, hoyCanarias, leerConfig, leerEquipo, tstore, tramos, type Quien, type F3, type Config } from "../lib/taller.mts";
+import { listarA, type MovPieza } from "../lib/almacen.mts";
 import { costesPorCoche, propiosSinEnlazar, esIdPropio, leerFicha, guardarFicha } from "../lib/vehiculos.mts";
 import { todosLosRegistros } from "../lib/facturas.mts";
 import { anotarSeguro } from "../lib/libro.mts";
@@ -81,6 +82,41 @@ async function porCaja(q: Quien, datos: any, origin: string) {
   const r = await crearMovimiento(q, { ...datos, origen: "finanzas", responsable: datos.tipo === "egreso" ? q.uid : "" }, origin);
   if (r.error) return { error: r.status === 409 && /abrir la caja/.test(r.error) ? "Para pagar o cobrar en efectivo la caja tiene que estar abierta (Control de Caja → Abrir la caja). Si no pasa por la caja, elige otro método." : r.error };
   return { id: r.mov!.id };
+}
+
+// ---------- Actualización 62 · resultado de cada coche de taller entregado ----------
+// Precio final (con IGIC) → base sin IGIC (el IGIC no es tuyo) → piezas del inventario a su coste → mano de obra por trabajador → beneficio.
+// Los fijos del taller (por defecto 9.000 €/mes en 20 días laborables = 450 €/día) se restan cada día laborable para saber si «hoy hubo pérdidas».
+type Ajustes = { descontarMO: boolean; fijosMes: number; diasLab: number };
+const AJUSTES_DEF: Ajustes = { descontarMO: true, fijosMes: 900000, diasLab: 20 };
+async function leerAjustes(): Promise<Ajustes> { const a = (await f().get("ajustes", { type: "json" }).catch(() => null)) as Partial<Ajustes> | null; return { ...AJUSTES_DEF, ...(a || {}) }; }
+const esLaborable = (d: string) => { const w = new Date(d + "T12:00:00Z").getUTCDay(); return w >= 1 && w <= 5; };
+const laborablesHasta = (d: string) => { let n = 0; for (let i = 1; i <= Number(d.slice(8)); i++) if (esLaborable(d.slice(0, 8) + String(i).padStart(2, "0"))) n++; return n; };
+const fijosDia = (a: Ajustes) => Math.round(a.fijosMes / a.diasLab);
+
+function piezasDeOrden(movs: MovPieza[], token: string) {
+  const det: { nombre: string; sku: string; cantidad: number; coste: number; sinCoste: boolean }[] = []; let coste = 0;
+  for (const m of movs) {
+    if (m.tipo !== "salida" || m.orden !== token) continue;
+    const net = Math.round((-m.cantidad - (m.devuelto || 0)) * 1000) / 1000; if (net <= 0) continue; // lo devuelto al estante no cuesta
+    const c = Math.round(net * (m.coste || 0)); coste += c; det.push({ nombre: m.nombre, sku: m.sku, cantidad: net, coste: c, sinCoste: !m.coste });
+  }
+  return { coste, det };
+}
+// Horas netas trabajadas por cada persona (FORM-03) × tarifa. La suma es EXACTAMENTE la mano de obra que enseña FORM-03.
+function manoObraDe(f3: F3 | null, cfg: Config, nombre: (u: string) => string) {
+  const tarifa = f3?.tarifa || cfg.tarifa;
+  if (!f3 || !(f3.eventos || []).length) return { coste: 0, minutos: 0, tarifa, trabajadores: [] as { nombre: string; minutos: number; coste: number }[], sinHoras: true };
+  const ultimo = Math.max(...f3.eventos.map((e) => Date.parse(e.t)));
+  const ms = new Map<string, number>();
+  for (const x of tramos(f3.eventos, ultimo).filter((x) => x.trabajo)) ms.set(x.por, (ms.get(x.por) || 0) + (x.fin - x.ini));
+  const filas = [...ms.entries()].sort((a, b) => b[1] - a[1]);
+  const minutos = Math.round(filas.reduce((a, [, v]) => a + v, 0) / 6e4), coste = Math.round((minutos / 60) * tarifa * 100);
+  const trab = filas.map(([u, v]) => ({ nombre: nombre(u), minutos: Math.round(v / 6e4), coste: 0 }));
+  if (trab.length) trab[0].minutos += minutos - trab.reduce((a, t) => a + t.minutos, 0);
+  for (const t of trab) t.coste = Math.round((t.minutos / 60) * tarifa * 100);
+  if (trab.length) trab[0].coste += coste - trab.reduce((a, t) => a + t.coste, 0);
+  return { coste, minutos, tarifa, trabajadores: trab, sinHoras: !minutos };
 }
 
 async function resumen(desde: string, hasta: string) {
@@ -183,6 +219,36 @@ async function resumen(desde: string, hasta: string) {
   const gG = sum(Rgasto.filter((g) => g.area === "general"), "base") + Math.max(0, -descNeto) - Math.max(0, descNeto);
   const baseVentas = cochesVendidosPeriodo.reduce((a, x) => a + x.base, 0);
   const pesoT = ingT + baseVentas + ingV ? ingT / (ingT + baseVentas + ingV) : 0.5;
+  // ===== Actualización 62 · coches de taller ENTREGADOS: precio final, base sin IGIC, piezas, mano de obra por trabajador y beneficio =====
+  const aju = await leerAjustes(), hoyD = hoyCanarias(), mesIni = hoyD.slice(0, 8) + "01";
+  const equipoT = await leerEquipo().catch(() => []), nombreDe = (u: string) => (u === "gerente" ? "Gerente" : equipoT.find((x) => x.id === u)?.nombre || "—");
+  const movsAlm = await listarA<MovPieza>("m/").catch(() => [] as MovPieza[]);
+  const docT = new Map(emitidas.filter((d) => d.tipo === "taller").map((d) => [d.id, d]));
+  const desdeR = desde < mesIni ? desde : mesIni, hastaR = hasta > hoyD ? hasta : hoyD;
+  const entregadas = await Promise.all(ords.filter((o) => o.estado === "entregado").map(async (o) => {
+    const pe = [...(o.pasos || [])].reverse().find((x: any) => x.estado === "entregado"), dia = pe ? diaDe(pe.t) : diaDe(o.actualizado || o.creado);
+    if (dia < desdeR || dia > hastaR) return null;
+    const doc = docT.get("t-" + o.token), fi = (await tstore().get("f/" + o.token, { type: "json" }).catch(() => null)) as any;
+    const pz = piezasDeOrden(movsAlm, o.token), mo = manoObraDe(fi?.f3 || null, cfg, nombreDe);
+    const base = doc ? doc.base : 0, total = doc ? doc.total : 0, descMO = aju.descontarMO ? mo.coste : 0, avisos: string[] = [];
+    if (!doc) avisos.push("Sin factura ni presupuesto aceptado: no hay ingreso que contar.");
+    else if (!doc.facturaEmitida) avisos.push("Todavía no tiene factura emitida.");
+    if (doc && doc.total - doc.cobrado > 0) avisos.push(`Falta cobrar ${eur(doc.total - doc.cobrado)}.`);
+    if (aju.descontarMO && mo.sinHoras) avisos.push("No se fichó ningún tiempo (FORM-03): la mano de obra sale a 0 y el beneficio puede estar inflado.");
+    if (pz.det.some((d) => d.sinCoste)) avisos.push("Alguna pieza no tiene precio de coste en el Inventario: su coste sale a 0.");
+    return { token: o.token, num: o.num || "", cliente: o.cliente?.nombre || "", coche: o.vehiculo?.coche || "", matricula: (o.vehiculo?.matricula || "").toUpperCase(), fecha: dia, factura: doc?.num || "", facturada: !!doc?.facturaEmitida,
+      total, base, igic: total - base, igicPct: doc?.impuestoPct ?? cfg.igic, cobrado: doc?.cobrado || 0, pendiente: doc ? doc.total - doc.cobrado : 0,
+      piezas: pz.coste, piezasDet: pz.det, manoObra: mo.coste, minutos: mo.minutos, tarifa: mo.tarifa, trabajadores: mo.trabajadores, descontadaMO: aju.descontarMO,
+      beneficio: base - pz.coste - descMO, avisos };
+  }));
+  const resAll = entregadas.filter(Boolean) as any[];
+  const resultadoTaller = resAll.filter((x) => dentro(x.fecha)).sort((a, b) => b.fecha.localeCompare(a.fecha));
+  const resTot = { coches: resultadoTaller.length, total: sum(resultadoTaller), base: sum(resultadoTaller, "base"), igic: sum(resultadoTaller, "igic"), piezas: sum(resultadoTaller, "piezas"), manoObra: sum(resultadoTaller, "manoObra"), beneficio: sum(resultadoTaller, "beneficio") };
+  // ¿Hoy hubo pérdidas? Beneficio de los coches entregados hoy − la parte de los fijos del taller de un día laborable
+  const lab = esLaborable(hoyD), fd = lab ? fijosDia(aju) : 0, delHoy = resAll.filter((x) => x.fecha === hoyD), benHoy = sum(delHoy, "beneficio");
+  const delMes = resAll.filter((x) => x.fecha >= mesIni && x.fecha <= hoyD), benMes = sum(delMes, "beneficio"), fijosHasta = fijosDia(aju) * Math.min(laborablesHasta(hoyD), aju.diasLab);
+  const hoy = { fecha: hoyD, laborable: lab, coches: delHoy.length, base: sum(delHoy, "base"), beneficio: benHoy, fijosDia: fd, resultado: benHoy - fd, perdida: benHoy - fd < 0 };
+  const mes = { desde: mesIni, coches: delMes.length, beneficio: benMes, fijosMes: aju.fijosMes, fijosHasta, resultado: benMes - fijosHasta, cubierto: aju.fijosMes ? Math.round((benMes / aju.fijosMes) * 1000) / 10 : 0, diasLaborables: Math.min(laborablesHasta(hoyD), aju.diasLab) };
   const taller = { ingresos: ingT, gastosDirectos: gT, margen: ingT - gT, generales: Math.round(gG * pesoT), neto: ingT - gT - Math.round(gG * pesoT) };
   const venta = { ingresos: baseVentas + ingV, costeCoches: cochesVendidosPeriodo.reduce((a, x) => a + x.compra + x.reacondicionamiento, 0), gastosDirectos: gVsinCoche, margen: margenCoches + ingV - gVsinCoche, generales: gG - Math.round(gG * pesoT), neto: margenCoches + ingV - gVsinCoche - (gG - Math.round(gG * pesoT)), coches: cochesVendidosPeriodo.length };
   const porCategoria: Record<string, number> = {}; for (const g of R) porCategoria[g.categoria] = (porCategoria[g.categoria] || 0) + g.total;
@@ -203,6 +269,7 @@ async function resumen(desde: string, hasta: string) {
     porCanal, porPago, porCategoria, taller, venta, coches: porCoche.sort((a, b) => b.fecha.localeCompare(a.fecha)), stock, efectivo, internos: I, descuadres: D,
     emitidas: E.sort((a, b) => b.fecha.localeCompare(a.fecha)), recibidas: R.sort((a, b) => b.fecha.localeCompare(a.fecha)), cobros: C.sort((a, b) => b.fecha.localeCompare(a.fecha)),
     porCobrar: porCobrar.sort((a, b) => a.fecha.localeCompare(b.fecha)), sinClasificar: recibidas.filter((g) => g.sinClasificar), serie,
+    resultadoTaller, resTot, hoy, mes, ajustes: aju,
     categorias: GASTOS, metodos: TXT_M,
   };
 }
@@ -295,6 +362,16 @@ export default async (req: Request) => {
     await f().setJSON("ingreso/" + i.id, i);
     await libro(q, "ingreso", { importe: i.total, concepto, metodo });
     return json({ ok: true, ingreso: i }, 201);
+  }
+
+  // ---------- ajustes del resultado de taller (interruptor de mano de obra y gastos fijos) ----------
+  if (accion === "ajustes" && req.method === "POST") {
+    const prev = await leerAjustes(), n: Ajustes = { ...prev };
+    if (body.descontarMO !== undefined) n.descontarMO = body.descontarMO === true || body.descontarMO === "true";
+    if (body.fijosMes !== undefined) { const c = cent(String(body.fijosMes ?? "").replace(/\.(?=\d{3}(\D|$))/g, "")); if (!Number.isFinite(c) || c < 0 || c > 10000000) return json({ error: "Los gastos fijos del mes no son válidos (de 0 a 100.000 €)." }, 400); n.fijosMes = c; }
+    if (body.diasLab !== undefined) { const d = Math.round(Number(body.diasLab)); if (!Number.isFinite(d) || d < 1 || d > 31) return json({ error: "Los días laborables del mes tienen que estar entre 1 y 31." }, 400); n.diasLab = d; }
+    await f().setJSON("ajustes", n); await libro(q, "ajustes", { antes: prev, despues: n });
+    return json({ ok: true, ajustes: n });
   }
 
   // ---------- cobro de una orden de taller o de una venta ----------

@@ -35,11 +35,11 @@
      ------------------------------------------------------------------ */
   const BLOQ = { A: "Taller", B: "Venta", C: "Cliente", D: "Dirección" };
   const SIS = [
-    ["01", "A", "Taller: de la recepción a la entrega", "Recepción · Inspección · Presupuesto · Tiempos · Calidad · Factura y cobro", "VolcanoCars-S01-Taller-recepcion-a-entrega", ["FORM-01", "FORM-02", "FORM-03", "FORM-04", "FORM-14"], "hecho"],
+    ["01", "A", "Taller: de la recepción a la entrega", "Recepción · Inspección · Presupuesto · Tiempos · Calidad · Factura y cobro", "VolcanoCars-S01-Taller-recepcion-a-entrega", ["FORM-01", "FORM-02", "FORM-03", "FORM-04", "FORM-14", "FORM-15"], "hecho"],
     ["02", "A", "Recambios, almacén, cascos y abonos", "Pedir · recibir · dar salida · devolver cascos · cobrar abonos", "VolcanoCars-S02-Recambios-almacen-cascos-abonos", ["FORM-05"], "nuevo"],
     ["03", "A", "Instalaciones, seguridad y 5S", "Taller ordenado, seguro y en regla", "VolcanoCars-S03-Instalaciones-seguridad-5S", ["FORM-06"], "nuevo"],
     ["04", "B", "Preparación y detailing anti-salitre", "Del taller al escaparate: coche impecable y protegido", "VolcanoCars-S04-Preparacion-detailing-anti-salitre", ["FORM-07"], "nuevo"],
-    ["05", "B", "El método de venta", "6 pasos · Chuleta · Anexo A prueba en carretera", "", ["Anexo A"], "hecho"],
+    ["05", "B", "El método de venta", "6 pasos · Chuleta · Anexo A prueba en carretera", "", ["Anexo A", "FORM-16", "FORM-17"], "hecho"],
     ["06", "B", "Embudo, prueba a domicilio y seguimiento", "Web + WhatsApp + CRM · fianza de 50 € · cadencia", "VolcanoCars-S06-Embudo-prueba-domicilio-seguimiento", ["FORM-08"], "nuevo"],
     ["07", "C", "Postventa, garantías y atención al cliente", "Respuesta en menos de 48 h", "VolcanoCars-S07-Postventa-garantias-atencion", ["FORM-09"], "nuevo"],
     ["08", "C", "Marketing digital, redes y marca", "Publicar con constancia y medir", "VolcanoCars-S08-Marketing-digital-redes-marca", ["FORM-10"], "nuevo"],
@@ -48,6 +48,8 @@
     ["11", "D", "Cuadro de mando y métricas", "Los números que dirigen el negocio", "VolcanoCars-S11-Cuadro-de-mando-metricas", ["FORM-13"], "nuevo"],
   ];
   const INDICE = "VolcanoCars-S00-Indice-MO-00-v3.0";
+  const HOJA32 = "VolcanoCars-S00-Hoja-v3.2-Fe-de-erratas";
+  const FPDF = { "FORM-01": "Recepción", "FORM-02": "Orden de trabajo", "FORM-03": "Control de calidad", "FORM-04": "Acta de entrega", "FORM-14": "Factura de reparación", "FORM-15": "Presupuesto", "FORM-16": "Factura de venta", "FORM-17": "Parte de reserva" };
   // Los manuales ya no son públicos: se piden con la sesión y se abren en otra pestaña
   const pdf = (f) => `#manual-${f}`;
   document.addEventListener("click", async (e) => {
@@ -357,6 +359,7 @@
     <div class="sv-in">
       <div class="sv-top">
         <a class="btn b-brand b-sm" href="${pdf(INDICE)}" target="_blank" rel="noopener">Índice MO-00 · orden de implantación ↗</a>
+        <a class="btn b-ghost b-sm" href="${pdf(HOJA32)}" target="_blank" rel="noopener">Hoja v3.2 · erratas y formularios 01→17 ↗</a>
         <span class="hint" style="margin:0">Se implanta uno detrás de otro: un sistema pasa cuando lleva <b>dos viernes seguidos en verde</b> (auditoría FORM-11).</span>
       </div>
       ${["A", "B", "C", "D"].map((b) => `<div class="sv-bloq"><h4>Bloque ${b} · ${BLOQ[b]}</h4>${SIS.filter((s) => s[1] === b).map(fila).join("")}</div>`).join("")}
@@ -364,7 +367,7 @@
     </div>`;
   function fila(s) {
     const [nn, , t, d, file, forms, est] = s;
-    const fbtn = forms.map((f) => (FORMS[f] ? `<button type="button" class="sv-f dig" data-form="${f}" ${FORMS[f].ger ? 'data-ger="1"' : ""}>${f} · ${E(FORMS[f].t)}</button>` : `<span class="sv-b">${f}${f === "FORM-12" || f === "FORM-13" ? " · papel" : ""}</span>`)).join("");
+    const fbtn = forms.map((f) => (FORMS[f] ? `<button type="button" class="sv-f dig" data-form="${f}" ${FORMS[f].ger ? 'data-ger="1"' : ""}>${f} · ${E(FORMS[f].t)}</button>` : FPDF[f] ? `<a class="sv-f dig" href="${pdf(f)}" target="_blank" rel="noopener">${f} · ${E(FPDF[f])} ↗</a>` : `<span class="sv-b">${f}${f === "FORM-12" || f === "FORM-13" ? " · papel" : ""}</span>`)).join("");
     let acts = file ? `<a class="btn b-ghost b-sm" href="${pdf(file)}" target="_blank" rel="noopener">PDF ↗</a>` : "";
     if (nn === "01") acts += `<button type="button" class="btn b-ghost b-sm" data-ir="ordenes">Órdenes (FORM-01 a 04)</button>`;
     if (nn === "05") acts = `<button type="button" class="btn b-ghost b-sm" data-ir="guia">Abrir la Guía de venta</button>`;

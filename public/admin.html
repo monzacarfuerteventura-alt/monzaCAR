@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#1B1B1A">
+<meta name="theme-color" content="#121212">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Volcano Panel">
@@ -395,6 +395,49 @@ body.dw-open{overflow:hidden}
 .pl .x{width:34px;height:34px}
 @media (max-width:460px){.pl{grid-template-columns:1fr 54px 84px 30px}}
 .tot{margin:12px 0 4px;font-size:15px}
+/* actualización 62 · resultado de cada coche de taller */
+.rs-hoy{border-radius:16px;padding:16px 18px;margin-bottom:12px;border:1.5px solid var(--line);display:grid;gap:10px;background:var(--surface)}
+.rs-hoy.neg{border-color:var(--bad);background:var(--bad-soft)}.rs-hoy.pos{border-color:var(--ok);background:var(--ok-soft)}
+.rs-hoy-t{display:grid;gap:2px}.rs-hoy-t small{color:var(--muted);font-size:12.5px}.rs-hoy-t b{font-size:22px}.rs-hoy.neg .rs-hoy-t b{color:var(--bad)}.rs-hoy.pos .rs-hoy-t b{color:var(--ok)}
+.rs-hoy-c{width:100%;border-collapse:collapse;font-size:14.5px}.rs-hoy-c td{padding:5px 0;vertical-align:top}.rs-hoy-c td small{display:block;color:var(--muted);font-size:12px}.rs-hoy-c .n{text-align:right;white-space:nowrap}.rs-hoy-c .tot td{border-top:1px solid var(--line);font-weight:700;padding-top:8px}
+/* BANNER DE HOY · volcán y lava (actualización 63) */
+.rs-hoy{position:relative;overflow:hidden;--rs-l1:#7CFFB2;--rs-l2:#1FBF6B;min-height:230px;padding:26px 28px;border-radius:22px;border:2px solid var(--rs-l2);background:radial-gradient(120% 140% at 85% 110%,rgba(31,191,107,.55),transparent 55%),linear-gradient(135deg,#06150d,#0c2a1a 60%,#0a1d12);color:#eafff3;box-shadow:0 0 0 1px rgba(124,255,178,.25),0 18px 60px -12px rgba(31,191,107,.55),inset 0 0 70px rgba(31,191,107,.18);animation:rs-pulso-v 2.6s ease-in-out infinite}
+.rs-hoy.neg{--rs-l1:#FFD25A;--rs-l2:#FF3B1F;border-color:#FF3B1F;background:radial-gradient(120% 140% at 85% 110%,rgba(255,59,31,.65),transparent 55%),linear-gradient(135deg,#1c0503,#3a0b06 60%,#260704);color:#fff0ea;box-shadow:0 0 0 1px rgba(255,120,80,.35),0 18px 60px -12px rgba(255,59,31,.7),inset 0 0 80px rgba(255,59,31,.25);animation:rs-pulso-r 1.5s ease-in-out infinite}
+.rs-hoy .rs-hoy-t{position:relative;z-index:2;display:grid;gap:6px;max-width:calc(100% - 190px)}
+.rs-hoy .rs-hoy-t small{color:rgba(255,255,255,.75);font-size:14px;letter-spacing:.04em;text-transform:uppercase}
+.rs-hoy .rs-hoy-t b{font-size:clamp(30px,5.6vw,64px);line-height:1;font-weight:900;letter-spacing:-.02em;color:#fff!important;text-shadow:0 0 22px var(--rs-l2),0 0 48px var(--rs-l2),0 3px 0 rgba(0,0,0,.5)}
+.rs-hoy .rs-ico{color:var(--rs-l1);display:inline-block;font-size:.8em;animation:rs-flota 1.4s ease-in-out infinite}
+.rs-hoy .rs-hoy-t>span{font-size:clamp(14px,1.6vw,18px);font-weight:600;opacity:.95}
+.rs-hoy .rs-gran{font-style:normal;font-weight:900;font-size:clamp(26px,4vw,44px);color:var(--rs-l1);text-shadow:0 0 18px var(--rs-l2)}
+.rs-hoy .rs-hoy-c,.rs-hoy .rs-mes{position:relative;z-index:2}.rs-hoy .rs-hoy-c td small,.rs-hoy .rs-mes{color:rgba(255,255,255,.78)}.rs-hoy .rs-hoy-c .tot td{border-top-color:rgba(255,255,255,.35)}
+.rs-volcan{position:absolute;right:10px;bottom:0;width:240px;height:100%;z-index:1;pointer-events:none}
+.rs-volcan svg{position:absolute;right:0;bottom:0;width:240px;height:150px;filter:drop-shadow(0 0 16px var(--rs-l2))}
+.rs-rio{animation:rs-lava 2.2s ease-in-out infinite;transform-origin:120px 54px}
+.rs-brasas{position:absolute;right:92px;bottom:118px;width:56px;height:140px}
+.rs-brasas i{position:absolute;left:28px;bottom:0;width:7px;height:7px;border-radius:50%;background:var(--rs-l1);box-shadow:0 0 10px 2px var(--rs-l2);opacity:0;animation:rs-brasa 2.4s ease-out infinite;animation-delay:var(--d)}
+@keyframes rs-brasa{0%{opacity:0;transform:translate(0,0) scale(var(--s))}15%{opacity:1}100%{opacity:0;transform:translate(var(--x),-120px) scale(.2)}}
+@keyframes rs-lava{0%,100%{opacity:.85;transform:scaleY(1)}50%{opacity:1;transform:scaleY(1.06)}}
+@keyframes rs-flota{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes rs-pulso-v{0%,100%{box-shadow:0 0 0 1px rgba(124,255,178,.25),0 18px 60px -12px rgba(31,191,107,.45),inset 0 0 70px rgba(31,191,107,.15)}50%{box-shadow:0 0 0 1px rgba(124,255,178,.45),0 18px 80px -6px rgba(31,191,107,.8),inset 0 0 90px rgba(31,191,107,.3)}}
+@keyframes rs-pulso-r{0%,100%{box-shadow:0 0 0 1px rgba(255,120,80,.35),0 18px 60px -12px rgba(255,59,31,.55),inset 0 0 80px rgba(255,59,31,.2)}50%{box-shadow:0 0 0 1px rgba(255,160,100,.6),0 18px 90px -4px rgba(255,59,31,.95),inset 0 0 110px rgba(255,59,31,.4)}}
+@media (max-width:620px){.rs-hoy{padding:20px 16px;min-height:200px}.rs-hoy .rs-hoy-t{max-width:100%}.rs-volcan{opacity:.35;right:-30px}}
+@media (prefers-reduced-motion:reduce){.rs-hoy,.rs-hoy *{animation:none!important}}
+.rs-mes{margin:0}
+.rs-inline{margin:12px 0;border:1.5px solid var(--accent)}.rs-inline h3{margin:0 0 6px}
+.rs-tot{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin:10px 0}
+.rs-tot>div{background:var(--surface-2);border-radius:12px;padding:10px 12px;display:grid;gap:2px;min-width:0}.rs-tot small{color:var(--muted);font-size:12px}.rs-tot b{font-size:16px;overflow-wrap:anywhere}
+.rs-igic{background:var(--t-aS,#FDF0D8)!important}.rs-ben.pos{background:var(--ok-soft)!important}.rs-ben.pos b{color:var(--ok)}.rs-ben.neg{background:var(--bad-soft)!important}.rs-ben.neg b{color:var(--bad)}
+@media (max-width:900px){.rs-tot{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.rs-tabla td small{display:block;color:var(--muted);font-size:12px}
+.rs-aju{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);display:grid;gap:10px}
+.rs-sw{display:inline-flex;align-items:center;gap:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px 8px 8px;font:inherit;font-weight:600;cursor:pointer;text-align:left}
+.rs-sw i{width:38px;height:22px;border-radius:999px;background:var(--line);position:relative;flex:none;transition:background .15s}
+.rs-sw i::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .15s}
+.rs-sw[aria-checked="true"]{border-color:var(--ok)}.rs-sw[aria-checked="true"] i{background:var(--ok)}.rs-sw[aria-checked="true"] i::after{transform:translateX(16px)}
+.rs-dlg{min-width:0}.rs-res{width:100%;border-collapse:collapse;font-size:15px;margin:8px 0}.rs-res td{padding:7px 0;vertical-align:top;border-bottom:1px solid var(--line)}.rs-res .n{text-align:right;white-space:nowrap;padding-left:12px}.rs-res small{color:var(--muted)}
+.rs-res .ap td{color:var(--muted)}.rs-res .sub td{font-weight:700}.rs-res .nores td{color:var(--muted)}.rs-res .nores .n{text-decoration:line-through}
+.rs-res .tot td{font-size:18px;font-weight:800;border-bottom:0;padding-top:12px}.rs-res .tot.pos .n{color:var(--ok)}.rs-res .tot.neg .n{color:var(--bad)}
+.rs-ul{margin:4px 0 0;padding-left:18px;font-size:13px;color:var(--muted)}.rs-ul li{margin:2px 0}.rs-ul b{color:var(--ink);margin-left:6px}
 /* FORM-15 · hoja de presupuesto rellenable en la ficha (actualización 61) */
 .tpre-l{display:grid;grid-template-columns:minmax(0,1fr) 72px 104px 96px 34px;gap:6px;align-items:center;margin-bottom:6px}
 .tpre-l .in{padding:9px 10px;font-size:15px;min-width:0}
@@ -525,9 +568,10 @@ dialog.dlg form{display:grid;gap:12px;padding:20px}
   --t-car:#2A2927;--t-carl:#A9A49B;--t-glass:#2E3C4B;--t-wheel:#0E0E0D;--t-rim:#67635D}}
 .t-yo{display:inline-flex;align-items:center;gap:8px;padding:3px 10px 3px 3px;border-radius:999px;background:var(--surface-2);font-size:13px;line-height:1.15}
 .t-yo i{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-style:normal;font-weight:800}
+.t-yo i.t-logo{background:#fff;padding:5px;box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 55%,transparent),0 0 12px rgba(217,72,28,.45)}.t-yo i.t-logo svg{display:block}
 .t-yo small{display:block;color:var(--muted);font-size:11.5px}
 @media (max-width:560px){.t-yo span{display:none}}
-body.modo-equipo:not(.eq-ger) #tabs [data-tab="dash"],body.modo-equipo:not(.eq-ger) #tabs [data-tab="fin"],body.modo-equipo:not(.con-caja):not(.eq-ger) #tabs [data-tab="caja"],body.modo-equipo:not(.eq-ger) #btn-seg{display:none!important}
+body.modo-equipo:not(.eq-ger) #tabs [data-tab="dash"],body.modo-equipo:not(.eq-ger) #tabs [data-tab="fin"],body.modo-equipo:not(.eq-ger) #tabs [data-tab="banco"],body.modo-equipo:not(.eq-ger) #tabs [data-tab="gest"],body.modo-equipo:not(.eq-ger) #tabs [data-tab="conta"],body.modo-equipo:not(.eq-ger) #tabs [data-tab="inc"],body.modo-equipo:not(.eq-ger) #tabs [data-tab="perm"],body.modo-equipo:not(.con-caja):not(.eq-ger) #tabs [data-tab="caja"],body.modo-equipo:not(.eq-ger) #btn-seg{display:none!important}
 body.modo-equipo #s-ordenes .head{margin-bottom:10px}
 
 /* barra y filtros */
@@ -1605,7 +1649,7 @@ b.fn-c-ing,b.fn-c-egr{background:none;color:var(--ink)}
   #ay-print .ay-how summary::after{content:""}
   #ay-print .ay-mz{font-size:9pt}
 }
-html body.modo-equipo #tabs #tab-ayuda{display:inline-flex!important}
+html body.modo-equipo #tabs #tab-ayuda,html body.modo-equipo #tabs #tab-docs{display:inline-flex!important}
 /* vídeo-ayuda: solo el vídeo con su voz, limpio */
 .ay-vid{display:grid;gap:12px}
 .ay-vid.vert{justify-items:center}
@@ -1973,7 +2017,7 @@ textarea.in{resize:vertical;min-height:76px;font:inherit}
 .co-in{display:flex;gap:6px;align-items:center;flex:none}.co-in .in{width:104px;text-align:right}.co-in span{color:var(--muted);font-weight:700}
 /*COSTES-CSS-FIN*/
 /*FACTURA-CSS-INICIO*//*FACTURA*/
-.fc-l{display:grid;grid-template-columns:2fr 1fr 1fr .8fr 1fr .8fr 1fr auto;gap:8px;align-items:end;padding:10px;margin-bottom:8px;border:1px solid var(--line,#e2e5ea);border-radius:10px;background:var(--card,#fff)}
+.fc-l{display:grid;grid-template-columns:2fr 1fr 1fr .8fr 1fr .8fr 1fr auto;gap:8px;align-items:end;padding:10px;margin-bottom:8px;border:1px solid var(--line,#e2e5ea);border-radius:10px;background:var(--surface-2,#fff)}
 .fc-l .fc-d{grid-column:1}
 .fc-im{display:flex;flex-direction:column;text-align:right}.fc-im small{color:var(--mut,#6b7280);font-size:11px}.fc-im b{font-variant-numeric:tabular-nums}
 .fc-acc{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
@@ -2398,6 +2442,7 @@ html,body{max-width:100%;overflow-x:hidden}
 .skip17{position:absolute;left:-9999px;top:8px;background:#000;color:#fff;padding:10px 14px;border-radius:8px;z-index:1000}.skip17:focus{left:8px}
 </style>
 <link rel="stylesheet" href="/panel-diseno.css">
+<link rel="stylesheet" href="/panel-erp.css">
 </head>
 <body class="vc-ui">
 <header class="top">
@@ -2439,10 +2484,19 @@ html,body{max-width:100%;overflow-x:hidden}
     <button type="button" role="tab" data-tab="caja" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/></svg>Control de Caja <span class="badge-n" id="n-caja" hidden></span></button>
     <button type="button" role="tab" data-tab="jornada" aria-selected="false">Jornada</button>
     <button type="button" role="tab" data-tab="fin" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18M6 16v-4M10 16V8M14 16v-6M18 16V5"/></svg>Finanzas</button>
+    <button type="button" role="tab" data-tab="compras" id="tab-compras" aria-selected="false" hidden>Compras</button>
+    <button type="button" role="tab" data-tab="banco" id="tab-banco" aria-selected="false" hidden>Banco</button>
+    <button type="button" role="tab" data-tab="gest" id="tab-gest" aria-selected="false" hidden>Gestoría</button>
+    <button type="button" role="tab" data-tab="conta" id="tab-conta" aria-selected="false" hidden>Contabilidad</button>
+    <button type="button" role="tab" data-tab="inc" id="tab-inc" aria-selected="false" hidden>Incentivos</button>
+    <button type="button" role="tab" data-tab="mcar" id="tab-mcar" aria-selected="false" hidden>Margen y documentos</button>
+    <button type="button" role="tab" data-tab="cli" id="tab-cli" aria-selected="false" hidden>Clientes 360</button>
+    <button type="button" role="tab" data-tab="perm" id="tab-perm" aria-selected="false" hidden>Permisos</button>
     <button type="button" role="tab" data-tab="agenda" aria-selected="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5.5" width="16" height="14" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/></svg>Agenda <span class="badge-n" id="n-hoy" hidden></span></button>
     <button type="button" role="tab" data-tab="coches" aria-selected="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16h14M6.5 16l1.3-4.3A2 2 0 0 1 9.7 10h4.6a2 2 0 0 1 1.9 1.7L17.5 16M4 16v2.5h2.5V16M17.5 16v2.5H20V16"/></svg>Coches <span class="badge-n" id="n-rsv" hidden></span></button>
     <button type="button" role="tab" data-tab="resp" id="tab-resp" aria-selected="false">Respuestas</button>
     <button type="button" role="tab" data-tab="ayuda" id="tab-ayuda" aria-selected="false">Ayuda</button>
+    <button type="button" role="tab" data-tab="docs" id="tab-docs" aria-selected="false">Documentación</button>
   </nav>
   <span class="live" id="live" role="status"><i></i><span id="live-t">En vivo</span></span>
   </div>
@@ -2527,6 +2581,18 @@ html,body{max-width:100%;overflow-x:hidden}
     </div>
     <div id="rs"></div>
   </section>
+
+  <!-- DOCUMENTACIÓN (act. 68): fichas, modelo de ventas, manuales y manual de marca; se pinta en panel-docs.js -->
+  <section id="s-docs" hidden></section>
+  <!-- ERP (act. 70): Compras, Banco y Gestoría; se pintan en panel-erp.js -->
+  <section id="s-compras" hidden></section>
+  <section id="s-banco" hidden></section>
+  <section id="s-gest" hidden></section>
+  <section id="s-conta" hidden></section>
+  <section id="s-inc" hidden></section>
+  <section id="s-mcar" hidden></section>
+  <section id="s-cli" hidden></section>
+  <section id="s-perm" hidden></section>
 
   <!-- AYUDA: manual de uso del panel (tools/ayuda) -->
   <section id="s-ayuda" hidden>
@@ -3567,7 +3633,7 @@ function htmlOrden(o){
       <div class="pl pl-h"><span>Concepto</span><span>Cant.</span><span>Precio sin IGIC</span><span></span></div>
       <div data-lineas>${lineas.map((l,i)=>lineaHTML(l,i,bloq)).join("")}</div>
       ${bloq?"":'<button type="button" class="chipb" data-addl style="margin-top:6px">+ Añadir línea</button>'}
-      <div class="g2" style="margin-top:10px"><div class="field"><label>IGIC %</label><input class="in num" data-igic value="${esc(String(p?p.igic:7).replace(".",","))}" ${bloq}></div><div class="field"><label>Válido hasta</label><input class="in" type="date" data-pval value="${esc(p?p.validez:"")}" ${bloq}></div></div>
+      <div class="g2" style="margin-top:10px"><div class="field"><label>IGIC %</label><input class="in num" data-igic value="${esc(String(p?p.igic:7).replace(".",","))}" ${bloq}></div><div class="field"><label>Válido hasta</label><input class="in" type="date" data-pval value="${esc(p?p.validez:vcValidez12())}" ${bloq}></div></div>
       <div class="field" style="margin-top:10px"><label>Nota para el cliente (garantía, plazos…)</label><textarea class="in" data-pnota rows="2" ${bloq}>${esc(p?p.nota:"")}</textarea></div>
       <p class="tot num" data-tot></p>
       <div class="quick">${bloq?'<button type="button" class="btn b-ghost b-sm" data-reabrir>Reabrir para cambiarlo</button>':`<button type="button" class="btn b-ghost b-sm" data-gpresu>Guardar borrador</button><button type="button" class="btn b-acc b-sm" data-epresu>${p&&p.estado==="enviado"?"Actualizar y reenviar":"Enviar al cliente"}</button>`}
@@ -3597,7 +3663,7 @@ async function clickOrden(e){
   const t=e.target, o=ORDENES.find(z=>z.token===DW.id); if(!o) return;
   if(t.closest("[data-copiar]")){ try{ await navigator.clipboard.writeText(linkOrden(o)); toast("Enlace copiado"); }catch(_){ $("#dw-body [data-link]").select(); } return; }
   const w=t.closest("[data-wa-orden]"); if(w){ if(o.lead) actividad(o.lead,"whatsapp",w.dataset.waOrden).catch(()=>{}); return; }
-  const ps=t.closest("[data-paso]"); if(ps){ if(ps.dataset.paso===o.estado) return; const nota=$("#dw-body [data-pnota-paso]").value.trim(); repintarOrden(await patchOrden(o.token,{estado:ps.dataset.paso,nota})); toast("Estado: "+PASO_TXT[ps.dataset.paso]+". El cliente ya lo ve."); if(o.lead) loadLeads(false); return; }
+  const ps=t.closest("[data-paso]"); if(ps){ if(ps.dataset.paso===o.estado) return; const nota=$("#dw-body [data-pnota-paso]").value.trim(); repintarOrden(await patchOrden(o.token,{estado:ps.dataset.paso,nota})); toast("Estado: "+PASO_TXT[ps.dataset.paso]+". El cliente ya lo ve."); if(ps.dataset.paso==="entregado"&&ES_GER()) rsMostrar(o.token); if(o.lead) loadLeads(false); return; }
   if(t.closest("[data-addl]")){ const box=$("#dw-body [data-lineas]"); box.insertAdjacentHTML("beforeend",lineaHTML({c:"",n:1,p:0},box.children.length,"")); box.lastElementChild.querySelector("[data-lc]").focus(); return; }
   const lx=t.closest("[data-lx]"); if(lx){ lx.closest(".pl").remove(); pintarTotales(); return; }
   if(t.closest("[data-gpresu]")){ repintarOrden(await patchOrden(o.token,{presupuesto:leerPresupuesto()})); toast("Presupuesto guardado (el cliente aún no lo ve)"); return; }
@@ -4281,7 +4347,7 @@ async function entrarEquipo(d){
 }
 function tUsuario(){
   let el=$("#t-yo"); if(!el){ el=document.createElement("span"); el.id="t-yo"; el.className="t-yo"; $("#topacts").prepend(el); }
-  el.hidden=!ME; if(ME) el.innerHTML=`<i>${esc((ME.nombre||"?").slice(0,1).toUpperCase())}</i><span><b>${esc(ME.nombre)}</b><small>${esc(T_ROL[ME.rol]||ME.rol)}</small></span>`;
+  el.hidden=!ME; if(ME) el.innerHTML=`<i class="t-logo" translate="no" aria-hidden="true"><svg viewBox="-30 -50 492 492" width="100%" height="100%"><path fill="#1d1d1b" d="M110 0h63l43 54 43-54h63l110 392H0z"/><path fill="#d9481c" d="M160 141h112l45 165H115z"/></svg></i><span translate="no"><b>${esc(ME.nombre)}</b><small>${esc(T_ROL[ME.rol]||ME.rol)}</small></span>`;
 }
 async function tCargarEquipo(){ try{ TEQ=await tApi("equipo"); }catch(_){ } }
 async function tallerTick(){ // refresco del equipo (no llama a nada del gerente)
@@ -4483,17 +4549,17 @@ function tCabecera(){
     <button type="button" class="btn b-ghost b-sm" data-tvolver>← Taller</button>
     <div class="t-fid"><small>Orden</small><b class="num">${esc(f.num||"—")}</b>${typeof vcPlegBtn==="function"?vcPlegBtn("ficha"):""}</div>
     <div class="t-fcar"><span class="mat">${esc((o.vehiculo.matricula||"—").toUpperCase())}</span><b>${esc(o.vehiculo.coche||"Coche")}</b><small>${esc(o.cliente.nombre)}${o.cliente.telefono?" · "+esc(o.cliente.telefono):""}</small></div>
-    <div class="t-facts"><button type="button" class="btn b-ghost b-sm" data-tprint="uno">Descargar PDF de esta ficha</button><button type="button" class="btn b-brand b-sm" data-tprint="todas">PDF de toda la orden</button><button type="button" class="btn b-ghost b-sm" data-tpanel>Las 6 fichas</button>${tBlancoBtn(TF_TAB)}<button type="button" class="btn b-ghost b-sm" data-tdrawer>Presupuesto y cliente</button></div>
+    <div class="t-facts"><button type="button" class="btn b-ghost b-sm" data-tprint="uno">Descargar PDF de esta ficha</button><button type="button" class="btn b-brand b-sm" data-tprint="todas">PDF de toda la orden</button><button type="button" class="btn b-ghost b-sm" data-tpanel>Las 6 fichas</button>${tBlancoBtn(TF_TAB)}${ES_GER()&&TF.orden.estado==="entregado"?'<button type="button" class="btn b-brand b-sm" data-rsficha>Resultado de la reparación</button>':""}<button type="button" class="btn b-ghost b-sm" data-tdrawer>Presupuesto y cliente</button></div>
   </div>
   <ol class="t-fases">${T_FASES.map((x,k)=>`<li class="${k<i?"hecho":k===i?"act":""}"><i>${k<i?"✓":k+1}</i><span>${x[1]}${k===i&&T_SUB[o.estado]?`<small>${T_SUB[o.estado]}</small>`:""}</span></li>`).join("")}</ol>
   ${(()=>{ const cl=T_SEIS.filter(k=>tabs.some(x=>x[0]===k)), pg=tProgreso(cl); return `<div class="fch-prog${pg.n===pg.total?" completo":""}${pg.primera?" anim":""}" role="img" aria-label="${pg.n} de ${pg.total} fichas completadas"><span class="fch-prog-n"><b>${pg.n}</b>/${pg.total}</span><div class="fch-prog-b">${cl.map((k,j)=>{ const tt=tabs.find(x=>x[0]===k); return `<button type="button" class="fch-seg${pg.hs[j]?" on":""}${pg.nuevas[j]?" nueva":""}" data-tseg="${k}" style="--i:${j}" title="${tt[2]}: ${pg.hs[j]?"completada":"pendiente"}"><i></i><small>${j+1}</small></button>`; }).join("")}</div><span class="fch-prog-t">${pg.n===pg.total?"¡Orden completa!":pg.n===0?"Ninguna ficha completada todavía":pg.n+(pg.n===1?" ficha completada":" fichas completadas")}</span></div>`; })()}
-  <nav class="t-tabs" role="tablist">${tabs.map(([k,n,t],ix)=>{ const [c,s]=tEstadoFicha(k), h=T_SEIS.includes(k)&&tHecha(k); return `<button type="button" role="tab" data-ttabb="${k}" class="${h?"hecha":""}" aria-selected="${TF_TAB===k}">${n?`<small>${n}</small>`:""}<b>${t}</b><em class="t-st ${c}">${esc(s)}</em></button>`; }).join("")}</nav>`;
+  <nav class="t-tabs" role="tablist">${tabs.map(([k,n,t],ix)=>{ const [c,s]=tEstadoFicha(k), h=T_SEIS.includes(k)&&tHecha(k); return `<button type="button" role="tab" data-ttabb="${k}" class="${h?"hecha":""}" aria-selected="${TF_TAB===k}">${n?`<small>${n}</small>`:""}<b>${t}</b><em class="t-st ${c}">${esc(s)}</em></button>`; }).join("")}</nav>${ES_GER()&&o.estado==="entregado"?'<section class="card rs-inline" id="rs-inline"><p class="hint">Calculando el resultado del coche…</p></section>':""}`;
 }
 function tRender(){
   $("#tf").innerHTML=`<div id="tf-head">${tCabecera()}</div><div id="tf-body"></div><div class="t-save" id="tf-save" hidden></div>`;
-  tRenderBody();
+  tRenderBody(); if(typeof rsInline==="function") rsInline();
 }
-function tRenderHead(){ const h=$("#tf-head"); if(h) h.innerHTML=tCabecera(); }
+function tRenderHead(){ const h=$("#tf-head"); if(h){ h.innerHTML=tCabecera(); if(typeof rsInline==="function") rsInline(); } }
 function tRenderBody(keep){
   const b=$("#tf-body"); if(!b) return; const y=scrollY;
   b.innerHTML=({f1:tF1,f2:tF2,f3:tF3,f4:tF4,f5:typeof fcRender==="function"?fcRender:tF1,pre:tPre,audit:tAud}[TF_TAB]||tF1)();
@@ -4792,11 +4858,12 @@ $("#tf").addEventListener("click",async e=>{
   const tb=q("[data-ttabb],[data-tseg]"); if(tb){ if(TDIRTY) await tGuardar(false,true); TF_TAB=tb.dataset.ttabb||tb.dataset.tseg; tRenderHead(); tRenderBody(); return; }
   if(q("[data-tpanel]")){ tPanelFichas(TF.orden.token); return; }
   const pr=q("[data-tprint]"); if(pr){ if(TDIRTY) await tGuardar(false,true); tImprimir(pr.dataset.tprint==="uno"&&TF_TAB!=="audit"?[TF_TAB]:["f1","f2",...(TF.orden.presupuesto&&(TF.orden.presupuesto.lineas||[]).length?["pre"]:[]),"f3","f4"]); return; }
+  if(q("[data-rsficha]")){ rsMostrar(TF.orden.token); return; }
   if(q("[data-tdrawer]")){ const o=ORDENES.find(z=>z.token===TF.orden.token); if(o) _tAbrirOrdenDrawer(o.token); return; }
   if(q("[data-tguardar]")){ await tGuardar(false); return; }
   if(q("[data-tcerrar]")){ const k=TF_TAB;
     if(k==="f1"&&!confirm("¿Cerrar la recepción con la firma del cliente? Después solo el gerente puede cambiarla.")) return;
-    if(k==="f5"&&!confirm("¿Emitir la factura? Queda bloqueada y con número definitivo. Si hay que corregirla, el gerente la reabre y sale como rectificativa.")) return;
+    if(k==="f5"){ if(ES_GER()){ fcEmitirDlg(); return; } if(!confirm("¿Emitir la factura? Queda bloqueada y con número definitivo. Si hay que corregirla, el gerente la reabre y sale como rectificativa.")) return; }
     if(k==="f4"&&TW.f4.resultado!=="rechazado"&&!confirm("¿Firmar el control de calidad como "+(T_RES[TW.f4.resultado]||"").toLowerCase()+"?")) return;
     await tGuardar(true); return; }
   const rb=q("[data-treabrir]"); if(rb){ const m=prompt("Motivo para reabrir la ficha (queda en la auditoría):"); if(!m||m.trim().length<4) return toast("Hace falta un motivo");
@@ -4824,7 +4891,7 @@ $("#tf").addEventListener("click",async e=>{
   const f4=q("[data-tf4]"); if(f4&&tEditable("f4")){ const id=f4.dataset.tf4; TW.f4.items[id]=TW.f4.items[id]===f4.dataset.v?"":f4.dataset.v;
     if(TW.f4.items[id]==="no") TW.f4.resultado="rechazado"; tMarcar(); tRenderBody(true); return; }
   if(q("[data-tcierre]")){ try{ const r=await tApi(`fichas/${TF.orden.token}/f4-cierre`,"POST",{}); tRecibir(r); tVacias(); tRenderHead(); tRenderBody(); toast("Orden cerrada"); }catch(err){ toast(err.message); } return; }
-  if(q("[data-tentregar]")){ if(!confirm("¿Marcar la orden como entregada? El cliente lo verá en su enlace.")) return; try{ await patchOrden(TF.orden.token,{estado:"entregado",nota:""}); const r=await tApi("fichas/"+TF.orden.token); tRecibir(r); tRenderHead(); tRenderBody(); toast("Entregado"); }catch(err){ toast(err.message); } return; }
+  if(q("[data-tentregar]")){ if(!confirm("¿Marcar la orden como entregada? El cliente lo verá en su enlace.")) return; try{ await patchOrden(TF.orden.token,{estado:"entregado",nota:""}); const r=await tApi("fichas/"+TF.orden.token); tRecibir(r); tRenderHead(); tRenderBody(); toast("Entregado"); if(ES_GER()) rsMostrar(TF.orden.token); }catch(err){ toast(err.message); } return; }
   // FORM-03
   if(q("[data-tpausa]")){ $("#t-pausas").hidden=!$("#t-pausas").hidden; return; }
   const ev=q("[data-tev]"); if(ev){ const tipo=ev.dataset.tev; if(tipo==="fin"&&!confirm("¿Terminar el trabajo? Después pasa a control de calidad.")) return;
@@ -5057,9 +5124,12 @@ let TPRE=null;
 const tPreEst=()=>{ const p=TF&&TF.orden.presupuesto; return p?p.estado:"nuevo"; };
 const tPreR2=x=>Math.round(x*100)/100;
 function tPreTot(P){ const base=tPreR2(P.lineas.reduce((a,l)=>a+(l.n||0)*(l.p||0),0)), ig=tPreR2(base*(P.igic/100)); return {base,ig,total:tPreR2(base+ig)}; }
+/* Validez de un presupuesto nuevo: 12 días HÁBILES (lunes a viernes), el mínimo legal (RD 1457/1986) y lo que dice el manual S01 */
+function vcValidez12(){ const v=new Date(); let n=0; while(n<12){ v.setDate(v.getDate()+1); const d=v.getDay(); if(d!==0&&d!==6) n++; }
+  return v.getFullYear()+"-"+String(v.getMonth()+1).padStart(2,"0")+"-"+String(v.getDate()).padStart(2,"0"); }
 function tPreInit(){ const o=TF.orden, p=o.presupuesto;
   if(TPRE&&TPRE.token===o.token&&TPRE.sucio) return;
-  const v=new Date(Date.now()+15*864e5), val=p?p.validez:v.getFullYear()+"-"+String(v.getMonth()+1).padStart(2,"0")+"-"+String(v.getDate()).padStart(2,"0");
+  const val=p?p.validez:vcValidez12();
   TPRE={token:o.token,sucio:false,lineas:(p&&p.lineas.length?p.lineas:[{c:"",n:1,p:0}]).map(l=>({c:l.c,n:l.n,p:l.p})),igic:p?p.igic:7,nota:p?p.nota:"",validez:val}; }
 function tPreSugeridas(){ const f2=TF.fichas.f2, out=[]; if(!f2||!f2.items) return out;
   for(const [,,,items] of F2_SECCIONES) for(const [id,tt] of items){ const it=f2.items[id]; if(!it||(it.e!=="r"&&it.e!=="a")) continue;
@@ -5487,6 +5557,7 @@ function fnPintar(){
     <div class="fn-acts"><button type="button" class="btn b-acc b-sm" data-fngasto>− Nuevo gasto</button><button type="button" class="btn b-brand b-sm" data-gdfactura>+ Factura Rápida / Cobro Directo</button><button type="button" class="btn b-ghost b-sm" data-fncaja>Control de Caja (Entrada / Salida)</button><details class="gd-mas"><summary>Más opciones / Utilidades</summary><div class="gd-menu"><button type="button" data-fningreso>+ Otro ingreso</button><button type="button" data-fnexp="emitidas">Excel emitidas</button><button type="button" data-fnexp="recibidas">Excel recibidas</button><button type="button" data-fnexp="pdf">PDF asesoría</button></div></details></div>
   </div>
   ${avisos.length?`<div class="fn-avisos">${avisos.map(a=>`<span>${a}</span>`).join("")} <a href="#fn-pend" class="g-link">Resolver</a></div>`:""}
+  ${fnHoy()}
   <div class="fn-kpis">
     <div class="fn-kpi hero ${k.flujo<0?"neg":""}"><small>Flujo de caja neto</small><b class="num">${cjD(k.flujo)}</b><span>Cobrado ${cjE(k.cobrado)} − pagado ${cjE(k.pagado)}${k.descuadres?` ${k.descuadres<0?"−":"+"} descuadres ${cjE(Math.abs(k.descuadres))}`:""}</span></div>
     <div class="fn-kpi"><small>Cobrado</small><b class="num">${cjE(k.cobrado)}</b><span>Facturado ${cjE(k.facturado)} · incluye ${cjE((r.porCanal.transferencia||0)+(r.porCanal.tarjeta||0)+(r.porCanal.financiacion||0))} en banco</span></div>
@@ -5508,6 +5579,7 @@ function fnPintar(){
       <button type="button" class="g-link" data-fncaja>Abrir Control de Caja →</button></section>
   </div>
   ${fnRentabilidad()}
+  ${fnResultados()}
   <div class="fn-grid">
     <section class="card"><h3>Entradas y salidas de dinero</h3>${fnEvolucion()}</section>
     <section class="card"><h3>¿A dónde se va el dinero?</h3><p class="hint">Reparto de lo pagado en ${esc(etq.toLowerCase())} (con impuestos).</p>${fnDestino()}</section>
@@ -5518,6 +5590,86 @@ function fnPintar(){
   ${fnCoches()}`;
 }
 
+/* ---------- Actualización 62 · resultado de cada coche de taller (solo gerente) ---------- */
+const rsMin=m=>{ const h=Math.floor(m/60), r=m%60; return h?`${h} h ${String(r).padStart(2,"0")} min`:`${r} min`; };
+const rsDia=iso=>new Intl.DateTimeFormat("en-CA",{timeZone:"Atlantic/Canary",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(iso));
+function fnHoy(){ const h=FN.hoy, m=FN.mes, a=FN.ajustes; if(!h) return "";
+  const dia=a.fijosMes?`${cjE(a.fijosMes)} ÷ ${a.diasLab} días`:"";
+  
+  const sub=!h.coches&&h.laborable?`Todavía no se ha entregado ningún coche: los fijos de hoy (${cjE(h.fijosDia)}) están sin cubrir.`:!h.laborable?"Hoy no es día laborable: no se resta ninguna parte de los gastos fijos.":h.perdida?`Faltan ${cjE(-h.resultado)} para cubrir los gastos fijos de hoy.`:`Los coches de hoy cubren los gastos fijos y sobran ${cjE(h.resultado)}.`;
+  const t1=h.perdida?"HOY HAY PÉRDIDAS":"HOY NO HAY PÉRDIDAS", ico=h.perdida?"▼":"▲";
+  const brasas=Array.from({length:14},(_,i)=>`<i style="--x:${(i*7+3)%46-23}px;--d:${(i%5)*.45+.2}s;--s:${.5+(i%4)*.22}"></i>`).join("");
+  return `<section class="rs-hoy ${h.perdida?"neg":"pos"}" aria-live="polite"><div class="rs-volcan" aria-hidden="true"><svg viewBox="0 0 240 150" preserveAspectRatio="xMaxYMax meet"><defs><linearGradient id="rsl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--rs-l1)"/><stop offset="1" stop-color="var(--rs-l2)"/></linearGradient></defs><path d="M0 150 L78 52 L100 40 L120 54 L140 40 L162 52 L240 150Z" fill="#1d1d1b" stroke="var(--rs-l2)" stroke-width="1.4"/><path d="M100 40 L120 54 L140 40 L132 30 L108 30Z" fill="url(#rsl)"/><path d="M120 54 C114 80 128 96 112 150 L132 150 C146 100 128 80 120 54Z" fill="url(#rsl)" class="rs-rio"/></svg><div class="rs-brasas">${brasas}</div></div>
+    <div class="rs-hoy-t"><small>${esc(fechaLarga(h.fecha))} · taller (hasta ahora)</small><b><span class="rs-ico">${ico}</span> ${t1}</b><span>${sub}</span><em class="rs-gran num">${cjD(h.resultado)}</em></div>
+    <table class="rs-hoy-c"><tbody>
+      <tr><td>Beneficio de ${h.coches} coche${h.coches===1?"":"s"} entregado${h.coches===1?"":"s"} hoy<small>sin IGIC, tras piezas${a.descontarMO?" y mano de obra":""}</small></td><td class="n num">${cjD(h.beneficio)}</td></tr>
+      <tr><td>− Parte de los gastos fijos de hoy<small>${h.laborable?esc(dia):"día no laborable"}</small></td><td class="n num">${h.laborable?"−"+cjE(h.fijosDia):cjE(0)}</td></tr>
+      <tr class="tot"><td>= Resultado de hoy</td><td class="n num">${cjD(h.resultado)}</td></tr>
+    </tbody></table>
+    <p class="hint rs-mes">Este mes (hasta hoy): beneficio <b>${cjE(m.beneficio)}</b> frente a <b>${cjE(m.fijosHasta)}</b> de fijos (${m.diasLaborables} de ${a.diasLab} días laborables) → <b class="${m.resultado<0?"cj-rojo":""}">${cjD(m.resultado)}</b>. Cubierto el ${fnPctTxt(m.cubierto)} de los ${cjE(m.fijosMes)} del mes.</p></section>`; }
+function fnResultados(){ const L=FN.resultadoTaller||[], T=FN.resTot, a=FN.ajustes, [,,etq]=fnRango();
+  const filas=L.map(x=>`<tr><td class="num">${esc(tF(x.fecha))}</td><td><b>${esc(x.coche||"Coche")}</b><small>${esc(x.matricula)}${x.cliente?" · "+esc(x.cliente):""}</small></td><td class="n num">${cjE(x.total)}</td><td class="n num">${cjE(x.base)}</td><td class="n num">${cjE(x.piezas)}</td><td class="n num">${cjE(x.manoObra)}${a.descontarMO?"":"<small>no se resta</small>"}</td><td class="n num ${x.beneficio<0?"cj-rojo":""}"><b>${cjD(x.beneficio)}</b></td><td><button type="button" class="btn b-ghost b-sm" data-rsver="${esc(x.token)}">Ver${x.avisos.length?" ⚠":""}</button></td></tr>`).join("");
+  return `<section class="card" id="fn-resultados"><h3>Coches de taller entregados · resultado de cada uno</h3>
+   <p class="hint">Cuando se va el cliente: precio final, el IGIC apartado (no es tuyo), lo que costaron las piezas del Inventario, lo gastado en cada trabajador y lo que de verdad ganas. Periodo: ${esc(etq.toLowerCase())}.</p>
+   ${L.length?`<div class="rs-tot"><div><small>Precio final</small><b class="num">${cjE(T.total)}</b></div><div class="rs-igic"><small>IGIC apartado (no es tuyo)</small><b class="num">${cjE(T.igic)}</b></div><div><small>Sin IGIC</small><b class="num">${cjE(T.base)}</b></div><div><small>Piezas</small><b class="num">${cjE(T.piezas)}</b></div><div><small>Mano de obra${a.descontarMO?"":" (no se resta)"}</small><b class="num">${cjE(T.manoObra)}</b></div><div class="rs-ben ${T.beneficio<0?"neg":"pos"}"><small>Beneficio</small><b class="num">${cjD(T.beneficio)}</b></div></div>
+   <div class="tabla-wrap"><table class="tabla rs-tabla"><thead><tr><th>Entregado</th><th>Coche</th><th class="n">Precio final</th><th class="n">Sin IGIC</th><th class="n">Piezas</th><th class="n">Mano de obra</th><th class="n">Beneficio</th><th></th></tr></thead><tbody>${filas}</tbody></table></div>`:'<p class="hint">Ningún coche de taller entregado en este periodo.</p>'}
+   <div class="rs-aju"><div class="rs-aju-sw"><button type="button" class="rs-sw" role="switch" aria-checked="${a.descontarMO}" data-rsmo><i></i><span>${a.descontarMO?"Descontar la mano de obra de los trabajadores: ACTIVADO":"Descontar la mano de obra de los trabajadores: DESACTIVADO"}</span></button>
+     <p class="hint">${a.descontarMO?"El beneficio de cada coche resta las horas fichadas de cada trabajador a la tarifa por hora. Entonces los gastos fijos de abajo NO deben incluir sueldos (si no, se descuentan dos veces).":"El beneficio de cada coche NO resta las horas de los trabajadores: se da por hecho que los sueldos ya están dentro de los gastos fijos del taller."}</p></div>
+     <div class="t-g2"><div class="field"><label for="rs-fijos">Gastos fijos del taller al mes (€)</label><input class="in num" id="rs-fijos" inputmode="decimal" value="${(a.fijosMes/100).toFixed(2).replace(".",",")}"></div><div class="field"><label for="rs-dias">Días laborables del mes</label><input class="in num" id="rs-dias" inputmode="numeric" value="${a.diasLab}"></div></div>
+     <div class="t-dlg-acts" style="justify-content:flex-start"><button type="button" class="btn b-acc b-sm" data-rsguardar>Guardar gastos fijos</button><small class="hint" id="rs-msg"></small></div>
+     <p class="hint">Gasto fijo de cada día laborable (lunes a viernes): <b>${cjE(Math.round(a.fijosMes/a.diasLab))}</b>.</p></div></section>`; }
+function rsHtml(x,r){ r=r||FN; const a=r.ajustes, h=r.hoy;
+  const pz=x.piezasDet.length?x.piezasDet.map(p=>`<li>${esc(p.nombre)} × ${esc(String(p.cantidad).replace(".",","))} <b class="num">${cjE(p.coste)}</b>${p.sinCoste?' <span class="chip rojo">sin precio de coste</span>':""}</li>`).join(""):"<li>Ninguna pieza del Inventario cargada a esta orden.</li>";
+  const tr=x.trabajadores.length?x.trabajadores.map(t=>`<li>${esc(t.nombre)} · ${rsMin(t.minutos)} × ${esc(String(x.tarifa).replace(".",","))} €/h <b class="num">${cjE(t.coste)}</b></li>`).join(""):"<li>Nadie fichó tiempo en esta orden (FORM-03).</li>";
+  return `<p class="hint"><b>${esc(x.coche||"Coche")}</b> ${esc(x.matricula)} · ${esc(x.cliente)}${x.num?" · orden "+esc(x.num):""}${x.factura?" · factura "+esc(x.factura):""} · entregado el ${esc(tF(x.fecha))}</p>
+   <table class="tabla rs-res"><tbody>
+    <tr><td>Precio final (con IGIC)</td><td class="n num">${cjE(x.total)}</td></tr>
+    <tr class="ap"><td>− IGIC ${esc(String(x.igicPct).replace(".",","))} % <small>apartado: es de Hacienda, no tuyo</small></td><td class="n num">−${cjE(x.igic)}</td></tr>
+    <tr class="sub"><td>= Precio sin IGIC</td><td class="n num">${cjE(x.base)}</td></tr>
+    <tr><td>− Piezas del Inventario (a precio de coste)<ul class="rs-ul">${pz}</ul></td><td class="n num">−${cjE(x.piezas)}</td></tr>
+    <tr class="${a.descontarMO?"":"nores"}"><td>− Mano de obra de los trabajadores${a.descontarMO?"":" <small>(DESACTIVADO: no se resta)</small>"}<ul class="rs-ul">${tr}</ul></td><td class="n num">${a.descontarMO?"−":""}${cjE(x.manoObra)}</td></tr>
+    <tr class="tot ${x.beneficio<0?"neg":"pos"}"><td>= BENEFICIO de este coche</td><td class="n num">${cjD(x.beneficio)}</td></tr>
+   </tbody></table>
+   <p class="hint">Cobrado ${cjE(x.cobrado)}${x.pendiente>0?` · <b class="cj-rojo">falta cobrar ${cjE(x.pendiente)}</b>`:x.cobrado?" ✔ todo cobrado":""}.</p>
+   ${x.avisos.length?`<div class="msg bad">${x.avisos.map(v=>esc(v)).join("<br>")}</div>`:""}
+   ${h&&x.fecha===h.fecha?`<p class="hint">Hoy en el taller: resultado <b class="${h.perdida?"cj-rojo":""}">${cjD(h.resultado)}</b> tras los gastos fijos del día (${cjE(h.fijosDia)}).</p>`:""}
+`; }
+async function rsInline(){ const box=document.getElementById("rs-inline"); if(!box||!TF||!TF.orden) return; const token=TF.orden.token;
+  try{ const o=ORDENES.find(z=>z.token===token)||TF.orden, e=[...(o.pasos||[])].reverse().find(p=>p.estado==="entregado"), dia=e?rsDia(e.t):hoyC();
+    const r=await api(`/api/finanzas/resumen?desde=${dia}&hasta=${dia}`), x=(r.resultadoTaller||[]).find(z=>z.token===token); const bx=document.getElementById("rs-inline"); if(!bx) return;
+    bx.innerHTML=x?`<h3>🌋 Resultado de este coche (solo gerente)</h3>${rsHtml(x,r)}`:"<p class=\"hint\">Esta orden todavía no tiene resultado calculado.</p>"; }catch(err){ box.innerHTML=`<p class="hint">No se pudo calcular el resultado: ${esc(err.message)}</p>`; } }
+function rsDlg(x,r){ r=r||FN;
+  const d=fnDlg(`<div class="rs-dlg"><h2>Resultado de la reparación</h2>${rsHtml(x,r)}
+   <div class="t-dlg-acts">${x.pendiente>0?`<button type="button" class="btn b-brand" data-rscobro>Registrar cobro</button>`:""}<button type="button" class="btn b-ghost" data-fncancel>Cerrar</button></div></div>`);
+  const b=d.querySelector("[data-rscobro]"); if(b) b.onclick=()=>{ d.close(); fnCobro("taller",x.token,x.pendiente,`${x.coche} ${x.matricula} · ${x.cliente}`); }; }
+async function rsMostrar(token){ try{ const o=ORDENES.find(z=>z.token===token), e=o&&[...(o.pasos||[])].reverse().find(p=>p.estado==="entregado"), dia=e?rsDia(e.t):hoyC();
+  const r=await api(`/api/finanzas/resumen?desde=${dia}&hasta=${dia}`), x=(r.resultadoTaller||[]).find(z=>z.token===token); if(!x) return toast("Esta orden todavía no tiene resultado (tiene que estar entregada)."); rsDlg(x,r); }catch(err){ toast(err.message); } }
+
+/* Emitir la factura preguntando cómo ha pagado: el dinero entra solo en Finanzas y, si es efectivo, en la Caja */
+function fcEmitirDlg(){ const tot=Math.round(fcTotales(TW.f5).total*100);
+  const d=fnDlg(`<form id="f-fn" novalidate><h2>Emitir la factura</h2><p class="hint">Total de la factura (IGIC incluido): <b>${cjE(tot)}</b>. Queda bloqueada con su número definitivo; si hay que corregirla, el gerente la reabre y sale como rectificativa.</p>
+    <div class="field"><label>¿Cómo ha pagado el cliente? *</label>${fnSeg("fn-met",[...FN_COBRO,["pendiente","Todavía no ha pagado"]],"")}<small class="hint" id="fn-met-h">Elige una opción: así el dinero entra en Finanzas en el mismo momento.</small></div>
+    <div class="field" id="fn-imp-box" hidden><label for="fn-importe">Importe cobrado ahora (€)</label><input class="in num cj-imp" id="fn-importe" inputmode="decimal" value="${(tot/100).toFixed(2).replace(".",",")}"><small class="hint">Si deja una entrega a cuenta, pon solo lo que paga ahora: el resto queda en «Por cobrar».</small></div>
+    <div class="msg bad" id="fn-aviso" hidden></div><div class="msg bad" id="fn-err" hidden></div>
+    <div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-fncancel>Cancelar</button><button type="submit" class="btn b-acc" id="fn-ok">Emitir factura</button></div></form>`);
+  const avisar=()=>{ const v=fnSegVal("fn-met"), imp=cjNum($("#fn-importe").value); $("#fn-imp-box").hidden=!v||v==="pendiente";
+    $("#fn-met-h").textContent=v==="efectivo"?"Entra en la caja abierta de hoy (suma a su teórico) y en Finanzas.":v==="pendiente"?"La factura queda emitida y «Por cobrar» en Finanzas. Cuando pague, usa «Registrar cobro».":v==="financiacion"?"La financiera paga al taller: cuenta como cobrado.":v?"Entra en Finanzas como cobrado por banco (no toca el cajón).":"";
+    $("#fn-aviso").hidden=!(v==="efectivo"&&imp>=1000); $("#fn-aviso").textContent="Ojo: en España los pagos en efectivo de 1.000 € o más entre una empresa y un particular no están permitidos (Ley 11/2021). Confírmalo con tu gestoría."; };
+  fnSegBind("fn-met",avisar); $("#fn-importe").oninput=avisar;
+  $("#f-fn").onsubmit=async e=>{ e.preventDefault(); $("#fn-err").hidden=true; const met=fnSegVal("fn-met");
+    if(!met) return fnErr("Elige cómo ha pagado el cliente (o «Todavía no ha pagado»).");
+    let imp=0; if(met!=="pendiente"){ imp=cjNum($("#fn-importe").value); if(!(imp>0)) return fnErr("Escribe el importe cobrado."); if(Math.round(imp*100)>tot) return fnErr("El importe cobrado no puede ser mayor que el total de la factura ("+cjE(tot)+")."); }
+    $("#fn-ok").disabled=true;
+    try{
+      if(met==="efectivo"){ const c=await api("/api/caja/estado"); if(!c.abierta){ $("#fn-ok").disabled=false; return fnErr("La caja está cerrada. Ábrela en Control de Caja o elige otra forma de pago. La factura NO se ha emitido."); } }
+      await tGuardar(true);
+      d.close(); if(!(TF&&TF.fichas.f5&&TF.fichas.f5.cerrada)) return; // faltan datos: ya se muestran en la ficha
+      if(met==="pendiente"){ toast("Factura emitida. Queda «Por cobrar» en Finanzas."); return; }
+      try{ await fnCobroPost(`/api/finanzas/cobro/taller/${encodeURIComponent(TF.orden.token)}`,{importe:String(imp),metodo:met,fecha:hoyC()}); toast(`Factura emitida y cobro de ${cjE(Math.round(imp*100))} registrado`+(met==="efectivo"?" en la Caja y en Finanzas":" en Finanzas")); }
+      catch(err){ toast("Factura emitida, pero el cobro NO se registró: "+err.message+" Regístralo en Finanzas → Por cobrar."); }
+    }catch(err){ fnErr(err.message); }
+    $("#fn-ok").disabled=false; };
+}
 function fnRentabilidad(){
   const t=FN.taller, v=FN.venta, col=(tit,sub,filas,neto)=>`<div class="fn-rent"><div class="fn-rent-h"><b>${tit}</b><small>${sub}</small></div><table class="tabla fn-mini"><tbody>${filas.map(([l,x,cls])=>`<tr class="${cls||""}"><td>${l}</td><td class="n num">${x}</td></tr>`).join("")}</tbody></table><div class="fn-neto ${neto<0?"neg":"pos"}"><span>Ganancia neta real</span><b class="num">${cjD(neto)}</b></div></div>`;
   return `<section class="card fn-rents"><h3>Rentabilidad: taller frente a venta de coches</h3><p class="hint">Importes sin impuestos. Los gastos comunes (alquiler, nóminas, luz…) se reparten según lo que factura cada parte. Lo invertido en coches que aún no se han vendido no cuenta como gasto hasta que se venden${FN.kpis.invertidoStock?` (ahora ${cjE(FN.kpis.invertidoStock)})`:""}.</p>
@@ -5738,6 +5890,9 @@ $("#fn").addEventListener("click",async e=>{ const t=e.target, q=s=>t.closest(s)
   if(q("[data-fningreso]")){ fnNuevoIngreso(); return; }
   const ex=q("[data-fnexp]"); if(ex){ fnExportar(ex.dataset.fnexp); return; }
   const ve=q("[data-fnve]"); if(ve){ FN_VISTA_E=ve.dataset.fnve; fnPintar(); return; }
+  const rv=q("[data-rsver]"); if(rv){ const x=(FN.resultadoTaller||[]).find(z=>z.token===rv.dataset.rsver); if(x) rsDlg(x); return; }
+  if(q("[data-rsmo]")){ try{ await api("/api/finanzas/ajustes",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({descontarMO:!FN.ajustes.descontarMO})}); toast(FN.ajustes.descontarMO?"Mano de obra DESACTIVADA: ya no se resta en el beneficio":"Mano de obra ACTIVADA: se resta en el beneficio de cada coche"); fnCargar(); }catch(err){ toast(err.message); } return; }
+  if(q("[data-rsguardar]")){ try{ await api("/api/finanzas/ajustes",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({fijosMes:$("#rs-fijos").value,diasLab:$("#rs-dias").value})}); toast("Gastos fijos guardados"); fnCargar(); }catch(err){ $("#rs-msg").textContent=err.message; } return; }
   const co=q("[data-fncobro]"); if(co){ fnCobro(co.dataset.fncobro,co.dataset.ref,+co.dataset.pend,co.dataset.txt); return; }
   const vt=q("[data-fnventa]"); if(vt){ fnVenta(vt.dataset.fnventa); return; }
   const cl=q("[data-fnclasif]"); if(cl){ fnClasificar(cl.dataset.fnclasif,cl.dataset.txt,cl.dataset.imp); return; }
@@ -9577,6 +9732,13 @@ async function guiaPDF(solo){
 <script src="/panel-mejoras.js" defer></script>
 <script src="/panel-precios.js" defer></script>
 <script src="/panel-sistemas.js" defer></script>
+<script src="/panel-manuales.js" defer></script>
+<script src="/panel-portales.js" defer></script>
+<script src="/panel-docs.js" defer></script>
+<script src="/erp-logic.js" defer></script>
+<script src="/panel-erp.js" defer></script>
+<script src="/panel-erp2.js" defer></script>
+<script src="/panel-conta.js" defer></script>
 <script src="/panel-plus.js" defer></script>
 <script src="/panel-guiado.js" defer></script>
 <script src="/panel-app.js" defer></script>

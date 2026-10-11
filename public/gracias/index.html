@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gracias, hemos recibido tu solicitud | Volcano Cars</title>
+<meta name="description" content="Hemos recibido tu solicitud. Volcano Cars, taller y coches de ocasión en Costa de Antigua, Fuerteventura, te contesta en horario de 8:00 a 16:00.">
+<meta name="robots" content="noindex, follow">
+<meta name="theme-color" content="#1B1B1A">
+<link rel="canonical" href="https://volcanocars.com/gracias/">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preload" as="image" href="/gracias/volcan.webp?v=70" media="(max-aspect-ratio: 1/1)">
+<link rel="preload" as="image" href="/gracias/volcan-wide.webp?v=70" media="(min-aspect-ratio: 1/1)">
+<link rel="preload" as="style" href="/fonts/fuentes.css">
+<link rel="stylesheet" href="/fonts/fuentes.css" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="/paginas.css">
+<link rel="stylesheet" href="/tema.css">
+<style>
+/* Página de gracias · sobria y cinematográfica: vídeo del volcán (Remotion) + brasas muy suaves */
+html{background:#1B1B1A}html:root:not([data-theme="light"]) body,body{background:transparent}html:root:not([data-theme="light"]) body::before{display:none}
+.bg{position:fixed;inset:0;z-index:-2;background:#1B1B1A url(/gracias/volcan.webp?v=70) center/cover no-repeat;overflow:hidden}
+@media (min-aspect-ratio:1/1){.bg{background-image:url(/gracias/volcan-wide.webp?v=70)}}
+.bg video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.6s ease}
+.bg video.on{opacity:1}
+.bg .px{position:absolute;inset:-14px;transition:transform .9s cubic-bezier(.2,.7,.2,1)}
+.bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,27,26,.35) 0%,rgba(27,27,26,0) 28%,rgba(27,27,26,0) 55%,rgba(27,27,26,.7) 100%)}
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:5;pointer-events:none}
+main{position:relative;z-index:6}
+.gr{max-width:560px;margin:0 auto;min-height:calc(100svh - 74px);display:flex;flex-direction:column;justify-content:space-between;text-align:center;color:#F2EFEA;padding:5vh 0 28px}
+.top{animation:ent 1.4s .2s cubic-bezier(.2,.7,.2,1) both}
+.ok{width:46px;height:46px;margin:0 auto 18px;display:block}
+.ok circle{fill:none;stroke:#D9481C;stroke-width:3;stroke-dasharray:140;stroke-dashoffset:140;animation:draw 1.1s .5s ease-out forwards}
+.ok path{fill:none;stroke:#F2EFEA;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:50;stroke-dashoffset:50;animation:draw .6s 1.2s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.gr h1{font-family:var(--display);font-weight:900;font-stretch:100%;text-transform:uppercase;font-size:clamp(46px,15vw,92px);line-height:.98;letter-spacing:.04em;margin:0 0 12px;text-shadow:0 4px 40px rgba(0,0,0,.55);animation:tit 2s .3s cubic-bezier(.2,.7,.2,1) both}
+@keyframes tit{from{opacity:0;letter-spacing:.28em;filter:blur(8px)}to{opacity:1;letter-spacing:.04em;filter:blur(0)}}
+@keyframes ent{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.gr .lead{font-size:clamp(17px,4.4vw,21px);color:#E4DDD2;margin:0;text-shadow:0 2px 16px rgba(0,0,0,.7);font-weight:500}
+.bajo{animation:ent 1.4s 1.3s cubic-bezier(.2,.7,.2,1) both}
+.gr ol{list-style:none;counter-reset:p;padding:0;margin:0 0 22px;display:grid;gap:9px;text-align:left}
+.gr li{counter-increment:p;display:flex;gap:14px;align-items:baseline;font-size:15.5px;line-height:1.4;color:#E4DDD2;text-shadow:0 1px 10px rgba(0,0,0,.8)}
+.gr li::before{content:"0" counter(p);font-weight:800;color:#D9481C;font-variant-numeric:tabular-nums;letter-spacing:.06em;flex:none}
+.gr .ctas{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.gr .ctas .btn{min-height:52px;font-size:16.5px;position:relative;overflow:hidden;transition:transform .35s,box-shadow .35s}
+.gr .ctas .btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.gr .ctas .b-ink{background:#F2EFEA;color:#121212}
+.gr .volver{color:#CFC7BB;font-size:14px;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3);padding-bottom:1px}
+.tag{display:inline-flex;margin:0 auto 22px;font-family:"Titillium Web",var(--display);font-weight:700;font-size:11px;letter-spacing:.2em;text-transform:uppercase}.tag b{background:#D9481C;color:#1B1B1A;padding:6px 12px;font-weight:700}.tag span{background:#F2EFEA;color:#1B1B1A;padding:6px 12px}
+.est{display:block;text-align:center;font-size:13.5px;color:#D6CEC2;margin:0 0 16px;text-shadow:0 1px 8px #000}
+.est i{display:inline-block;vertical-align:middle;margin-right:8px;width:7px;height:7px;border-radius:50%;background:#3DDC84}.est.cerrado i{background:#FFB347}
+.gr small{display:block;margin-top:16px;color:#A89F94;font-size:12px;text-shadow:0 1px 8px #000}
+[data-en]{display:none}html[lang="en"] [data-es]{display:none}html[lang="en"] [data-en]{display:revert}
+@media (prefers-reduced-motion:reduce){.bg video{display:none}.top,.bajo,.gr h1,.ok circle,.ok path{animation:none;opacity:1;filter:none;stroke-dashoffset:0}}
+</style>
+<script src="/medicion.js" defer></script>
+</head>
+<body>
+<div class="bg" id="bg" aria-hidden="true"><div class="px" id="px"><video id="vid" muted loop playsinline preload="none" disablepictureinpicture tabindex="-1"></video></div></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+<header class="pg-top"><div class="wrap">
+  <a class="pg-logo" href="/" aria-label="Volcano Cars"><img src="/marca/logo-claro.svg" alt="Volcano Cars" width="163" height="40"></a>
+  <nav class="pg-nav" aria-label="Secciones"><a class="pg-call" href="tel:+34643566098">Llamar<span class="n"> 643 56 60 98</span></a></nav>
+</div></header>
+<main><div class="wrap"><section class="gr" id="gr">
+  <div class="top">
+    <div class="tag" aria-hidden="true"><b>CARS</b><span>Taller mecánico · Chapa y pintura</span></div><br>
+    <svg class="ok" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="21"/><path d="M14 25 L21 32 L34 17"/></svg>
+    <h1 id="tit"><span data-es>Gracias</span><span data-en>Thank you</span></h1>
+    <p class="lead"><span data-es>Hemos recibido tu solicitud. Te contestamos de lunes a viernes, de 8:00 a 16:00.</span><span data-en>We have received your request. We reply Monday to Friday, 8:00 to 16:00.</span></p>
+  </div>
+  <div class="bajo">
+    <div class="est" id="est" hidden><i></i><span id="est-t"></span></div>
+    <ol id="pasos">
+      <li><span data-es>Revisamos tu solicitud en el taller.</span><span data-en>We review your request at the workshop.</span></li>
+      <li><span data-es>Te escribimos o llamamos para confirmar los detalles.</span><span data-en>We message or call you to confirm the details.</span></li>
+      <li><span data-es>Te esperamos en Costa de Antigua, o vamos nosotros: entrega gratis en toda la isla.</span><span data-en>We see you in Costa de Antigua, or we come to you: free delivery across the island.</span></li>
+    </ol>
+    <div class="ctas">
+      <a class="btn b-wa" href="https://wa.me/34643566098" target="_blank" rel="noopener">WhatsApp</a>
+      <a class="btn b-ink" href="tel:+34643566098"><span data-es>Llamar</span><span data-en>Call</span></a>
+    </div>
+    <a class="volver" href="/"><span data-es>Volver al inicio</span><span data-en>Back to home</span></a>
+    <small>Calle Valle Largo, Nave 8, Polígono Industrial, 35610 Costa de Antigua, Las Palmas</small>
+  </div>
+</section></div></main>
+<script>try{if(/[?&]l=en\b/.test(location.search)||(document.referrer.indexOf("/en/")>-1))document.documentElement.lang="en"}catch(e){}</script>
+<script>
+(function(){
+"use strict";
+var D=document,EN=D.documentElement.lang==="en",RM=false,SD=false;
+try{RM=matchMedia("(prefers-reduced-motion: reduce)").matches}catch(e){}
+try{SD=!!(navigator.connection&&navigator.connection.saveData)}catch(e){}
+var $=function(i){return D.getElementById(i)},vid=$("vid");
+if(!RM&&!SD){
+  var wide=false;try{wide=matchMedia("(min-aspect-ratio: 1/1)").matches}catch(e){}
+  vid.src=(wide?"/gracias/volcan-wide.mp4":"/gracias/volcan.mp4")+"?v=70";vid.preload="auto";
+  vid.addEventListener("canplay",function(){var p=vid.play();if(p&&p.catch)p.catch(function(){});vid.classList.add("on")},{once:true});
+  D.addEventListener("visibilitychange",function(){if(D.hidden)vid.pause();else if(vid.classList.contains("on")){var p=vid.play();if(p&&p.catch)p.catch(function(){})}});
+}
+try{
+  var o={},h,ab;new Intl.DateTimeFormat("en-GB",{timeZone:"Atlantic/Canary",weekday:"short",hour:"2-digit",hour12:false}).formatToParts(new Date()).forEach(function(p){o[p.type]=p.value});
+  h=parseInt(o.hour,10)%24;ab=["Mon","Tue","Wed","Thu","Fri"].indexOf(o.weekday)>-1&&h>=8&&h<16;
+  $("est-t").textContent=ab?(EN?"We are at the workshop now: we usually reply within minutes.":"Estamos en el taller: solemos contestar en minutos."):(EN?"We are closed now. We reply the next working day from 8:00.":"Ahora estamos cerrados. Te contestamos el próximo día laborable desde las 8:00.");
+  $("est").hidden=false;if(!ab)$("est").classList.add("cerrado");
+}catch(e){}
+if(RM)return;
+/* brasas: pocas, lentas y suaves */
+var cv=$("fx"),c=cv.getContext("2d"),W=0,H=0,DPR=Math.min(devicePixelRatio||1,2),E=[];
+function size(){W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;c.setTransform(DPR,0,0,DPR,0,0)}size();addEventListener("resize",size);
+function ember(x,y,tap){var a=tap?Math.random()*6.283:0;E.push({x:x,y:y,vx:tap?Math.cos(a)*30:(Math.random()-.5)*14,vy:tap?Math.sin(a)*30-20:-(14+Math.random()*26),r:.8+Math.random()*1.8,l:0,L:tap?1.6+Math.random():6+Math.random()*6})}
+for(var i=0;i<16;i++){ember(Math.random()*innerWidth,innerHeight*(.4+Math.random()*.6),false);E[i].l=Math.random()*4}
+var last=performance.now(),run=true;
+function tick(t){
+  var dt=Math.min(.05,(t-last)/1000);last=t;
+  if(E.length<18&&Math.random()<dt*2)ember(innerWidth*(.2+Math.random()*.6),innerHeight*(.62+Math.random()*.1),false);
+  c.clearRect(0,0,W,H);c.globalCompositeOperation="lighter";
+  for(var i=E.length-1;i>=0;i--){var p=E[i];p.l+=dt;if(p.l>p.L){E.splice(i,1);continue}
+    p.x+=p.vx*dt+Math.sin(p.l*1.3+i)*.2;p.y+=p.vy*dt;p.vx*=.985;p.vy*=.995;
+    var k=Math.sin(Math.min(1,p.l/p.L)*Math.PI);c.globalAlpha=.55*k;c.fillStyle=i%3?"#FF9A4A":"#FFD08A";c.beginPath();c.arc(p.x,p.y,p.r,0,6.283);c.fill()}
+  c.globalAlpha=1;c.globalCompositeOperation="source-over";
+  if(run)requestAnimationFrame(tick)}
+requestAnimationFrame(tick);
+D.addEventListener("visibilitychange",function(){if(D.hidden)run=false;else if(!run){run=true;last=performance.now();requestAnimationFrame(tick)}});
+D.addEventListener("pointerdown",function(e){for(var i=0;i<7;i++)ember(e.clientX,e.clientY,true)},{passive:true});
+/* paralaje del fondo (muy leve) */
+var px=$("px");
+D.addEventListener("pointermove",function(e){if(e.pointerType==="touch")return;px.style.transform="translate("+((.5-e.clientX/innerWidth)*14).toFixed(1)+"px,"+((.5-e.clientY/innerHeight)*10).toFixed(1)+"px)"},{passive:true});
+})();
+</script>
+</body>
+</html>

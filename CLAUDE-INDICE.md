@@ -1,6 +1,6 @@
 # CLAUDE-INDICE.md · Inventario completo del código (GENERADO, no editar a mano)
 
-Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLAUDE.md`. Contiene qué hace cada archivo, sus rutas, almacenes de datos y funciones exportadas; para ver el código exacto, abrir el archivo.
+Generado con `python3 tools/indice.py` el 2026-10-10. Lo lee Claude junto a `CLAUDE.md`. Contiene qué hace cada archivo, sus rutas, almacenes de datos y funciones exportadas; para ver el código exacto, abrir el archivo.
 
 
 ## 1. Funciones de servidor (`netlify/functions`)
@@ -36,6 +36,10 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
 - **entregas.mts** (50 líneas): ENTREGAS Y OPINIONES (panel, solo gerente) - GET /api/entregas → todas las entregas (foto, opinión, autorización, publicada o no) - PUT /api/entregas/:cocheId → guarda la entrega de un coche VENDIDO - DELETE /api/entregas/:cocheId → la borra (y deja de salir en /coches-vendidos) Lo público está en /coches-vendidos (netlify/functions/vendidos.mts).
   - rutas: `["/api/entregas", "/api/entregas/:id"]`
   - almacenes: monzacar
+- **erp.mts** (437 líneas): ERP · COMPRAS, BANCO, INCENTIVOS, CLIENTES Y DOCUMENTOS DE COCHE (Actualización 64) · SOLO EL GERENTE Los datos viven en el almacén «finanzas» bajo el prefijo «erp/» (así entran solos en la copia de seguridad diaria y NO chocan con nada de Finanzas, que solo lee gasto/, ingreso/, venta/, coste/, clasif/, cobro-taller/, log/…). Acceso: el gerente lo ve todo; el resto del equipo solo los módulos que el gerente les abre…
+  - rutas: `["/api/erp/:accion", "/api/erp/:accion/:id"]`
+  - almacenes: finanzas
+  - variables: INC_MAX_PCT
 - **ev.mts** (90 líneas): ANALÍTICA PROPIA, SIN COOKIES - POST /api/ev → la web avisa de lo que pasa (página vista, coche abierto, clic en WhatsApp…) - GET /api/stats → el panel pide los totales por día (requiere contraseña) Privacidad: no se guarda la IP ni nada que identifique a la persona. Para contar visitantes únicos se usa una huella que cambia cada día (sal aleatoria diaria que se borra al día siguiente), así que es imposible seguir a …
   - rutas: `["/api/ev", "/api/stats"]`
   - almacenes: analitica
@@ -48,7 +52,7 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
 - **financiacion.mts** (91 líneas): FINANCIACIÓN (calculadora de cuotas de la web) - GET /api/financiacion → condiciones que usa la calculadora (público) - PUT /api/financiacion → el panel cambia las condiciones (requiere sesión) Las condiciones son las que te dé la entidad financiera con la que trabajes (TIN, comisión, plazos, importe mínimo y antigüedad máxima del coche). La web calcula con ellas la cuota, la TAE y el ejemplo representativo que exige…
   - rutas: `"/api/financiacion"`
   - almacenes: monzacar
-- **finanzas.mts** (388 líneas): GESTIÓN DE INGRESOS Y EGRESOS GLOBALES (solo el gerente) Ingresos automáticos, sin duplicar trabajo: · Taller: cada presupuesto ACEPTADO por el cliente es una factura emitida. Los cobros salen de «Registrar cobro» o, solos, de los cobros de caja que el equipo enlaza a esa orden. · Venta de coches: cada coche marcado «Vendido» es una venta. Con «Registrar la venta» se anotan precio final, coste de compra y forma de pa…
+- **finanzas.mts** (465 líneas): GESTIÓN DE INGRESOS Y EGRESOS GLOBALES (solo el gerente) Ingresos automáticos, sin duplicar trabajo: · Taller: cada presupuesto ACEPTADO por el cliente es una factura emitida. Los cobros salen de «Registrar cobro» o, solos, de los cobros de caja que el equipo enlaza a esa orden. · Venta de coches: cada coche marcado «Vendido» es una venta. Con «Registrar la venta» se anotan precio final, coste de compra y forma de pa…
   - rutas: `["/api/finanzas/:accion", "/api/finanzas/:accion/:id", "/api/finanzas/:accion/:id/:sub"]`
   - almacenes: finanzas, monzacar, monzacar-fotos, ordenes
 - **fotos-cliente.mts** (62 líneas): FOTOS DEL CLIENTE · «Presupuesto por foto» del taller - POST /api/fotos-cliente → la web sube una foto del daño (JPEG ya reducido en el móvil, máx. 3 MB) - GET /api/fotos-cliente/:clave → solo el panel la puede ver (son fotos privadas del cliente) La foto queda «suelta» hasta que se envía la solicitud; las que nadie usa se borran solas a las 24 h (lo hace la tarea programada de las reservas).
@@ -92,6 +96,10 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
   - variables: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
 - **piloto-web.mts** (65 líneas): PILOTO DE CONVERSIÓN EN LA WEB - GET /api/piloto-web → (público) qué reglas están activas y qué coches las disparan. Lo lee /piloto-web.js - POST /api/piloto-web/evento → (público) la ventana avisa de que se mostró / se pulsó / se cerró (sin datos personales) - GET /api/piloto-web/admin → (gerente) reglas, estado completo y resultados de la semana - PUT /api/piloto-web/config → (gerente) guarda las reglas desde el pa…
   - rutas: `["/api/piloto-web", "/api/piloto-web/:accion"]`
+- **portales.mts** (55 líneas): PORTALES · PUBLICACIÓN ASISTIDA (actualización 66) · gerente y recepción GET /api/portales → coches (disponibles, reservados y vendidos recientes) con sus datos limpios, el estado de cada anuncio en cada portal (publicado, enlace, fecha) y los anuncios que HAY QUE RETIRAR porque el coche ya se vendió. PUT /api/portales {id, portal, publicado?, retirado?, enlace?, nota?} → apunta que un coche está (o ya no está) en un…
+  - rutas: `"/api/portales"`
+  - almacenes: monzacar, portales
+  - variables: FEED_TOKEN
 - **precios-taller.mts** (90 líneas): PRECIOS «DESDE» DEL TALLER - GET /api/precios-taller → precios que enseña la web (público, en caché del CDN) - PUT /api/precios-taller → el panel (Taller → Precios en la web) los cambia (solo el gerente) Cada servicio del taller de la web (las mismas claves que SERVICIOS en public/index.html) puede tener un precio «desde» con IGIC incluido, un sufijo («/ pieza», «/ rueda»…) y una etiqueta llamativa («Oferta», «Más pe…
   - rutas: `"/api/precios-taller"`
   - almacenes: monzacar
@@ -206,6 +214,8 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
   - exporta: EMPRESA, escH, eur, kmTxt, foto, fotoW, imgAttrs, wa, slugDe, cabecera, pie
 - **piloto.mts** (146 líneas): PILOTO DE CONVERSIÓN EN LA WEB · lógica común de /api/piloto-web (público + panel) El panel guarda unas REGLAS (interruptores y números). Este archivo las cruza con los datos REALES de la web (personas que abren cada ficha, solicitudes, tráfico por hora) y publica un «estado» pequeño que lee la web (public/piloto-web.js) para actuar sola en la ficha del coche: · Prueba social: «N personas han pedido información de es…
   - exporta: Reglas, REGLAS_BASE, limpiarReglas, pw, leerReglas, EstadoWeb, calcularEstado, estadoWeb, TIPOS_EV, ACC_EV, resumenEventos
+- **plan-contable.mts** (11 líneas): Plan de cuentas abreviado (PGC de pymes) para la contabilidad del ERP. Mismo listado que public/erp-logic.js (una prueba lo comprueba).
+  - exporta: PLAN
 - **plantilla-coches-fv.mts** (3 líneas): GENERADO por tools/seo.py: no editar a mano
   - exporta: PLANTILLA
 - **presencia.mts** (131 líneas): PRESENCIA EN LA NAVE · antitrampa del fichaje (actualización 44) El servidor comprueba, en el momento de fichar, que la persona está DENTRO de la nave. Nunca se fía del móvil: · El móvil solo manda sus coordenadas (y la precisión); la distancia a la nave la calcula SIEMPRE el servidor. · Si la geovalla está activa y no hay ubicación, o está fuera del radio, o es muy imprecisa → NO se ficha (y queda anotado el intento…
@@ -238,17 +248,17 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
 ## 3. Páginas HTML (`public`)
 
 - **public/404.html** (36 líneas, 1 KB): Página no encontrada | Volcano Cars
-- **public/admin.html** (9611 líneas, 1161 KB): Panel Volcano Cars
+- **public/admin.html** (9773 líneas, 1185 KB): Panel Volcano Cars
   - vistas: v-empty, v-up, v-cancel, v-bar, v-ok, v-change, v-rm, v-err
-  - pestañas del panel: agenda, alm, ayuda, caja, coches, dash, fin, jornada, leads, ordenes, resp
-  - scripts: /cartel-fichaje.js, /panel-app.js, /panel-guiado.js, /panel-mejoras.js, /panel-plus.js, /panel-precios.js, /panel-shell.js, /panel-sistemas.js
+  - pestañas del panel: agenda, alm, ayuda, banco, caja, cli, coches, compras, conta, dash, docs, fin, gest, inc, jornada, leads, mcar, ordenes, perm, resp
+  - scripts: /cartel-fichaje.js, /erp-logic.js, /panel-app.js, /panel-conta.js, /panel-docs.js, /panel-erp.js, /panel-erp2.js, /panel-guiado.js, /panel-manuales.js, /panel-mejoras.js, /panel-plus.js, /panel-portales.js, /panel-precios.js, /panel-shell.js, /panel-sistemas.js
 - **public/aviso-legal.html** (96 líneas, 10 KB): Aviso legal · Volcano Cars
   - scripts: /medicion.js, /origen.js
 - **public/chapa-y-pintura-fuerteventura/index.html** (79 líneas, 15 KB): Chapa y pintura en Fuerteventura | Volcano Cars
   - scripts: /medicion.js, /origen.js, /precios-taller.js
 - **public/coches-segunda-mano-fuerteventura/index.html** (98 líneas, 17 KB): Coches de segunda mano en Fuerteventura | Volcano Cars
   - scripts: /medicion.js, /origen.js
-- **public/comprar/index.html** (3201 líneas, 359 KB): Coches de ocasión en Fuerteventura | Volcano Cars
+- **public/comprar/index.html** (3206 líneas, 361 KB): Coches de ocasión en Fuerteventura | Volcano Cars
   - vistas: v-inicio, v-comprar, v-taller, v-contacto
   - scripts: /conversion.js, /mejoras.js, /piloto-web.js, /script-ia.js, /taller-ui.js
 - **public/condiciones.html** (143 líneas, 17 KB): Condiciones de venta, taller y garantía · Volcano Cars
@@ -257,12 +267,14 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
   - scripts: /medicion.js, /origen.js
 - **public/cookies.html** (79 líneas, 8 KB): Política de cookies · Volcano Cars
   - scripts: /medicion.js
-- **public/en/index.html** (3206 líneas, 360 KB): Used cars and car workshop in Fuerteventura | Volcano Cars
+- **public/en/index.html** (3211 líneas, 362 KB): Used cars and car workshop in Fuerteventura | Volcano Cars
   - vistas: v-inicio, v-comprar, v-taller, v-contacto
   - scripts: /conversion.js, /mejoras.js, /piloto-web.js, /script-ia.js, /taller-ui.js
 - **public/financiacion-coches-fuerteventura/index.html** (78 líneas, 14 KB): Financiación de coches en Fuerteventura | Volcano Cars
   - scripts: /medicion.js, /origen.js
-- **public/index.html** (3205 líneas, 360 KB): Coches de ocasión y taller en Fuerteventura | Volcano Cars
+- **public/gracias/index.html** (134 líneas, 10 KB): Gracias, hemos recibido tu solicitud | Volcano Cars
+  - scripts: /medicion.js
+- **public/index.html** (3211 líneas, 362 KB): Coches de ocasión y taller en Fuerteventura | Volcano Cars
   - vistas: v-inicio, v-comprar, v-taller, v-contacto
   - scripts: /conversion.js, /mejoras.js, /piloto-web.js, /script-ia.js, /taller-ui.js
 - **public/itv-fuerteventura/index.html** (95 líneas, 17 KB): ITV en Fuerteventura: guía y cómo aprobar | Volcano Cars
@@ -276,7 +288,7 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
 - **public/seguimiento.html** (300 líneas, 35 KB): Seguimiento de tu coche · Volcano Cars
 - **public/taller-mecanico-fuerteventura/index.html** (79 líneas, 17 KB): Taller mecánico en Fuerteventura | Volcano Cars
   - scripts: /medicion.js, /origen.js, /precios-taller.js
-- **public/taller/index.html** (3201 líneas, 359 KB): Taller mecánico y chapa y pintura | Volcano Cars
+- **public/taller/index.html** (3206 líneas, 361 KB): Taller mecánico y chapa y pintura | Volcano Cars
   - vistas: v-inicio, v-comprar, v-taller, v-contacto
   - scripts: /conversion.js, /mejoras.js, /piloto-web.js, /script-ia.js, /taller-ui.js
 
@@ -285,19 +297,27 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
 - **cartel-fichaje.js** (99 líneas): CARTEL DE FICHAJE QR / NFC · Volcano Cars (27-09-2026) A4 vertical, a sangre, estética del taller: grafito, magma y brillo neón. Lo usa el panel (Jornada → «Ver e imprimir el cartel») y la herramienta tools/cartel/generar-pdf.mjs. window.vcCartel.html({url, desde, qrSvg})
 - **conversion.css** (346 líneas): VOLCANO CARS · CONVERSIÓN (conversion.css) Reserva flash 50 €, lista de espera, confirmación y presupuesto por foto. Mismo estilo «high-tech» de toda la web: antracita, naranja volcánico, letra técnica y bordes redondeados. Solo afecta a sus propias clases (.rsv-*, .pf-*), así que no cambia nada de lo que ya existía.
 - **conversion.js** (775 líneas): VOLCANO CARS · CONVERSIÓN (conversion.js) Cuatro módulos, sin librerías externas: 1. RESERVA FLASH 50 € en la ficha del coche (tarjeta · Google Pay · Apple Pay con Stripe, o transferencia / Bizum con justificante). 2. LISTA DE ESPERA en los coches RESERVADOS. 3. CONFIRMACIÓN + COMPROBANTE PDF (generado aquí mismo, sin jsPDF: la web no carga código de otras webs) y reenvío por WhatsApp. 4. PRESUPUESTO POR FOTO en el t…
+- **erp-logic.js** (558 líneas): VOLCANO CARS · ERP · NÚCLEO DE CÁLCULO (erp-logic.js) · Actualización 64 Funciones PURAS (sin red, sin pantalla): dinero, IGIC, libros, banco, incentivos, avisos de clientes y margen de coches. Se usa en el navegador (window.ERP) y en las pruebas (require). Todo el dinero va en CÉNTIMOS ENTEROS.
 - **medicion.js** (99 líneas): MEDICIÓN · Google Analytics 4 + conversiones de Google Ads, con aviso de cookies ÚNICO sitio donde se ponen los códigos. Mientras estén vacíos, la web no carga nada de Google ni enseña el aviso de cookies. · ga4: «ID de medición» de Analytics (G-XXXXXXXXXX) · ads: «ID de conversión» de Google Ads (AW-XXXXXXXXX) · conv: la «etiqueta» de cada conversión (lo que va detrás de la barra: AW-123/<etiqueta>) La portada (inde…
 - **mejoras.css** (106 líneas): VOLCANO CARS · MEJORAS DE CAPTACIÓN (mejoras.css) Alertas por pueblo (.al-*), Historial Sin Sorpresas (.hist-*) y ajustes del móvil. Usa las variables de marca de la web (--rosso, --surface…), así que respeta el tema claro/oscuro. Solo afecta a sus propias clases.
 - **mejoras.js** (265 líneas): VOLCANO CARS · MEJORAS DE CAPTACIÓN (mejoras.js + mejoras.css) 1. ALERTAS DE COCHES NUEVOS POR PUEBLO, debajo del catálogo: quien no encuentra su coche deja pueblo + WhatsApp y recibe el aviso antes de que el coche se anuncie. Llega al CRM como «Alerta» y el panel, al dar de alta un coche, enseña qué alertas encajan con él. 2. «HISTORIAL SIN SORPRESAS» en la ficha de cada coche: descarga del PDF con la inspección de …
 - **origen.js** (16 líneas): ORIGEN DE LA VISITA (actualización 19) Si alguien llega por un QR o un anuncio a una página interna (p. ej. /pre-itv-fuerteventura/?utm_source=flyer…) y luego pasa a otra página para pedir cita, los UTM se perdían y la solicitud salía como «Directo». Aquí se recuerdan solo durante la visita (sessionStorage: desaparece al cerrar la pestaña, no es una cookie y no se envía a ningún sitio). Los formularios lo leen con wi…
 - **paginas.css** (415 líneas): Estilo de las páginas de servicios y de las fichas de coches (Volcano Cars)
-- **panel-app.js** (266 líneas): PANEL · CAPA «APP» PARA MÓVIL (actualización 47) Solo se activa con pantalla de móvil (≤ 720 px). En ordenador no cambia nada. NO quita ninguna función: lo que antes estaba arriba en pestañas y botones sigue ahí y funciona igual; en el móvil se llega a ello con la barra inferior, el botón «+» y la hoja «Más» (patrón de las apps de taller de EE. UU.: Tekmetric, Shopmonkey, Shop-Ware → barra inferior + acción principal…
-- **panel-diseno.css** (568 líneas): PANEL · SISTEMA DE DISEÑO (actualización 48) Capa visual única para TODO el panel (admin.html y sus scripts). No cambia ninguna función: solo cómo se ve. Se carga la última (antes de </head>) y todo cuelga de `body.vc-ui` para ganar a los estilos antiguos. Referentes: Linear / Vercel / Stripe Dashboard (ordenador) y las apps de taller de EE. UU. (Tekmetric, Shopmonkey) en móvil. Estructura: 1 fichas de color y medida…
+- **panel-app.js** (275 líneas): PANEL · CAPA «APP» PARA MÓVIL (actualización 47) Solo se activa con pantalla de móvil (≤ 720 px). En ordenador no cambia nada. NO quita ninguna función: lo que antes estaba arriba en pestañas y botones sigue ahí y funciona igual; en el móvil se llega a ello con la barra inferior, el botón «+» y la hoja «Más» (patrón de las apps de taller de EE. UU.: Tekmetric, Shopmonkey, Shop-Ware → barra inferior + acción principal…
+- **panel-conta.js** (133 líneas): PANEL · CONTABILIDAD (actualización 70) · pestaña nueva DENTRO del panel, solo gerente Los asientos AUTOMÁTICOS salen de lo que ya hay en Finanzas (facturas, cobros, gastos, facturas de proveedor y coste de los coches vendidos); los MANUALES (apertura, nóminas, préstamos, amortizaciones…) los apunta el gerente. Cada asiento cuadra (Debe = Haber). Es una ayuda para el gestor: el plan de cuentas es el abreviado de pyme…
+- **panel-diseno.css** (612 líneas): PANEL · SISTEMA DE DISEÑO (actualización 48) Capa visual única para TODO el panel (admin.html y sus scripts). No cambia ninguna función: solo cómo se ve. Se carga la última (antes de </head>) y todo cuelga de `body.vc-ui` para ganar a los estilos antiguos. Referentes: Linear / Vercel / Stripe Dashboard (ordenador) y las apps de taller de EE. UU. (Tekmetric, Shopmonkey) en móvil. Estructura: 1 fichas de color y medida…
+- **panel-docs.js** (78 líneas): DOCUMENTACIÓN (actualización 68) · pestaña nueva del panel Reúne en un solo sitio: el manual de marca, el modelo de ventas, todas las fichas (FORM-01 a FORM-17) y los manuales S00–S11. Los PDF se abren con /api/manual/<nombre> y solo con sesión (netlify/functions/manuales.mts); los enlaces usan «#manual-<nombre>», que ya gestiona panel-sistemas.js.
+- **panel-erp.css** (45 líneas): PANEL · ERP (actualización 70): Compras, Banco y Gestoría con el formato del panel (usa sus variables y clases)
+- **panel-erp.js** (405 líneas): PANEL · ERP (actualización 70) · pestañas nuevas DENTRO del panel, con su mismo formato · Compras (#s-compras): pedidos, recepción con entrada al inventario, facturas de proveedor, pago, deuda y reposición · Banco (#s-banco) : importar el extracto y conciliar con cobros, gastos y facturas de proveedor · Gestoría (#s-gest) : IGIC por trimestre, libros de facturas emitidas y recibidas, descargas para el gestor Compras …
+- **panel-erp2.js** (259 líneas): PANEL · ERP 2 (actualización 70): Clientes 360, Incentivos, Margen y documentos de coche, Permisos Pestañas nuevas DENTRO del panel con su formato. Usa window.PE (panel-erp.js) y /erp-logic.js. · Clientes 360 (#s-cli) : historial, servicios pendientes y avisos (respeta permiso y bajas; la ITV la avisa Taller) · Incentivos (#s-inc) : solo de lo que sobra tras los fijos (tope duro 15 %), solo gerente · Margen y documen…
 - **panel-guiado.js** (507 líneas): VOLCANO CARS · PANEL GUIADO (actualización 46) Parte del panel admin.html (no es un panel aparte): se carga desde él, igual que panel-plus.js. 1. Barra de acciones principales (3 botones grandes) + desplegable «Más opciones / Utilidades». 2. Asistente de 4 pasos: Recepción → Asignación → Facturación (directa en 2 clics) → Cobro y cierre. 3. Anular con motivo (nada se borra): cuadro único, recálculo de totales y confi…
+- **panel-manuales.js** (46 líneas): VOLCANO CARS · PANEL: MANUALES EN SU SITIO (panel-manuales.js · actualización 65) · Pone, arriba de cada pantalla del panel, el botón «Manual Sxx» del sistema al que pertenece (Taller → S01, Inventario → S02, Caja y Finanzas → S09, CRM y Agenda → S06, ...). Los PDF se abren con la sesión del panel: el clic lo gestiona panel-sistemas.js (enlaces #manual-…). No cambia ningún dato ni ninguna pantalla existente: solo aña…
 - **panel-mejoras.js** (124 líneas): VOLCANO CARS · PANEL: HISTORIAL SIN SORPRESAS + ALERTAS QUE ENCAJAN En la ficha de cada coche del panel (Coches → Editar / Añadir): 1. «Historial Sin Sorpresas»: sube el PDF con el FORM-02 (inspección 360°, 80 puntos) y el FORM-04 firmado de ESE coche. En la web sale el botón de descarga solo cuando hay PDF. 2. «Alertas que encajan»: los clientes apuntados a las alertas de la web cuyo presupuesto y cambio encajan con…
 - **panel-plus.js** (335 líneas): VOLCANO CARS · PANEL PLUS (27-09-2026) 1. Sonidos del panel (SFX): pasar el ratón, pulsar, enviar, avisos y vídeos. Se generan en el propio navegador (Web Audio): no hay archivos que descargar. Botón 🔊 arriba para quitarlos o ponerlos (se recuerda en cada dispositivo). 2. Guía por voz (voz masculina en español): explica campo por campo la pantalla abierta, o cada campo al tocarlo (modo «Explicar al tocar»). En Ayuda,…
+- **panel-portales.js** (141 líneas): VOLCANO CARS · PANEL: PUBLICAR EN PORTALES · KIT ASISTIDO (panel-portales.js · actualización 66) Tarjeta «Publicar en portales» en Coches. Para cada coche y cada portal (Coches.net, AutoScout24, Wallapop, Milanuncios, Facebook Marketplace) da: el texto del anuncio ya redactado (botón copiar), el enlace para publicar, las fotos en un ZIP y una casilla «Publicado» con el enlace del anuncio. Cuando un coche pasa a VENDI…
 - **panel-precios.js** (224 líneas): VOLCANO CARS · PANEL: PRECIOS «DESDE» DEL TALLER (panel-precios.js) Pestaña Taller → tarjeta «Precios en la web». El gerente pone el precio «desde» (IGIC incluido) de cada servicio del taller: Pre-ITV, frenos, pintura, aceite, neumáticos… Al pulsar «Guardar y publicar» sale al momento en la web con su etiqueta de precio animada (/precios-taller.js). · Vacío = «a presupuestar» (la web no enseña precio). · Sufijo opcio…
-- **panel-shell.js** (240 líneas): Panel · estructura de ordenador (actualización 48): barra lateral, buscador y paleta de comandos (Ctrl/⌘+K). No contiene lógica de negocio: solo reutiliza lo que ya existe (abrirTab, abrirFichas, abrirLead, openForm, VCGuiado).
-- **panel-sistemas.js** (494 líneas): VOLCANO CARS · PANEL: SISTEMAS VOLCANO CARS (MO-00 v3.0) (panel-sistemas.js) Pestaña Taller → tarjeta «Sistemas Volcano Cars»: · Biblioteca para el equipo: los 11 sistemas en su orden estricto (S01 → S11) con su PDF, y el índice MO-00 con el orden de implantación. · Formularios digitales que no existían en el panel: FORM-05 Cascos y abonos (S02) FORM-06 Ronda 5S y seguridad (S03) FORM-07 Hoja de preparación (S04) FOR…
+- **panel-shell.js** (249 líneas): Panel · estructura de ordenador (actualización 48): barra lateral, buscador y paleta de comandos (Ctrl/⌘+K). No contiene lógica de negocio: solo reutiliza lo que ya existe (abrirTab, abrirFichas, abrirLead, openForm, VCGuiado).
+- **panel-sistemas.js** (497 líneas): VOLCANO CARS · PANEL: SISTEMAS VOLCANO CARS (MO-00 v3.0) (panel-sistemas.js) Pestaña Taller → tarjeta «Sistemas Volcano Cars»: · Biblioteca para el equipo: los 11 sistemas en su orden estricto (S01 → S11) con su PDF, y el índice MO-00 con el orden de implantación. · Formularios digitales que no existían en el panel: FORM-05 Cascos y abonos (S02) FORM-06 Ronda 5S y seguridad (S03) FORM-07 Hoja de preparación (S04) FOR…
 - **piloto-web.js** (267 líneas): VOLCANO CARS · PILOTO DE CONVERSIÓN EN LA WEB (piloto-web.js) Actúa solo en la ficha del coche según las reglas que el gerente activa en el panel (Marketing en vivo → Piloto). Lee /api/piloto-web (datos REALES). 1. Prueba social: «2 personas han pedido información de este coche hoy». (el «N personas lo ven ahora mismo» ya lo pinta la ficha con /api/viendo) 2. Regla A · baja conversión: muchas visitas y ninguna solici…
 - **precios-taller.css** (163 líneas): VOLCANO CARS · ETIQUETAS DE PRECIO «DESDE» (precios-taller.css) Lo carga solo /precios-taller.js. Etiqueta con forma de etiqueta de tienda (punta + agujero), brillo que la recorre, cifras que suben, entrada con rebote y balanceo al pasar por la tarjeta. Colores oficiales: naranja volcánico #D94A26 / #C83E1A.
 - **precios-taller.js** (273 líneas): VOLCANO CARS · PRECIOS «DESDE» DEL TALLER (precios-taller.js) Los precios se cambian en el panel: Taller → «Precios en la web». Se guardan en /api/precios-taller y este archivo los pinta solo: · en cada tarjeta de servicio del taller (/taller y la portada), con una etiqueta de precio animada; · en las etiquetas de las tarjetas «Chapa y pintura» y «Mecánica rápida» de la portada; · en las páginas de servicio (/pre-itv…
@@ -390,10 +410,12 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
 - **tools/jornada/inyectar.py** (65 líneas): JORNADA-CSS-INICIO
 - **tools/jornada/jornada.js** (310 líneas): JORNADA · fichaje de ultra-baja fricción + 2FA del equipo + registro legal Fuente: tools/jornada/jornada.js (+ jornada.css) → se copia dentro de admin.html con python3 tools/jornada/inyectar.py · Equipo: tras entrar con PIN, si no está trabajando ve UN botón gigante que cambia solo (Entrada → Pausa/Salida → Reanudar). 1 toque, hora del servidor, aviso de 2 s y «Deshacer». · Cartel QR / pegatina NFC del taller: escane…
 - **tools/legal.py** (255 líneas): etiqueta «Powered by Netlify»: tapaba el aviso de cookies; la solución de fondo es apagarla en Netlify
-- **tools/minificar-html.mjs** (40 líneas): MINIFICADO AL PUBLICAR (Netlify ejecuta esto después de tools/fuentes-locales.mjs). En el repositorio el código sigue legible; aquí se minifica SOLO la copia que se publica: · los JavaScript y CSS sueltos de public/ (conversion.js, mejoras.js, taller-vfx.js…) · los <script> y <style> en línea de las páginas públicas (portada, /en, /comprar, /taller, SEO, legales) Si esbuild no está o algo falla, NO se toca ese archiv…
+- **tools/minificar-html.mjs** (41 líneas): MINIFICADO AL PUBLICAR (Netlify ejecuta esto después de tools/fuentes-locales.mjs). En el repositorio el código sigue legible; aquí se minifica SOLO la copia que se publica: · los JavaScript y CSS sueltos de public/ (conversion.js, mejoras.js, taller-vfx.js…) · los <script> y <style> en línea de las páginas públicas (portada, /en, /comprar, /taller, SEO, legales) · (act. 67) también los scripts del panel: panel-*.js …
 - **tools/pagespeed/inline-css.py** (20 líneas): (sin descripción)
 - **tools/pagespeed/inline-rendimiento.py** (50 líneas): (sin descripción)
-- **tools/pruebas/LEEME.md** (nota, 14 líneas): 
+- **tools/pruebas/LEEME.md** (nota, 22 líneas): 
+- **tools/pruebas/auditoria-publica.py** (42 líneas): (sin descripción)
+- **tools/pruebas/auditoria-rellenar-panel.py** (100 líneas): (sin descripción)
 - **tools/pruebas/e2e-app.py** (149 líneas): (sin descripción)
 - **tools/pruebas/e2e-arqueo.py** (38 líneas): (sin descripción)
 - **tools/pruebas/e2e-ausencias-panel.py** (92 líneas): (sin descripción)
@@ -405,20 +427,27 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
 - **tools/pruebas/e2e-costes-panel.py** (54 líneas): (sin descripción)
 - **tools/pruebas/e2e-costes.mjs** (90 líneas): PRUEBA DE «COSTE DE PERSONAL» DE PRINCIPIO A FIN (30-09-2026) Ejecuta las funciones reales de netlify/functions con un almacén en memoria y recorre el panel con cada puesto: Gerente (contraseña), Lestter (puesto Gerente con PIN), Calidad, Recepción y Mecánico. Uso (en el ordenador del desarrollador, con bun): bun tools/pruebas/e2e-costes.mjs Necesita un @netlify/blobs de pruebas en node_modules (ver tools/pruebas/LEE…
 - **tools/pruebas/e2e-doble-factura.py** (23 líneas): (sin descripción)
+- **tools/pruebas/e2e-docs-68.py** (43 líneas): (sin descripción)
 - **tools/pruebas/e2e-estres.py** (124 líneas): ",lambda r:(time.sleep(1.2),r.continue_())[1]) if False else None ctx.set_offline(True) for s in secc[:6]: try: pg.click(f'#vc-side [data-vs="{s}"]',timeout=3000) except Exception: pass pg.wait_for_timeout(800); check("sin excepciones con la red caída",not [e for e in errs if e.startswith("JS")],str(errs[:3])) ctx.set_offline(False) pg.route("*
 - **tools/pruebas/e2e-factura-panel.py** (59 líneas): (sin descripción)
 - **tools/pruebas/e2e-factura.mjs** (112 líneas): PRUEBA DE LA «FACTURA DE REPARACIÓN» (FORM-14) DE PRINCIPIO A FIN (30-09-2026) Ejecuta las funciones reales de netlify/functions con un almacén en memoria y recorre el panel con cada puesto: Gerente (contraseña), Lestter (puesto Gerente con PIN), Calidad, Recepción y Mecánico. Uso (en el ordenador del desarrollador, con bun): bun tools/pruebas/e2e-factura.mjs Necesita un @netlify/blobs de pruebas en node_modules (ver…
 - **tools/pruebas/e2e-fichas.py** (40 líneas): (sin descripción)
 - **tools/pruebas/e2e-formularios-web.py** (35 líneas): (sin descripción)
+- **tools/pruebas/e2e-gracias-67.py** (49 líneas): (sin descripción)
 - **tools/pruebas/e2e-guiado.py** (152 líneas): (sin descripción)
+- **tools/pruebas/e2e-manuales-65.py** (54 líneas): (sin descripción)
+- **tools/pruebas/e2e-panel-63.py** (51 líneas): (sin descripción)
 - **tools/pruebas/e2e-panel.py** (111 líneas): (sin descripción)
 - **tools/pruebas/e2e-permisos.mjs** (129 líneas): PRUEBA DE PERMISOS DE PRINCIPIO A FIN (27-09-2026) Ejecuta las funciones reales de netlify/functions con un almacén en memoria y recorre el panel con cada puesto: Gerente (contraseña), Lestter (puesto Gerente con PIN), Calidad, Recepción y Mecánico. Uso (en el ordenador del desarrollador, con bun): bun tools/pruebas/e2e-permisos.mjs Necesita un @netlify/blobs de pruebas en node_modules (ver tools/pruebas/LEEME.md).
 - **tools/pruebas/e2e-plegables.py** (77 líneas): (sin descripción)
+- **tools/pruebas/e2e-portales-66.py** (52 líneas): (sin descripción)
 - **tools/pruebas/e2e-presencia-panel.py** (105 líneas): (sin descripción)
 - **tools/pruebas/e2e-presencia.mjs** (193 líneas): PRUEBA DEL ANTITRAMPA DEL FICHAJE (actualización 44) Ejecuta las funciones reales de netlify/functions con un almacén en memoria. Uso: bun tools/pruebas/e2e-presencia.mjs (necesita el @netlify/blobs de pruebas, ver LEEME.md)
 - **tools/pruebas/e2e-presupuesto-ficha.py** (89 líneas): (sin descripción)
 - **tools/pruebas/e2e-propios-finanzas.mjs** (158 líneas): PRUEBA «COCHE PROPIO SIN ENLAZAR → FINANZAS Y CAJA AL CÉNTIMO» (actualización 60) Ejecuta las funciones reales de netlify/functions con un almacén en memoria y recorre el panel con cada puesto: Gerente (contraseña), Lestter (puesto Gerente con PIN), Calidad, Recepción y Mecánico. Uso (en el ordenador del desarrollador, con bun): bun tools/pruebas/e2e-propios-finanzas.mjs Necesita un @netlify/blobs de pruebas en node_…
 - **tools/pruebas/e2e-propios-venta-panel.py** (59 líneas): (sin descripción)
+- **tools/pruebas/e2e-resultado-panel.py** (110 líneas): (sin descripción)
+- **tools/pruebas/e2e-resultado-taller.mjs** (149 líneas): PRUEBA «RESULTADO DE CADA COCHE DE TALLER ENTREGADO + FIJOS + ¿HOY HUBO PÉRDIDAS?» (actualización 62) Ejecuta las funciones reales de netlify/functions con un almacén en memoria y recorre el panel con cada puesto: Gerente (contraseña), Lestter (puesto Gerente con PIN), Calidad, Recepción y Mecánico. Uso (en el ordenador del desarrollador, con bun): bun tools/pruebas/e2e-resultado-taller.mjs Necesita un @netlify/blobs…
 - **tools/pruebas/e2e-seguridad.mjs** (32 líneas): Prueba de seguridad: bloqueo del PIN por usuario y manuales privados. Uso: bun tools/pruebas/e2e-seguridad.mjs
 - **tools/pruebas/e2e-shell.py** (39 líneas): (sin descripción)
 - **tools/pruebas/e2e-tareas-panel.py** (78 líneas): (sin descripción)
@@ -427,12 +456,22 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
 - **tools/pruebas/e2e-ventas.mjs** (145 líneas): Motor de ventas (Módulo 4): filtro de frases prohibidas, horario/08:30 y canales Messenger / Instagram / WhatsApp. Uso: bun tools/pruebas/e2e-ventas.mjs (mismo almacén en memoria que el resto de pruebas)
 - **tools/pruebas/e2e-voz-panel.py** (95 líneas): (sin descripción)
 - **tools/pruebas/e2e-voz.mjs** (101 líneas): Voz de los vídeos de ayuda (Módulo 5): guiones y servicio ElevenLabs «DAN» (simulado). Uso: bun tools/pruebas/e2e-voz.mjs
+- **tools/pruebas/erp/LEEME.md** (nota, 9 líneas): 
+- **tools/pruebas/erp/navegador/LEEME.md** (nota, 7 líneas): 
+- **tools/pruebas/erp/navegador/e2e-panel.mjs** (57 líneas): ¿están las pestañas del ERP visibles para el gerente en el menú lateral?
+- **tools/pruebas/erp/navegador/e2e-recepcion.mjs** (31 líneas): (sin descripción)
+- **tools/pruebas/erp/navegador/sembrar-clientes.mjs** (7 líneas): (sin descripción)
+- **tools/pruebas/erp/navegador/sembrar.mjs** (32 líneas): inventario
+- **tools/pruebas/erp/real/blobs-simulado/index.js** (18 líneas): Almacén de Netlify Blobs SIMULADO EN MEMORIA (solo para pruebas)
+- **tools/pruebas/erp/real/functions-simulado/index.js** (2 líneas): (sin descripción)
 - **tools/pruebas/sembrar-demo.py** (73 líneas): (sin descripción)
 - **tools/pruebas/servidor-local.mjs** (45 líneas): Servidor de pruebas: sirve public/ y ejecuta las funciones reales de netlify/functions con un almacén en memoria. Uso: bun tools/pruebas/servidor-local.mjs → http://localhost:8888/admin
 - **tools/pruebas/sindica-integracion.mjs** (80 líneas): Simulación completa del motor con un almacén falso y un portal simulado (sin red): node tools/pruebas/sindica-integracion.mjs
 - **tools/pruebas/sindica.test.mjs** (143 líneas): Pruebas de la multipublicación (no necesitan red ni Netlify): node --test tools/pruebas/sindica.test.mjs
 - **tools/pulido/inyectar.py** (22 líneas): PULIDO-CSS-INICIO
 - **tools/pulido/pulido.js** (12 líneas): PULIDO DE INTERFAZ · la sección activa del menú siempre a la vista (móvil)
+- **tools/remotion-gracias/LEEME.md** (nota, 6 líneas): 
+- **tools/remotion-gracias/render.mjs** (12 líneas): (sin descripción)
 - **tools/reservas/GUIA-RESERVAS.md** (nota, 109 líneas): 
 - **tools/reservas/inyectar.py** (21 líneas): RSV-CSS-INICIO
 - **tools/reservas/reservas.js** (191 líneas): PANEL · RESERVAS ONLINE DE 50 €, LISTAS DE ESPERA Y FOTOS DEL DAÑO (se copia dentro de public/admin.html con: python3 tools/reservas/inyectar.py) En la pestaña «Coches», encima de la lista: · Reservas activas: confirmar el pago, ver el justificante, alargar, marcar vendido, liberar y mandar la confirmación por WhatsApp. · Listas de espera: un botón por persona que abre WhatsApp con el aviso «¡Buenas noticias…! vuelve…
@@ -473,6 +512,7 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
 - `public/en/`: 1 archivos
 - `public/financiacion-coches-fuerteventura/`: 1 archivos
 - `public/fonts/`: 1 archivos
+- `public/gracias/`: 5 archivos
 - `public/ig/`: 333 archivos
 - `public/itv-fuerteventura/`: 1 archivos
 - `public/marca/`: 2 archivos
@@ -482,4 +522,4 @@ Generado con `python3 tools/indice.py` el 2026-10-09. Lo lee Claude junto a `CLA
 - `public/vfx/`: 72 archivos
 
 ---
-Total de líneas de código indexadas: 57032.
+Total de líneas de código indexadas: 60469.
