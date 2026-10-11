@@ -10,7 +10,7 @@ import { permiso, esRespuesta } from "../lib/acceso.mts";
   gerente o usuario + PIN del equipo).   GET /api/manual/VolcanoCars-S01-Taller-recepcion-a-entrega
 */
 const NOMBRE = /^VolcanoCars-S(0[0-9]|1[01])-[A-Za-z0-9.-]+$/;
-const FORMULARIO = /^(FORM-(01|02|03|04|14|15|16|17)|FICHAS-TALLER)$/; // PDF originales de las fichas: netlify/privado/formularios/FORM-NN.pdf
+const FORMULARIO = /^(FORM-(01|02|03|04|05|06|10|11)|FICHAS-TALLER)$/; // PDF originales de las fichas: netlify/privado/formularios/FORM-NN.pdf
 export default async (req: Request) => {
   if (req.method !== "GET") return json({ error: "Método no permitido" }, 405);
   const q = await permiso(req, "equipo"); if (esRespuesta(q)) return q;

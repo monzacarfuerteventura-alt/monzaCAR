@@ -37,7 +37,7 @@ with sync_playwright() as p:
         check("tarjeta de auditoría quitada de Taller", pg.evaluate("!document.getElementById('vm-aud')"))
         pg.evaluate("document.getElementById('sv-lib').open=true")
         check("biblioteca enlaza la Hoja v3.2", pg.evaluate("!!document.querySelector('#sv-lib a[href=\"#manual-VolcanoCars-S00-Hoja-v3.2-Fe-de-erratas\"]')"))
-        check("biblioteca lista FORM-14, 15, 16 y 17", pg.evaluate("['FORM-14','FORM-15','FORM-16','FORM-17'].every(f=>[...document.querySelectorAll('#sv-lib .sv-f')].some(b=>b.textContent.startsWith(f)))"))
+        check("biblioteca lista FORM-03, 06, 10 y 11", pg.evaluate("['FORM-06','FORM-03','FORM-11','FORM-10'].every(f=>[...document.querySelectorAll('#sv-lib .sv-f')].some(b=>b.textContent.startsWith(f)))"))
         # validez 12 días hábiles
         tok=pg.evaluate("""async(m)=>{const r=await tApi("recepcion","POST",{cliente:{nombre:"Cliente V",telefono:"600111222"},vehiculo:{matricula:m,marcaModelo:"Seat Ibiza"},tipoEntrada:"reparacion",recibidoPor:"Test"}); ORDENES.unshift(r.orden); return r.orden.token;}""", __import__("random").choice("0123456789")*4+"ZZZ")
         pg.evaluate("t=>abrirFichas(t,'pre')",tok); pg.wait_for_selector("#tpre")

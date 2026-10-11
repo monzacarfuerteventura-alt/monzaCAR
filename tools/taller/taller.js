@@ -1,6 +1,6 @@
 /* =====================================================================
    TALLER · Manual SOP-01 (FORM-01 Recepción, FORM-02 Inspección 360°,
-   FORM-03 Control de tiempos, FORM-04 Control de calidad)
+   FORM-04 Control de tiempos, FORM-05 Control de calidad)
    Fuente: tools/taller/taller.js → se copia dentro de admin.html con
    python3 tools/taller/inyectar.py. Para cambiar textos, edita aquí.
    ===================================================================== */
@@ -107,8 +107,8 @@ function tFichasChips(o){
   const f=o.fichas||{}, c=(n,cls,tip)=>`<span class="t-fb ${cls}" title="${esc(tip)}">${n}</span>`;
   const f1=f.f1?f.f1.cerrada?c("01","ok","FORM-01 firmada por el cliente"):c("01","curso","FORM-01 sin firmar"):c("01","","FORM-01 sin empezar");
   const f2=f.f2?f.f2.cerrada?c("02",f.f2.rojos?"rojo":f.f2.ambar?"ambar":"ok",`FORM-02 firmada: ${f.f2.rojos} rojos, ${f.f2.ambar} ámbar`):c("02","curso",`FORM-02 en curso (${f.f2.hechos}/${f.f2.total})`):c("02","","FORM-02 sin empezar");
-  const e3=f.f3&&f.f3.estado, f3=!f.f3||e3==="sin"?c("03","","FORM-03 sin fichajes"):e3==="fin"?c("03",f.f3.exige&&!f.f3.aprobada?"rojo":"ok",`FORM-03 terminado · ${tPct(f.f3.desvPct)}`):c("03","vivo",e3==="pausa"?"FORM-03 en pausa":"FORM-03 trabajando ahora");
-  const f4=!f.f4||!f.f4.firmada?c("04","","FORM-04 pendiente"):f.f4.resultado==="rechazado"?c("04","rojo","FORM-04 rechazado: vuelve a taller"):c("04",f.f4.cierre?"ok cerr":"ok","FORM-04 "+(T_RES[f.f4.resultado]||"").toLowerCase());
+  const e3=f.f3&&f.f3.estado, f3=!f.f3||e3==="sin"?c("03","","FORM-04 sin fichajes"):e3==="fin"?c("03",f.f3.exige&&!f.f3.aprobada?"rojo":"ok",`FORM-04 terminado · ${tPct(f.f3.desvPct)}`):c("03","vivo",e3==="pausa"?"FORM-04 en pausa":"FORM-04 trabajando ahora");
+  const f4=!f.f4||!f.f4.firmada?c("04","","FORM-05 pendiente"):f.f4.resultado==="rechazado"?c("04","rojo","FORM-05 rechazado: vuelve a taller"):c("04",f.f4.cierre?"ok cerr":"ok","FORM-05 "+(T_RES[f.f4.resultado]||"").toLowerCase());
   return `<span class="t-fbs">${f1}${f2}${f3}${f4}</span>`;
 }
 function tPipe(o,mini){ const i=tFase(o.estado);
@@ -176,9 +176,9 @@ function tMios(){
     return `<button type="button" class="t-ahora ${x.estado}" data-tabrir="${o.token}" data-ttab="f3"><span class="t-dot"></span><span><small>${x.estado==="pausa"?"En pausa":"Trabajando ahora"}${ES_GER()?" · "+esc(tNombre(x.mecanico)):""}</small><b>${esc(o.vehiculo.coche||"Coche")} <span class="mat">${esc((o.vehiculo.matricula||"").toUpperCase())}</span></b></span><b class="num t-reloj" data-treloj-o="${x.netoMin*6e4}" data-tdesde="${x.estado==="trabajando"?esc(x.desde):""}">${tHms(x.netoMin*6e4+vivo)}</b></button>`; }).join("");
   let h=ahora?`<div class="t-ahoras">${ahora}</div>`:"";
   if(rol==="recepcion") h+=bloque("Recepciones sin firmar","Termina la ficha de entrada y que firme el cliente.",rec,"f1","Todo firmado.")+bloque("Listos para entregar","",listos,"f4","Ninguno ahora.");
-  else if(rol==="calidad") h+=bloque("Pendientes de control de calidad","Revisa y firma FORM-04. Nunca un coche que hayas reparado tú.",cal,"f4","Nada pendiente.")+bloque("Por inspeccionar","",insp,"f2","Nada pendiente.");
+  else if(rol==="calidad") h+=bloque("Pendientes de control de calidad","Revisa y firma FORM-05. Nunca un coche que hayas reparado tú.",cal,"f4","Nada pendiente.")+bloque("Por inspeccionar","",insp,"f2","Nada pendiente.");
   else { if(!ES_GER()) h+=bloque("Asignados a mí","Pulsa para fichar el inicio, las pausas y el final.",asign,"f3","No tienes trabajos asignados.");
-    h+=bloque("Por inspeccionar (FORM-02)","Coches recibidos que esperan la inspección 360°.",insp,"f2","Nada pendiente.")+bloque("Aprobados sin mecánico","El cliente ya ha dicho que sí: asigna o empieza el trabajo.",sinAsignar,"f3","Ninguno.")+bloque("Control de calidad · 30 puntos (FORM-04)",ES_GER()?"":"Solo coches que NO has reparado tú.",cal,"f4","Nada pendiente.");
+    h+=bloque("Por inspeccionar (FORM-02)","Coches recibidos que esperan la inspección 360°.",insp,"f2","Nada pendiente.")+bloque("Aprobados sin mecánico","El cliente ya ha dicho que sí: asigna o empieza el trabajo.",sinAsignar,"f3","Ninguno.")+bloque("Control de calidad · 30 puntos (FORM-05)",ES_GER()?"":"Solo coches que NO has reparado tú.",cal,"f4","Nada pendiente.");
     if(ES_GER()) h+=bloque("Recepciones sin firmar","",rec,"f1","Todo firmado."); }
   return h;
 }
@@ -282,7 +282,7 @@ function tEstadoFicha(k){ const f=TF.fichas;
 }
 function tCabecera(){
   const o=TF.orden, f=TF.fichas, i=tFase(o.estado);
-  const tabs=[["f1","FORM-01","Recepción"],["f2","FORM-02","Inspección 360°"],...(typeof fcTab==="function"?fcTab():[]),["f3","FORM-03","Tiempos"],["f4","FORM-04","Calidad · 30 pts"],["audit","","Auditoría"]];
+  const tabs=[["f1","FORM-01","Recepción"],["f2","FORM-02","Inspección 360°"],...(typeof fcTab==="function"?fcTab():[]),["f3","FORM-04","Tiempos"],["f4","FORM-05","Calidad · 30 pts"],["audit","","Auditoría"]];
   return `<div class="t-fhead">
     <button type="button" class="btn b-ghost b-sm" data-tvolver>← Taller</button>
     <div class="t-fid"><small>Orden</small><b class="num">${esc(f.num||"—")}</b></div>
@@ -327,7 +327,7 @@ async function tGuardar(cerrar,quieto){
     if(!TF||TF.orden.token!==token) return;
     tRecibir(r); TSAVED=tHora(new Date().toISOString());
     if(TVER===ver){ TDIRTY=false; }
-    if(cerrar){ TDIRTY=false; tVacias(); tRenderHead(); tRenderBody(); toast(cual==="f5"?"Factura emitida":cual==="f1"?"Recepción firmada y cerrada":cual==="f2"?"Inspección firmada. El tiempo estimado ya está en FORM-03":TF.fichas.f4&&TF.fichas.f4.resultado==="rechazado"?"Rechazado: el coche vuelve a taller":"Control de calidad firmado"); scrollTo(0,0); }
+    if(cerrar){ TDIRTY=false; tVacias(); tRenderHead(); tRenderBody(); toast(cual==="f5"?"Factura emitida":cual==="f1"?"Recepción firmada y cerrada":cual==="f2"?"Inspección firmada. El tiempo estimado ya está en FORM-04":TF.fichas.f4&&TF.fichas.f4.resultado==="rechazado"?"Rechazado: el coche vuelve a taller":"Control de calidad firmado"); scrollTo(0,0); }
     else { if(TVER===ver) TW[cual]=Object.assign(tClone(TF.fichas[cual]),cual==="f4"?{firma:null}:{}); tRenderHead(); }
   }catch(err){ toast(err.message); if(cerrar) tFaltan([err.message]); }
   TSAVING=false; tSaveBar();
@@ -456,7 +456,7 @@ function tF2(){
     return `<details class="t-f2s" data-tsec="${L}" ${T_OPEN.has(L)?"open":""}><summary><i>${L}</i><span><b>${t}</b>${sub?`<small>${sub}</small>`:""}</span><em class="num" data-tsecn="${L}">${hechos}/${items.length}${rj?` · <b class="s-r">${rj} R</b>`:""}${am?` · <b class="s-a">${am} Á</b>`:""}</em></summary>
       ${items.map(([id,tt,ex])=>tFila2(id,tt,ex,lock)).join("")}
       ${lock?"":`<div class="t-f2acts"><button type="button" class="chipb" data-tresto="${L}">Marcar el resto como OK</button></div>`}</details>`; }).join("")}
-  ${tSec("✓","Resultado de la inspección","",`<div class="t-g3"><div class="field"><label>Horas estimadas de trabajo <b class="t-req">*</b></label><input class="in num" data-f="horasEst" value="${x.horasEst?tEsc(String(x.horasEst).replace(".",",")):""}" inputmode="decimal" placeholder="Ej. 2,5" ${lock?"disabled":""}><small class="hint">Pasa a FORM-03 como tiempo estimado.</small></div>
+  ${tSec("✓","Resultado de la inspección","",`<div class="t-g3"><div class="field"><label>Horas estimadas de trabajo <b class="t-req">*</b></label><input class="in num" data-f="horasEst" value="${x.horasEst?tEsc(String(x.horasEst).replace(".",",")):""}" inputmode="decimal" placeholder="Ej. 2,5" ${lock?"disabled":""}><small class="hint">Pasa a FORM-04 como tiempo estimado.</small></div>
     <div class="field t-span2"><label>Recomendación <b class="t-req">*</b></label>${lock?`<div class="in t-ro">${esc(T_RECO[x.recomendacion]||"—")}</div>`:tSeg("recomendacion",Object.entries(T_RECO).map(([k,t])=>[k,t]))}</div></div>
     ${r.rojos?`<label class="t-chk"><input type="checkbox" data-f="rechazoFirmado" ${x.rechazoFirmado?"checked":""} ${lock?"disabled":""}><span>El cliente <b>rechaza por escrito</b> reparar los puntos en ROJO (se guarda el papel firmado en la carpeta)</span></label>`:""}
     ${r.rojos?`<div class="msg bad" style="font-weight:600">Hay ${r.rojos} punto${r.rojos>1?"s":""} en ROJO: no se entrega el coche sin reparar o sin rechazo firmado. Al firmar, la orden pasa a «Presupuesto».</div>`:""}
@@ -471,7 +471,7 @@ function tF2Refrescar(id){
   const su=$("#t-f2sum"); if(su) su.innerHTML=tF2Resumen();
 }
 
-/* ---------- FORM-03 · control de tiempos ---------- */
+/* ---------- FORM-04 · control de tiempos ---------- */
 function tF3(){
   const f3=TF.fichas.f3||TW.f3, c=tCalc(f3,TF.config), cfg=TF.config, x=TW.f3, empezado=f3.eventos.length>0, ger=ES_GER();
   const esMio=ger||ME.uid===f3.mecanico||(!f3.mecanico&&ME.rol==="mecanico");
@@ -524,7 +524,7 @@ function tReloj(){ const el=document.querySelector("[data-treloj]"); if(el&&TF&&
 setInterval(()=>{ if(document.hidden) return; if(!$("#s-ficha").hidden&&TF_TAB==="f3") tReloj(); else if(!$("#s-ordenes").hidden) tReloj(); },1000);
 async function tF3Post(body,msg){ try{ const r=await tApi(`fichas/${TF.orden.token}/f3`,"POST",body); tRecibir(r); TW.f3=tClone(r.fichas.f3); tRenderHead(); tRenderBody(true); if(msg) toast(msg); return true; }catch(err){ toast(err.message); return false; } }
 
-/* ---------- FORM-04 · control de calidad ---------- */
+/* ---------- FORM-05 · control de calidad ---------- */
 function tPuedeF4(){ const f=TF.fichas, e=tEstado(f.f3?f.f3.eventos:[]), uid=ME?ME.uid:"gerente";
   if(f.f4&&f.f4.firma&&!(f.f4.resultado==="rechazado"&&tNuevoIntento())) return [false,f.f4.resultado==="rechazado"?"espera":"firmada"];
   if(e!=="fin") return [false,"trabajo"];
@@ -536,7 +536,7 @@ function tF4(){
   const x=TW.f4, f=TF.fichas.f4, [puede,por]=tPuedeF4(), lista=F4_SECC.filter(s=>s[0]==="A"||s[0]==="B"||(x.destino==="venta"?s[0]==="D":s[0]==="C"));
   const hayNo=lista.some(s=>s[2].some(([id])=>x.items[id]==="no")), lock=!puede;
   const hechos=lista.reduce((a,s)=>a+s[2].filter(([id])=>x.items[id]).length,0), total=lista.reduce((a,s)=>a+s[2].length,0);
-  const aviso={trabajo:"Se rellena cuando el mecánico termina el trabajo en FORM-03.",mismo:"Tú has trabajado en este coche: el control de calidad lo firma otra persona (responsable de calidad, otro mecánico o el gerente).",rol:"El control de calidad lo hace calidad, otro mecánico o el gerente.",espera:"Rechazado: el coche ha vuelto a taller. Cuando el mecánico repita el trabajo y lo termine en FORM-03, se hace un nuevo control.",firmada:""}[por];
+  const aviso={trabajo:"Se rellena cuando el mecánico termina el trabajo en FORM-04.",mismo:"Tú has trabajado en este coche: el control de calidad lo firma otra persona (responsable de calidad, otro mecánico o el gerente).",rol:"El control de calidad lo hace calidad, otro mecánico o el gerente.",espera:"Rechazado: el coche ha vuelto a taller. Cuando el mecánico repita el trabajo y lo termine en FORM-04, se hace un nuevo control.",firmada:""}[por];
   const f3=TF.fichas.f3, c=tCalc(f3,TF.config);
   return `${aviso?`<div class="t-lock"><span>${por==="espera"?"↩️":"ℹ️"}</span><div><b>${esc(aviso)}</b>${por==="mismo"&&f3?`<small>Mecánico del trabajo: ${esc(tNombre(f3.mecanico))}</small>`:""}</div></div>`:""}
   ${f&&f.firma&&f.resultado!=="rechazado"?`<div class="t-res ${f.resultado}"><b>${esc(T_RES[f.resultado])}</b>${f.motivo?`<p>${esc(f.motivo)}</p>`:""}${tFirmaBox(f.firma,"Control de calidad firmado")}${f.cierreGerente?tFirmaBox({nombre:tNombre(f.cierreGerente.por),t:f.cierreGerente.t},"Orden cerrada por el gerente"):""}
@@ -619,12 +619,12 @@ $("#tf").addEventListener("click",async e=>{
   const sm=q("[data-tsem]"); if(sm&&tEditable("f2")){ const id=sm.dataset.tsem; TW.f2.items[id]=TW.f2.items[id]||{e:"",nota:"",extra:"",fotos:[]}; const it=TW.f2.items[id]; it.e=it.e===sm.dataset.v?"":sm.dataset.v; tMarcar(); tF2Refrescar(id);
     if(it.e==="a"||it.e==="r"){ const n=document.querySelector(`[data-trow="${id}"] .t-f2n input`); if(n&&!n.value) n.focus({preventScroll:true}); } return; }
   const rs=q("[data-tresto]"); if(rs&&tEditable("f2")){ const s=F2_SECCIONES.find(z=>z[0]===rs.dataset.tresto); let n=0; for(const [id] of s[3]){ const it=TW.f2.items[id]=TW.f2.items[id]||{e:"",nota:"",extra:"",fotos:[]}; if(!it.e){ it.e="ok"; n++; } } tMarcar(); tRenderBody(true); toast(n?`${n} puntos marcados OK`:"No quedaba ninguno sin marcar"); return; }
-  // FORM-04
+  // FORM-05
   const f4=q("[data-tf4]"); if(f4&&tEditable("f4")){ const id=f4.dataset.tf4; TW.f4.items[id]=TW.f4.items[id]===f4.dataset.v?"":f4.dataset.v;
     if(TW.f4.items[id]==="no") TW.f4.resultado="rechazado"; tMarcar(); tRenderBody(true); return; }
   if(q("[data-tcierre]")){ try{ const r=await tApi(`fichas/${TF.orden.token}/f4-cierre`,"POST",{}); tRecibir(r); tVacias(); tRenderHead(); tRenderBody(); toast("Orden cerrada"); }catch(err){ toast(err.message); } return; }
   if(q("[data-tentregar]")){ if(!confirm("¿Marcar la orden como entregada? El cliente lo verá en su enlace.")) return; try{ await patchOrden(TF.orden.token,{estado:"entregado",nota:""}); const r=await tApi("fichas/"+TF.orden.token); tRecibir(r); tRenderHead(); tRenderBody(); toast("Entregado"); }catch(err){ toast(err.message); } return; }
-  // FORM-03
+  // FORM-04
   if(q("[data-tpausa]")){ $("#t-pausas").hidden=!$("#t-pausas").hidden; return; }
   const ev=q("[data-tev]"); if(ev){ const tipo=ev.dataset.tev; if(tipo==="fin"&&!confirm("¿Terminar el trabajo? Después pasa a control de calidad.")) return;
     ev.disabled=true; const ok=await tF3Post({accion:"evento",tipo,motivo:ev.dataset.motivo||"",nota:($("#t-evnota")||{}).value||""},{inicio:"Trabajo iniciado",pausa:"En pausa",reanudar:"Trabajo reanudado",fin:"Trabajo terminado: pasa a control de calidad"}[tipo]); if(!ok) ev.disabled=false; return; }
@@ -675,7 +675,7 @@ function tDashHTML(r){
   const color=p=>p==null?"":p>=85?"verde":p>=65?"ambar":"rojo";
   const icoAl={rojo:"⚠",desviacion:"⏱","visto-bueno":"✔",calidad:"✓",rechazo:"↩",f1:"✍"};
   return `<div class="t-dash">
-  <div class="t-dash-h"><div><h2>Taller · ${esc(nombreMes(MES))}</h2><p class="hint">Fichajes de FORM-03 y firmas de FORM-02 y FORM-04. Horas pagadas: días laborables (lunes a viernes, sin los días cerrados de la agenda) × jornada de cada mecánico.</p></div><button type="button" class="btn b-ghost b-sm" data-tequipo>Equipo y ajustes</button></div>
+  <div class="t-dash-h"><div><h2>Taller · ${esc(nombreMes(MES))}</h2><p class="hint">Fichajes de FORM-04 y firmas de FORM-02 y FORM-05. Horas pagadas: días laborables (lunes a viernes, sin los días cerrados de la agenda) × jornada de cada mecánico.</p></div><button type="button" class="btn b-ghost b-sm" data-tequipo>Equipo y ajustes</button></div>
   <div class="kpis"><div class="kpi"><b class="num">${pag?pct(prod,pag):"—"}</b><span>Productividad: ${tH(prod)} de trabajo de ${tH(pag)} pagadas</span></div><div class="kpi k2"><b class="num">${tPct(dvm)}</b><span>Desviación media sobre lo estimado</span></div><div class="kpi k3"><b class="num">${r.calidad.total?pct(r.calidad.primera,r.calidad.total):"—"}</b><span>Calidad a la primera (${r.calidad.primera}/${r.calidad.total})</span></div><div class="kpi k4"><b class="num">${eur(fact)}</b><span>Mano de obra de ${ords} trabajo${ords===1?"":"s"} terminado${ords===1?"":"s"}</span></div></div>
   <div class="dgrid">
     <section class="card ancho"><h3>Rendimiento por mecánico</h3><p class="hint">Horas productivas (trabajo neto fichado) frente a horas pagadas (jornada de ${esc(String(r.config.jornada).replace(".",","))} h × ${r.diasLaborables} días laborables).</p>
@@ -777,7 +777,7 @@ document.addEventListener("click",e=>{ const t=e.target;
 async function tPdfOrden(token){ try{ const [r]=await Promise.all([tApi("fichas/"+token),TEQ.length?null:tCargarEquipo(),typeof alCargarOrden==="function"?alCargarOrden(token):null]); const prev=TF; TF=r; tImprimir(["f1","f2","f3","f4"]); TF=prev; }catch(err){ toast(err.message); } }
 function tImprimir(cuales){
   let el=$("#t-print"); if(!el){ el=document.createElement("div"); el.id="t-print"; document.body.appendChild(el); }
-  const T={f1:["FORM-01","Ficha de recepción del vehículo"],f2:["FORM-02","Inspección 360°"],f3:["FORM-03","Control de tiempos"],f4:["FORM-04","Control de calidad · 30 puntos"],f5:["FORM-14","Factura de reparación"]};
+  const T={f1:["FORM-01","Ficha de recepción del vehículo"],f2:["FORM-02","Inspección 360°"],f3:["FORM-04","Control de tiempos"],f4:["FORM-05","Control de calidad · 30 puntos"],f5:["FORM-06","Factura de reparación"]};
   el.innerHTML=cuales.map(k=>k==="f5"&&typeof fcPagina==="function"?fcPagina():`<article class="tp-pag"><header class="tp-h"><img src="/marca/logo-oscuro.svg" alt="Volcano Cars" height="26"><div><b>${T[k][1]}</b><small>Orden <b>${esc(TF.fichas.num)}</b> · ${esc((TF.orden.vehiculo.matricula||"").toUpperCase())} · ${esc(TF.orden.vehiculo.coche||"")} · ${esc(TF.orden.cliente.nombre)}</small></div><span class="tp-badge">${T[k][0]}</span></header>
     ${({f1:tP1,f2:tP2,f3:tP3,f4:tP4,f5:typeof fcImprimir==="function"?fcImprimir:tP1})[k]()}
     <footer class="tp-f">Volcano Cars · Sistema 01 Taller: de la recepción a la entrega · ${T[k][0]} · Versión 1.1 · Impreso ${esc(tFH(new Date().toISOString()))}</footer></article>`).join("");

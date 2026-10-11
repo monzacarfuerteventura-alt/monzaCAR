@@ -87,7 +87,7 @@
     .app-live{margin:12px 2px 0;font-size:12.5px;color:var(--muted);display:flex;gap:7px;align-items:center}
     .app-live i{width:9px;height:9px;border-radius:50%;background:#2fbf71;display:inline-block}
 
-    /* ---- ficha de la orden (FORM-01 a FORM-04 y factura): cabecera compacta ---- */
+    /* ---- ficha de la orden (FORM-01 a FORM-06): cabecera compacta ---- */
     #tf .t-fhead{grid-template-columns:auto 1fr auto!important;gap:8px 10px}
     #tf .t-fcar{grid-column:1/-1!important;display:flex;flex-wrap:wrap;align-items:center;gap:2px 10px}
     #tf .t-fcar small{flex:1 0 100%}

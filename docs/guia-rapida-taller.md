@@ -13,9 +13,9 @@ Botones de siempre: **+ Nueva Entrada / Recepción** · **+ Factura Rápida / Co
 |---|---|---|
 | 1 · FORM-01 Recepción | Deja por escrito cómo llega el coche (daños, objetos, km) y lo que autoriza el cliente. Te protege ante reclamaciones. | Al entrar |
 | 2 · FORM-02 Inspección 360° | Semáforo OK / Ámbar / Rojo del coche. Justifica el presupuesto y demuestra al cliente lo que necesita. | Antes de reparar |
-| 3 · FORM-14 Factura | Documento legal del cobro con número definitivo. Sin ella no hay venta ni IGIC declarable. | Al terminar |
-| 4 · FORM-03 Tiempos | Fichajes de inicio, pausa y fin: horas reales frente a las estimadas y coste de cada trabajo. | Durante el trabajo |
-| 5 · FORM-04 Calidad (30 pts) | Revisión final: evita devoluciones y reclamaciones de garantía. | Antes de entregar |
+| 3 · FORM-06 Factura | Documento legal del cobro con número definitivo. Sin ella no hay venta ni IGIC declarable. | Al terminar |
+| 4 · FORM-04 Tiempos | Fichajes de inicio, pausa y fin: horas reales frente a las estimadas y coste de cada trabajo. | Durante el trabajo |
+| 5 · FORM-05 Calidad (30 pts) | Revisión final: evita devoluciones y reclamaciones de garantía. | Antes de entregar |
 
 **PDF de cada ficha:** dentro de la ficha, **«Descargar PDF de esta ficha»** (o **PDF** en la lista de las 5 fichas) → en el cuadro de impresión elige **Guardar como PDF**. El archivo ya lleva nombre (p. ej. *FORM-02 VC-2026-0001 1234ABC*). **«PDF de toda la orden»** baja las 4 fichas juntas.
 

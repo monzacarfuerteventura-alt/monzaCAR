@@ -1,4 +1,4 @@
-# Factura de reparación (FORM-14), en el navegador (escritorio y móvil 390 px). Uso: bun tools/pruebas/servidor-local.mjs  y  python3 tools/pruebas/e2e-factura-panel.py [carpeta-capturas]
+# Factura de reparación (FORM-06), en el navegador (escritorio y móvil 390 px). Uso: bun tools/pruebas/servidor-local.mjs  y  python3 tools/pruebas/e2e-factura-panel.py [carpeta-capturas]
 import sys, pathlib
 from playwright.sync_api import sync_playwright
 BASE = "http://localhost:8888"; CLAVE = "clave-de-pruebas-larga-2026"

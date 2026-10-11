@@ -158,7 +158,7 @@
   /* =====================================================================
      MARGEN Y DOCUMENTOS DE COCHE
      ===================================================================== */
-  const CHECK = [["dgt", "Informe DGT: titularidad, cargas y embargos"], ["itv", "ITV en vigor"], ["imp", "Impuesto de circulación al corriente"], ["docs", "Permiso de circulación y ficha técnica entregados"], ["contrato", "Contrato firmado por las dos partes"], ["factura", "Factura de venta emitida (FORM-16)"], ["pago", "Pago recibido y justificante guardado"], ["seguro", "Seguro del comprador activo antes de llevárselo"], ["llaves", "Llaves (y 2.ª llave) y libro de mantenimiento entregados"], ["titular", "Cambio de titularidad presentado en Tráfico"], ["resena", "Pedir reseña de Google a los 7 días"]];
+  const CHECK = [["dgt", "Informe DGT: titularidad, cargas y embargos"], ["itv", "ITV en vigor"], ["imp", "Impuesto de circulación al corriente"], ["docs", "Permiso de circulación y ficha técnica entregados"], ["contrato", "Contrato firmado por las dos partes"], ["factura", "Factura de venta emitida (FORM-11)"], ["pago", "Pago recibido y justificante guardado"], ["seguro", "Seguro del comprador activo antes de llevárselo"], ["llaves", "Llaves (y 2.ª llave) y libro de mantenimiento entregados"], ["titular", "Cambio de titularidad presentado en Tráfico"], ["resena", "Pedir reseña de Google a los 7 días"]];
   const mes12 = (f, m) => (f ? E.addMeses(f, m) : "");
   function contratoHTML(x, emp) {
     const v = x.vehiculo || {}, c = x.comprador || {}, f = x.fechaEntrega || hoy(), em = emp || {};

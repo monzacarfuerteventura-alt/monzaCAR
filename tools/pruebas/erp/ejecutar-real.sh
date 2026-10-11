@@ -5,5 +5,5 @@ set -euo pipefail
 RAIZ="$(cd "$(dirname "$0")/../../.." && pwd)"; T="$(mktemp -d)"
 cp -r "$RAIZ/netlify" "$T/netlify"; cp "$RAIZ/package.json" "$T/package.json"
 mkdir -p "$T/node_modules/@netlify"; cp -r "$RAIZ/tools/pruebas/erp/real/blobs-simulado" "$T/node_modules/@netlify/blobs"; cp -r "$RAIZ/tools/pruebas/erp/real/functions-simulado" "$T/node_modules/@netlify/functions"
-cp "$RAIZ/tools/pruebas/erp/real/real.test.mts" "$T/real.test.mts"; cp "$RAIZ/public/erp-logic.js" "$T/public-erp-logic.js"
-cd "$T" && node --experimental-strip-types --no-warnings real.test.mts
+cp "$RAIZ/tools/pruebas/erp/real/real.test.mts" "$T/real.test.mts"; cp "$RAIZ/tools/pruebas/erp/real/renum.test.mts" "$T/renum.test.mts"; mkdir -p "$T/public"; cp "$RAIZ/public/panel-docs.js" "$T/public/"; cp "$RAIZ/public/erp-logic.js" "$T/public-erp-logic.js"
+cd "$T" && node --experimental-strip-types --no-warnings real.test.mts && node --experimental-strip-types --no-warnings renum.test.mts

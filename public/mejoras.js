@@ -7,7 +7,7 @@
         panel, al dar de alta un coche, enseña qué alertas encajan con él.
      2. «HISTORIAL SIN SORPRESAS» en la ficha de cada coche: descarga del PDF
         con la inspección de 80 puntos (FORM-02) y el control de calidad
-        FORM-04 firmado. Solo sale si ese coche tiene su PDF subido.
+        FORM-05 firmado. Solo sale si ese coche tiene su PDF subido.
    Sin librerías externas. No toca nada de lo que ya existía: si falta este
    archivo, la web sigue exactamente igual.
    ===================================================================== */
@@ -202,7 +202,7 @@
     box.innerHTML = `<a class="hist-btn" href="${url}" download>
         <span class="hist-ic">${ICO.doc}</span>
         <span class="hist-tx"><b>📄 ${L("Descargar Historial Sin Sorpresas (PDF)", "Download the No-Surprises History (PDF)")}</b>
-        <small>${L("Inspección 360° de 80 puntos (FORM-02) y control de calidad pre-entrega de 30 puntos (FORM-04) firmado por el taller.", "80-point 360° inspection (FORM-02) and 30-point pre-delivery quality check (FORM-04) signed by the workshop.")}</small></span>
+        <small>${L("Inspección 360° de 80 puntos (FORM-02) y control de calidad pre-entrega de 30 puntos (FORM-05) firmado por el taller.", "80-point 360° inspection (FORM-02) and 30-point pre-delivery quality check (FORM-05) signed by the workshop.")}</small></span>
         <span class="hist-dl" aria-hidden="true">${ICO.dl}</span></a>
       <p class="hist-sub"><span class="hist-seal">${ICO.ok}${L("Firmado por el taller", "Signed by the workshop")}</span>${L("Cero sorpresas, cero engaños: el estado mecánico y estético exacto del coche tras revisar los 80 puntos clave, incluidos los pequeños detalles de pintura si los tiene.", "No surprises, no tricks: the car's exact mechanical and cosmetic condition after checking all 80 key points, including small paint marks if it has any.")}
       <a href="${url}?ver=1" target="_blank" rel="noopener">${L("Verlo sin descargar", "View without downloading")}</a>${inf.fecha ? ` · <span>${L("publicado el", "published")} ${esc(fechaTxt(inf.fecha))}</span>` : ""}</p>`;

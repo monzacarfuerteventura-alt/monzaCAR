@@ -7,7 +7,7 @@ Sigue la misma arquitectura que el resto de la web: HTML/JS sin librerías, Netl
 
 | Archivo | Qué hace |
 |---|---|
-| `netlify/lib/jornada.mts` | Lógica de fichaje: estados, cálculo de horas, deshacer, correcciones, candado (423) y enganche con el FORM-03 |
+| `netlify/lib/jornada.mts` | Lógica de fichaje: estados, cálculo de horas, deshacer, correcciones, candado (423) y enganche con el FORM-04 |
 | `netlify/functions/jornada.mts` | API `/api/jornada/*` (fichar, plantilla, registro, corregir, QR, acceso) |
 | `netlify/lib/seguridad.mts` | + 2FA por persona del equipo, dispositivos de confianza (cookie firmada) y horas raras |
 | `netlify/functions/login.mts` | + alta de Google Authenticator del equipo, «confiar 30 días», estado de jornada en la misma respuesta |
@@ -50,14 +50,14 @@ Nada se borra: un error del trabajador se **deshace** (anulación con motivo, 2 
 - **Salida olvidada**: si una jornada de un día anterior lleva más de 16 h abierta, al volver a fichar queda como incidencia «Sin salida registrada» (no se inventa ninguna hora) y el gerente la corrige. Un turno que pasa de la medianoche no se corta.
 - **Horas extra**: lo trabajado por encima de la jornada diaria de cada persona (Taller → Equipo y ajustes). Pausas no cuentan como trabajo.
 - **Candado**: con estado distinto de «trabajando», las API del equipo (taller, órdenes, inventario, caja y fotos) contestan 423 y el panel abre la pantalla de fichaje. El gerente con contraseña no ficha.
-- **FORM-03**: pausa de jornada → el trabajo en marcha se pausa con «Comida / descanso»; salida → «Fin de jornada». Al reanudar o fichar la entrada, se reanuda solo ese trabajo (si nadie lo ha tocado a mano).
+- **FORM-04**: pausa de jornada → el trabajo en marcha se pausa con «Comida / descanso»; salida → «Fin de jornada». Al reanudar o fichar la entrada, se reanuda solo ese trabajo (si nadie lo ha tocado a mano).
 
 ## Por qué el fichaje tarda menos de 2 segundos
 
 1. **Cero pantallas intermedias.** El login del equipo ya devuelve el estado de jornada: si no ha fichado, sale directamente el botón; si ya estaba trabajando (cerró el navegador y volvió), entra directo al taller.
 2. **Un solo botón que decide por el trabajador.** Entrada, pausa, reanudar o salida según el estado. Después de las 15:30, o con la jornada cumplida, «Salida» pasa a ser el botón grande.
 3. **Botón gigante** (media pantalla en el móvil, `touch-action: manipulation`: sin espera de doble toque), pensado para usarlo con guantes o con las manos sucias.
-4. **Una petición = un fichaje.** El servidor contesta en cuanto guarda el día y el estado; el libro y el FORM-03 se escriben en paralelo.
+4. **Una petición = un fichaje.** El servidor contesta en cuanto guarda el día y el estado; el libro y el FORM-04 se escriben en paralelo.
 5. **Sin «Aceptar».** Aviso de 2 segundos con la hora y «Deshacer» en lugar de un «¿Seguro?».
 6. **Precarga.** Al abrir la pantalla estando trabajando, se piden en segundo plano las herramientas a su nombre, así la salida no espera.
 7. **QR / NFC del taller.** Escanear = fichar entrada o vuelta de la pausa sin tocar nada más. En el móvil de confianza solo pide el PIN si la sesión se cerró.

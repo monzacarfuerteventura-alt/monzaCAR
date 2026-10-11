@@ -1,4 +1,4 @@
-# Hoja de presupuesto rellenable en la ficha FORM-15 (actualización 61), en Chromium (escritorio y móvil).
+# Hoja de presupuesto rellenable en la ficha FORM-03 (actualización 61), en Chromium (escritorio y móvil).
 # Uso: bun tools/pruebas/servidor-local.mjs (recién arrancado) y luego  python3 tools/pruebas/e2e-presupuesto-ficha.py [carpeta-capturas]
 # Comprueba: rellenar sin salir de la ficha, totales, traer puntos de la inspección, borrador que el cliente NO ve, enviar,
 # lo que ve el cliente en su enlace, que lo guardado coincide con el cajón y el PDF, y el bloqueo al aceptar.
@@ -26,7 +26,7 @@ with sync_playwright() as p:
         # inspección con dos puntos: uno rojo y otro ámbar (para traerlos al presupuesto)
         pg.evaluate("""async (t)=>{ await tApi("fichas/"+t+"/f2","PUT",{mecanico:"",items:{d6:{e:"r",nota:"1 mm",extra:"",fotos:[]},c1:{e:"a",nota:"",extra:"",fotos:[]},a1:{e:"ok",nota:"",extra:"",fotos:[]}},horasEst:2.5,recomendacion:"",rechazoFirmado:false,autorizaRojos:false,autorizaNombre:"",firma:null,cerrada:false,inicio:""}); }""", tok)
         pg.evaluate("t=>abrirFichas(t,'pre')", tok); pg.wait_for_selector("#tpre")
-        check("la pestaña FORM-15 es un formulario (ya no solo un resumen)", pg.locator("#tpre [data-plc]").count() >= 1 and pg.locator("[data-pguardar]").count() == 1)
+        check("la pestaña FORM-03 es un formulario (ya no solo un resumen)", pg.locator("#tpre [data-plc]").count() >= 1 and pg.locator("[data-pguardar]").count() == 1)
         check("avisa de los puntos que dejó la inspección", "2" in pg.inner_text("#tpre") and "ámbar o rojo" in pg.inner_text("#tpre"))
         check("viene el cliente y el coche de la recepción", "Cliente Presu" in pg.inner_text("#tpre") and mat in pg.inner_text("#tpre").upper())
         pg.click("[data-plsug]"); pg.wait_for_function("document.querySelectorAll('#tpre .tpre-l[data-pl]').length==2")

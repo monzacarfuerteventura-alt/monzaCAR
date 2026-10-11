@@ -6,22 +6,26 @@ import { permiso, esRespuesta } from "../lib/acceso.mts";
   SISTEMAS VOLCANO CARS · formularios digitales (MO-00 v3.0)
   ---------------------------------------------------------------------------------
   Solo los formularios que no tenían equivalente en el panel:
-    FORM-05 Cascos y abonos (S02) · FORM-06 Ronda 5S y seguridad (S03) · FORM-07 Hoja de preparación (S04)
-    FORM-08 Prueba a domicilio · fianza 50 € (S06) · FORM-09 Registro de postventa (S07)
-    FORM-10 Plan semanal de marketing (S08, solo gerente) · FORM-11 Auditoría del viernes (S09, solo gerente)
-  FORM-01 a 04 y FORM-14 (Factura de reparación, entre FORM-02 y FORM-03) siguen en las órdenes del taller; FORM-12 y FORM-13 son de papel (el Dashboard ya da los números).
+    FORM-07 Cascos y abonos (S02) · FORM-08 Ronda 5S y seguridad (S03) · FORM-09 Hoja de preparación (S04)
+    FORM-12 Prueba a domicilio · fianza 50 € (S06) · FORM-13 Registro de postventa (S07)
+    FORM-14 Plan semanal de marketing (S08, solo gerente) · FORM-15 Auditoría del viernes (S09, solo gerente)
+  FORM-01 a FORM-06 (las fichas del taller, con la Factura de reparación) siguen en las órdenes del taller; FORM-10 (Parte de reserva) y FORM-11 (Factura de venta) están en Coches; FORM-16 y FORM-17 son de papel (el Dashboard ya da los números).
+  NUMERACIÓN (act. 72): los formularios van de FORM-01 a FORM-17 en el orden de los manuales S01 a S11. Antes eran otros números (cascos 05, 5S 06, preparación 07, prueba a domicilio 08, postventa 09, marketing 10, auditoría 11);
+  los registros ya guardados siguen en su clave antigua y se leen con el número nuevo (tabla FIS), así no se pierde nada.
 
-  GET    /api/sistemas?form=FORM-05          → registros (los 300 más recientes)
+  GET    /api/sistemas?form=FORM-07          → registros (los 300 más recientes)
   POST   /api/sistemas  {form, datos}        → nuevo registro
   PUT    /api/sistemas  {form, id, datos, cerrar?, reabrir?}
-  DELETE /api/sistemas?form=FORM-05&id=…     → solo gerente
-  Almacén de Netlify Blobs «sistemas», clave <FORM>/<id>. El id empieza por la fecha: se ordena solo.
+  DELETE /api/sistemas?form=FORM-07&id=…     → solo gerente
+  Almacén de Netlify Blobs «sistemas», clave <FIS[FORM]>/<id> (la clave física no cambia). El id empieza por la fecha: se ordena solo.
 */
 
 const FORMS: Record<string, "equipo" | "gerente"> = {
-  "FORM-05": "equipo", "FORM-06": "equipo", "FORM-07": "equipo", "FORM-08": "equipo", "FORM-09": "equipo",
-  "FORM-10": "gerente", "FORM-11": "gerente",
+  "FORM-07": "equipo", "FORM-08": "equipo", "FORM-09": "equipo", "FORM-12": "equipo", "FORM-13": "equipo",
+  "FORM-14": "gerente", "FORM-15": "gerente",
 };
+// Número NUEVO → clave física (la de antes de la 72) con la que están guardados los registros. NO cambiar: perdería los datos.
+const FIS: Record<string, string> = { "FORM-07": "FORM-05", "FORM-08": "FORM-06", "FORM-09": "FORM-07", "FORM-12": "FORM-08", "FORM-13": "FORM-09", "FORM-14": "FORM-10", "FORM-15": "FORM-11" };
 export type Registro = {
   id: string; form: string; creado: string; autor: string; actualizado: string; porUltimo: string;
   cerrado: boolean; firma: { nombre: string; t: string } | null; datos: Record<string, unknown>;
@@ -70,12 +74,12 @@ export default async (req: Request) => {
   if (esRespuesta(q)) return q;
 
   if (req.method === "GET") {
-    const { blobs } = await s().list({ prefix: form + "/" });
+    const { blobs } = await s().list({ prefix: FIS[form] + "/" });
     const claves = blobs.map((b) => b.key).sort().reverse().slice(0, 300);
     const regs: Registro[] = [];
     for (let i = 0; i < claves.length; i += 25) {
       const parte = await Promise.all(claves.slice(i, i + 25).map((k) => s().get(k, { type: "json" }).catch(() => null)));
-      for (const r of parte) if (r) regs.push(r as Registro);
+      for (const r of parte) if (r) regs.push({ ...(r as Registro), form }); // los antiguos traen el número viejo dentro: se muestra el nuevo
     }
     return json({ form, registros: regs, yo: { nombre: q.nombre, gerente: q.admin } });
   }
@@ -85,14 +89,14 @@ export default async (req: Request) => {
     if (!datos) return json({ error: "Datos no válidos o demasiado largos." }, 400);
     const t = new Date().toISOString();
     const r: Registro = { id: nuevoId(), form, creado: t, autor: q.nombre, actualizado: t, porUltimo: q.nombre, cerrado: false, firma: null, datos };
-    await s().setJSON(`${form}/${r.id}`, r);
+    await s().setJSON(`${FIS[form]}/${r.id}`, r);
     return json(r, 201);
   }
 
   if (req.method === "PUT") {
     const id = String(body?.id || "");
     if (!idValido(id)) return json({ error: "Registro no válido." }, 400);
-    const r = (await s().get(`${form}/${id}`, { type: "json" }).catch(() => null)) as Registro | null;
+    const r = (await s().get(`${FIS[form]}/${id}`, { type: "json" }).catch(() => null)) as Registro | null;
     if (!r) return json({ error: "Ese registro ya no existe." }, 404);
     if (body?.reabrir) {
       if (!q.admin) return json({ error: "Solo el gerente puede reabrir un formulario firmado." }, 403);
@@ -105,7 +109,7 @@ export default async (req: Request) => {
       if (body?.cerrar) { r.cerrado = true; r.firma = { nombre: q.nombre, t: new Date().toISOString() }; }
     }
     r.actualizado = new Date().toISOString(); r.porUltimo = q.nombre;
-    await s().setJSON(`${form}/${id}`, r);
+    r.form = form; await s().setJSON(`${FIS[form]}/${id}`, r);
     return json(r);
   }
 
@@ -113,7 +117,7 @@ export default async (req: Request) => {
     if (!q.admin) return json({ error: "Solo el gerente puede borrar formularios." }, 403);
     const id = String(url.searchParams.get("id") || "");
     if (!idValido(id)) return json({ error: "Registro no válido." }, 400);
-    await s().delete(`${form}/${id}`);
+    await s().delete(`${FIS[form]}/${id}`);
     return json({ ok: true });
   }
   return json({ error: "Método no permitido" }, 405);

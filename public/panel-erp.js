@@ -77,7 +77,7 @@
   const recargar = () => { if (ACTUAL) pintarSeguro(ACTUAL); };
   const sec = (t) => document.getElementById(SECC[t]);
   const soyGerente = () => esGerente();
-  const porError = (t, e) => { const s = sec(t); if (s) s.innerHTML = cabecera(({ gest: "Gestoría", banco: "Banco", compras: "Compras", cli: "Clientes 360", inc: "Incentivos", mcar: "Margen y documentos", conta: "Contabilidad", perm: "Permisos" })[t] || "ERP", "") + `<div class="msg bad">${H(e.message)}</div><button class="btn b-ghost" type="button" data-pereintentar>Reintentar</button>`; };
+  const porError = (t, e) => { const s = sec(t); if (s) s.innerHTML = cabecera(({ gest: "Gestoría", banco: "Banco", compras: "Compras", cli: "Clientes 360", inc: "Incentivos", mcar: "Margen y documentos", conta: "Contabilidad", perm: "Permisos" })[t] || "ERP", "") + `<div class="msg bad">${H(e.message)}</div><div class="pe-barra"><button class="btn b-ghost" type="button" data-pereintentar>Reintentar</button>${typeof window.diagnosticoServidor === "function" ? '<button class="btn b-ghost" type="button" data-pediag>Diagnóstico</button>' : ""}</div>`; };
 
   /* =====================================================================
      COMPRAS
@@ -336,6 +336,7 @@
      ===================================================================== */
   document.addEventListener("click", async (e) => {
     const t = ACTUAL, s = t && sec(t); if (!s || s.hidden || (!s.contains(e.target) && !e.target.closest("dialog.erp-dlg"))) return; let b;
+    if (e.target.closest("[data-pediag]")) return window.diagnosticoServidor();
     if (e.target.closest("[data-pereintentar]")) return recargar();
     if ((b = e.target.closest("[data-peseg]")) && (b = e.target.closest("[data-peseg] button"))) {
       const id = e.target.closest("[data-peseg]").dataset.peseg;

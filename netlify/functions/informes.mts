@@ -6,7 +6,7 @@ import { permiso, esRespuesta } from "../lib/acceso.mts";
   HISTORIAL SIN SORPRESAS  ·  el informe de revisión de cada coche en PDF
   ---------------------------------------------------------------------------------------------
   Es el escaneo del FORM-02 (Inspección de entrada 360°, 80 puntos con semáforo OK / Ámbar / Rojo)
-  y del FORM-04 (Control de calidad pre-entrega, firmado) de ESE coche. Se sube desde el panel,
+  y del FORM-05 (Control de calidad pre-entrega, firmado) de ESE coche. Se sube desde el panel,
   en la ficha del coche → «Historial Sin Sorpresas».
 
   - GET    /api/informes          → público: qué coches tienen informe  { "<idCoche>": { fecha, kb } }
@@ -59,7 +59,7 @@ export default async (req: Request) => {
     const buf = new Uint8Array(await req.arrayBuffer());
     if (buf.byteLength > MAX) return json({ error: "El PDF pesa más de 5,5 MB. Escanéalo a 150 ppp o en blanco y negro y vuelve a subirlo." }, 413);
     // tiene que ser un PDF de verdad (empieza por «%PDF-»)
-    if (buf.byteLength < 400 || String.fromCharCode(...buf.slice(0, 5)) !== "%PDF-") return json({ error: "Eso no es un PDF. Sube el escaneo del FORM-02 y FORM-04 en PDF." }, 400);
+    if (buf.byteLength < 400 || String.fromCharCode(...buf.slice(0, 5)) !== "%PDF-") return json({ error: "Eso no es un PDF. Sube el escaneo del FORM-02 y FORM-05 en PDF." }, 400);
     await s.set("pdf/" + id, buf);
     const i = await indice();
     i[id] = { fecha: new Date().toISOString(), kb: Math.round(buf.byteLength / 1024) };

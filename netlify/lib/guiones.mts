@@ -474,8 +474,8 @@ export const GUIONES: Guion[] = [
    },
    {
     "t": 313,
-    "txt": "FORM-14: la factura",
-    "voz": "Entre la inspección y los tiempos está formulario catorce, la factura de reparación. Ya viene rellena con los datos del cliente y las líneas del presupuesto. Revisa el nombre, el DNI o CIF y los kilómetros de salida. Puedes ajustar líneas, descuento y el tipo de igic. El total se calcula solo."
+    "txt": "FORM-06: la factura",
+    "voz": "En la pestaña Factura está formulario seis, la factura de reparación. Ya viene rellena con los datos del cliente y las líneas del presupuesto. Revisa el nombre, el DNI o CIF y los kilómetros de salida. Puedes ajustar líneas, descuento y el tipo de igic. El total se calcula solo."
    },
    {
     "t": 337.4,
@@ -489,8 +489,8 @@ export const GUIONES: Guion[] = [
    },
    {
     "t": 376.5,
-    "txt": "FORM-03: los tiempos",
-    "voz": "formulario tres mide cuánto tarda el trabajo. El mecánico pulsa Iniciar trabajo, y si para, elige el motivo: falta un recambio, otro coche urgente, comida u otro. Al acabar pulsa Terminar y el coche pasa a Control de calidad. La hora la pone el servidor: nadie puede inventarla."
+    "txt": "FORM-04: los tiempos",
+    "voz": "formulario cuatro mide cuánto tarda el trabajo. El mecánico pulsa Iniciar trabajo, y si para, elige el motivo: falta un recambio, otro coche urgente, comida u otro. Al acabar pulsa Terminar y el coche pasa a Control de calidad. La hora la pone el servidor: nadie puede inventarla."
    },
    {
     "t": 399,
@@ -499,8 +499,8 @@ export const GUIONES: Guion[] = [
    },
    {
     "t": 420.2,
-    "txt": "FORM-04: control de calidad",
-    "voz": "formulario cuatro es el control final. Lo firma siempre otra persona distinta del mecánico que hizo el trabajo. Eliges el destino: entrega al cliente o inventario de venta, y marcas cada punto con Sí, No o NA. Si hay algún No, el coche vuelve al taller y hay que escribir la causa."
+    "txt": "FORM-05: control de calidad",
+    "voz": "formulario cinco es el control final. Lo firma siempre otra persona distinta del mecánico que hizo el trabajo. Eliges el destino: entrega al cliente o inventario de venta, y marcas cada punto con Sí, No o NA. Si hay algún No, el coche vuelve al taller y hay que escribir la causa."
    },
    {
     "t": 444.6,

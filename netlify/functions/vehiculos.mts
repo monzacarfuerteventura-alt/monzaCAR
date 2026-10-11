@@ -146,7 +146,7 @@ export default async (req: Request) => {
     if (!body.pin || !pinOk(String(body.pin), persona?.pin)) { await pinFallos(q.uid, true); return json({ error: "PIN incorrecto. Es el mismo con el que entras al panel.", pin: true }, 403); }
     return json({ ok: true, pin: true });
   }
-  // ================= FICHAJE DE TAREAS (FORM-03 de coches propios) =================
+  // ================= FICHAJE DE TAREAS (FORM-04 de coches propios) =================
   if (accion === "tarea-iniciar") {
     const fv = await leerFicha(String(body.vehiculo || "")); if (!fv) return json({ error: "Elige el coche." }, 404);
     if (fv.fase === "vendido") return json({ error: "Ese coche ya está vendido." }, 409);
@@ -274,7 +274,7 @@ export default async (req: Request) => {
     const ok: Record<string, Fase[]> = { entrada: ["reparacion"], reparacion: ["calidad"], calidad: ["listo", "reparacion"], listo: ["reparacion", "vendido"] };
     if (!(ok[a] || []).includes(b)) return json({ error: `Desde «${FASE_TXT[a]}» no se puede pasar a «${FASE_TXT[b]}». Sigue el orden del flujo.` }, 409);
     if (b === "listo") {
-      // Mismo criterio que el FORM-04: quien ha reparado no firma su propio control de calidad (el gerente sí puede)
+      // Mismo criterio que el FORM-05: quien ha reparado no firma su propio control de calidad (el gerente sí puede)
       if (!(q.admin || q.rol === "calidad")) return json({ error: "Solo Calidad o el gerente pasan un coche a «Listo para venta»." }, 403);
       if (!q.admin && f.horas.some((h) => !h.anulada && h.uid === q.uid)) return json({ error: "Has trabajado en este coche: el control de calidad lo firma otra persona." }, 403);
       if (f.costes.some((c) => c.estado === "pendiente" && !c.anulado)) return json({ error: "Hay costes pendientes de aprobar. El gerente debe aprobarlos o rechazarlos antes." }, 409);

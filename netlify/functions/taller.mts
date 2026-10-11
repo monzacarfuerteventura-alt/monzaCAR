@@ -10,7 +10,7 @@ import { exigirJornada } from "../lib/jornada.mts";
 import { reservarNumero, emitirFactura, todosLosRegistros, comprobarIntegridad, listado, csv } from "../lib/facturas.mts";
 
 /*
-  TALLER · SOP-01 (FORM-01 recepción, FORM-02 inspección 360°, FORM-03 tiempos, FORM-04 calidad)
+  TALLER · SOP-01 (FORM-01 recepción, FORM-02 inspección 360°, FORM-03 presupuesto, FORM-04 tiempos, FORM-05 calidad, FORM-06 factura de reparación)
   GET  /api/taller/yo                       → quién soy (gerente o persona del equipo)
   GET/PUT /api/taller/config                → tarifa, jornada y umbrales (PUT solo gerente)
   GET/POST /api/taller/equipo · PUT/DELETE /api/taller/equipo/:id   (solo gerente; el equipo ve nombres)
@@ -108,7 +108,7 @@ function faltaF2(f: F2): string {
   if (!f.recomendacion) return "Elige la recomendación.";
   return "";
 }
-// ---------- factura de reparación (FORM-14) ----------
+// ---------- factura de reparación (FORM-06) ----------
 function limpiarF5(x: any, prev: F5 | null): F5 {
   const c = x?.cliente || {}, v = x?.vehiculo || {};
   const lineas: F5Linea[] = (Array.isArray(x?.lineas) ? x.lineas : []).slice(0, 30)
@@ -198,7 +198,7 @@ async function resumen(desde: string, hasta: string) {
     const r2 = resumenF2(f.f2), p = o.presupuesto;
     if (r2 && r2.rojos > 0 && o.estado !== "entregado" && !(p && p.estado === "aceptado") && !f.f2?.rechazoFirmado && !f.f2?.autorizaRojos)
       alertas.push({ tipo: "rojo", nivel: "rojo", token: f.token, num: f.num, txt: `${coche}: ${r2.rojos} punto${r2.rojos > 1 ? "s" : ""} en ROJO sin presupuesto aceptado ni rechazo firmado` });
-    if (o.estado === "calidad" && !(f.f4 && f.f4.firma)) alertas.push({ tipo: "calidad", nivel: "ambar", token: f.token, num: f.num, txt: `${coche}: terminado, pendiente de control de calidad (FORM-04)` });
+    if (o.estado === "calidad" && !(f.f4 && f.f4.firma)) alertas.push({ tipo: "calidad", nivel: "ambar", token: f.token, num: f.num, txt: `${coche}: terminado, pendiente de control de calidad (FORM-05)` });
     if (f.f4?.resultado === "rechazado" && o.estado !== "entregado" && c?.estado === "fin") alertas.push({ tipo: "rechazo", nivel: "rojo", token: f.token, num: f.num, txt: `${coche}: calidad rechazada, vuelve a taller` });
     if (f.f1 && !f.f1.cerrada && o.estado !== "entregado") alertas.push({ tipo: "f1", nivel: "ambar", token: f.token, num: f.num, txt: `${coche}: recepción sin firma del cliente` });
     if (f.f4?.firma && dentro(Date.parse(f.f4.firma.t))) { calidadTotal++; if ((f.f4.intentos || 0) <= 1 && f.f4.resultado !== "rechazado") calidadPrimera++; }
@@ -358,7 +358,7 @@ export default async (req: Request, context: Context) => {
   const cfg = await leerConfig();
   const veFactura = q.admin || q.rol === "recepcion"; // el mecánico y calidad no ven importes de la factura
   // El equipo del taller ve que hay factura, pero ningún importe (ni en la auditoría).
-  const fichasVista = () => (veFactura ? f : { ...f, f5: f.f5 ? ({ cerrada: f.f5.cerrada } as any) : null, audit: f.audit.map((x) => (x.accion === "emitir-factura" ? { ...x, detalle: "FORM-14 emitida" } : x)) });
+  const fichasVista = () => (veFactura ? f : { ...f, f5: f.f5 ? ({ cerrada: f.f5.cerrada } as any) : null, audit: f.audit.map((x) => (x.accion === "emitir-factura" ? { ...x, detalle: "FORM-06 emitida" } : x)) });
   const salida = () => json({ orden: o, fichas: fichasVista(), calculo: calculo(f.f3, cfg), config: cfg, ahora: new Date().toISOString() });
 
   if (req.method === "GET" && !sub) return salida();
@@ -425,7 +425,7 @@ export default async (req: Request, context: Context) => {
       if (body.estMin !== undefined) f3.estMin = Math.round(num(body.estMin, 6000));
       if (body.tipo !== undefined) f3.tipo = uno(body.tipo, ["inspeccion", "mantenimiento", "reparacion", "preparacion"]) || f3.tipo;
       if (body.hoja !== undefined) f3.hoja = str(body.hoja, 12);
-      auditar(f, q, antesEst !== f3.estMin && empezado ? "tiempo-estimado" : "guardar", antesEst !== f3.estMin ? `Tiempo estimado ${antesEst} → ${f3.estMin} min` : "FORM-03: datos del trabajo");
+      auditar(f, q, antesEst !== f3.estMin && empezado ? "tiempo-estimado" : "guardar", antesEst !== f3.estMin ? `Tiempo estimado ${antesEst} → ${f3.estMin} min` : "FORM-04: datos del trabajo");
       await guardar(f, o); return salida();
     }
     if (acc === "evento") {
@@ -510,8 +510,8 @@ export default async (req: Request, context: Context) => {
       } catch (e: any) { return json({ error: String(e?.message || e) }, 503); }
       nf.cerrada = true; nf.emision = { t: reg.ts, fecha: hoy, por: q.uid, nombre: q.nombre, numero: reg.numero, huella: reg.huella, tipo: reg.tipo };
       if (!nf.fechaOperacion) nf.fechaOperacion = hoy;
-      auditar(f, q, "emitir-factura", `FORM-14 emitida ${reg.numero}: ${tt.total.toFixed(2)} € (${nf.lineas.length} líneas)`);
-    } else auditar(f, q, "guardar", "FORM-14 guardada");
+      auditar(f, q, "emitir-factura", `FORM-06 emitida ${reg.numero}: ${tt.total.toFixed(2)} € (${nf.lineas.length} líneas)`);
+    } else auditar(f, q, "guardar", "FORM-06 guardada");
     f.f5 = nf;
     await guardar(f, o); return salida();
   }
@@ -521,21 +521,21 @@ export default async (req: Request, context: Context) => {
     const trabajaron = new Set([f.f3?.mecanico, ...(f.f3?.eventos || []).map((e) => e.por)].filter(Boolean));
     if (trabajaron.has(q.uid)) return json({ error: "El control de calidad lo firma una persona distinta a quien hizo el trabajo." }, 403);
     if (q.rol === "recepcion" && !q.admin) return json({ error: "El control de calidad lo hace el responsable de calidad, otro mecánico o el gerente." }, 403);
-    if (estadoTiempo(f.f3?.eventos || []) !== "fin") return json({ error: "El trabajo aún no está terminado (FORM-03)." }, 409);
+    if (estadoTiempo(f.f3?.eventos || []) !== "fin") return json({ error: "El trabajo aún no está terminado (FORM-04)." }, 409);
     const nf = limpiarF4(body, f.f4);
     let cambio: { estado: string; nota: string } | undefined;
     if (body.cerrar) {
       const falta = faltaF4(nf); if (falta) return json({ error: falta }, 400);
-      // Tras un rechazo, no se vuelve a firmar hasta que el mecánico repite el trabajo (un nuevo «fin» en FORM-03)
+      // Tras un rechazo, no se vuelve a firmar hasta que el mecánico repite el trabajo (un nuevo «fin» en FORM-04)
       const ultimoFin = [...(f.f3?.eventos || [])].filter((e) => e.tipo === "fin").map((e) => e.t).sort().pop() || "";
-      if (f.f4?.resultado === "rechazado" && f.f4.firma && ultimoFin < f.f4.firma.t) return json({ error: "El coche volvió a taller: primero el mecánico tiene que repetir el trabajo y terminarlo en FORM-03." }, 409);
+      if (f.f4?.resultado === "rechazado" && f.f4.firma && ultimoFin < f.f4.firma.t) return json({ error: "El coche volvió a taller: primero el mecánico tiene que repetir el trabajo y terminarlo en FORM-04." }, 409);
       nf.firma = firma(q); nf.intentos = (f.f4?.intentos || 0) + 1;
       if (nf.resultado === "rechazado") {
         f.f3!.retrabajos.push({ t: new Date().toISOString(), causa: nf.motivo, por: q.uid });
         cambio = { estado: "reparacion", nota: "" };
-        auditar(f, q, "calidad-rechazo", "FORM-04 rechazado: " + nf.motivo);
-      } else { cambio = { estado: "listo", nota: "" }; auditar(f, q, "firmar", "FORM-04 " + (nf.resultado === "aprobado" ? "aprobado" : "aprobado con observaciones")); }
-    } else auditar(f, q, "guardar", "FORM-04 guardada");
+        auditar(f, q, "calidad-rechazo", "FORM-05 rechazado: " + nf.motivo);
+      } else { cambio = { estado: "listo", nota: "" }; auditar(f, q, "firmar", "FORM-05 " + (nf.resultado === "aprobado" ? "aprobado" : "aprobado con observaciones")); }
+    } else auditar(f, q, "guardar", "FORM-05 guardada");
     f.f4 = nf;
     await guardar(f, o, cambio);
     return salida();

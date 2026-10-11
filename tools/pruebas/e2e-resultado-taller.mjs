@@ -95,7 +95,7 @@ const trab = x?.trabajadores || [];
 esperar("por trabajador: Pedro 120 min = 80,00 y Gerente 30 min = 20,00", trab.length === 2 && trab.find((t) => t.nombre === "Pedro")?.coste === 8000 && trab.find((t) => t.nombre === "Pedro")?.minutos === 120 && trab.find((t) => t.nombre === "Gerente")?.coste === 2000, JSON.stringify(trab));
 esperar("lo repartido suma justo la mano de obra", trab.reduce((a, t) => a + t.coste, 0) === x?.manoObra);
 const cfg = await leerConfig(); const fi2 = await tstore().get("f/" + T1, { type: "json" });
-esperar("la mano de obra es la misma que enseña FORM-03", Math.round(calculo(fi2.f3, cfg).manoObra * 100) === x?.manoObra);
+esperar("la mano de obra es la misma que enseña FORM-04", Math.round(calculo(fi2.f3, cfg).manoObra * 100) === x?.manoObra);
 esperar("beneficio = 270,00 − 51,25 − 100,00 = 118,75", x?.beneficio === 11875, String(x?.beneficio));
 esperar("cobrado 288,90 y nada pendiente", x?.cobrado === 28890 && x?.pendiente === 0);
 esperar("coherente: base + IGIC = precio final", x.base + x.igic === x.total);

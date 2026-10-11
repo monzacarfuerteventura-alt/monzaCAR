@@ -1,5 +1,5 @@
 // =====================================================================
-// PRUEBA DE LA «FACTURA DE REPARACIÓN» (FORM-14) DE PRINCIPIO A FIN (30-09-2026)
+// PRUEBA DE LA «FACTURA DE REPARACIÓN» (FORM-06) DE PRINCIPIO A FIN (30-09-2026)
 // Ejecuta las funciones reales de netlify/functions con un almacén en memoria y recorre el panel con
 // cada puesto: Gerente (contraseña), Lestter (puesto Gerente con PIN), Calidad, Recepción y Mecánico.
 // Uso (en el ordenador del desarrollador, con bun):  bun tools/pruebas/e2e-factura.mjs

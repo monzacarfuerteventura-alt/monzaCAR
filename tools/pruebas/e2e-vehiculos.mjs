@@ -152,7 +152,7 @@ r = await llamar("POST", "/api/almacen/devolver-pieza/" + mv2, M, { motivo: "Era
 r = await llamar("GET", "/api/vehiculos/ficha/" + id2, L); esperar("la ficha 2 no suma la pieza devuelta", r.data.eco.piezas === 0 && r.data.piezas[0].devuelto === 1, JSON.stringify(r.data.eco));
 const mv = await llamar("GET", "/api/almacen/movimientos?desde=2020-01-01&hasta=2099-12-31", L); esperar("Inventario · movimientos muestran los del coche", mv.status === 200 && JSON.stringify(mv.data).includes("VP-"), est(mv));
 
-console.log("\nI) Fichaje de tareas (FORM-03 de coches propios)");
+console.log("\nI) Fichaje de tareas (FORM-04 de coches propios)");
 r = await llamar("POST", "/api/vehiculos/crear", R, { marca: "Renault", modelo: "Clio", matricula: "7777tar" }); const v3 = r.data.ficha.id;
 r = await llamar("POST", "/api/vehiculos/tarea-iniciar", M, { vehiculo: v3, tipo: "reparacion" }); esperar("sin tiempo estimado: rechazado", r.status === 400, est(r));
 r = await llamar("POST", "/api/vehiculos/tarea-iniciar", M, { vehiculo: v3, tipo: "volar", estMin: 60 }); esperar("tipo inválido rechazado", r.status === 400, est(r));

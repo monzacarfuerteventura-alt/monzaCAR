@@ -103,7 +103,7 @@ function piezasDeOrden(movs: MovPieza[], token: string) {
   }
   return { coste, det };
 }
-// Horas netas trabajadas por cada persona (FORM-03) × tarifa. La suma es EXACTAMENTE la mano de obra que enseña FORM-03.
+// Horas netas trabajadas por cada persona (FORM-04) × tarifa. La suma es EXACTAMENTE la mano de obra que enseña FORM-04.
 function manoObraDe(f3: F3 | null, cfg: Config, nombre: (u: string) => string) {
   const tarifa = f3?.tarifa || cfg.tarifa;
   if (!f3 || !(f3.eventos || []).length) return { coste: 0, minutos: 0, tarifa, trabajadores: [] as { nombre: string; minutos: number; coste: number }[], sinHoras: true };
@@ -128,7 +128,7 @@ async function resumen(desde: string, hasta: string) {
   // Los coches propios sin enlazar a la web (vp-…) cuentan como un coche más: stock invertido, venta, cobros y beneficio al céntimo
   // (si su venta ya está apuntada en Finanzas deja de contar como stock aunque la ficha aún no esté cerrada)
   const cars = [...carsWeb, ...sinEnlazar.map((c) => (ventas.some((v) => v.coche === c.id) ? { ...c, estado: "vendido" as const } : c))];
-  // Actualización 11: presupuesto aceptado -> factura emitida (FORM-14). Cada orden toma el número y el importe de su última factura (F o R).
+  // Actualización 11: presupuesto aceptado -> factura emitida (FORM-06). Cada orden toma el número y el importe de su última factura (F o R).
   const facDeOrden = new Map<string, any>();
   for (const r of ((await todosLosRegistros().catch(() => [])) as any[])) if (r.serie !== "H" && r.orden) facDeOrden.set(r.orden, r);
   const turnos = await listarCaja<Turno>("t/");
@@ -234,7 +234,7 @@ async function resumen(desde: string, hasta: string) {
     if (!doc) avisos.push("Sin factura ni presupuesto aceptado: no hay ingreso que contar.");
     else if (!doc.facturaEmitida) avisos.push("Todavía no tiene factura emitida.");
     if (doc && doc.total - doc.cobrado > 0) avisos.push(`Falta cobrar ${eur(doc.total - doc.cobrado)}.`);
-    if (aju.descontarMO && mo.sinHoras) avisos.push("No se fichó ningún tiempo (FORM-03): la mano de obra sale a 0 y el beneficio puede estar inflado.");
+    if (aju.descontarMO && mo.sinHoras) avisos.push("No se fichó ningún tiempo (FORM-04): la mano de obra sale a 0 y el beneficio puede estar inflado.");
     if (pz.det.some((d) => d.sinCoste)) avisos.push("Alguna pieza no tiene precio de coste en el Inventario: su coste sale a 0.");
     return { token: o.token, num: o.num || "", cliente: o.cliente?.nombre || "", coche: o.vehiculo?.coche || "", matricula: (o.vehiculo?.matricula || "").toUpperCase(), fecha: dia, factura: doc?.num || "", facturada: !!doc?.facturaEmitida,
       total, base, igic: total - base, igicPct: doc?.impuestoPct ?? cfg.igic, cobrado: doc?.cobrado || 0, pendiente: doc ? doc.total - doc.cobrado : 0,

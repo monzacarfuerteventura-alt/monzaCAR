@@ -1,6 +1,6 @@
 /* =====================================================================
    INVENTARIO · repuestos (stock en tiempo real) y herramientas (anti-pérdida)
-   Integrado con FORM-03 (recambios y herramientas de cada orden) y con el
+   Integrado con FORM-04 (recambios y herramientas de cada orden) y con el
    cierre de caja (auditoría de herramientas no devueltas).
    Fuente: tools/almacen/almacen.js → python3 tools/almacen/inyectar.py
    ===================================================================== */
@@ -301,7 +301,7 @@ $("#al").addEventListener("input",e=>{ if(e.target.id==="al-busq"){ AL_BUSQ=e.ta
 setInterval(()=>{ if(!PW||document.hidden) return; if(!$("#s-alm").hidden&&!document.querySelector("#dlg-al[open],#dlg-scan[open]")&&!(document.activeElement&&document.activeElement.id==="al-busq")) alCargar(true); else if(ES_GER()&&!ES_EQ()) alCargar(true); },30000);
 
 /* =====================================================================
-   FORM-03: recambios y herramientas de la orden
+   FORM-04: recambios y herramientas de la orden
    ===================================================================== */
 async function alCargarOrden(token){ try{ const [r]=await Promise.all([api("/api/almacen/orden/"+token),AL?null:api("/api/almacen/estado").then(x=>{ AL=x; })]); AL_ORDEN={token,...r}; }catch(_){ AL_ORDEN={token,recambios:[],herramientas:[],historial:[],error:true}; } }
 async function alRefrescarOrden(){ if(!TF||$("#s-ficha").hidden) return; await alCargarOrden(TF.orden.token); if(TF_TAB==="f3"){ const b=$("#al-f3"); if(b) b.outerHTML=alF3(); } }

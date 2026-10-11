@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Fichas del taller (6) como PDF VECTORIAL A4 a sangre completa, mismo diseño que las originales y SIN textos de ayuda en gris.
    Uso: python3 tools/fichas/construir.py <carpeta_salida>      (necesita Playwright + Chromium; datos en tools/fichas/datos.json)
-   Orden: 1 Recepción FORM-01 · 2 Inspección FORM-02 (2 págs) · 3 Presupuesto FORM-15 · 4 Tiempos FORM-03 · 5 Calidad FORM-04 · 6 Factura FORM-14"""
+   Orden: 1 Recepción FORM-01 · 2 Inspección FORM-02 (2 págs) · 3 Presupuesto FORM-03 · 4 Tiempos FORM-04 · 5 Calidad FORM-05 · 6 Factura FORM-06"""
 import json, sys, os, html
 AQUI = os.path.dirname(os.path.abspath(__file__)); RAIZ = os.path.join(AQUI, "..", "..")
 D = json.load(open(os.path.join(AQUI, "datos.json"), encoding="utf-8"))
@@ -165,7 +165,7 @@ def form02():
     p2 += '<table class="kv"><tr><th style="width:15%">Autorización</th><td colspan="3">' + cb("El cliente AUTORIZA reparar el vehículo con los puntos en ROJO existentes y queda bajo su responsabilidad.") + '</td></tr><tr><th>Firma del cliente</th><td style="height:calc(15mm*var(--d,1));width:35%;vertical-align:top;font-size:7.5pt;color:#6b665e">Nombre:</td><th style="width:15%">Firma del mecánico</th><td style="width:35%;vertical-align:top;font-size:7.5pt;color:#6b665e">Nombre:</td></tr></table>'
     return [pagina("FORM-02", "Inspección de entrada 360°", "Checklist del mecánico · semáforo OK / Ámbar / Rojo", 2, p1, pag=" · pág. 1/2"),
             pagina("FORM-02", "Inspección de entrada 360°", "Checklist del mecánico · semáforo OK / Ámbar / Rojo", 2, p2, pag=" · pág. 2/2")]
-# ---------- FORM-15 Presupuesto (nuevo) ----------
+# ---------- FORM-03 Presupuesto (nuevo) ----------
 def lineas(n, cols=("Tipo", "Referencia", "Descripción", "Cant.", "Precio ud.", "Dto. %", "Importe €")):
     w = (7, 13, 38, 8, 13, 8, 13)
     h = '<tr>' + ''.join(f'<th class="{"r" if i>=3 else ""}" style="width:{w[i]}%">{c}</th>' for i, c in enumerate(cols)) + '</tr>'
@@ -175,7 +175,7 @@ def totales(extra_izq):
     izq = ig + f'<div style="border:.28mm solid #8c8780;flex:1;padding:1.6mm 2mm"><b>{extra_izq}</b></div>'
     der = '<table class="tot"><tr><th>Suma de líneas</th><td>€</td></tr><tr><th>Descuento global</th><td>€</td></tr><tr><th>Base imponible</th><td>€</td></tr><tr><th>IGIC (tipo <span class="ln s" style="min-width:7mm"></span> %)</th><td>€</td></tr><tr class="t"><th>TOTAL</th><td>€</td></tr></table>'
     return f'<div style="display:grid;grid-template-columns:1.25fr 1fr;gap:0;margin-top:0"><div style="display:flex;flex-direction:column">{izq}</div>{der}</div>'
-def form15():
+def form03():
     c = idrow(("Fecha", (11, 17)), ("Validez", (11, 16))).replace('width:30%">VC', 'width:22%">VC')
     c += sec(1, "Datos del cliente") + kv([[("Nombre / empresa", ""), ("DNI / NIE / CIF", "")], [("Teléfono", ""), ("Correo electrónico", "")]])
     c += sec(2, "Datos del vehículo") + kv([[("Matrícula", ""), ("Marca / modelo", "")], [("Bastidor (VIN)", ""), ("Kilometraje", '<span style="float:right">km</span>')]])
@@ -185,9 +185,9 @@ def form15():
     c += sec(6, "Aceptación del presupuesto", o=True)
     c += '<div class="tx" style="padding:2mm 3mm">Autorizo a Volcano Cars a realizar los trabajos indicados por el importe señalado. Cualquier trabajo adicional o importe superior se presupuestará y aprobará antes de ejecutarse.<div style="margin-top:1.8mm">' + cb("Acepto todo el presupuesto") + cb("Acepto solo las líneas marcadas") + cb("No acepto") + '</div></div>'
     c += firmas("Firma del cliente", "Firma de Volcano Cars", "Fecha")
-    return [pagina("FORM-15", "Presupuesto", "Propuesta de trabajos y recambios para autorizar", 3, c)]
-# ---------- FORM-03 tiempos ----------
-def form03():
+    return [pagina("FORM-03", "Presupuesto", "Propuesta de trabajos y recambios para autorizar", 3, c)]
+# ---------- FORM-04 tiempos ----------
+def form04():
     c = idrow(("Matrícula", (11, 15)), ("Mecánico", (11, 18))).replace('width:30%">VC', 'width:20%">VC')
     c += sec(1, "Datos del trabajo") + kv([[("Marca / modelo", ""), ("Tarifa mano de obra", '<span class="ln"></span> € / hora (sin impuestos)')],
         [("Tiempo estimado", '<span class="ln s"></span> h <span class="ln s"></span> min'), ("Hoja", '<span class="ln s"></span> de <span class="ln s"></span>')],
@@ -211,13 +211,13 @@ def form03():
     c += jt + '</table>'
     c += kv([[("Explicación breve", "")], [("¿Cliente avisado y sobrecoste autorizado?", cb("Sí") + cb("No") + cb("No aplica"))], [("¿Qué cambiamos para que no se repita?", "")]], (28, 0, 0, 0)).replace('<td colspan="3">', '<td colspan="3" style="height:7.4mm">')
     c += firmas("Firma del mecánico", "Visto bueno del gerente", "Fecha").replace('class="firmas"', 'class="firmas f3"')
-    return [pagina("FORM-03", "Control de tiempos y mano de obra", "Registro de horas por vehículo", 4, c)]
-# ---------- FORM-04 calidad ----------
-def form04():
+    return [pagina("FORM-04", "Control de tiempos y mano de obra", "Registro de horas por vehículo", 4, c)]
+# ---------- FORM-05 calidad ----------
+def form05():
     S4 = {s[0]: s for s in D["F4_SECC"]}
     c = idrow(("Matrícula", (11, 12)), ("Revisado por", (12, 12)), ("Fecha / hora", (12, 12))).replace('width:30%">VC', 'width:16%">VC')
     c += '<table class="kv" style="margin-top:2.2mm"><tr><th style="width:17%">Destino del vehículo</th><td>' + cb("Entrega a cliente") + cb("Inventario de venta") + '</td></tr></table>'
-    c += '<p class="nota"><b>Lo firma una persona distinta al mecánico que hizo el trabajo.</b> Un solo NO → el coche vuelve a taller y se anota la causa en FORM-03.</p>'
+    c += '<p class="nota"><b>Lo firma una persona distinta al mecánico que hizo el trabajo.</b> Un solo NO → el coche vuelve a taller y se anota la causa en FORM-04.</p>'
     ex = {9: cb("Informe final guardado", "o"), 11: '<span class="ln"></span> km'}
     A = [(x[1], ex.get(i, "")) for i, x in enumerate(S4["A"][2])]
     c += checklist("VERIFICACIÓN DEL TRABAJO", A, "A", cols=("SÍ", "NO", "NA"))
@@ -230,24 +230,24 @@ def form04():
     c += sec("E", "Cierre de la orden", o=True)
     c += ('<table class="kv"><tr><th style="width:22%">Resultado</th><td colspan="3">' + cb("Aprobado") + cb("Aprobado con observaciones") + cb("Rechazado → vuelve a taller") + '</td></tr>'
            '<tr><th>Motivo / observaciones</th><td colspan="3" style="height:7.4mm"></td></tr>'
-           '<tr><th>Horas netas (FORM-03)</th><td style="width:30%"><span class="ln s"></span> h <span class="ln s"></span> min</td><th style="width:20%">Desviación total</th><td><span class="ln s"></span> %</td></tr></table>')
-    c = c.replace('<tr><th style="width:22%">Horas netas (FORM-03)</th><td colspan="3">', '<tr><th style="width:22%">Horas netas (FORM-03)</th><td colspan="3">')
+           '<tr><th>Horas netas (FORM-04)</th><td style="width:30%"><span class="ln s"></span> h <span class="ln s"></span> min</td><th style="width:20%">Desviación total</th><td><span class="ln s"></span> %</td></tr></table>')
+    c = c.replace('<tr><th style="width:22%">Horas netas (FORM-04)</th><td colspan="3">', '<tr><th style="width:22%">Horas netas (FORM-04)</th><td colspan="3">')
     c += firmas("Firma responsable de calidad", "Firma del gerente (cierre)", "Fecha de cierre")
-    return [pagina("FORM-04", "Control de calidad pre-entrega", "Cierre de la orden de trabajo", 5, c)]
-# ---------- FORM-14 factura ----------
-def form14():
+    return [pagina("FORM-05", "Control de calidad pre-entrega", "Cierre de la orden de trabajo", 5, c)]
+# ---------- FORM-06 factura ----------
+def form06():
     num = '<table class="idr"><tr><th style="width:17%">Nº de factura</th><td style="width:25%">F&nbsp;-&nbsp;<span class="ln s"></span>&nbsp;-&nbsp;<span class="ln s"></span></td><th style="width:14%">Fecha emisión</th><td style="width:14%"></td><th style="width:16%">Fecha operación</th><td></td></tr><tr><th>Nº de orden</th><td colspan="5">' + ORDEN + '</td></tr></table>'
     c = num + '<p class="nota"><b>El nº de factura es correlativo (F-AAAA-NNNN), lo asigna el sistema al emitir y no se repite. No es el nº de la orden de trabajo (VC-AAAA-NNNN).</b> Un error no se tacha: se emite factura rectificativa.</p>'
     c += sec(1, "Datos del emisor", "quien factura") + kv([[("Razón social", "MAYLIN Y YERAY S.L."), ("NIF / CIF", "B93975647")], [("Dirección", "CALLE VALLE LARGO 8"), ("CP / localidad", "35610 - Polígono Industrial Costa de Antigua")], [("Teléfono", "643 56 60 98"), ("Correo electrónico", "volcanocars2026@gmail.com")], [("Registro Mercantil", REG_MERC), ("Inscripción", REG_INSC)]])
     c += sec(2, "Datos del cliente") + kv([[("Nombre / empresa", ""), ("DNI / NIE / CIF", "")], [("Dirección", ""), ("CP / localidad", "")], [("Teléfono", ""), ("Correo electrónico", "")]])
     c += sec(3, "Datos del vehículo") + kv([[("Matrícula", ""), ("Marca / modelo", "")], [("Bastidor (VIN)", ""), ("Kilometraje", 'entrada <span class="ln s"></span> km &nbsp; salida <span class="ln s"></span> km')]])
-    c += sec(4, "Detalle de la reparación", "una línea por concepto · MO = mano de obra (horas de FORM-03 × tarifa) · REC = recambio") + lineas(9)
+    c += sec(4, "Detalle de la reparación", "una línea por concepto · MO = mano de obra (horas de FORM-04 × tarifa) · REC = recambio") + lineas(9)
     c += sec(5, "Totales e IGIC", o=True) + '<p class="nota" style="margin:1.4mm 0"><b>Base imponible</b> = suma de líneas − descuento global &nbsp;·&nbsp; <b>IGIC</b> = base × tipo &nbsp;·&nbsp; <b>Total</b> = base + IGIC</p>' + totales("Observaciones")
     c = c.replace('<td></td>' * 7, '<td></td>' * 7)
-    return [pagina("FORM-14", "Factura de reparación", "Documento de cobro al cliente", 6, c)]
-# ---------- FORM-16 factura de venta de coche ----------
+    return [pagina("FORM-06", "Factura de reparación", "Documento de cobro al cliente", 6, c)]
+# ---------- FORM-11 factura de venta de coche ----------
 VENTA = "Venta de coches de ocasión"
-def form16():
+def form11():
     num = '<table class="idr"><tr><th style="width:17%">Nº de factura</th><td style="width:25%">F&nbsp;-&nbsp;<span class="ln s"></span>&nbsp;-&nbsp;<span class="ln s"></span></td><th style="width:14%">Fecha emisión</th><td style="width:14%"></td><th style="width:16%">Fecha de entrega</th><td></td></tr></table>'
     c = num + '<p class="nota"><b>El nº de factura es correlativo (F-AAAA-NNNN), lo asigna el sistema al emitir y no se repite.</b> Un error no se tacha: se emite factura rectificativa.</p>'
     c += sec(1, "Vendedor") + kv([[("Razón social", "MAYLIN Y YERAY S.L. (Volcano Cars)"), ("NIF / CIF", "B93975647")], [("Dirección", "CALLE VALLE LARGO 8"), ("CP / localidad", "35610 - Polígono Industrial Costa de Antigua")], [("Teléfono", "643 56 60 98"), ("Correo electrónico", "volcanocars2026@gmail.com")], [("Registro Mercantil", REG_MERC), ("Inscripción", REG_INSC)]])
@@ -257,16 +257,16 @@ def form16():
     c += '<div class="ley" style="border-top:0">' + '<b>Régimen:</b> ' + cb("General (IGIC)") + cb("Bienes usados (REBU)") + cb("Otro") + '<br><b>Forma de pago:</b> ' + cb("Efectivo") + cb("Transferencia") + cb("Tarjeta") + cb("Financiación") + ' &nbsp; <b>Reserva descontada:</b> ' + cb("Sí") + cb("No") + '</div>'
     c += sec(5, "Lo que incluye tu compra", "garantía y servicios de Volcano Cars", o=True) + '<ul class="pt">' + ''.join(f'<li>{x}</li>' for x in [
         "<b>12 meses de garantía legal desde la entrega</b> (particulares): cubre cualquier defecto que el coche ya tuviera al entregártelo, sea del motor o de otra parte; es la garantía mínima que marca la ley (RDL 1/2007) y no puede reducirse. Empieza a contar el día que recibes el coche.",
-        "<b>Coche revisado en nuestro taller</b> y control de calidad de 30 puntos (FORM-04) firmado antes de la venta. Puedes pedir una copia al comprar.",
+        "<b>Coche revisado en nuestro taller</b> y control de calidad de 30 puntos (FORM-05) firmado antes de la venta. Puedes pedir una copia al comprar.",
         "<b>Precio final con todos los impuestos incluidos</b> y cambio de titularidad en Tráfico hecho por Volcano Cars, listo para conducir.",
         "<b>Entrega a domicilio gratis</b> en cualquier punto de Fuerteventura, el día y a la hora que acordemos, o recogida en nuestro taller de Costa de Antigua.",
         "<b>Documentación:</b> permiso de circulación, ficha técnica con la ITV en vigor, llaves y el historial que tengamos."]) + '</ul>'
-    c += sec(6, "Cómo usar la garantía y qué no cubre") + '<div class="tx" style="font-size:8.7pt"><b>Para reclamarla:</b> avísanos en cuanto notes el fallo, por teléfono (643 56 60 98), WhatsApp o en el taller, con este documento. Revisamos el coche y, si procede, lo reparamos sin coste; si no es posible o no lo resuelve, puedes pedir una rebaja del precio o, si el defecto es relevante, la devolución.<br><b>No cubre:</b> el desgaste normal por uso y edad (pastillas, neumáticos, embrague, batería, escobillas…), las averías por mal uso, accidente o falta de mantenimiento, ni los defectos informados por escrito antes de la venta. <div style="margin-top:1.6mm"><b>Empresas y autónomos que compran para su actividad:</b> garantía pactada en este documento &nbsp; ' + cb("Solo el motor") + cb("Motor y caja de cambios") + cb("Otra") + ' <span class="ln l" style="min-width:34mm"></span> &nbsp; durante <span class="ln s" style="min-width:9mm"></span> meses.</div><div style="margin-top:1.6mm"><b>Defectos informados por escrito antes de la venta:</b> <span class="ln l" style="min-width:104mm"></span></div><div style="margin-top:1.4mm"><b>Documentación entregada:</b> ' + cb("Permiso de circulación") + cb("Ficha técnica + ITV") + cb("Llaves (nº ___)") + cb("Historial") + cb("Copia FORM-04") + '</div></div>'
+    c += sec(6, "Cómo usar la garantía y qué no cubre") + '<div class="tx" style="font-size:8.7pt"><b>Para reclamarla:</b> avísanos en cuanto notes el fallo, por teléfono (643 56 60 98), WhatsApp o en el taller, con este documento. Revisamos el coche y, si procede, lo reparamos sin coste; si no es posible o no lo resuelve, puedes pedir una rebaja del precio o, si el defecto es relevante, la devolución.<br><b>No cubre:</b> el desgaste normal por uso y edad (pastillas, neumáticos, embrague, batería, escobillas…), las averías por mal uso, accidente o falta de mantenimiento, ni los defectos informados por escrito antes de la venta. <div style="margin-top:1.6mm"><b>Empresas y autónomos que compran para su actividad:</b> garantía pactada en este documento &nbsp; ' + cb("Solo el motor") + cb("Motor y caja de cambios") + cb("Otra") + ' <span class="ln l" style="min-width:34mm"></span> &nbsp; durante <span class="ln s" style="min-width:9mm"></span> meses.</div><div style="margin-top:1.6mm"><b>Defectos informados por escrito antes de la venta:</b> <span class="ln l" style="min-width:104mm"></span></div><div style="margin-top:1.4mm"><b>Documentación entregada:</b> ' + cb("Permiso de circulación") + cb("Ficha técnica + ITV") + cb("Llaves (nº ___)") + cb("Historial") + cb("Copia FORM-05") + '</div></div>'
     c += firmas("Firma del comprador (conforme)", "Firma de Volcano Cars", "Fecha")
-    return [pagina("FORM-16", "Factura de venta de vehículo", "Compraventa con garantía de 12 meses · Documento de entrega", 1, c, ver="1.0", base=VENTA, de=1)]
-# ---------- FORM-17 parte de reserva ----------
+    return [pagina("FORM-11", "Factura de venta de vehículo", "Compraventa con garantía de 12 meses · Documento de entrega", 1, c, ver="1.0", base=VENTA, de=1)]
+# ---------- FORM-10 parte de reserva ----------
 def bullets(items): return '<ul class="pt">' + ''.join(f'<li>{x}</li>' for x in items) + '</ul>'
-def form17():
+def form10():
     c = '<table class="idr"><tr><th style="width:15%">Nº de reserva</th><td style="width:14%"></td><th style="width:19%">Fecha y hora de confirmación</th><td style="width:17%"></td><th style="width:15%">Válida hasta (48 h)</th><td></td></tr></table>'
     c += '<div class="ban">VEHÍCULO RESERVADO</div>'
     c += sec(1, "Datos del emisor", "quien recibe la reserva") + kv([[("Razón social", "MAYLIN Y YERAY S.L. (Volcano Cars)"), ("NIF / CIF", "B93975647")], [("Dirección", "CALLE VALLE LARGO 8, 35610 - Polígono Industrial Costa de Antigua"), ("Teléfono", "643 56 60 98")], [("Registro Mercantil", REG_MERC), ("Inscripción", REG_INSC)]])
@@ -279,7 +279,7 @@ def form17():
         "<b>Si dos personas pagan a la vez,</b> el coche es para quien completó antes el pago; a la otra persona le devolvemos todo.",
         "<b>Si compras,</b> tu coche lleva 12 meses de garantía legal, cambio de nombre hecho y entrega gratis a domicilio en Fuerteventura."])
     c += sec(5, "Seguimiento de la reserva") + kv([[("Ampliada", cb("No") + cb("Sí, hasta"), ), ("Fecha y hora", "")], [("Resultado", cb("Ha comprado") + cb("Reserva liberada (se devuelve lo pagado)") + cb("Pendiente"))], [("Observaciones", '<div data-grow style="min-height:9mm"></div>')]])
-    p1 = pagina("FORM-17", "Parte de reserva de vehículo", "Justificante de que el coche está apartado para ti", 1, c, ver="1.1", base=VENTA, de=2)
+    p1 = pagina("FORM-10", "Parte de reserva de vehículo", "Justificante de que el coche está apartado para ti", 1, c, ver="1.1", base=VENTA, de=2)
     d = sec(6, "Devoluciones: las 4 situaciones de la reserva", "tal y como figuran en la web de Volcano Cars (condiciones, apartado 5)", o=True)
     caso = lambda l, t, x: f'<div class="caso"><i>{l}</i><div><b>{t}</b><p>{x}</p></div></div>'
     d += '<div class="casos">' + caso("A", "No compras el coche", "100 % reembolsable por el motivo que sea: te devolvemos todo lo pagado por el mismo medio de pago en un máximo de 14 días naturales desde que nos lo pidas. Por ley tienes 14 días naturales para desistir sin dar explicaciones; en la práctica te lo devolvemos siempre que nos lo pidas, aunque hayan pasado, mientras no hayas comprado el coche.") \
@@ -295,9 +295,9 @@ def form17():
     d += sec(7, "Notas de la prueba o de la reserva", "kilómetros recorridos, combustible, acuerdos") + '<div class="tx" data-grow style="min-height:22mm;border-top:.28mm solid #8c8780"></div>'
     d += sec(8, "Conformidad") + '<div class="tx">' + cb("He leído y acepto las condiciones de la reserva y, en su caso, las 4 reglas de la prueba a domicilio.") + ' Los datos personales se tratarán según la política de privacidad de Volcano Cars. Esta reserva no obliga a comprar.</div>'
     d += '<table class="firmas"><tr>' + ''.join(f'<th style="width:{w}%">{t}</th>' for t, w in [("Firma del cliente", 34), ("Firma de Volcano Cars", 33), ("Fecha", 33)]) + '</tr><tr class="r">' + '<td></td>' * 3 + '</tr></table>'
-    p2 = pagina("FORM-17", "Parte de reserva de vehículo", "Condiciones y devoluciones", 2, d, ver="1.1", base=VENTA, de=2)
+    p2 = pagina("FORM-10", "Parte de reserva de vehículo", "Condiciones y devoluciones", 2, d, ver="1.1", base=VENTA, de=2)
     return [p1, p2]
-FORMS = [("FORM-01", form01), ("FORM-02", form02), ("FORM-15", form15), ("FORM-03", form03), ("FORM-04", form04), ("FORM-14", form14)]
+FORMS = [("FORM-01", form01), ("FORM-02", form02), ("FORM-03", form03), ("FORM-04", form04), ("FORM-05", form05), ("FORM-06", form06)]
 AJUSTE = r"""<script>
 /* a sangre completa: reparte el hueco que sobra entre las filas (hasta +2,6 mm cada una); lo que queda va antes del pie */
 function ajusta(){ document.querySelectorAll('.pag').forEach(p=>{
@@ -312,7 +312,7 @@ function ajusta(){ document.querySelectorAll('.pag').forEach(p=>{
   p.dataset.d=d; pie.style.marginTop='auto'; }); }
 document.fonts.ready.then(()=>{ajusta();document.body.dataset.listo=1});
 </script>"""
-VENTAS = [("FORM-16", form16), ("FORM-17", form17)]
+VENTAS = [("FORM-11", form11), ("FORM-10", form10)]
 def html_de(forms):
     pags = ''.join(p for _, f in forms for p in f())
     return f'<!doctype html><html lang="es"><meta charset="utf-8"><title>Fichas Volcano Cars</title><style>{CSS}</style><body>{pags}{AJUSTE}</body></html>'
@@ -320,7 +320,7 @@ if __name__ == "__main__":
     from playwright.sync_api import sync_playwright
     out = sys.argv[1] if len(sys.argv) > 1 else "/tmp/fichas"; os.makedirs(out, exist_ok=True)
     with sync_playwright() as p:
-        b = p.chromium.launch(); pg = b.new_page()
+        b = p.chromium.launch(executable_path=os.environ.get("CHROMIUM_BIN") or None, args=["--no-sandbox"]); pg = b.new_page()   # CHROMIUM_BIN: ruta de un Chromium propio (opcional)
         def render(nombre, forms, png=False):
             h = html_de(forms); ruta = os.path.join(out, nombre + ".html"); open(ruta, "w", encoding="utf-8").write(h)
             pg.goto("file://" + os.path.abspath(ruta)); pg.wait_for_selector("body[data-listo]")

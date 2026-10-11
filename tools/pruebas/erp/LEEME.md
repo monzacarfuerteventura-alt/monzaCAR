@@ -6,3 +6,5 @@
 LÍMITE: el almacén y las librerías (`shared`, `taller`, `libro`) son de mentira; no prueban Netlify Blobs real ni `/api/finanzas|ordenes|almacen` reales. Tras subir, comprobar a mano la lista del LEEME.txt.
 
 - `navegador/`: Chrome real contra la web real (ver su LEEME.md): ocho pestañas, contabilidad, permisos, móvil y Recepción.
+
+- `real/renum.test.mts`: numeración de formularios 01-17 (act. 72), con el código real; lo ejecuta `ejecutar-real.sh`.

@@ -228,12 +228,12 @@
         <div class="gd-box mal" id="gd-err" hidden></div>
         <div class="gd-acts"><button type="button" class="btn b-ghost" data-gdatras>‹ Atrás</button></div>`;
     }
-    // factura directa: el formulario COMPLETO de la factura (FORM-14)
+    // factura directa: el formulario COMPLETO de la factura (FORM-06)
     const t = totalCliente(), pct = pctIgic(), base = pct ? t / (1 + pct / 100) : t, cuota = t - base;
     const F = (k, et, ex = "") => `<div class="field"><label for="gd-${k}">${et}</label><input class="in${ex.includes("num") ? " num" : ""}" id="gd-${k}" data-gdf="${k}" ${ex.replace("num", "")} value="${E(W[k] || "")}"></div>`;
     return `<h2>Factura directa</h2>
       <p class="hint" style="margin:0">${E(W.nombre)} · ${E(W.mat.toUpperCase())}${W.orden ? " · orden " + E(W.orden.num || "") : ""} · El número de factura (F-AAAA-NNNN) lo pone el sistema al emitir.</p>
-      <p style="margin:0"><a class="g-link" href="#manual-FORM-14">Factura en blanco (PDF)</a></p>
+      <p style="margin:0"><a class="g-link" href="#manual-FORM-06">Factura en blanco (PDF)</a></p>
       <h3 class="gd-sec">Cliente</h3>
       <div class="t-g2">${F("doc", "DNI / NIE / CIF " + (t > 400 ? "*" : "(obligatorio si pasa de 400 €)"), 'maxlength="20" autocomplete="off"')}${F("dir", "Dirección", 'maxlength="120" autocomplete="off"')}</div>
       <div class="t-g2">${F("cp", "CP / localidad", 'maxlength="80" autocomplete="off"')}${F("email", "Correo electrónico", 'maxlength="120" inputmode="email" autocomplete="off"')}</div>

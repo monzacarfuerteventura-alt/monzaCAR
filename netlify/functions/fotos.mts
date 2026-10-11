@@ -29,7 +29,7 @@ export default async (req: Request) => {
     const type = (req.headers.get("content-type") || "").split(";")[0];
     const ext = TYPES[type];
     if (!ext) return json({ error: "Formato no admitido. Usa una foto (JPG, PNG, WEBP) o un PDF." }, 415);
-    // PDF (informes FORM-02/FORM-04): lo puede subir cualquier persona del equipo que haya fichado
+    // PDF (informes FORM-02/FORM-05): lo puede subir cualquier persona del equipo que haya fichado
     const buf = await req.arrayBuffer();
     if (!buf.byteLength) return json({ error: "La foto está vacía." }, 400);
     if (ext === "pdf" && new TextDecoder().decode(new Uint8Array(buf, 0, Math.min(5, buf.byteLength))) !== "%PDF-") return json({ error: "Ese archivo no es un PDF válido." }, 415);

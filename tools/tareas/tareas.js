@@ -1,7 +1,7 @@
 /* =====================================================================
    FICHAJE DE TAREAS POR COCHE · pantalla de fichaje (#s-fichar), justo debajo de la jornada
    "Modo taller": botones grandes de 1 toque para manos con grasa o guantes.
-   · Órdenes de clientes: usa el FORM-03 de siempre (mismo servidor, mismas reglas).
+   · Órdenes de clientes: usa el FORM-04 de siempre (mismo servidor, mismas reglas).
    · Coches propios (Taller → Coches propios): reparación, mantenimiento, limpieza/preparación.
    Al pulsar Pausa / Salida de la jornada, la tarea en marcha se pausa sola (y se reanuda al volver).
    Terminar: si se pasa del 15 % o 30 min hay que marcar la causa (A a I); se firma con el PIN.
@@ -165,7 +165,7 @@ async function tkTerminar(clave,{codigos,explicacion,pin}){
       if(!r.ok) return r.data.error||"No se ha podido cerrar.";
       toast(r.data.pendienteVisto?"Terminado. Falta el visto bueno del gerente":"Trabajo terminado y firmado");
     }else{
-      // Orden de cliente: primero la firma con PIN, luego el fin del FORM-03 y, si se pasó, la justificación
+      // Orden de cliente: primero la firma con PIN, luego el fin del FORM-04 y, si se pasó, la justificación
       const v=await tkPost("/api/vehiculos/verificar-pin",{pin},true); if(!v.ok) return v.data.error||"PIN incorrecto.";
       const r=await tkPost(`/api/taller/fichas/${id}/f3`,{accion:"evento",tipo:"fin",motivo:"",nota:""},true); if(!r.ok) return r.data.error||"No se ha podido cerrar.";
       await tkCargar(true); const o=TK_ORD.find(x=>x.token===id);

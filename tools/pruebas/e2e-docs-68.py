@@ -25,7 +25,7 @@ with sync_playwright() as p:
         check("modelo de ventas listado", "Modelo de ventas" in pg.inner_text("#s-docs"))
         check("8 fichas FORM-01..17 + todas", pg.locator("#s-docs .dc-chip").count() == 9)
         check("13 manuales S00–S11", pg.locator("#s-docs .dc-full:last-of-type .dc-row").count() == 13)
-        for nm in ["VolcanoCars-S00-Manual-de-marca-v1", "VolcanoCars-S05-Ventas-hoja-v3.1", "FORM-16", "FORM-17", "FICHAS-TALLER"]:
+        for nm in ["VolcanoCars-S00-Manual-de-marca-v1", "VolcanoCars-S05-Ventas-hoja-v3.1", "FORM-11", "FORM-10", "FICHAS-TALLER"]:
             r = pg.evaluate("async n=>{const r=await fetch('/api/manual/'+n,{headers:{authorization:'Bearer '+PW}});return [r.status,r.headers.get('content-type')]}", nm)
             check("se abre " + nm, r[0] == 200 and "pdf" in r[1], r)
         r = pg.evaluate("fetch('/api/manual/VolcanoCars-S00-Manual-de-marca-v1').then(r=>r.status)"); check("sin sesión no se abre el manual de marca", r in (401, 403), r)

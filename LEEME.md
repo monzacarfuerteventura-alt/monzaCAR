@@ -606,3 +606,12 @@ Ocho pestañas nuevas con el mismo formato del panel (nada de páginas aparte). 
 - **Margen y documentos** y **Clientes 360** (Venta de coches): margen real por coche, contrato, garantía y traspaso; historial de cada cliente y avisos pendientes (la ITV sigue siendo de Taller).
 - **Permisos** (Soporte): qué puestos usan Compras, Clientes 360 y Documentos, y desde qué importe un pedido necesita tu aprobación.
 Ya existía y se respeta: búsqueda Ctrl+K, aviso de pérdidas de hoy, avisos de ITV con permiso, registro de facturación encadenado.
+
+
+## Actualización 71 (11-10-2026) · Diagnóstico del servidor
+Los errores del panel dicen ahora qué parte del servidor falla (antes solo «Algo ha fallado (404)»). Nuevo «Diagnóstico» que prueba las rutas principales y dice cuáles responden: `volcanocars.com/admin.html#diagnostico` o el botón «Diagnóstico» de las pantallas del ERP cuando fallan. Solo lee; no cambia datos.
+
+
+## Actualización 72 (11-10-2026) · Formularios numerados del 01 al 17
+Los formularios van ahora de FORM-01 a FORM-17, sin saltos y en el orden de los manuales: 01 Ficha de recepción · 02 Inspección de entrada 360° · 03 Presupuesto · 04 Control de tiempos y mano de obra · 05 Control de calidad pre-entrega · 06 Factura de reparación · 07 Cascos y abonos · 08 Ronda 5S y seguridad · 09 Hoja de preparación · 10 Parte de reserva · 11 Factura de venta de vehículo · 12 Prueba a domicilio · 13 Registro de postventa · 14 Plan semanal de marketing · 15 Auditoría del viernes · 16 Organigrama y RACI · 17 Cuadro de mando.
+Mismo nombre y número en el panel, en los PDF, en Documentación y en la nueva Hoja v3.3 (que trae la tabla «número antiguo → número actual» para leer los manuales impresos). Lo que ya tenías guardado no se pierde. Incluye la 71 (diagnóstico del servidor).

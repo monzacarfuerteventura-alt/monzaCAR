@@ -5,11 +5,11 @@
    · Biblioteca para el equipo: los 11 sistemas en su orden estricto
      (S01 → S11) con su PDF, y el índice MO-00 con el orden de implantación.
    · Formularios digitales que no existían en el panel:
-       FORM-05 Cascos y abonos (S02)       FORM-06 Ronda 5S y seguridad (S03)
-       FORM-07 Hoja de preparación (S04)   FORM-08 Prueba a domicilio · fianza (S06)
-       FORM-09 Registro de postventa (S07) FORM-10 Plan semanal de marketing (S08, gerente)
-       FORM-11 Auditoría del viernes (S09, gerente)
-   FORM-01 a 04 y FORM-14 (Factura de reparación) siguen dentro de cada orden (S01) y la Guía de venta (S05)
+       FORM-07 Cascos y abonos (S02)       FORM-08 Ronda 5S y seguridad (S03)
+       FORM-09 Hoja de preparación (S04)   FORM-12 Prueba a domicilio · fianza (S06)
+       FORM-13 Registro de postventa (S07) FORM-14 Plan semanal de marketing (S08, gerente)
+       FORM-15 Auditoría del viernes (S09, gerente)
+   FORM-01 a FORM-06 (las fichas del taller, con la Factura de reparación) siguen dentro de cada orden (S01) y la Guía de venta (S05)
    en su sitio: aquí solo se enlazan. Guarda en /api/sistemas (Netlify Blobs).
    Usa las funciones del panel: api, toast, ME, PUEDE_TODO, abrirGuia.
    ===================================================================== */
@@ -35,21 +35,22 @@
      ------------------------------------------------------------------ */
   const BLOQ = { A: "Taller", B: "Venta", C: "Cliente", D: "Dirección" };
   const SIS = [
-    ["01", "A", "Taller: de la recepción a la entrega", "Recepción · Inspección · Presupuesto · Tiempos · Calidad · Factura y cobro", "VolcanoCars-S01-Taller-recepcion-a-entrega", ["FORM-01", "FORM-02", "FORM-03", "FORM-04", "FORM-14", "FORM-15"], "hecho"],
-    ["02", "A", "Recambios, almacén, cascos y abonos", "Pedir · recibir · dar salida · devolver cascos · cobrar abonos", "VolcanoCars-S02-Recambios-almacen-cascos-abonos", ["FORM-05"], "nuevo"],
-    ["03", "A", "Instalaciones, seguridad y 5S", "Taller ordenado, seguro y en regla", "VolcanoCars-S03-Instalaciones-seguridad-5S", ["FORM-06"], "nuevo"],
-    ["04", "B", "Preparación y detailing anti-salitre", "Del taller al escaparate: coche impecable y protegido", "VolcanoCars-S04-Preparacion-detailing-anti-salitre", ["FORM-07"], "nuevo"],
-    ["05", "B", "El método de venta", "6 pasos · Chuleta · Anexo A prueba en carretera", "", ["Anexo A", "FORM-16", "FORM-17"], "hecho"],
-    ["06", "B", "Embudo, prueba a domicilio y seguimiento", "Web + WhatsApp + CRM · fianza de 50 € · cadencia", "VolcanoCars-S06-Embudo-prueba-domicilio-seguimiento", ["FORM-08"], "nuevo"],
-    ["07", "C", "Postventa, garantías y atención al cliente", "Respuesta en menos de 48 h", "VolcanoCars-S07-Postventa-garantias-atencion", ["FORM-09"], "nuevo"],
-    ["08", "C", "Marketing digital, redes y marca", "Publicar con constancia y medir", "VolcanoCars-S08-Marketing-digital-redes-marca", ["FORM-10"], "nuevo"],
-    ["09", "D", "Control financiero y anti-impagos", "Mermas · costes ocultos · tesorería · auditoría del viernes 15:00", "VolcanoCars-S09-Control-financiero-anti-impagos", ["FORM-11"], "nuevo"],
-    ["10", "D", "Organización, puestos y matriz RACI", "Organigrama terminado y quién hace qué hoy", "VolcanoCars-S10-Organizacion-puestos-RACI", ["FORM-12"], "nuevo"],
-    ["11", "D", "Cuadro de mando y métricas", "Los números que dirigen el negocio", "VolcanoCars-S11-Cuadro-de-mando-metricas", ["FORM-13"], "nuevo"],
+    ["01", "A", "Taller: de la recepción a la entrega", "Recepción · Inspección · Presupuesto · Tiempos · Calidad · Factura y cobro", "VolcanoCars-S01-Taller-recepcion-a-entrega", ["FORM-01", "FORM-02", "FORM-04", "FORM-05", "FORM-06", "FORM-03"], "hecho"],
+    ["02", "A", "Recambios, almacén, cascos y abonos", "Pedir · recibir · dar salida · devolver cascos · cobrar abonos", "VolcanoCars-S02-Recambios-almacen-cascos-abonos", ["FORM-07"], "nuevo"],
+    ["03", "A", "Instalaciones, seguridad y 5S", "Taller ordenado, seguro y en regla", "VolcanoCars-S03-Instalaciones-seguridad-5S", ["FORM-08"], "nuevo"],
+    ["04", "B", "Preparación y detailing anti-salitre", "Del taller al escaparate: coche impecable y protegido", "VolcanoCars-S04-Preparacion-detailing-anti-salitre", ["FORM-09"], "nuevo"],
+    ["05", "B", "El método de venta", "6 pasos · Chuleta · Anexo A prueba en carretera", "", ["Anexo A", "FORM-11", "FORM-10"], "hecho"],
+    ["06", "B", "Embudo, prueba a domicilio y seguimiento", "Web + WhatsApp + CRM · fianza de 50 € · cadencia", "VolcanoCars-S06-Embudo-prueba-domicilio-seguimiento", ["FORM-12"], "nuevo"],
+    ["07", "C", "Postventa, garantías y atención al cliente", "Respuesta en menos de 48 h", "VolcanoCars-S07-Postventa-garantias-atencion", ["FORM-13"], "nuevo"],
+    ["08", "C", "Marketing digital, redes y marca", "Publicar con constancia y medir", "VolcanoCars-S08-Marketing-digital-redes-marca", ["FORM-14"], "nuevo"],
+    ["09", "D", "Control financiero y anti-impagos", "Mermas · costes ocultos · tesorería · auditoría del viernes 15:00", "VolcanoCars-S09-Control-financiero-anti-impagos", ["FORM-15"], "nuevo"],
+    ["10", "D", "Organización, puestos y matriz RACI", "Organigrama terminado y quién hace qué hoy", "VolcanoCars-S10-Organizacion-puestos-RACI", ["FORM-16"], "nuevo"],
+    ["11", "D", "Cuadro de mando y métricas", "Los números que dirigen el negocio", "VolcanoCars-S11-Cuadro-de-mando-metricas", ["FORM-17"], "nuevo"],
   ];
   const INDICE = "VolcanoCars-S00-Indice-MO-00-v3.0";
   const HOJA32 = "VolcanoCars-S00-Hoja-v3.2-Fe-de-erratas";
-  const FPDF = { "FORM-01": "Recepción", "FORM-02": "Orden de trabajo", "FORM-03": "Control de calidad", "FORM-04": "Acta de entrega", "FORM-14": "Factura de reparación", "FORM-15": "Presupuesto", "FORM-16": "Factura de venta", "FORM-17": "Parte de reserva" };
+  const HOJA33 = "VolcanoCars-S00-Hoja-v3.3-Renumeracion-formularios"; // numeración vigente de los formularios (act. 72)
+  const FPDF = { "FORM-01": "Recepción", "FORM-02": "Orden de trabajo", "FORM-04": "Control de calidad", "FORM-05": "Acta de entrega", "FORM-06": "Factura de reparación", "FORM-03": "Presupuesto", "FORM-11": "Factura de venta", "FORM-10": "Parte de reserva" };
   // Los manuales ya no son públicos: se piden con la sesión y se abren en otra pestaña
   const pdf = (f) => `#manual-${f}`;
   document.addEventListener("click", async (e) => {
@@ -68,7 +69,7 @@
      ------------------------------------------------------------------ */
   const OKNO = (k, items) => ({ k, type: "ok", items });
   const FORMS = {
-    "FORM-05": {
+    "FORM-07": {
       t: "Cascos y abonos", sis: "02", ger: false, uno: "casco o devolución",
       ayuda: "Una ficha por pieza. Se cierra (firma) solo cuando el abono está cobrado o descontado con su número.",
       campos: [
@@ -78,7 +79,7 @@
         { k: "proveedor", l: "Proveedor", req: 1 },
         { k: "tipo", l: "Tipo", type: "radio", req: 1, opts: [["C", "Casco"], ["E", "Error / sobrante"], ["D", "Defectuosa"]] },
         { k: "esperado", l: "Abono esperado (€)", type: "num" },
-        { k: "chk", type: "checks", items: [["cliente", "El cliente decidió sobre su pieza vieja (FORM-04)"], ["caja", "Limpio, en la caja de la pieza nueva y etiquetado"], ["foto", "Foto del albarán de devolución firmado"]] },
+        { k: "chk", type: "checks", items: [["cliente", "El cliente decidió sobre su pieza vieja (FORM-05)"], ["caja", "Limpio, en la caja de la pieza nueva y etiquetado"], ["foto", "Foto del albarán de devolución firmado"]] },
         { k: "entregado", l: "Entregado al proveedor (fecha)", type: "date" },
         { k: "albaran", l: "Nº albarán de devolución" },
         { k: "nabono", l: "Nº de abono" },
@@ -105,7 +106,7 @@
         return `<span><b>${ab.length}</b> abiertos</span><span class="${tarde ? "mal" : ""}"><b>${tarde}</b> con más de 7 días</span><span><b>${eu(debe)}</b> nos deben</span>`;
       },
     },
-    "FORM-06": {
+    "FORM-08": {
       t: "Ronda 5S y seguridad", sis: "03", ger: false, uno: "ronda del viernes",
       ayuda: "Viernes 14:00. Marca cada punto OK o NO. Cada NO lleva una acción. Meta: 90 % o más.",
       campos: [
@@ -129,9 +130,9 @@
       cerrar: (d) => { const p = puntos(d, "abcd"); if (p.tot < 22) return "Marca todos los puntos antes de firmar."; if (p.tot - p.ok > 0 && !String(d.acciones || "").trim()) return "Cada NO necesita una acción."; return ""; },
       resumen: (l) => { const u = l[0]; if (!u) return ""; const p = puntos(u.datos, "abcd"); return `<span>Última ronda: <b>${fd(u.datos.semana)}</b> · <b>${p.tot ? Math.round((p.ok / p.tot) * 100) : 0} %</b></span>`; },
     },
-    "FORM-07": {
+    "FORM-09": {
       t: "Hoja de preparación", sis: "04", ger: false, uno: "coche",
-      ayuda: "Una por coche de venta. Empieza con FORM-04 «Inventario de venta» y termina en exposición. Meta: 24 h.",
+      ayuda: "Una por coche de venta. Empieza con FORM-05 «Inventario de venta» y termina en exposición. Meta: 24 h.",
       campos: [
         { k: "coche", l: "Marca y modelo", req: 1 },
         { k: "matricula", l: "Matrícula", req: 1 },
@@ -157,7 +158,7 @@
       cerrar: (d) => (!esGerente() ? "La revisión final la firma el gerente." : puntos(d, "abc").no > 0 ? "Hay puntos en NO: vuelve a preparación antes de firmar." : !(d.chk && d.chk.docs && d.chk.expo) ? "Marca documentación y exposición." : ""),
       resumen: (l) => `<span><b>${l.filter((r) => !r.cerrado).length}</b> en preparación</span>`,
     },
-    "FORM-08": {
+    "FORM-12": {
       t: "Prueba a domicilio · fianza 50 €", sis: "06", ger: false, uno: "prueba",
       ayuda: "Sin el «de acuerdo» del cliente a las 4 reglas no se cobra ni se agenda. Liquidación en 48 h como máximo.",
       campos: [
@@ -190,7 +191,7 @@
       cerrar: (d) => (!(d.chk && d.chk.acuerdo) ? "Falta el «de acuerdo» del cliente a las 4 reglas." : !d.regla ? "Marca qué pasó para liquidar la fianza." : d.regla === "3" && !Number.isFinite(liq(d).comb) ? "Faltan km, consumo o precio del litro." : (d.regla === "1" || d.regla === "3" || (d.excepcion && d.excepcion.dir)) && !d.devuelto ? "Pon la fecha en que se devolvió." : ""),
       resumen: (l) => { const ab = l.filter((r) => !r.cerrado); const tarde = ab.filter((r) => r.datos.regla && dias(r.datos.fecha) > 2).length; return `<span><b>${ab.length}</b> abiertas</span><span class="${tarde ? "mal" : ""}"><b>${tarde}</b> por liquidar con más de 48 h</span>`; },
     },
-    "FORM-09": {
+    "FORM-13": {
       t: "Registro de postventa", sis: "07", ger: false, uno: "incidencia",
       ayuda: "Acuse en 2 horas y solución o plan en 48 horas desde que se recibe. Se cierra solo con la confirmación del cliente.",
       campos: [
@@ -219,7 +220,7 @@
       cerrar: (d) => (!d.tipo ? "Clasifica la incidencia." : !d.plan ? "Escribe el plan." : !(d.chk && d.chk.confirma) ? "Solo se cierra con la confirmación del cliente." : (d.tipo === "recl" || d.tipo === "hoja") && !(d.chk && d.chk.director) ? "Informa al Director antes de cerrar." : ""),
       resumen: (l) => { const ab = l.filter((r) => !r.cerrado); const venc = ab.filter((r) => reloj(r.datos) < 0).length; return `<span><b>${ab.length}</b> abiertas</span><span class="${venc ? "mal" : ""}"><b>${venc}</b> con el plazo vencido</span>`; },
     },
-    "FORM-10": {
+    "FORM-14": {
       t: "Plan semanal de marketing", sis: "08", ger: true, uno: "semana",
       ayuda: "Lunes 8:30: un tema fijo por día. Viernes: números y marca. Solo el gerente.",
       campos: [
@@ -240,7 +241,7 @@
       cerrar: () => "",
       resumen: () => "",
     },
-    "FORM-11": {
+    "FORM-15": {
       t: "Auditoría del viernes", sis: "09", ger: true, uno: "auditoría",
       ayuda: "Viernes 15:00 · 30 minutos · Director y Gerente. Máximo 3 acciones.",
       campos: [
@@ -254,10 +255,10 @@
         { k: "descuadre", l: "Descuadre total de caja (€)", type: "num" },
         { k: "mermas", l: "Mermas de almacén (€)", type: "num" },
         { k: "herram", l: "Herramientas extraviadas (€)", type: "num" },
-        { k: "abonos", l: "Abonos pendientes FORM-05 (€)", type: "num" },
+        { k: "abonos", l: "Abonos pendientes FORM-07 (€)", type: "num" },
         { k: "repetidos", l: "Trabajos repetidos (€)", type: "num" },
         { k: "retrasos", l: "Descuentos por retraso (€)", type: "num" },
-        { k: "garantias", l: "Garantías FORM-09 (€)", type: "num" },
+        { k: "garantias", l: "Garantías FORM-13 (€)", type: "num" },
         { k: "comisiones", l: "Comisiones de cobro (€)", type: "num" },
         { k: "fuga", l: "Fuga más grande y por qué", type: "area" },
         { k: "h_d", type: "info", html: "<h4>D · Repostajes</h4>" },
@@ -359,17 +360,18 @@
     <div class="sv-in">
       <div class="sv-top">
         <a class="btn b-brand b-sm" href="${pdf(INDICE)}" target="_blank" rel="noopener">Índice MO-00 · orden de implantación ↗</a>
-        <a class="btn b-ghost b-sm" href="${pdf(HOJA32)}" target="_blank" rel="noopener">Hoja v3.2 · erratas y formularios 01→17 ↗</a>
-        <span class="hint" style="margin:0">Se implanta uno detrás de otro: un sistema pasa cuando lleva <b>dos viernes seguidos en verde</b> (auditoría FORM-11).</span>
+        <a class="btn b-ghost b-sm" href="${pdf(HOJA33)}" target="_blank" rel="noopener">Hoja v3.3 · numeración de los formularios 01→17 ↗</a>
+        <a class="btn b-ghost b-sm" href="${pdf(HOJA32)}" target="_blank" rel="noopener">Hoja v3.2 · fe de erratas (números antiguos) ↗</a>
+        <span class="hint" style="margin:0">Se implanta uno detrás de otro: un sistema pasa cuando lleva <b>dos viernes seguidos en verde</b> (auditoría FORM-15).</span>
       </div>
       ${["A", "B", "C", "D"].map((b) => `<div class="sv-bloq"><h4>Bloque ${b} · ${BLOQ[b]}</h4>${SIS.filter((s) => s[1] === b).map(fila).join("")}</div>`).join("")}
-      <p class="hint" style="margin:0">Antes: «Manual SOP-01» = <b>S01</b> (los FORM-01 a 04 impresos siguen valiendo) · «SOP-02 El método de venta» = <b>S05</b> · Guía de WhatsApp = parte del <b>S06</b>. SOP-10 (tasación y compras) eliminado. ${nuevos} sistemas nuevos.</p>
+      <p class="hint" style="margin:0">Antes: «Manual SOP-01» = <b>S01</b> (las fichas FORM-01 a FORM-06 están en Documentación; los impresos con la numeración antigua valen igual: mira la Hoja v3.3) · «SOP-02 El método de venta» = <b>S05</b> · Guía de WhatsApp = parte del <b>S06</b>. SOP-10 (tasación y compras) eliminado. ${nuevos} sistemas nuevos.</p>
     </div>`;
   function fila(s) {
     const [nn, , t, d, file, forms, est] = s;
-    const fbtn = forms.map((f) => (FORMS[f] ? `<button type="button" class="sv-f dig" data-form="${f}" ${FORMS[f].ger ? 'data-ger="1"' : ""}>${f} · ${E(FORMS[f].t)}</button>` : FPDF[f] ? `<a class="sv-f dig" href="${pdf(f)}" target="_blank" rel="noopener">${f} · ${E(FPDF[f])} ↗</a>` : `<span class="sv-b">${f}${f === "FORM-12" || f === "FORM-13" ? " · papel" : ""}</span>`)).join("");
+    const fbtn = forms.map((f) => (FORMS[f] ? `<button type="button" class="sv-f dig" data-form="${f}" ${FORMS[f].ger ? 'data-ger="1"' : ""}>${f} · ${E(FORMS[f].t)}</button>` : FPDF[f] ? `<a class="sv-f dig" href="${pdf(f)}" target="_blank" rel="noopener">${f} · ${E(FPDF[f])} ↗</a>` : `<span class="sv-b">${f}${f === "FORM-16" || f === "FORM-17" ? " · papel" : ""}</span>`)).join("");
     let acts = file ? `<a class="btn b-ghost b-sm" href="${pdf(file)}" target="_blank" rel="noopener">PDF ↗</a>` : "";
-    if (nn === "01") acts += `<button type="button" class="btn b-ghost b-sm" data-ir="ordenes">Órdenes (FORM-01 a 04)</button>`;
+    if (nn === "01") acts += `<button type="button" class="btn b-ghost b-sm" data-ir="ordenes">Órdenes (FORM-01 a FORM-06)</button>`;
     if (nn === "05") acts = `<button type="button" class="btn b-ghost b-sm" data-ir="guia">Abrir la Guía de venta</button>`;
     if (nn === "06") acts += `<button type="button" class="btn b-ghost b-sm" data-ir="resp">Guía WhatsApp · Respuestas</button>`;
     return `<div class="sv-row"><div class="sv-n"><small>S</small>${nn}</div>

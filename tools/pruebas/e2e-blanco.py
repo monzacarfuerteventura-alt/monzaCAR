@@ -15,10 +15,10 @@ with sync_playwright() as p:
     pg.fill("#pw",CLAVE); pg.click("#login-btn"); pg.wait_for_selector("#s-dash:not([hidden])",timeout=15000); pg.wait_for_timeout(1200)
     pg.evaluate("()=>{window.__p=[];window.print=()=>window.__p.push(document.title)}")
     # --- PDF en blanco (los originales del usuario) servidos con sesión
-    for nom in ["FORM-01","FORM-02","FORM-03","FORM-04","FORM-14","FORM-15","FORM-16","FORM-17","FICHAS-TALLER"]:
+    for nom in ["FORM-01","FORM-02","FORM-04","FORM-05","FORM-06","FORM-03","FORM-11","FORM-10","FICHAS-TALLER"]:
         r=pg.evaluate("async n=>{const r=await fetch('/api/manual/'+n,{headers:{authorization:'Bearer '+PW}});const b=new Uint8Array(await r.arrayBuffer());return [r.status,r.headers.get('content-type'),String.fromCharCode(...b.slice(0,4))]}",nom)
         check("PDF en blanco "+nom,r[0]==200 and "pdf" in r[1] and r[2]=="%PDF",str(r))
-    r=pg.evaluate("fetch('/api/manual/FORM-14').then(r=>r.status)"); check("sin sesión no se entrega",r in (401,403,423),str(r))
+    r=pg.evaluate("fetch('/api/manual/FORM-06').then(r=>r.status)"); check("sin sesión no se entrega",r in (401,403,423),str(r))
     check("el menú ofrece «Fichas en blanco (PDF)»",pg.evaluate("document.querySelector('#gd-bar [data-gdutil=blanco]').textContent")=="Fichas en blanco (PDF)")
     check("ya no existe el botón «Original PDF»","Original PDF" not in pg.content())
     check("ya no existe el generador de fichas en blanco",pg.evaluate("typeof tEnBlanco")=="undefined")
@@ -51,12 +51,12 @@ with sync_playwright() as p:
     tabs=pg.evaluate("[...document.querySelectorAll('#tf [data-ttabb]')].map(b=>b.dataset.ttabb)")
     check("pestañas: f1,f2,pre,f3,f4,f5,audit",tabs==["f1","f2","pre","f3","f4","f5","audit"],str(tabs))
     pg.evaluate("document.querySelector('#tf [data-ttabb=pre]').click()"); pg.wait_for_timeout(500)
-    check("la ficha de presupuesto se abre",pg.locator("#tf-body").inner_text().find("FORM-15")>=0)
-    check("botón «Ficha en blanco (PDF)» del presupuesto",pg.locator("#tf a[href='#manual-FORM-15']").count()>=1)
+    check("la ficha de presupuesto se abre",pg.locator("#tf-body").inner_text().find("FORM-03")>=0)
+    check("botón «Ficha en blanco (PDF)» del presupuesto",pg.locator("#tf a[href='#manual-FORM-03']").count()>=1)
     pg.evaluate("abrirTab('coches')"); pg.wait_for_selector("#s-list:not([hidden])"); pg.wait_for_timeout(400)
     check("Coches: botón «Factura de venta (PDF)»",pg.is_visible("#pdf-venta") and "Factura de venta" in pg.inner_text("#pdf-venta"))
     check("Coches: botón «Parte de reserva (PDF)»",pg.is_visible("#pdf-reserva") and "reserva" in pg.inner_text("#pdf-reserva").lower())
-    check("los botones de Coches apuntan a FORM-16 y FORM-17",pg.get_attribute("#pdf-venta","href")=="#manual-FORM-16" and pg.get_attribute("#pdf-reserva","href")=="#manual-FORM-17")
+    check("los botones de Coches apuntan a FORM-11 y FORM-10",pg.get_attribute("#pdf-venta","href")=="#manual-FORM-11" and pg.get_attribute("#pdf-reserva","href")=="#manual-FORM-10")
     with pg.context.expect_page() as nueva: pg.click("#pdf-venta")
     check("pulsar «Factura de venta (PDF)» abre una pestaña",nueva.value is not None); nueva.value.close()
     pg.evaluate("tPanelFichas(TF.orden.token)"); pg.wait_for_selector("#vc-fichas")

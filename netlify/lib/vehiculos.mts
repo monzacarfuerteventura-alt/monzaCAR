@@ -110,8 +110,8 @@ export async function devolverPieza(f: Ficha, mov: string, n: number, quien: { u
 }
 
 // =====================================================================
-// FICHAJE DE TAREAS POR COCHE (FORM-03 para coches propios: reparación, mantenimiento, limpieza/preparación)
-// Mismas reglas que el FORM-03 de las órdenes de clientes: hora del servidor, pausas con motivo, un solo trabajo
+// FICHAJE DE TAREAS POR COCHE (FORM-04 para coches propios: reparación, mantenimiento, limpieza/preparación)
+// Mismas reglas que el FORM-04 de las órdenes de clientes: hora del servidor, pausas con motivo, un solo trabajo
 // a la vez por persona, desviación (% y minutos), causas A a I y visto bueno del gerente. Al terminar, el tiempo
 // neto pasa solo a las horas de la ficha del coche (y de ahí a Finanzas).
 // =====================================================================
@@ -135,7 +135,7 @@ export async function listarTareas(): Promise<Tarea[]> {
 export const calculoTarea = async (t: Tarea, ahora = Date.now()) => calculo({ mecanico: t.uid, tarifa: 0, estMin: t.estMin, tipo: t.tipo, hoja: "", eventos: t.eventos } as any, await leerConfig(), ahora)!;
 export const etiquetaTarea = (t: Tarea) => `${TIPOS_TAREA[t.tipo]} · ${t.matricula || t.ref}`;
 
-/** ¿Tiene esa persona una tarea de coche propio trabajando ahora? Devuelve su etiqueta (lo usa el FORM-03 de las órdenes para no fichar dos a la vez). */
+/** ¿Tiene esa persona una tarea de coche propio trabajando ahora? Devuelve su etiqueta (lo usa el FORM-04 de las órdenes para no fichar dos a la vez). */
 export async function tareaEnMarcha(id: string): Promise<string> {
   const t = await leerTarea(id);
   return t && estadoTiempo(t.eventos) === "trabajando" ? etiquetaTarea(t) : "";

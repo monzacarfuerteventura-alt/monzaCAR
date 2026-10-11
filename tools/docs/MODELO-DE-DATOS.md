@@ -16,7 +16,7 @@ familia de claves. Es el equivalente exacto de lo que se pidió, sin instalar ni
 | `form14_factura_reparacion` | Factura de reparación de cada orden: emisor, cliente, vehículo, líneas (mano de obra / recambio / otro), descuento, IGIC, emisión y rectificativas (-R1…) | `taller` · `f/<token>` → `f5` (solo gerente y recepción la ven completa; el equipo del taller solo ve «emitida») |
 | `libro_facturas` | Registro INALTERABLE de facturas emitidas: serie F-AAAA-NNNN y R-AAAA-NNNN (rectificativas), datos del cliente y líneas, importes, IGIC, huella SHA-256 encadenada con la anterior; listado CSV para la gestoría y comprobación de integridad | almacén `facturas` · `reg/<seq>` · `num/<número>` · `orden/<token>~<n>` · contadores `contador/…` y `reserva/…` (números sin duplicados) |
 | `copias_seguridad` | Copias automáticas diarias, una por almacén; se conservan 30 días, el día 1 de cada mes 24 meses y el 1 de enero para siempre | almacén `copias` · `diaria/AAAA-MM-DD.json` (índice) y `diaria/AAAA-MM-DD/<almacén>.json` · `estado.json` |
-| `form04_tiempos_taller` | Fichaje de tareas de coches propios + FORM-03 de órdenes | `vehiculos` · `t/<id>` (coches propios) · `taller` · `f/<token>` → `f3` (órdenes de clientes) |
+| `form04_tiempos_taller` | Fichaje de tareas de coches propios + FORM-04 de órdenes | `vehiculos` · `t/<id>` (coches propios) · `taller` · `f/<token>` → `f3` (órdenes de clientes) |
 | `form04_pausas_tarea` | Eventos `pausa`/`reanudar` con motivo dentro de cada tarea | dentro de `t/<id>.eventos[]` y `f3.eventos[]` (motivos: `MOTIVOS_PAUSA`) |
 | `crm_conversaciones` | Conversaciones del agente de ventas por canal | `whatsapp` · `c/<teléfono>` · `c/fb:<PSID>` · `c/ig:<IGSID>` |
 | (medios de la Ayuda) | MP3 de la voz DAN | `ayuda-voz` · `<vídeo>/<n>.mp3` y `meta/<vídeo>` |
@@ -32,7 +32,7 @@ justificacion   { codigos[A–I], explicacion (≥ 5 letras), t, por }  — obli
 cierre          { t, por, pin: true, netoMin, desvPct, desvMin }     — firma con PIN
 vistoBueno      { t, por, nota }                                      — solo el gerente
 ```
-Fórmulas (las mismas del FORM-03 de siempre, en `calculo()` de `netlify/lib/taller.mts`):
+Fórmulas (las mismas del FORM-04 de siempre, en `calculo()` de `netlify/lib/taller.mts`):
 `tiempo neto = fin − inicio − suma de pausas` · `desviación min = neto − estimado` · `desviación % = (neto − estimado) / estimado × 100`.
 Umbral por defecto: **15 %** o **30 min** (ajustable en Taller → Equipo y ajustes). Si se supera, **no se puede cerrar** sin causas A–I y
 explicación. Al cerrar, el neto pasa solo a las horas de la ficha del coche (y de ahí a Finanzas).

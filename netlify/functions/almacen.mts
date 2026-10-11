@@ -9,7 +9,7 @@ import { exigirJornada } from "../lib/jornada.mts";
 /*
   INVENTARIO DE REPUESTOS Y CONTROL DE HERRAMIENTAS
   GET  /api/almacen/estado                     → piezas, herramientas y avisos (el coste solo lo ve el gerente)
-  GET  /api/almacen/orden/:token               → recambios y herramientas de una orden (FORM-03)
+  GET  /api/almacen/orden/:token               → recambios y herramientas de una orden (FORM-04)
   GET  /api/almacen/mias                       → herramientas que tengo yo (para salir)
   GET  /api/almacen/pendientes-cierre          → herramientas fuera sin localizar hoy (cierre de caja)
   POST /api/almacen/pieza[/:id]                → alta / edición de la ficha (gerente o recepción)
@@ -156,7 +156,7 @@ export default async (req: Request) => {
 
   // ================= RECAMBIO USADO EN UNA ORDEN (descuento automático) =================
   if (accion === "imputar" && req.method === "POST") {
-    // Destino: una orden de cliente (FORM-03) o un coche propio del stock (Taller → Coches propios)
+    // Destino: una orden de cliente (FORM-04) o un coche propio del stock (Taller → Coches propios)
     const vid = String(body.vehiculo || "");
     const o = vid ? null : await leerOrden(String(body.orden || ""));
     const fv = vid ? await leerFicha(vid) : null;
@@ -167,7 +167,7 @@ export default async (req: Request) => {
     const p = await leerPieza(String(body.pieza || "")); if (!p || !p.activo) return json({ error: "Pieza no encontrada." }, 404);
     const n = cant(body.cantidad); if (!Number.isFinite(n) || n <= 0 || n > 10000) return json({ error: "Pon cuántas unidades has usado." }, 400);
     if (n > p.stock) return json({ error: `No hay stock suficiente: el sistema dice que quedan ${String(p.stock).replace(".", ",")} ${p.unidad}. Si hay más en la estantería, avisa para registrar la entrada o hacer un recuento.` }, 409);
-    const m = await mover(q, p, "salida", -n, fv ? { vehiculo: fv.id, num: fv.ref, motivo: str(body.nota, 200), origen: "COCHE-PROPIO" } : { orden: o!.token, num: o!.num || "", motivo: str(body.nota, 200), origen: "FORM-03" });
+    const m = await mover(q, p, "salida", -n, fv ? { vehiculo: fv.id, num: fv.ref, motivo: str(body.nota, 200), origen: "COCHE-PROPIO" } : { orden: o!.token, num: o!.num || "", motivo: str(body.nota, 200), origen: "FORM-04" });
     if (fv) await anotarPieza(fv, { mov: m.id, t: m.t, pieza: p.id, sku: p.sku, nombre: p.nombre, cantidad: n, coste: p.coste, uid: q.uid, nombre_por: q.nombre }, q);
     if (m.antes > p.minimo && m.despues <= p.minimo) await alerta(m.despues <= 0 ? "rojo" : "ambar", "minimo", `${p.nombre} ${m.despues <= 0 ? "AGOTADO" : "por debajo del mínimo"} (quedan ${String(m.despues).replace(".", ",")} ${p.unidad})`, [["Pieza", `${p.sku} · ${p.nombre}`], ["Quedan", `${m.despues} ${p.unidad}`], ["Mínimo", `${p.minimo} ${p.unidad}`], ["Proveedor", p.proveedor]], origin, m.despues <= 0);
     return json({ ok: true, movimiento: { ...m, coste: q.admin ? m.coste : undefined }, stock: m.despues, bajoMinimo: m.despues <= p.minimo });

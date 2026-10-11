@@ -1,7 +1,7 @@
 // =====================================================================
 // REGISTRO DE JORNADA (art. 34.9 del Estatuto de los Trabajadores)
 // Fichaje de ultra-baja fricción: un botón que cambia según el momento (entrada → pausa → reanudar →
-// salida), QR/NFC fijo en el taller y fichajes que se enganchan solos con el FORM-03.
+// salida), QR/NFC fijo en el taller y fichajes que se enganchan solos con el FORM-04.
 //  · La hora la pone SIEMPRE el servidor. Nadie puede escribirla desde el móvil.
 //  · Nada se borra: una pulsación por error se «deshace» con un apunte nuevo, y el gerente corrige con
 //    motivo (queda la hora original, quién, cuándo y por qué).
@@ -82,7 +82,7 @@ export function calcDia(d: Dia, jornadaH: number, ahora = Date.now()) {
   };
 }
 
-// ---------- el FORM-03 se engancha solo al fichaje ----------
+// ---------- el FORM-04 se engancha solo al fichaje ----------
 // Pausa o salida de jornada → el trabajo que tenga en marcha se pausa solo (motivo «Comida / descanso» o
 // «Fin de jornada»). Al volver (reanudar o entrada del día siguiente) se reanuda solo ese mismo trabajo.
 async function cargarOrden(token: string) {

@@ -78,7 +78,7 @@ export type F4 = {
   destino: string; items: Record<string, "si" | "no" | "na" | "">; notas: Record<string, string>;
   resultado: string; motivo: string; firma: { uid: string; nombre: string; t: string } | null; cierreGerente: { t: string; por: string } | null; intentos: number;
 };
-// ---------- factura de reparación (FORM-14) ----------
+// ---------- factura de reparación (FORM-06) ----------
 export const EMISOR = { razon: "MAYLIN Y YERAY S.L.", nif: "B93975647", direccion: "CALLE VALLE LARGO 8", cp: "35610 - Polígono Industrial Costa de Antigua", telefono: "643 56 60 98", email: "volcanocars2026@gmail.com", registro: "Registro Mercantil de Fuerteventura, hoja IF-10512", inscripcion: "1.ª · IRUS 1000478998399" };
 export type F5Linea = { tipo: "MO" | "REC" | "OTRO"; ref: string; desc: string; cant: number; precio: number; dto: number };
 export type F5 = {
@@ -98,7 +98,7 @@ export function totalesF5(x: Pick<F5, "lineas" | "descuentoGlobal" | "igicTipo" 
 }
 export type Fichas = { token: string; num: string; f1: F1 | null; f2: F2 | null; f3: F3 | null; f4: F4 | null; f5?: F5 | null; audit: { t: string; por: string; nombre: string; rol: string; accion: string; detalle: string }[] };
 
-// ---------- tiempos (FORM-03) ----------
+// ---------- tiempos (FORM-04) ----------
 export const MOTIVOS_PAUSA = ["Recambio pendiente", "Otro coche urgente", "Comida / descanso", "Espera de autorización del cliente", "Falta de herramienta", "Otro"];
 export type Tramo = { ini: number; fin: number; trabajo: boolean; motivo: string; por: string };
 export function tramos(ev: Evento[], ahora = Date.now()): Tramo[] {
@@ -150,7 +150,7 @@ export function resumenF2(f2: F2 | null) {
   return { rojos, ambar, hechos, total: F2_IDS.length, horasEst: f2.horasEst, recomendacion: f2.recomendacion, cerrada: f2.cerrada };
 }
 
-// ---------- FORM-04 ----------
+// ---------- FORM-05 ----------
 export const F4_A: [string, string][] = [["a1", "Todos los trabajos autorizados en el presupuesto están hechos"], ["a2", "Puntos en ROJO de FORM-02 corregidos o rechazados por escrito"], ["a3", "No hay trabajos hechos sin autorización"], ["a4", "Recambios instalados = presupuesto = factura"], ["a5", "Piezas sustituidas guardadas para el cliente (si las pide)"], ["a6", "Pares de apriete revisados (ruedas, tren delantero, frenos)"], ["a7", "Sin fugas tras la reparación (revisado con motor caliente)"], ["a8", "Niveles de aceite, refrigerante y frenos correctos"], ["a9", "Presión de neumáticos según fabricante"], ["a10", "Testigos apagados y OBD sin averías nuevas"], ["a11", "Testigo de mantenimiento reiniciado (si procede)"], ["a12", "Prueba en carretera final sin ruidos ni vibraciones"], ["a13", "Luces, intermitentes, limpias, claxon y A/C funcionan"]];
 export const F4_B: [string, string][] = [["b1", "Exterior lavado: sin grasa, huellas, arena ni salitre"], ["b2", "Cristales limpios por dentro y por fuera"], ["b3", "Interior aspirado, salpicadero y plásticos limpios"], ["b4", "Sin grasa en volante, palanca, tapicería y moquetas"], ["b5", "Protectores de asiento, alfombrilla y volante retirados"], ["b6", "Sin olores extraños (aceite, humedad, humo)"], ["b7", "Ningún daño nuevo respecto al croquis de FORM-01"], ["b8", "Herramientas y accesorios del coche en su sitio"]];
 export const F4_C: [string, string][] = [["c1", "Objetos personales devueltos a su sitio"], ["c2", "Km y combustible de salida anotados"], ["c3", "Factura desglosada preparada"], ["c4", "Garantía explicada y entregada por escrito"], ["c5", "Puntos en ÁMBAR pendientes explicados"], ["c6", "Cliente avisado de la hora de recogida"], ["c7", "Repaso del coche y factura con el cliente"], ["c8", "Firma de conformidad del cliente"], ["c9", "QR de reseñas mostrado y tarjeta entregada"]];
