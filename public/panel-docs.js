@@ -29,12 +29,12 @@
     ["FORM-04", "Control de tiempos y mano de obra", "S01", "Taller → orden → Fichas", "FORM-04"],
     ["FORM-05", "Control de calidad pre-entrega", "S01", "Taller → orden → Fichas", "FORM-05"],
     ["FORM-06", "Factura de reparación", "S01", "Taller → orden → Fichas", "FORM-06"],
-    ["FORM-07", "Cascos y abonos", "S02", "Formulario digital: se rellena aquí", ""],
+    ["FORM-07", "Devoluciones a proveedor", "S02", "Se rellena en Compras → Devoluciones", ""],
     ["FORM-08", "Ronda 5S y seguridad", "S03", "Formulario digital: se rellena aquí", ""],
     ["FORM-09", "Hoja de preparación", "S04", "Formulario digital: se rellena aquí", ""],
     ["FORM-10", "Parte de reserva de vehículo", "S05 · S06", "Coches → reservar", "FORM-10"],
     ["FORM-11", "Factura de venta de vehículo", "S05", "Coches → vender", "FORM-11"],
-    ["FORM-12", "Prueba a domicilio · fianza 50 €", "S06", "Formulario digital: se rellena aquí", ""],
+    ["FORM-12", "Prueba a domicilio · fianza 50 €", "S06", "Se rellena en Coches → Herramientas de venta", ""],
     ["FORM-13", "Registro de postventa", "S07", "Formulario digital: se rellena aquí", ""],
     ["FORM-14", "Plan semanal de marketing", "S08", "Formulario digital: se rellena aquí (solo gerente)", ""],
     ["FORM-15", "Auditoría del viernes", "S09", "Formulario digital: se rellena aquí (solo gerente)", ""],
@@ -53,6 +53,7 @@
 
   // Formularios que se rellenan en el panel (los abre panel-sistemas.js). 14 y 15 son solo del gerente.
   const DIGITALES = new Set(["FORM-07", "FORM-08", "FORM-09", "FORM-12", "FORM-13", "FORM-14", "FORM-15"]);
+  const IR = { "FORM-07": "Ir a Compras", "FORM-12": "Ir a Coches" }; // Act. 75: viven en su sección, no aquí
   const soloGer = (n) => n === "FORM-14" || n === "FORM-15";
   const esGer = () => { try { return PUEDE_TODO(); } catch (_) { return true; } };
 
@@ -65,7 +66,7 @@
       <section class="card dc-card dc-marca dc-full"><h3>Marca</h3><p class="hint">Cómo se ve y cómo habla Volcano Cars.</p>${MARCAS.map((x) => fila(...x)).join("")}</section>
       <section class="card dc-card dc-full"><h3>Formularios (FORM-01 a FORM-17)</h3><p class="hint">Numerados en el orden de los manuales: FORM-01 a 06 son las fichas del taller (S01), después los de cada manual hasta S11. Cada número tiene siempre el mismo nombre aquí, en el panel, en el PDF y en los manuales.</p>
         <div class="dc-row" data-q="todas las fichas del taller en un solo pdf"><div><b>Todas las fichas del taller (FORM-01 a FORM-06)</b><span>S01 · Un solo PDF, en orden: recepción, inspección, presupuesto, tiempos, calidad y factura.</span></div><a class="btn b-ghost b-sm" href="${pdf("FICHAS-TALLER")}" target="_blank" rel="noopener">Abrir PDF ↗</a></div>
-        ${FORMULARIOS.map(([n, t, m, d, f]) => `<div class="dc-row" data-q="${E((n + " " + t + " " + m + " " + d).toLowerCase())}"><div><b>${n} · ${E(t)}</b><span>${E(m)} · ${E(d)}</span></div>${f ? `<a class="btn b-ghost b-sm" href="${pdf(f)}" target="_blank" rel="noopener">PDF ↗</a>` : DIGITALES.has(n) ? (soloGer(n) && !esGer() ? `<span class="dc-nota">Solo gerente</span>` : `<button type="button" class="btn b-ghost b-sm" data-dc-form="${n}">Rellenar</button>`) : ""}</div>`).join("")}
+        ${FORMULARIOS.map(([n, t, m, d, f]) => `<div class="dc-row" data-q="${E((n + " " + t + " " + m + " " + d).toLowerCase())}"><div><b>${n} · ${E(t)}</b><span>${E(m)} · ${E(d)}</span></div>${f ? `<a class="btn b-ghost b-sm" href="${pdf(f)}" target="_blank" rel="noopener">PDF ↗</a>` : DIGITALES.has(n) ? (soloGer(n) && !esGer() ? `<span class="dc-nota">Solo gerente</span>` : `<button type="button" class="btn b-ghost b-sm" data-dc-form="${n}">${IR[n] || "Rellenar"}</button>`) : ""}</div>`).join("")}
         <p class="hint" style="margin-top:10px">Si tienes impresos o manuales con la numeración antigua, la Hoja v3.3 de la lista de manuales trae la tabla de equivalencias.</p></section>
       <section class="card dc-card dc-full"><h3>Manuales de sistemas (S00 a S11)</h3><p class="hint">Se leen en este orden: primero la hoja v3.3 (numeración vigente de los formularios), después la v3.2, las hojas v3.1 y, al final, el manual original.</p>${MANUALES.map(([n, t, f]) => fila(n + " · " + t, "", f, "PDF")).join("")}</section>
     </div><p class="hint" id="dc-vacio" hidden>No hay ningún documento con ese nombre.</p>`;
@@ -79,6 +80,8 @@
   sec.addEventListener("input", (e) => { if (e.target.id === "dc-q") filtrar(e.target.value); });
   sec.addEventListener("click", (e) => {
     const b = e.target.closest("[data-dc-form]"); if (!b) return;
+    if (b.dataset.dcForm === "FORM-07" && window.PE_DEV) return window.PE_DEV.ir();
+    if (b.dataset.dcForm === "FORM-12" && window.VCOrden) return window.VCOrden.irPruebas();
     if (window.VCSistemas) window.VCSistemas.abrir(b.dataset.dcForm);
     else if (typeof toast === "function") toast("El formulario todavía se está cargando. Prueba otra vez en un momento.");
   });

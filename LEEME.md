@@ -625,3 +625,12 @@ Mismo nombre y número en el panel, en los PDF, en Documentación y en la nueva 
 - **Inventario en el móvil**: la lista de repuestos se veía aplastada (letras en vertical y botones cortados); ahora cada repuesto es una tarjeta con sus tres botones.
 - No cambia ningún dato guardado ni ningún cálculo: se comprobó que el servidor nuevo responde exactamente lo mismo que el anterior con los mismos datos (459 respuestas comparadas).
 
+## Actualización 74 (13-10-2026)
+Empezar de cero (Finanzas y Caja, con copia y registro de facturas vacío), cobro dividido efectivo + transferencia, correcciones libres del gerente en Caja y Finanzas,
+Margen y documentos con desglose de ganancia de taller y de venta, avisos de ITV solo en Clientes 360 y garantía sin cabecera del navegador.
+Detalle técnico completo en la sección 7 de CLAUDE.md. Pruebas: `tools/pruebas/e2e-74.mjs` y `tools/pruebas/e2e-panel-74.py`.
+
+## Actualización 75 (13-10-2026, acumulativa con la 74)
+Devoluciones a proveedor dentro de Compras (con seguimiento y abono a caja o banco), Prueba a domicilio en Coches, «Herramientas de venta» plegadas y pliegues por tarjeta.
+Detalle en la sección 7 de CLAUDE.md. Prueba: `tools/pruebas/e2e-panel-75.py`.
+

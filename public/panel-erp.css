@@ -40,7 +40,8 @@ tr.pe-pick{cursor:pointer}tr.pe-pick:hover{background:var(--surface-2)}
 .pe-chk{justify-content:center}
 .pe-lin h3.pe-h3{margin:0}
 @media (max-width:640px){.pe-t td.pe-det{padding-left:0}.pe-t tr.pe-sub{border-color:var(--accent)}}
-@media print{body>*:not(#pe-print){display:none!important}#pe-print{display:block!important;color:#000;background:#fff;font:13px/1.5 Georgia,serif;padding:0}#pe-print h1{font-size:20px;text-align:center}#pe-print table{font-size:12px}#pe-print td,#pe-print th{color:#000}}
+@page pe{size:A4;margin:0}
+@media print{body>*:not(#pe-print){display:none!important}#pe-print{display:block!important;page:pe;box-sizing:border-box;color:#000;background:#fff;font:13px/1.5 Georgia,serif;padding:18mm 17mm}#pe-print h1{font-size:20px;text-align:center}#pe-print table{font-size:12px}#pe-print td,#pe-print th{color:#000}}
 #pe-print{display:none}
 
 /* Documentación (act. 72): en el móvil cada formulario ocupa una sola línea, con su botón a la derecha */

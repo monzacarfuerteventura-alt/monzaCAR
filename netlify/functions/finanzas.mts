@@ -1,11 +1,12 @@
 import type { Config } from "@netlify/functions";
 import { createHash } from "node:crypto";
 import { store, json, mismoOrigen, type Car } from "../lib/shared.mts";
-import { quien, hoyCanarias, leerConfig, leerEquipo, tstore, tramos, type Quien, type F3, type Config as ConfigTaller } from "../lib/taller.mts";
+import { quien, hoyCanarias, leerConfig, leerEquipo, tstore, tramos, totalesF5, type Quien, type F3, type Config as ConfigTaller } from "../lib/taller.mts";
 import { listarA, type MovPieza } from "../lib/almacen.mts";
 import { costesPorCoche, propiosSinEnlazar, esIdPropio, leerFicha, guardarFicha } from "../lib/vehiculos.mts";
 import { todosLosRegistros } from "../lib/facturas.mts";
 import { anotarSeguro } from "../lib/libro.mts";
+import { volcar } from "../lib/copia.mts";
 import { str, cent, eur, esFoto, rid, ahora, listar as listarCaja, turnoAbierto, crearMovimiento, leerMov, libro as libroCaja, s as sCaja, teorico, type Turno, type Mov } from "../lib/caja.mts";
 
 /*
@@ -30,6 +31,7 @@ import { str, cent, eur, esFoto, rid, ahora, listar as listarCaja, turnoAbierto,
   POST /api/finanzas/venta/:coche           (datos de la venta)
   POST /api/finanzas/coste/:coche           (coste de compra de un coche en stock)
   POST /api/finanzas/clasificar/:movCaja    (clasifica una salida de caja registrada en la caja)
+  POST /api/finanzas/reiniciar {confirmar:"EMPEZAR DE CERO"}   (Actualización 74: copia de seguridad y deja Finanzas y Caja a cero; solo gerente)
   GET  /api/finanzas/libro
 */
 
@@ -84,10 +86,41 @@ async function porCaja(q: Quien, datos: any, origin: string) {
   return { id: r.mov!.id };
 }
 
+// ---------- Actualización 74 · EMPEZAR DE CERO (solo Finanzas y Caja) ----------
+// Antes de borrar nada se guarda una copia completa de «finanzas» y «caja» en copias/reinicio/<fecha>/ (la limpieza automática de copias solo toca «diaria/»).
+// Se borra: gastos, ingresos, ventas y cobros de Finanzas, clasificaciones de salidas de caja, facturas de proveedor, banco, asientos manuales, liquidaciones de incentivos y TODA la caja
+// (turnos, movimientos, alertas y último cierre). NO se borra: coches, CRM, órdenes del taller, inventario, equipo, costes de compra de los coches en stock ni los libros encadenados. SÍ se vacía el registro de facturas (eran de prueba) para que la numeración real empiece en 0001.
+// Las órdenes de taller anteriores al reinicio dejan de contar en Finanzas (ajustes.reinicio), pero siguen en Taller.
+async function borrarPrefijos(s: ReturnType<typeof store>, prefijos: string[], claves: string[] = []) {
+  let n = 0;
+  for (const prefix of prefijos) {
+    const { blobs } = await s.list({ prefix });
+    for (let i = 0; i < blobs.length; i += 25) await Promise.all(blobs.slice(i, i + 25).map((b) => s.delete(b.key)));
+    n += blobs.length;
+  }
+  for (const k of claves) if ((await s.get(k).catch(() => null)) != null) { await s.delete(k); n++; }
+  return n;
+}
+async function reiniciarFinanzas(q: Quien) {
+  const t = ahora(), carpeta = "reinicio/" + t.replace(/[:.]/g, "-"), copias = store("copias"), cuenta: Record<string, number> = {};
+  for (const nombre of ["finanzas", "caja", "facturas"]) await copias.set(`${carpeta}/${nombre}.json`, JSON.stringify(await volcar(nombre))); // si esto falla NO se borra nada
+  const prev = await leerAjustes(); await f().setJSON("ajustes", { ...prev, reinicio: t });
+  cuenta.finanzas = await borrarPrefijos(f(), ["gasto/", "ingreso/", "venta/", "cobro-taller/", "clasif/", "erp/fprov/", "erp/banco/", "erp/conta/", "erp/inc/p/"]);
+  cuenta.caja = await borrarPrefijos(sCaja(), ["t/", "m/", "alerta/"], ["abierto", "ultimo-cierre", "intentos-apertura"]);
+  // Registro de facturas (todas eran de prueba): se vacía para que la primera factura REAL sea la F-AAAA-0001
+  cuenta.facturas = await borrarPrefijos(store("facturas"), [""]);
+  // los albaranes que estaban ligados a una factura de proveedor borrada vuelven a «sin facturar»
+  const { blobs } = await f().list({ prefix: "erp/alb/" });
+  for (const b of blobs) { const a = (await f().get(b.key, { type: "json" }).catch(() => null)) as any; if (a && a.facturaId) { a.facturaId = ""; await f().setJSON(b.key, a); } }
+  await libro(q, "reinicio", { copia: carpeta, borradosFinanzas: cuenta.finanzas, borradosCaja: cuenta.caja, borradasFacturas: cuenta.facturas });
+  await libroCaja(q, "reinicio", { copia: carpeta, borrados: cuenta.caja });
+  return { t, copia: carpeta, borrados: cuenta };
+}
+
 // ---------- Actualización 62 · resultado de cada coche de taller entregado ----------
 // Precio final (con IGIC) → base sin IGIC (el IGIC no es tuyo) → piezas del inventario a su coste → mano de obra por trabajador → beneficio.
 // Los fijos del taller (por defecto 9.000 €/mes en 20 días laborables = 450 €/día) se restan cada día laborable para saber si «hoy hubo pérdidas».
-type Ajustes = { descontarMO: boolean; fijosMes: number; diasLab: number };
+type Ajustes = { descontarMO: boolean; fijosMes: number; diasLab: number; reinicio?: string }; // reinicio: instante del último «Empezar de cero» (Act. 74): las órdenes creadas antes no cuentan en Finanzas
 const AJUSTES_DEF: Ajustes = { descontarMO: true, fijosMes: 900000, diasLab: 20 };
 async function leerAjustes(): Promise<Ajustes> { const a = (await f().get("ajustes", { type: "json" }).catch(() => null)) as Partial<Ajustes> | null; return { ...AJUSTES_DEF, ...(a || {}) }; }
 const esLaborable = (d: string) => { const w = new Date(d + "T12:00:00Z").getUTCDay(); return w >= 1 && w <= 5; };
@@ -119,6 +152,21 @@ function manoObraDe(f3: F3 | null, cfg: ConfigTaller, nombre: (u: string) => str
   return { coste, minutos, tarifa, trabajadores: trab, sinHoras: !minutos };
 }
 
+// Act. 74 · De lo facturado (FORM-06) cuánto es de PIEZAS (REC), de MANO DE OBRA (MO) y de OTROS, ya con el descuento global repartido. Céntimos.
+function desgloseF5(f5: any) {
+  if (!f5 || !Array.isArray(f5.lineas) || !f5.lineas.length) return null;
+  const t = totalesF5(f5), baseC = Math.round(t.base * 100), factor = t.suma > 0 ? t.base / t.suma : 1;
+  const g = { REC: 0, MO: 0, OTRO: 0 }; const piezas: { ref: string; desc: string; cant: number; precio: number; importe: number }[] = [];
+  f5.lineas.forEach((l: any, i: number) => {
+    const imp = Math.round((t.importes[i] || 0) * factor * 100), k = l.tipo === "REC" || l.tipo === "MO" ? l.tipo : "OTRO";
+    g[k as "REC" | "MO" | "OTRO"] += imp;
+    if (k === "REC") piezas.push({ ref: String(l.ref || "").slice(0, 40), desc: String(l.desc || "").slice(0, 120), cant: Number(l.cant) || 0, precio: Math.round((Number(l.precio) || 0) * 100), importe: imp });
+  });
+  const resto = baseC - (g.REC + g.MO + g.OTRO); // ajuste de céntimos por los redondeos
+  if (resto) { const k = (Object.entries(g).sort((a, b) => b[1] - a[1])[0][0]) as "REC" | "MO" | "OTRO"; g[k] += resto; if (k === "REC" && piezas.length) piezas[0].importe += resto; }
+  return { piezas: g.REC, manoObra: g.MO, otros: g.OTRO, lineasPiezas: piezas, descuentoGlobal: Math.round(t.dto * 100) };
+}
+
 // Caja para el resumen: turnos, movimientos de cada turno (mismo orden que movsDe: por hora) y caja abierta. Un solo listado de «m/» en vez de uno por turno.
 async function cajaParaResumen() {
   const sc = sCaja();
@@ -142,12 +190,14 @@ async function resumen(desde: string, hasta: string) {
   // Act. 73 · Las lecturas van en DOS tandas en paralelo. Antes iban en cadena (órdenes → facturas → turnos → movimientos de cada turno →
   // ajustes → equipo → almacén → fichas → caja): hasta 16 viajes al almacén uno detrás de otro; ahora 4. Los cálculos de abajo no cambian.
   // Tanda 1 (la de siempre) + ajustes y equipo:
-  const [ords, carsWeb, gastos, ingresosM, ventas, costes, clasif, cobrosT, cfg, propios, sinEnlazar, aju, equipoT] = await Promise.all([
+  const [ordsTodas, carsWeb, gastos, ingresosM, ventas, costes, clasif, cobrosT, cfg, propios, sinEnlazar, aju, equipoT] = await Promise.all([
     (async () => { const s = store("ordenes"); const { blobs } = await s.list({ prefix: "o/" }); return (await Promise.all(blobs.map((b) => s.get(b.key, { type: "json" })))).filter(Boolean) as any[]; })(),
     (async () => ((await store("monzacar").get("coches", { type: "json" }).catch(() => null)) as Car[] | null) || [])(),
     lista<Gasto>("gasto/"), lista<Ingreso>("ingreso/"), lista<Venta>("venta/"), lista<any>("coste/"), lista<any>("clasif/"), lista<{ token: string; cobros: Cobro[] }>("cobro-taller/"), leerConfig(), costesPorCoche(), propiosSinEnlazar(),
     leerAjustes(), leerEquipo().catch(() => []),
   ]);
+  // Act. 74 · «Empezar de cero»: las órdenes de taller creadas ANTES del reinicio (datos de prueba) no cuentan en Finanzas; siguen existiendo en Taller.
+  const ords = aju.reinicio ? ordsTodas.filter((o) => String(o.creado || "") >= aju.reinicio!) : ordsTodas;
   // Tanda 2: facturas emitidas, caja, movimientos del almacén y las fichas de los coches de taller entregados en el periodo (o en el mes en curso)
   const hoyD = hoyCanarias(), mesIni = hoyD.slice(0, 8) + "01";
   const desdeR = desde < mesIni ? desde : mesIni, hastaR = hasta > hoyD ? hasta : hoyD;
@@ -206,7 +256,11 @@ async function resumen(desde: string, hasta: string) {
     const nombre = c ? `${c.marca} ${c.modelo} ${c.version || ""}`.trim() + (c.anio ? ` (${c.anio})` : "") : "Coche borrado del inventario";
     const doc = { id: "v-" + id, tipo: "venta", area: "venta", ref: id, fecha: fechaDoc, num: v?.factura || "", cliente: v?.comprador || "", concepto: "Venta · " + nombre, base, impuestoPct: igic, impuesto: total - base, total, cobrado: cobrado.reduce((a, x) => a + x.importe, 0), cobros: cobrado, estimado: !v, costeCompra: compra, reacondicionamiento: reac, beneficio: base - compra - reac, sinCoste: !compra };
     emitidas.push(doc); cobrado.forEach((x) => addCobro({ ...x, doc: doc.id, area: "venta", concepto: doc.concepto }));
-    porCoche.push({ coche: id, nombre, fecha: fechaDoc, precio: total, base, compra, reacondicionamiento: reac, beneficio: base - compra - reac, estimado: !v, sinCoste: !compra, pendiente: total - doc.cobrado });
+    const pr = propios.get(id), gDet = gastos.filter((g) => !g.anulado && g.coche === id), reacGastos = gDet.reduce((a, g) => a + g.base, 0);
+    porCoche.push({ coche: id, nombre, fecha: fechaDoc, precio: total, base, compra, reacondicionamiento: reac, beneficio: base - compra - reac, estimado: !v, sinCoste: !compra, pendiente: total - doc.cobrado,
+      // Act. 74 · desglose del coste: gastos apuntados al coche + piezas, horas y costes aprobados de su ficha
+      comprador: v?.comprador || "", igic: total - base, reacGastos, reacPiezas: pr?.piezas || 0, reacHoras: pr?.horas || 0, reacOtros: pr?.otros || 0,
+      gastosDet: gDet.slice(0, 40).map((g) => ({ fecha: g.fecha, proveedor: g.proveedor, concepto: g.concepto, categoria: CAT.get(g.categoria)?.txt || g.categoria, base: g.base })) });
   }
   // Ingresos manuales
   for (const i of ingresosM.filter((x) => !x.anulado)) {
@@ -265,14 +319,21 @@ async function resumen(desde: string, hasta: string) {
     if (doc && doc.total - doc.cobrado > 0) avisos.push(`Falta cobrar ${eur(doc.total - doc.cobrado)}.`);
     if (aju.descontarMO && mo.sinHoras) avisos.push("No se fichó ningún tiempo (FORM-04): la mano de obra sale a 0 y el beneficio puede estar inflado.");
     if (pz.det.some((d) => d.sinCoste)) avisos.push("Alguna pieza no tiene precio de coste en el Inventario: su coste sale a 0.");
+    const dg = desgloseF5(fi?.f5 || null);
+    if (dg && dg.piezas > 0 && pz.coste === 0) avisos.push("Facturaste piezas, pero ninguna salió del Inventario con esta orden: el coste de piezas sale a 0 y la ganancia en piezas está inflada.");
+    if (!dg && doc) avisos.push("Esta orden no tiene la factura (FORM-06) con líneas: no se puede separar lo cobrado en piezas y mano de obra.");
     return { token: o.token, num: o.num || "", cliente: o.cliente?.nombre || "", coche: o.vehiculo?.coche || "", matricula: (o.vehiculo?.matricula || "").toUpperCase(), fecha: dia, factura: doc?.num || "", facturada: !!doc?.facturaEmitida,
       total, base, igic: total - base, igicPct: doc?.impuestoPct ?? cfg.igic, cobrado: doc?.cobrado || 0, pendiente: doc ? doc.total - doc.cobrado : 0,
       piezas: pz.coste, piezasDet: pz.det, manoObra: mo.coste, minutos: mo.minutos, tarifa: mo.tarifa, trabajadores: mo.trabajadores, descontadaMO: aju.descontarMO,
-      beneficio: base - pz.coste - descMO, avisos };
+      beneficio: base - pz.coste - descMO, avisos,
+      // Act. 74 · desglose de la ganancia: lo facturado en piezas frente a lo que costaron al proveedor, y la mano de obra frente a las horas fichadas
+      sinDesglose: !dg, ventaPiezas: dg?.piezas || 0, ventaManoObra: dg?.manoObra || 0, ventaOtros: dg?.otros || 0, descuentoGlobal: dg?.descuentoGlobal || 0, lineasPiezas: dg?.lineasPiezas || [],
+      gananciaPiezas: (dg?.piezas || 0) - pz.coste, margenPiezasPct: pz.coste > 0 ? Math.round((((dg?.piezas || 0) - pz.coste) / pz.coste) * 1000) / 10 : null,
+      gananciaManoObra: (dg?.manoObra || 0) - mo.coste, gananciaOtros: dg?.otros || 0 };
   });
   const resAll = entregadas.filter(Boolean) as any[];
   const resultadoTaller = resAll.filter((x) => dentro(x.fecha)).sort((a, b) => b.fecha.localeCompare(a.fecha));
-  const resTot = { coches: resultadoTaller.length, total: sum(resultadoTaller), base: sum(resultadoTaller, "base"), igic: sum(resultadoTaller, "igic"), piezas: sum(resultadoTaller, "piezas"), manoObra: sum(resultadoTaller, "manoObra"), beneficio: sum(resultadoTaller, "beneficio") };
+  const resTot = { coches: resultadoTaller.length, total: sum(resultadoTaller), base: sum(resultadoTaller, "base"), igic: sum(resultadoTaller, "igic"), piezas: sum(resultadoTaller, "piezas"), manoObra: sum(resultadoTaller, "manoObra"), beneficio: sum(resultadoTaller, "beneficio"), ventaPiezas: sum(resultadoTaller, "ventaPiezas"), gananciaPiezas: sum(resultadoTaller, "gananciaPiezas"), ventaManoObra: sum(resultadoTaller, "ventaManoObra"), gananciaManoObra: sum(resultadoTaller, "gananciaManoObra"), ventaOtros: sum(resultadoTaller, "ventaOtros") };
   // ¿Hoy hubo pérdidas? Beneficio de los coches entregados hoy − la parte de los fijos del taller de un día laborable
   const lab = esLaborable(hoyD), fd = lab ? fijosDia(aju) : 0, delHoy = resAll.filter((x) => x.fecha === hoyD), benHoy = sum(delHoy, "beneficio");
   const delMes = resAll.filter((x) => x.fecha >= mesIni && x.fecha <= hoyD), benMes = sum(delMes, "beneficio"), fijosHasta = fijosDia(aju) * Math.min(laborablesHasta(hoyD), aju.diasLab);
@@ -374,6 +435,56 @@ export default async (req: Request) => {
     return json({ ok: true });
   }
 
+  // ---------- Actualización 74 · CORREGIR (el gerente corrige cualquier número desde el panel; queda en el libro con el antes y el después) ----------
+  // Sin las exigencias del alta (foto obligatoria, fecha no pasada para el efectivo…): corregir un error no debería ser más difícil que cometerlo.
+  // Si el apunte salió de la caja, su movimiento de caja se corrige a la vez; si deja de ser efectivo, ese movimiento se anula; si pasa a efectivo, entra en la caja abierta.
+  async function cajaSegunMetodo(x: any, metodoNuevo: string, mov: { tipo: "ingreso" | "egreso"; categoria: string; concepto: string; ref: string; coche?: string }) {
+    if (x.cajaMov) {
+      const l = await leerMov(x.cajaMov);
+      if (l) {
+        if (metodoNuevo !== "efectivo") { l.m.anulado = { t: ahora(), motivo: "Corregido desde Finanzas: ya no es efectivo" }; await sCaja().setJSON(l.key, l.m); x.cajaMov = ""; }
+        else { l.m.importe = x.total ?? x.importe; l.m.concepto = mov.concepto || l.m.concepto; await sCaja().setJSON(l.key, l.m); }
+      }
+    } else if (metodoNuevo === "efectivo") {
+      const r = await porCaja(q, { tipo: mov.tipo, importe: String((x.total ?? x.importe) / 100), categoria: mov.categoria, concepto: mov.concepto, ref: mov.ref, coche: mov.coche || "" }, origin);
+      if (r.error) return r.error; x.cajaMov = r.id!;
+    }
+    return "";
+  }
+  if ((accion === "gasto-editar" || accion === "ingreso-editar") && req.method === "POST") {
+    const esG = accion === "gasto-editar", k = (esG ? "gasto/" : "ingreso/") + id;
+    if (!/^[a-z0-9]{6,20}$/.test(id)) return json({ error: "Apunte no válido." }, 400);
+    const x = (await f().get(k, { type: "json" }).catch(() => null)) as any; if (!x) return json({ error: "No existe ese apunte." }, 404);
+    if (x.anulado) return json({ error: "Está anulado: no se puede corregir." }, 409);
+    const antes = { fecha: x.fecha, base: x.base, impuestoPct: x.impuestoPct, total: x.total, metodo: x.metodo, categoria: x.categoria, proveedor: x.proveedor, concepto: x.concepto };
+    const d = fecha(body.fecha) || x.fecha; if (d > hoyCanarias()) return json({ error: "La fecha no puede ser futura." }, 400);
+    const imp = importes(body); if (!imp) return json({ error: "Escribe la base imponible." }, 400); if ("error" in imp) return json({ error: imp.error }, 400);
+    const metodo = (esG ? PAGOS : COBROS).includes(body.metodo) ? body.metodo : x.metodo;
+    const concepto = str(body.concepto ?? x.concepto, 300); if (concepto.length < 2) return json({ error: "Escribe el concepto." }, 400);
+    if (esG) { if (body.categoria !== undefined) { if (!CAT.get(body.categoria)) return json({ error: "Categoría no válida." }, 400); x.categoria = body.categoria; } x.proveedor = str(body.proveedor ?? x.proveedor, 120) || x.proveedor; if (AREAS.includes(body.area)) x.area = body.area; }
+    else { x.cliente = str(body.cliente ?? x.cliente, 120); if (AREAS.includes(body.area)) x.area = body.area; }
+    x.factura = str(body.factura ?? x.factura, 40); x.fecha = d; x.concepto = concepto; Object.assign(x, imp); x.metodo = metodo;
+    const e = await cajaSegunMetodo(x, metodo, esG ? { tipo: "egreso", categoria: x.categoria === "recambios" || x.categoria === "herramientas" ? "compra" : "proveedor", concepto: `${x.proveedor} · ${concepto}`.slice(0, 200), ref: x.factura || "sin nº", coche: x.coche } : { tipo: "ingreso", categoria: x.area === "taller" ? "taller" : x.area === "venta" ? "venta" : "otro", concepto, ref: x.factura });
+    if (e) return json({ error: e }, 409);
+    x.corregido = { t: ahora(), por: q.nombre }; await f().setJSON(k, x);
+    await libro(q, accion, { id, antes, despues: { fecha: x.fecha, base: x.base, impuestoPct: x.impuestoPct, total: x.total, metodo: x.metodo, categoria: x.categoria, proveedor: x.proveedor, concepto: x.concepto } });
+    return json({ ok: true });
+  }
+  if (accion === "cobro-editar" && req.method === "POST" && (id === "taller" || id === "venta")) {
+    const k = id === "taller" ? "cobro-taller/" + id2 : "venta/" + id2;
+    const reg = (await f().get(k, { type: "json" }).catch(() => null)) as any; if (!reg) return json({ error: "No existe." }, 404);
+    const c = (reg.cobros || []).find((z: Cobro) => z.id === String(body.cobro || "")); if (!c) return json({ error: "Cobro no encontrado." }, 404);
+    if (c.anulado) return json({ error: "Está anulado: no se puede corregir." }, 409);
+    const importe = cent(body.importe); if (!Number.isFinite(importe) || importe <= 0) return json({ error: "Escribe el importe." }, 400);
+    const metodo = COBROS.includes(body.metodo) ? body.metodo : c.metodo, d = fecha(body.fecha) || c.fecha; if (d > hoyCanarias()) return json({ error: "La fecha no puede ser futura." }, 400);
+    const antes = { importe: c.importe, metodo: c.metodo, fecha: c.fecha };
+    c.importe = importe; c.metodo = metodo; c.fecha = d;
+    const e = await cajaSegunMetodo(c, metodo, { tipo: "ingreso", categoria: id === "taller" ? "taller" : "venta", concepto: str(c.nota, 150) || (id === "taller" ? "Cobro de taller" : "Venta de coche"), ref: "", coche: id === "venta" ? id2 : "" });
+    if (e) return json({ error: e }, 409);
+    await f().setJSON(k, reg); await libro(q, "cobro-editar", { tipo: id, ref: id2, cobro: c.id, antes, despues: { importe, metodo, fecha: d } });
+    return json({ ok: true });
+  }
+
   // ---------- ingreso manual (otros ingresos con factura) ----------
   if (accion === "ingreso" && req.method === "POST") {
     const d = fecha(body.fecha); if (!d || d > hoyCanarias()) return json({ error: "Pon la fecha." }, 400);
@@ -391,6 +502,13 @@ export default async (req: Request) => {
     await f().setJSON("ingreso/" + i.id, i);
     await libro(q, "ingreso", { importe: i.total, concepto, metodo });
     return json({ ok: true, ingreso: i }, 201);
+  }
+
+  // ---------- Actualización 74 · empezar de cero (solo gerente; pide escribir la frase y guarda copia antes) ----------
+  if (accion === "reiniciar" && req.method === "POST") {
+    if (String(body.confirmar || "").trim().toUpperCase() !== "EMPEZAR DE CERO") return json({ error: "Para empezar de cero escribe exactamente: EMPEZAR DE CERO" }, 400);
+    try { return json({ ok: true, ...(await reiniciarFinanzas(q)) }); }
+    catch (e: any) { return json({ error: "No se ha podido empezar de cero: " + String(e?.message || e).slice(0, 200) + " Vuelve a intentarlo; si ya se había guardado la copia, no se pierde nada." }, 500); }
   }
 
   // ---------- ajustes del resultado de taller (interruptor de mano de obra y gastos fijos) ----------

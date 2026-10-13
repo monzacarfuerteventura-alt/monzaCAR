@@ -91,22 +91,24 @@
   async function pintarCompras(mi) {
     ACTUAL = "compras"; const s = sec("compras"), d = hoy();
     try {
+      if (window.__peSub) { CO.sub = window.__peSub; window.__peSub = ""; }
       const C = await compras(true), sb = CO.sub;
       const facs = C.facturas.map((f) => ({ ...f, proveedor: provN(C, f.proveedor) })), deuda = E.deudaProveedores(facs, d), pend = C.facturas.filter((f) => f.estado === "pendiente"), venc = pend.filter((f) => f.vence < d);
       const porAprobar = C.pedidos.filter((p) => p.estado === "borrador" && p.aprobacion && p.aprobacion.estado === "pendiente"), sinStock = C.albaranes.filter((a) => a.stock.estado === "pendiente"), abiertos = C.pedidos.filter((p) => ["enviado", "parcial"].includes(p.estado));
-      const acc = { pedidos: '<button class="btn b-acc b-sm" type="button" data-pe="nped">+ Pedido al proveedor</button>', facturas: '<button class="btn b-acc b-sm" type="button" data-pe="nfac">+ Factura de proveedor</button>', proveedores: '<button class="btn b-acc b-sm" type="button" data-pe="nprov">+ Proveedor</button>' }[sb] || "";
+      const acc = { pedidos: '<button class="btn b-acc b-sm" type="button" data-pe="nped">+ Pedido al proveedor</button>', facturas: '<button class="btn b-acc b-sm" type="button" data-pe="nfac">+ Factura de proveedor</button>', proveedores: '<button class="btn b-acc b-sm" type="button" data-pe="nprov">+ Proveedor</button>', dev: '<button class="btn b-acc b-sm" type="button" data-dev="nueva">+ Nueva devolución</button>' }[sb] || "";
       let cuerpo = "";
       if (sb === "pedidos") cuerpo = tabla([{ t: "Nº", k: "num" }, { t: "Fecha", h: (p) => fechaES(p.fecha) }, { t: "Proveedor", h: (p) => H(provN(C, p.proveedor)) }, { t: "Total sin IGIC", n: 1, h: (p) => euros(pedTotal(p)) }, { t: "Estado", h: chipPed }], C.pedidos, { pick: "id", vacio: "Todavía no hay pedidos. Pulsa «+ Pedido al proveedor»." });
       else if (sb === "facturas") cuerpo = tabla([{ t: "Fecha", h: (f) => fechaES(f.fecha) }, { t: "Proveedor", k: "proveedor" }, { t: "Nº", k: "num" }, { t: "Total", n: 1, h: (f) => euros(f.total) }, { t: "Vence", h: (f) => fechaES(f.vence) }, { t: "Estado", h: (f) => chipFac(f, d) }], facs, { pick: "id", vacio: "No hay facturas de proveedor registradas." });
       else if (sb === "proveedores") cuerpo = tabla([{ t: "Proveedor", h: (p) => `<b>${H(p.nombre)}</b>${p.activo ? "" : " " + chip("de baja", "c-piedra")}<br><small>${H(p.nif)}</small>` }, { t: "Contacto", h: (p) => H(p.telefono) + "<br>" + H(p.email) }, { t: "Plazo de pago", n: 1, h: (p) => p.plazoDias + " días" }, { t: "Pedidos", n: 1, h: (p) => C.pedidos.filter((x) => x.proveedor === p.id).length }], C.proveedores, { pick: "id", vacio: "Da de alta a tu primer proveedor." });
       else if (sb === "deuda") cuerpo = tabla([{ t: "Proveedor", k: "proveedor" }, { t: "Facturas", n: 1, k: "n" }, { t: "Total", n: 1, h: (x) => euros(x.total) }, { t: "Vencido", n: 1, h: (x) => (x.vencida ? `<b class="pe-mal">${euros(x.vencida)}</b>` : "—") }, { t: "Primer vencimiento", h: (x) => fechaES(x.primera) || "—" }], deuda, { vacio: "No debes nada a ningún proveedor." });
+      else if (sb === "dev") cuerpo = window.PE_DEV ? await window.PE_DEV.html() : "";
       else cuerpo = await htmlReposicion(C);
       if (!vigente(mi)) return;
       s.innerHTML = cabecera("Compras", "Para lo que compráis vosotros (piezas y material del taller y de la preparación de coches): pedido al proveedor → mercancía recibida (entra sola al inventario) → factura del proveedor → pago (se apunta en Finanzas), sin duplicar nada.", acc)
         + kpis([kpi("Debo a proveedores", euros(deuda.reduce((a, x) => a + x.total, 0)), pend.length + " factura(s) pendiente(s)", venc.length ? "neg" : ""), kpi("Vencido", euros(deuda.reduce((a, x) => a + x.vencida, 0)), venc.length ? venc.length + " factura(s)" : "Nada vencido", venc.length ? "neg" : ""), kpi("Vence en 7 días", euros(deuda.reduce((a, x) => a + x.proxima, 0))), kpi("Pedidos por recibir", String(abiertos.length), abiertos.length ? "Ya pedidos, esperando mercancía" : "Ninguno")])
         + (porAprobar.length && soyGerente() ? `<div class="msg pe-aviso">${porAprobar.length} pedido(s) esperan tu aprobación por ser de un importe grande. <button class="btn b-ghost b-sm" type="button" data-pe="verpend" data-id="${H(porAprobar[0].id)}">Revisar</button></div>` : "")
         + (sinStock.length ? `<div class="msg pe-aviso">${sinStock.length} albarán(es) recibido(s) cuya mercancía NO se ha dado de alta en el inventario. <button class="btn b-ghost b-sm" type="button" data-pe="stock" data-id="${H(sinStock[0].id)}">Dar entrada ahora</button></div>` : "")
-        + `<div class="pe-barra">${seg("csub", [["pedidos", "Pedidos"], ["facturas", "Facturas"], ["proveedores", "Proveedores"], ["deuda", "Lo que debo"], ["rep", "Reposición"]], sb)}</div><div class="card pe-card">${cuerpo}</div>`;
+        + `<div class="pe-barra">${seg("csub", [["pedidos", "Pedidos"], ["facturas", "Facturas"], ["proveedores", "Proveedores"], ["dev", "Devoluciones"], ["deuda", "Lo que debo"], ["rep", "Reposición"]], sb)}</div><div class="card pe-card">${cuerpo}</div>`;
     } catch (e) { porError("compras", e); }
   }
 

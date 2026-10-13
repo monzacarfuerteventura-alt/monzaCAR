@@ -421,6 +421,8 @@ export default async (req: Request) => {
         id, comprador: { nombre: str(c.nombre, 120), nif: str(c.nif, 20).toUpperCase(), direccion: str(c.direccion, 200), telefono: str(c.telefono, 30), email: str(c.email, 120) },
         vehiculo: { descripcion: str((body.vehiculo || {}).descripcion, 160), matricula: str((body.vehiculo || {}).matricula, 12).toUpperCase(), bastidor: str((body.vehiculo || {}).bastidor, 24).toUpperCase() },
         precio: int(body.precio, 0, 1_000_000_000), forma: str(body.forma, 60), fechaEntrega: fecha(body.fechaEntrega), kmEntrega: int(body.kmEntrega, 0, 2_000_000), garantiaMeses: int(body.garantiaMeses, 12, 36, 12),
+        // Act. 74 · «solo motor» solo es posible si el comprador es una empresa o un autónomo que compra para su negocio; un particular siempre tiene la garantía legal completa
+        compradorTipo: body.compradorTipo === "empresa" ? "empresa" : "particular", garantiaSoloMotor: body.compradorTipo === "empresa" && body.garantiaSoloMotor === true,
         notas: str(body.notas, 500), checklist: ch, actualizado: ahora(), por: q.nombre,
       };
       await f().setJSON(P.coche + id, x); await libro(q, "coche-doc", { coche: id });

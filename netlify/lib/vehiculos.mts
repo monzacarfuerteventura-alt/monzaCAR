@@ -69,12 +69,13 @@ export const idFinanzas = (f: Pick<Ficha, "id" | "coche">) => f.coche || VP_PREF
 export const esIdPropio = (id: string) => /^vp-[a-z0-9]{12}$/.test(String(id || ""));
 
 /** Para Finanzas: por cada coche propio (enlazado a la web o no), su reacondicionamiento interno y su compra. */
-export async function costesPorCoche(): Promise<Map<string, { reac: number; compra: number }>> {
-  const m = new Map<string, { reac: number; compra: number }>();
+// Act. 74: además del total (reac), el desglose del reacondicionamiento (piezas del Inventario, horas y otros costes aprobados) para «Margen y documentos»
+export async function costesPorCoche(): Promise<Map<string, { reac: number; compra: number; piezas: number; horas: number; otros: number }>> {
+  const m = new Map<string, { reac: number; compra: number; piezas: number; horas: number; otros: number }>();
   for (const f of await listarFichas().catch(() => [] as Ficha[])) {
     const k = idFinanzas(f);
-    const x = m.get(k) || { reac: 0, compra: 0 };
-    x.reac += costeReacond(f); x.compra += f.compra; m.set(k, x);
+    const x = m.get(k) || { reac: 0, compra: 0, piezas: 0, horas: 0, otros: 0 };
+    x.reac += costeReacond(f); x.compra += f.compra; x.piezas += costePiezas(f); x.horas += costeHoras(f); x.otros += costeOtros(f); m.set(k, x);
   }
   return m;
 }

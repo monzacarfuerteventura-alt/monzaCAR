@@ -4419,7 +4419,7 @@ function tFiltrar(){
 function tBarra(){
   const n=k=>ORDENES.filter(o=>T_FASES[tFase(o.estado)][0]===k).length, al=tAlertasLocal();
   const vistas=[["mios",ES_EQ()?"Mis trabajos":"En marcha"],["tabla","Órdenes"],["tablero","Tablero"]];
-  if(T_ITV_OK()){ const p=tItvPendientes(); vistas.push(["itv",`Avisos de ITV${p?` <b class="num t-itv-n">${p}</b>`:""}`]); }
+  /* Act. 74: los avisos de ITV ya no están en Taller: se ven SOLO en Clientes 360 → «Avisos de ITV» */
   if(typeof vpBadge==="function"){ const n=vpBadge(); vistas.push(["propios",`Coches propios${n?` <b class="num">${n}</b>`:""}`]); } // control interno de coches para vender (tools/vehiculos)
   return `<div class="t-bar">
     <div class="segv" role="group" aria-label="Vista">${vistas.map(([k,t])=>`<button type="button" data-tvista="${k}" aria-pressed="${TVISTA===k}">${t}</button>`).join("")}</div>
@@ -5029,7 +5029,8 @@ const tItvTramo=x=>x.dias<0?"cad":x.dias<=7?"7":"30";
 const tItvHecho=x=>x[{cad:"cad","7":"a7","30":"a30"}[tItvTramo(x)]];
 const tItvPendientes=()=>TITV&&TITV.items?TITV.items.filter(x=>!tItvHecho(x)).length:0;
 async function tItvCargar(){ try{ TITV=await tApi("itv"); TITV_T=Date.now(); }catch(err){ TITV={error:err.message,items:[]}; }
-  if(TVISTA==="itv"){ $("#t-barra").innerHTML=tBarra(); tItvPintar(); } }
+  if(TVISTA==="itv"){ TVISTA="mios"; try{ $("#t-barra").innerHTML=tBarra(); }catch(_){} }
+  const cx=$("#cli-itv"); if(cx) tItvPintar(cx); }
 function tItvTexto(x){ const n=(x.nombre||"").trim().split(/\s+/)[0]||"", coche=(x.coche||"coche")+(x.matricula?` (${x.matricula.toUpperCase()})`:""), f=tF(x.itv), t=tItvTramo(x);
   const baja="\n\nSi no quieres recibir más avisos de ITV, contesta BAJA.";
   if(t==="cad") return `Hola ${n}, somos Volcano Cars, tu taller en Costa de Antigua. Te escribimos porque la ITV de tu ${coche} caducó el ${f}. Si quieres, te revisamos el coche antes de pasarla (Pre-ITV: luces, frenos, neumáticos, emisiones y testigos) para que la pases a la primera. ¿Te damos cita esta semana?${baja}`;
@@ -5046,7 +5047,7 @@ function tItvCard(x){ const t=tItvTramo(x), hecho=tItvHecho(x), coche=esc(x.coch
       :`<div class="t-itv-acts"><a class="btn b-wa b-sm" target="_blank" rel="noopener" href="https://wa.me/${waNum(x.telefono)}?text=${encodeURIComponent(tItvTexto(x))}" data-titv-wa="${esc(x.clave)}" data-titv-t="${t}">${IC.wa}WhatsApp</a><button type="button" class="btn b-ghost b-sm" data-titv-hecho="${esc(x.clave)}" data-titv-t="${t}" title="Si le has avisado por otro medio">Ya avisado</button></div>`}
     <div class="t-itv-acts"><button type="button" class="chipb" data-tabrir="${esc(x.token)}" data-ttab="f1">Ficha ${esc(x.num||"")}</button><button type="button" class="chipb" data-titv-baja="${esc(x.clave)}" data-titv-tel="${esc(x.telefono)}">No quiere avisos</button></div></div>`;
 }
-function tItvPintar(){ const box=$("#ordenes"); if(!box) return;
+function tItvPintar(dest){ const box=dest||$("#ordenes"); if(!box) return;
   if(!TITV){ box.innerHTML='<div class="empty">Cargando avisos de ITV…</div>'; return; }
   if(TITV.error){ box.innerHTML=`<div class="empty">${esc(TITV.error)}</div>`; return; }
   const xs=TITV.items, g=k=>xs.filter(x=>tItvTramo(x)===k).sort((a,b)=>(!!tItvHecho(a))-(!!tItvHecho(b))||a.dias-b.dias);
@@ -5446,18 +5447,18 @@ function cjTurno(id){
   const desg=d=>Object.keys(d||{}).length?`<div class="cj-desg">${Object.entries(d).sort((a,b)=>b[0]-a[0]).map(([v,n])=>`<span>${n} × ${cjDen(+v)}</span>`).join("")}</div>`:'<small class="hint">Sin desglose</small>';
   abrirDrawer(`<div class="dw-head"><div><span class="tipo">Caja</span><h2 class="dw-nombre" style="margin:0">Turno del ${esc(fechaLarga(t.fecha))}</h2></div><button class="x" type="button" data-cerrar aria-label="Cerrar">✕</button></div>
     <section class="dw-box"><h3>Cuadre</h3><table class="tabla"><tbody>
-      <tr><td>Fondo de apertura (${esc(t.apertura.nombre)}, ${esc(tHora(t.apertura.t))})</td><td class="n num">${cjE(k.base)}</td></tr>
+      <tr><td>Fondo de apertura (${esc(t.apertura.nombre)}, ${esc(tHora(t.apertura.t))})</td><td class="n num">${cjE(k.base)}${ES_GER()?` <button type="button" class="chipb" data-cjtedit="${esc(t.id)}" data-donde="apertura" data-val="${t.apertura.contado}">Corregir</button>`:""}</td></tr>
       ${t.apertura.esperado!=null?`<tr><td><small>Quedó en el cierre anterior</small></td><td class="n num"><small>${cjE(t.apertura.esperado)}</small></td></tr>`:""}
       <tr><td>+ Cobros en efectivo</td><td class="n num">${cjE(k.ingresos)}</td></tr><tr><td>− Salidas</td><td class="n num">${cjE(k.egresos)}</td></tr>
       <tr><td><b>Debería haber</b></td><td class="n num"><b>${cjE(k.teorico)}</b></td></tr>
-      ${c?`<tr><td><b>Contado al cerrar</b> (${esc(c.nombre)}, ${esc(tHora(c.t))})</td><td class="n num"><b>${cjE(c.contado)}</b></td></tr><tr class="${c.diferencia?"cj-fdesc":""}"><td><b>Diferencia</b></td><td class="n num"><b class="${c.diferencia<0?"cj-rojo":c.diferencia>0?"cj-ambar":"cj-verde"}">${cjD(c.diferencia)}</b></td></tr>`:""}
+      ${c?`<tr><td><b>Contado al cerrar</b> (${esc(c.nombre)}, ${esc(tHora(c.t))})</td><td class="n num"><b>${cjE(c.contado)}</b>${ES_GER()?` <button type="button" class="chipb" data-cjtedit="${esc(t.id)}" data-donde="cierre" data-val="${c.contado}">Corregir</button>`:""}</td></tr><tr class="${c.diferencia?"cj-fdesc":""}"><td><b>Diferencia</b></td><td class="n num"><b class="${c.diferencia<0?"cj-rojo":c.diferencia>0?"cj-ambar":"cj-verde"}">${cjD(c.diferencia)}</b></td></tr>`:""}
     </tbody></table>
     ${t.apertura.diferencia?`<div class="msg bad" style="margin-top:10px">Apertura con diferencia de ${esc(cjD(t.apertura.diferencia))}: «${esc(t.apertura.justificacion)}»</div>`:""}${t.apertura.corregida?`<div class="msg" style="margin-top:6px">✓ Descuadre de apertura corregido por ${esc(t.apertura.corregida.nombre)}: «${esc(t.apertura.corregida.motivo)}»</div>`:""}${c&&c.corregida?`<div class="msg" style="margin-top:6px">✓ Descuadre de cierre corregido por ${esc(c.corregida.nombre)}: «${esc(c.corregida.motivo)}»</div>`:""}
     ${c&&c.justificacion?`<div class="msg bad" style="margin-top:10px">Explicación de ${esc(c.nombre)}: «${esc(c.justificacion)}»</div>`:""}</section>
     ${c?`<section class="dw-box"><h3>Conteos del cierre</h3>${c.intentos.map((x,i)=>`<div class="cj-int"><b>${i+1}º · ${esc(tHora(x.t))} · ${cjE(x.contado)}</b>${desg(x.desglose)}</div>`).join("")}${c.intentos.length>1?'<p class="hint">Varios recuentos: el empleado volvió a contar porque no cuadraba. Compara los importes.</p>':""}</section>`:""}
     <section class="dw-box"><h3>Movimientos (${t.movimientos.length})</h3>${t.movimientos.length?t.movimientos.map(m=>`<div class="cj-mov ${m.tipo} ${m.anulado?"anulado":""}"><i>${m.tipo==="egreso"?"−":"+"}</i><div><b>${esc(m.concepto)}</b><small>${esc(tHora(m.t))} · ${esc(CJ_TXT[m.categoria]||m.categoria)}${m.ref?" · "+esc(m.ref):""} · registra ${esc(m.porNombre)}${m.tipo==="egreso"?" · se lo lleva "+esc(m.responsableNombre):""}${m.ajuste?" · AJUSTE DEL GERENTE":""}</small>
       ${m.foto?`<a href="${FOTO(m.foto)}" target="_blank" rel="noopener" class="cj-tkimg">${m.foto.endsWith(".pdf")?'<span class="chip">Factura PDF</span>':`<img src="${FOTO(m.foto)}" alt="Ticket">`}</a>${m.sinTicket?`<small class="cj-ambar">Ticket añadido después (${esc(fechaHora(m.fotoT))})</small>`:""}`:m.tipo==="egreso"&&!m.ajuste?'<span class="chip rojo">Sin ticket</span>':""}
-      ${m.anulado?`<small class="cj-rojo">Anulado: ${esc(m.anulado.motivo)} (${esc(fechaHora(m.anulado.t))})</small>`:`<button type="button" class="chipb" data-cjanular="${esc(m.id)}" style="margin-top:6px">Anular</button>`}</div><b class="num">${m.tipo==="egreso"?"−":"+"}${cjE(m.importe)}</b></div>`).join(""):'<p class="hint">Sin movimientos.</p>'}</section>
+      ${m.anulado?`<small class="cj-rojo">Anulado: ${esc(m.anulado.motivo)} (${esc(fechaHora(m.anulado.t))})</small>`:`<button type="button" class="chipb" data-cjanular="${esc(m.id)}" style="margin-top:6px">Anular</button>${ES_GER()?` <button type="button" class="chipb" data-cjedit="${esc(m.id)}" data-imp="${m.importe}" data-con="${esc(m.concepto)}" data-tipo="${m.tipo}" data-cat="${esc(m.categoria)}" data-ref="${esc(m.ref||"")}" style="margin-top:6px">Corregir</button>`:""}`}</div><b class="num">${m.tipo==="egreso"?"−":"+"}${cjE(m.importe)}</b></div>`).join(""):'<p class="hint">Sin movimientos.</p>'}</section>
     ${t.ajustes.length?`<section class="dw-box"><h3>Ajustes del gerente</h3>${t.ajustes.map(a=>`<p style="margin:0 0 6px"><b>${esc(fechaHora(a.t))}</b> · ${esc(a.tipo)} ${esc(cjD(a.importe))} · ${esc(a.concepto)}<br><small>Motivo: ${esc(a.motivo)}</small></p>`).join("")}</section>`:""}
     ${c?`<section class="dw-box"><h3>Revisión</h3>${t.revision?`<div class="t-firmado"><span class="t-sello">✓</span><span><b>Revisado</b><small>${esc(fechaHora(t.revision.t))} · ${esc(t.revision.nota)}</small></span></div>`:`<div class="quick"><input class="in" id="cj-rev" placeholder="Qué has comprobado o decidido (p. ej. «Lo repone de su sueldo»)" maxlength="400" style="flex:1 1 240px"><button type="button" class="btn b-brand b-sm" data-cjrevisar="${esc(t.id)}">Dar por revisado</button></div>`}</section>
     <section class="dw-box"><h3>Ajuste del gerente</h3><p class="hint" style="margin:0 0 8px">Para corregir un turno cerrado (un cobro que no se registró, una salida olvidada…). No borra nada: añade un movimiento marcado como ajuste, recalcula la diferencia y queda en el libro.</p>
@@ -5673,23 +5674,25 @@ async function rsMostrar(token){ try{ const o=ORDENES.find(z=>z.token===token), 
 /* Emitir la factura preguntando cómo ha pagado: el dinero entra solo en Finanzas y, si es efectivo, en la Caja */
 function fcEmitirDlg(){ const tot=Math.round(fcTotales(TW.f5).total*100);
   const d=fnDlg(`<form id="f-fn" novalidate><h2>Emitir la factura</h2><p class="hint">Total de la factura (IGIC incluido): <b>${cjE(tot)}</b>. Queda bloqueada con su número definitivo; si hay que corregirla, el gerente la reabre y sale como rectificativa.</p>
-    <div class="field"><label>¿Cómo ha pagado el cliente? *</label>${fnSeg("fn-met",[...FN_COBRO,["pendiente","Todavía no ha pagado"]],"")}<small class="hint" id="fn-met-h">Elige una opción: así el dinero entra en Finanzas en el mismo momento.</small></div>
-    <div class="field" id="fn-imp-box" hidden><label for="fn-importe">Importe cobrado ahora (€)</label><input class="in num cj-imp" id="fn-importe" inputmode="decimal" value="${(tot/100).toFixed(2).replace(".",",")}"><small class="hint">Si deja una entrega a cuenta, pon solo lo que paga ahora: el resto queda en «Por cobrar».</small></div>
+    <div class="field"><label>¿Cómo ha pagado el cliente? *</label>${fnSeg("fn-met",[...FN_COBRO_MX,["pendiente","Todavía no ha pagado"]],"")}<small class="hint" id="fn-met-h">Elige una opción: así el dinero entra en Finanzas en el mismo momento.</small></div>
+    <div class="field" id="fn-imp-box" hidden><label for="fn-importe">Importe cobrado ahora (€)</label><input class="in num cj-imp" id="fn-importe" inputmode="decimal" value="${(tot/100).toFixed(2).replace(".",",")}"><small class="hint">Si deja una entrega a cuenta, pon solo lo que paga ahora: el resto queda en «Por cobrar».</small></div>${fnMixtoHtml()}
     <div class="msg bad" id="fn-aviso" hidden></div><div class="msg bad" id="fn-err" hidden></div>
     <div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-fncancel>Cancelar</button><button type="submit" class="btn b-acc" id="fn-ok">Emitir factura</button></div></form>`);
-  const avisar=()=>{ const v=fnSegVal("fn-met"), imp=cjNum($("#fn-importe").value); $("#fn-imp-box").hidden=!v||v==="pendiente";
-    $("#fn-met-h").textContent=v==="efectivo"?"Entra en la caja abierta de hoy (suma a su teórico) y en Finanzas.":v==="pendiente"?"La factura queda emitida y «Por cobrar» en Finanzas. Cuando pague, usa «Registrar cobro».":v==="financiacion"?"La financiera paga al taller: cuenta como cobrado.":v?"Entra en Finanzas como cobrado por banco (no toca el cajón).":"";
-    $("#fn-aviso").hidden=!(v==="efectivo"&&imp>=1000); $("#fn-aviso").textContent="Ojo: en España los pagos en efectivo de 1.000 € o más entre una empresa y un particular no están permitidos (Ley 11/2021). Confírmalo con tu gestoría."; };
-  fnSegBind("fn-met",avisar); $("#fn-importe").oninput=avisar;
+  let MX=null;
+  const avisar=()=>{ const v=fnSegVal("fn-met"), imp=cjNum($("#fn-importe").value); $("#fn-imp-box").hidden=!v||v==="pendiente"; $("#fn-mixto").hidden=v!=="mixto";
+    $("#fn-met-h").textContent=v==="efectivo"?"Entra en la caja abierta de hoy (suma a su teórico) y en Finanzas.":v==="mixto"?"Una parte entra en la caja abierta (efectivo) y la otra en Finanzas como banco (transferencia).":v==="pendiente"?"La factura queda emitida y «Por cobrar» en Finanzas. Cuando pague, usa «Registrar cobro».":v==="financiacion"?"La financiera paga al taller: cuenta como cobrado.":v?"Entra en Finanzas como cobrado por banco (no toca el cajón).":"";
+    if(v==="mixto"&&MX) MX.act("ef"); else { $("#fn-aviso").hidden=!(v==="efectivo"&&imp>=1000); $("#fn-aviso").textContent="Ojo: en España los pagos en efectivo de 1.000 € o más entre una empresa y un particular no están permitidos (Ley 11/2021). Confírmalo con tu gestoría."; } };
+  fnSegBind("fn-met",avisar); $("#fn-importe").addEventListener("input",avisar); MX=fnMixtoBind();
   $("#f-fn").onsubmit=async e=>{ e.preventDefault(); $("#fn-err").hidden=true; const met=fnSegVal("fn-met");
     if(!met) return fnErr("Elige cómo ha pagado el cliente (o «Todavía no ha pagado»).");
-    let imp=0; if(met!=="pendiente"){ imp=cjNum($("#fn-importe").value); if(!(imp>0)) return fnErr("Escribe el importe cobrado."); if(Math.round(imp*100)>tot) return fnErr("El importe cobrado no puede ser mayor que el total de la factura ("+cjE(tot)+")."); }
+    let imp=0, mx=null; if(met!=="pendiente"){ imp=cjNum($("#fn-importe").value); if(!(imp>0)) return fnErr("Escribe el importe cobrado."); if(Math.round(imp*100)>tot) return fnErr("El importe cobrado no puede ser mayor que el total de la factura ("+cjE(tot)+")."); if(met==="mixto"){ mx=MX.leer(); const em=fnMixtoValida(mx); if(em) return fnErr(em); } }
     $("#fn-ok").disabled=true;
     try{
-      if(met==="efectivo"){ const c=await api("/api/caja/estado"); if(!c.abierta){ $("#fn-ok").disabled=false; return fnErr("La caja está cerrada. Ábrela en Control de Caja o elige otra forma de pago. La factura NO se ha emitido."); } }
+      if(met==="efectivo"||met==="mixto"){ const c=await api("/api/caja/estado"); if(!c.abierta){ $("#fn-ok").disabled=false; return fnErr("La caja está cerrada. Ábrela en Control de Caja o elige otra forma de pago. La factura NO se ha emitido."); } }
       await tGuardar(true);
       d.close(); if(!(TF&&TF.fichas.f5&&TF.fichas.f5.cerrada)) return; // faltan datos: ya se muestran en la ficha
       if(met==="pendiente"){ toast("Factura emitida. Queda «Por cobrar» en Finanzas."); return; }
+      if(mx){ try{ await fnCobroMixto(`/api/finanzas/cobro/taller/${encodeURIComponent(TF.orden.token)}`,mx,hoyC()); toast(`Factura emitida y cobro registrado: ${cjE(mx.e)} en efectivo (en la Caja) y ${cjE(mx.t)} por transferencia`); } catch(err){ toast("Factura emitida, pero: "+err.message); } return; }
       try{ await fnCobroPost(`/api/finanzas/cobro/taller/${encodeURIComponent(TF.orden.token)}`,{importe:String(imp),metodo:met,fecha:hoyC()}); toast(`Factura emitida y cobro de ${cjE(Math.round(imp*100))} registrado`+(met==="efectivo"?" en la Caja y en Finanzas":" en Finanzas")); }
       catch(err){ toast("Factura emitida, pero el cobro NO se registró: "+err.message+" Regístralo en Finanzas → Por cobrar."); }
     }catch(err){ fnErr(err.message); }
@@ -5734,12 +5737,12 @@ function fnEmitidas(){
   const l=FN.emitidas.filter(d=>FN_VISTA_E==="todas"||d.area===FN_VISTA_E);
   return `<section class="card"><div class="fn-th"><h3>Facturas emitidas · ingresos <span class="num">${FN.emitidas.length}</span></h3><div class="segv" role="group">${[["todas","Todas"],["taller","Taller"],["venta","Venta"],["general","Otros"]].map(([k,t])=>`<button type="button" data-fnve="${k}" aria-pressed="${FN_VISTA_E===k}">${t}</button>`).join("")}</div></div>
    ${l.length?`<div class="tabla-wrap"><table class="tabla fn-t"><thead><tr><th>Fecha</th><th>Concepto</th><th class="n">Base</th><th class="n">Impuesto</th><th class="n">Total</th><th>Cobro</th><th></th></tr></thead><tbody>${l.map(d=>{ const pend=d.total-d.cobrado, canales=[...new Set(d.cobros.map(c=>FN_MTXT[c.metodo]))].join(" + ");
-     return `<tr><td class="num">${esc(tF(d.fecha))}<small>${esc(d.num||"")}</small></td><td><b>${esc(d.concepto)}</b><small>${esc(d.cliente||"")}${d.estimado?' · <span class="cj-ambar">precio estimado</span>':""}${d.sinPresupuesto?' · <span class="cj-ambar">cobrado sin presupuesto aceptado</span>':""}${d.facturaEmitida?' · <span class="chip ok">Factura emitida</span>':""}${d.faltaFactura?' · <span class="cj-ambar">presupuesto aceptado: falta emitir la factura (Taller → FORM-06)</span>':""}${d.sinFactura?" · cobro de caja":""}</small></td><td class="n num">${cjE(d.base)}</td><td class="n num">${cjE(d.impuesto)}<small>${fnPctTxt(d.impuestoPct)}</small></td><td class="n num"><b>${cjE(d.total)}</b></td><td>${pend<=0?`<span class="chip ok">Cobrado</span>`:d.cobrado?`<span class="chip">Parcial</span>`:`<span class="chip rojo">Pendiente</span>`}<small>${esc(canales)}</small>${(d.tipo==="taller"||d.tipo==="venta")?d.cobros.filter(c=>c.origen==="finanzas").map(c=>`<button type="button" class="chipb" data-fncobroanular="${d.tipo}" data-ref="${esc(d.ref)}" data-cobro="${esc(c.id)}" data-imp="${esc(cjE(c.importe))}">Anular cobro ${esc(cjE(c.importe))}</button>`).join(""):""}</td><td class="n">${d.tipo==="manual"?`<button type="button" class="chipb" data-fnanular="ingreso" data-id="${esc(d.ref)}">Anular</button>`:""}${d.adjunto?fnAdj(d.adjunto):""}</td></tr>`; }).join("")}</tbody></table></div>`:'<p class="hint">Sin ingresos en este periodo.</p>'}</section>`;
+     return `<tr><td class="num">${esc(tF(d.fecha))}<small>${esc(d.num||"")}</small></td><td><b>${esc(d.concepto)}</b><small>${esc(d.cliente||"")}${d.estimado?' · <span class="cj-ambar">precio estimado</span>':""}${d.sinPresupuesto?' · <span class="cj-ambar">cobrado sin presupuesto aceptado</span>':""}${d.facturaEmitida?' · <span class="chip ok">Factura emitida</span>':""}${d.faltaFactura?' · <span class="cj-ambar">presupuesto aceptado: falta emitir la factura (Taller → FORM-06)</span>':""}${d.sinFactura?" · cobro de caja":""}</small></td><td class="n num">${cjE(d.base)}</td><td class="n num">${cjE(d.impuesto)}<small>${fnPctTxt(d.impuestoPct)}</small></td><td class="n num"><b>${cjE(d.total)}</b></td><td>${pend<=0?`<span class="chip ok">Cobrado</span>`:d.cobrado?`<span class="chip">Parcial</span>`:`<span class="chip rojo">Pendiente</span>`}<small>${esc(canales)}</small>${(d.tipo==="taller"||d.tipo==="venta")?d.cobros.filter(c=>c.origen==="finanzas").map(c=>`<button type="button" class="chipb" data-fncobroanular="${d.tipo}" data-ref="${esc(d.ref)}" data-cobro="${esc(c.id)}" data-imp="${esc(cjE(c.importe))}">Anular cobro ${esc(cjE(c.importe))}</button><button type="button" class="chipb" data-fncobroedit="${d.tipo}" data-ref="${esc(d.ref)}" data-cobro="${esc(c.id)}" data-imp="${c.importe}" data-met="${esc(c.metodo)}" data-fec="${esc(c.fecha)}">Corregir cobro</button>`).join(""):""}</td><td class="n">${d.tipo==="manual"?`<button type="button" class="chipb" data-fnanular="ingreso" data-id="${esc(d.ref)}">Anular</button> <button type="button" class="chipb" data-fnedit="ingreso" data-id="${esc(d.ref)}">Corregir</button>`:""}${d.adjunto?fnAdj(d.adjunto):""}</td></tr>`; }).join("")}</tbody></table></div>`:'<p class="hint">Sin ingresos en este periodo.</p>'}</section>`;
 }
 function fnRecibidas(){
   const l=FN.recibidas;
   return `<section class="card"><div class="fn-th"><h3>Facturas recibidas · gastos <span class="num">${l.length}</span></h3><button type="button" class="btn b-acc b-sm" data-fngasto>− Nuevo gasto</button></div>
-   ${l.length?`<div class="tabla-wrap"><table class="tabla fn-t"><thead><tr><th>Fecha</th><th>Proveedor · concepto</th><th>Categoría</th><th class="n">Base</th><th class="n">Impuesto</th><th class="n">Total</th><th>Pago</th><th></th></tr></thead><tbody>${l.map(g=>`<tr class="${g.sinClasificar?"fn-sc":""}"><td class="num">${esc(tF(g.fecha))}<small>${esc(g.factura||"")}</small></td><td><b>${esc(g.proveedor||"—")}</b><small>${esc(g.concepto)}${g.cocheNombre?" · "+esc(g.cocheNombre):""}</small></td><td>${esc(FN_CATTXT[g.categoria]||g.categoria)}<small>${esc(FN_AREA[g.area]||"")}</small></td><td class="n num">${cjE(g.base)}</td><td class="n num">${cjE(g.impuesto)}<small>${fnPctTxt(g.impuestoPct)}</small></td><td class="n num"><b>${cjE(g.total)}</b></td><td>${esc(FN_MTXT[g.metodo]||g.metodo)}${g.origen==="caja"?"<small>salida de caja</small>":g.cajaMov?"<small>salió de la caja</small>":""}</td><td class="n">${fnAdj(g.adjunto)}${g.origen==="gasto"?` <button type="button" class="chipb" data-fnanular="gasto" data-id="${esc(g.id)}">Anular</button>`:g.sinClasificar?` <button type="button" class="chipb" data-fnclasif="${esc(g.cajaMov)}" data-txt="${esc(g.concepto)}" data-imp="${g.total}">Clasificar</button>`:""}</td></tr>`).join("")}</tbody></table></div>`:'<p class="hint">Sin gastos en este periodo.</p>'}</section>`;
+   ${l.length?`<div class="tabla-wrap"><table class="tabla fn-t"><thead><tr><th>Fecha</th><th>Proveedor · concepto</th><th>Categoría</th><th class="n">Base</th><th class="n">Impuesto</th><th class="n">Total</th><th>Pago</th><th></th></tr></thead><tbody>${l.map(g=>`<tr class="${g.sinClasificar?"fn-sc":""}"><td class="num">${esc(tF(g.fecha))}<small>${esc(g.factura||"")}</small></td><td><b>${esc(g.proveedor||"—")}</b><small>${esc(g.concepto)}${g.cocheNombre?" · "+esc(g.cocheNombre):""}</small></td><td>${esc(FN_CATTXT[g.categoria]||g.categoria)}<small>${esc(FN_AREA[g.area]||"")}</small></td><td class="n num">${cjE(g.base)}</td><td class="n num">${cjE(g.impuesto)}<small>${fnPctTxt(g.impuestoPct)}</small></td><td class="n num"><b>${cjE(g.total)}</b></td><td>${esc(FN_MTXT[g.metodo]||g.metodo)}${g.origen==="caja"?"<small>salida de caja</small>":g.cajaMov?"<small>salió de la caja</small>":""}</td><td class="n">${fnAdj(g.adjunto)}${g.origen==="gasto"?` <button type="button" class="chipb" data-fnanular="gasto" data-id="${esc(g.id)}">Anular</button> <button type="button" class="chipb" data-fnedit="gasto" data-id="${esc(g.id)}">Corregir</button>`:g.sinClasificar?` <button type="button" class="chipb" data-fnclasif="${esc(g.cajaMov)}" data-txt="${esc(g.concepto)}" data-imp="${g.total}">Clasificar</button>`:""}</td></tr>`).join("")}</tbody></table></div>`:'<p class="hint">Sin gastos en este periodo.</p>'}</section>`;
 }
 function fnCoches(){
   const v=FN.coches.filter(c=>{ const [a,b]=fnRango(); return c.fecha>=a&&c.fecha<=b; }), s=FN.stock;
@@ -5819,19 +5822,46 @@ async function fnCobroPost(url,obj){
   try{ return await api(url,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(obj)}); }
   catch(e){ if(/se pasa de/.test(e.message||"") && confirm(e.message+"\n\n¿Guardar el cobro igualmente?")) return await api(url,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({...obj,confirmarExceso:true})}); throw e; }
 }
+/* ===== Act. 74 · pago dividido: una parte en efectivo y otra por transferencia (hay clientes que pagan así) ===== */
+const FN_COBRO_MX=[FN_COBRO[0],FN_COBRO[1],FN_COBRO[2],["mixto","Efectivo + transferencia"],FN_COBRO[3]];
+const fnMixtoHtml=()=>`<div class="fn-mixto" id="fn-mixto" hidden><div class="t-g2"><div class="field"><label for="fn-mx-ef">💵 Pagó en efectivo (€)</label><input class="in num cj-imp" id="fn-mx-ef" inputmode="decimal" placeholder="0,00"></div><div class="field"><label for="fn-mx-tr">🏦 Pagó por transferencia (€)</label><input class="in num cj-imp" id="fn-mx-tr" inputmode="decimal" placeholder="0,00"></div></div><small class="hint" id="fn-mx-h">Escribe lo que pagó en efectivo y el resto se pone solo como transferencia. El efectivo entra en la caja abierta; la transferencia, en Finanzas (banco).</small></div>`;
+function fnMixtoBind(){
+  const ef=$("#fn-mx-ef"), tr=$("#fn-mx-tr"), tot=$("#fn-importe"); if(!ef||!tr||!tot) return { act(){}, leer:()=>null };
+  const act=desde=>{ const T=Math.round((cjNum(tot.value)||0)*100);
+    if(desde==="ef"){ const e=Math.round((cjNum(ef.value)||0)*100); tr.value=T-e>0?((T-e)/100).toFixed(2).replace(".",","):""; }
+    if(desde==="tr"){ const t=Math.round((cjNum(tr.value)||0)*100); ef.value=T-t>0?((T-t)/100).toFixed(2).replace(".",","):""; }
+    const e=Math.round((cjNum(ef.value)||0)*100), t=Math.round((cjNum(tr.value)||0)*100);
+    $("#fn-mx-h").textContent=`Efectivo ${cjE(e)} + transferencia ${cjE(t)} = ${cjE(e+t)}`+(T&&e+t!==T?` · falta ${cjE(T-e-t)} para llegar a ${cjE(T)}`:T?" ✓":"");
+    const av=$("#fn-aviso"); if(av&&!$("#fn-mixto").hidden){ av.hidden=!(e>=100000); av.textContent="Ojo: en España los pagos en efectivo de 1.000 € o más entre una empresa y un particular no están permitidos (Ley 11/2021). Confírmalo con tu gestoría."; } };
+  ef.oninput=()=>act("ef"); tr.oninput=()=>act("tr"); tot.addEventListener("input",()=>act("ef"));
+  return { act, leer(){ return { T:Math.round((cjNum(tot.value)||0)*100), e:Math.round((cjNum(ef.value)||0)*100), t:Math.round((cjNum(tr.value)||0)*100) }; } };
+}
+function fnMixtoValida(m){ if(!m) return "Escribe las dos cantidades."; if(!(m.T>0)) return "Escribe el importe cobrado."; if(!(m.e>0)||!(m.t>0)) return "En «Efectivo + transferencia» las dos partes tienen que ser mayores que 0. Si pagó todo de una sola forma, elige solo esa."; if(m.e+m.t!==m.T) return `Efectivo (${cjE(m.e)}) + transferencia (${cjE(m.t)}) suman ${cjE(m.e+m.t)}, no ${cjE(m.T)}.`; return ""; }
+async function fnCobroMixto(url,m,fecha){
+  const c=await api("/api/caja/estado"); if(!c.abierta) throw new Error("La caja está cerrada. Ábrela en Control de Caja para anotar la parte en efectivo, o elige solo transferencia. No se ha registrado ningún cobro.");
+  await fnCobroPost(url,{importe:(m.e/100).toFixed(2),metodo:"efectivo",fecha});
+  try{ await fnCobroPost(url,{importe:(m.t/100).toFixed(2),metodo:"transferencia",fecha}); }
+  catch(err){ throw new Error("La parte en EFECTIVO ("+cjE(m.e)+") SÍ se registró, pero la TRANSFERENCIA ("+cjE(m.t)+") NO: "+err.message+" Regístrala ahora con «Registrar cobro» (solo la transferencia)."); }
+}
 function fnCobro(tipo,ref,pend,txt){
   const d=fnDlg(`<form id="f-fn" novalidate><h2>Registrar cobro</h2><p class="hint">${esc(txt)}</p>
     <div class="t-g2"><div class="field"><label for="fn-importe">Importe cobrado (€) *</label><input class="in num cj-imp" id="fn-importe" inputmode="decimal" value="${(pend/100).toFixed(2).replace(".",",")}"></div><div class="field"><label for="fn-fecha">Fecha</label><input class="in" type="date" id="fn-fecha" value="${hoyC()}" max="${hoyC()}"></div></div>
-    <div class="field"><label>¿Cómo ha pagado? *</label>${fnSeg("fn-met",FN_COBRO,"")}<small class="hint" id="fn-met-h"></small></div>
+    <div class="field"><label>¿Cómo ha pagado? *</label>${fnSeg("fn-met",FN_COBRO_MX,"")}<small class="hint" id="fn-met-h"></small></div>${fnMixtoHtml()}
     <div class="msg bad" id="fn-aviso" hidden></div><div class="msg bad" id="fn-err" hidden></div>
     <div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-fncancel>Cancelar</button><button type="submit" class="btn b-acc" id="fn-ok">Guardar cobro</button></div></form>`);
-  const avisar=()=>{ const v=fnSegVal("fn-met"), imp=cjNum($("#fn-importe").value); $("#fn-met-h").textContent=v==="efectivo"?"Entra en la caja abierta de hoy (suma a su teórico).":v==="financiacion"?"La financiera paga al concesionario: cuenta como cobrado.":"";
-    $("#fn-aviso").hidden=!(v==="efectivo"&&imp>=1000); $("#fn-aviso").textContent="Ojo: en España los pagos en efectivo de 1.000 € o más entre una empresa y un particular no están permitidos (Ley 11/2021). Confírmalo con tu gestoría."; };
-  fnSegBind("fn-met",avisar); $("#fn-importe").oninput=avisar;
+  let MX=null;
+  const avisar=()=>{ const v=fnSegVal("fn-met"), imp=cjNum($("#fn-importe").value); $("#fn-mixto").hidden=v!=="mixto"; $("#fn-met-h").textContent=v==="efectivo"?"Entra en la caja abierta de hoy (suma a su teórico).":v==="mixto"?"Una parte entra en la caja (efectivo) y la otra en Finanzas como banco (transferencia).":v==="financiacion"?"La financiera paga al concesionario: cuenta como cobrado.":"";
+    if(v==="mixto"&&MX) MX.act("ef");
+    else { $("#fn-aviso").hidden=!(v==="efectivo"&&imp>=1000); $("#fn-aviso").textContent="Ojo: en España los pagos en efectivo de 1.000 € o más entre una empresa y un particular no están permitidos (Ley 11/2021). Confírmalo con tu gestoría."; } };
+  fnSegBind("fn-met",avisar); $("#fn-importe").addEventListener("input",avisar); MX=fnMixtoBind();
   $("#f-fn").onsubmit=async e=>{ e.preventDefault(); $("#fn-err").hidden=true; const imp=cjNum($("#fn-importe").value), met=fnSegVal("fn-met");
-    if(!(imp>0)) return fnErr("Escribe el importe."); if(!met) return fnErr("Elige cómo ha pagado."); $("#fn-ok").disabled=true;
-    try{ await fnCobroPost(`/api/finanzas/cobro/${tipo}/${encodeURIComponent(ref)}`,{importe:String(imp),metodo:met,fecha:$("#fn-fecha").value});
-      d.close(); toast("Cobro registrado"+(met==="efectivo"?" y sumado a la caja":"")); fnCargar(); }catch(err){ fnErr(err.message); }
+    if(!(imp>0)) return fnErr("Escribe el importe."); if(!met) return fnErr("Elige cómo ha pagado.");
+    let mx=null; if(met==="mixto"){ mx=MX.leer(); const em=fnMixtoValida(mx); if(em) return fnErr(em); }
+    $("#fn-ok").disabled=true;
+    try{ const url=`/api/finanzas/cobro/${tipo}/${encodeURIComponent(ref)}`;
+      if(mx){ await fnCobroMixto(url,mx,$("#fn-fecha").value); d.close(); toast(`Cobro registrado: ${cjE(mx.e)} en efectivo (sumado a la caja) y ${cjE(mx.t)} por transferencia`); fnCargar(); }
+      else { await fnCobroPost(url,{importe:String(imp),metodo:met,fecha:$("#fn-fecha").value});
+        d.close(); toast("Cobro registrado"+(met==="efectivo"?" y sumado a la caja":"")); fnCargar(); } }catch(err){ fnErr(err.message); if(/SÍ se registró/.test(err.message)) fnCargar(); }
     $("#fn-ok").disabled=false; };
 }
 async function fnVenta(id,alTerminar){
@@ -5847,16 +5877,19 @@ async function fnVenta(id,alTerminar){
     <div class="field"><label for="fn-compra">Lo que costó comprarlo (€) *</label><input class="in num cj-imp" id="fn-compra" inputmode="decimal" ${vpf?"readonly ":""}value="${vpf?(vpf.compra/100).toFixed(2).replace(".",","):v&&v.compra?(v.compra/100).toFixed(2).replace(".",","):""}" placeholder="0,00">${vpf?'<small class="hint">Viene de la ficha del coche. Para cambiarla: Taller → Coches propios → Editar datos.</small>':""}</div></div>
     <div class="t-g2"><div class="field"><label for="fn-fecha">Fecha de venta</label><input class="in" type="date" id="fn-fecha" value="${v?v.fecha:hoyC()}" max="${hoyC()}"></div><div class="field"><label for="fn-imp">Impuesto incluido en el precio</label><select class="in" id="fn-imp"><option value="0">Sin desglosar (REBU u otro: lo ve tu gestoría)</option><option value="7">7 % IGIC</option><option value="21">21 % IVA</option></select></div></div>
     <div class="t-g2"><div class="field"><label for="fn-cli">Comprador</label><input class="in" id="fn-cli" maxlength="120"></div><div class="field"><label for="fn-fact">Nº de factura o contrato</label><input class="in" id="fn-fact" maxlength="40"></div></div>
-    ${!v||v.estimado?`<div class="field"><label>Forma de pago de lo cobrado ahora</label>${fnSeg("fn-met",[...FN_COBRO,["","Aún sin cobrar"]],"")}<small class="hint">El reacondicionamiento (gastos con este coche) se descuenta solo.</small></div><div class="msg bad" id="fn-aviso" hidden>Ojo: en España los pagos en efectivo de 1.000 € o más entre una empresa y un particular no están permitidos (Ley 11/2021). Confírmalo con tu gestoría.</div>`:""}
+    ${!v||v.estimado?`<div class="field"><label>Forma de pago de lo cobrado ahora</label>${fnSeg("fn-met",[...FN_COBRO_MX,["","Aún sin cobrar"]],"")}<small class="hint">El reacondicionamiento (gastos con este coche) se descuenta solo.</small></div>${fnMixtoHtml()}<div class="msg bad" id="fn-aviso" hidden>Ojo: en España los pagos en efectivo de 1.000 € o más entre una empresa y un particular no están permitidos (Ley 11/2021). Confírmalo con tu gestoría.</div>`:""}
     <div class="msg bad" id="fn-err" hidden></div>
     <div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-fncancel>Más tarde</button><button type="submit" class="btn b-acc" id="fn-ok">Guardar la venta</button></div></form>`);
-  if($("#fn-met")) fnSegBind("fn-met",x=>{ $("#fn-aviso").hidden=!(x==="efectivo"&&cjNum($("#fn-importe").value)>=1000); });
+  let MX=null;
+  if($("#fn-met")){ MX=fnMixtoBind(); fnSegBind("fn-met",x=>{ $("#fn-mixto").hidden=x!=="mixto"; if(x==="mixto") MX.act("ef"); else $("#fn-aviso").hidden=!(x==="efectivo"&&cjNum($("#fn-importe").value)>=1000); }); }
   $("#f-fn").onsubmit=async e=>{ e.preventDefault(); $("#fn-err").hidden=true; const imp=cjNum($("#fn-importe").value), compra=cjNum($("#fn-compra").value||"0");
     if(!(imp>0)) return fnErr("Escribe el precio final."); if(!(compra>=0)) return fnErr("Escribe el coste de compra (0 si no lo sabes aún).");
+    let mx=null; if($("#fn-met")&&fnSegVal("fn-met")==="mixto"){ mx=MX.leer(); const em=fnMixtoValida(mx); if(em) return fnErr(em); try{ const cj=await api("/api/caja/estado"); if(!cj.abierta) return fnErr("La caja está cerrada. Ábrela en Control de Caja para anotar la parte en efectivo, o elige solo transferencia. La venta NO se ha guardado."); }catch(err){ return fnErr(err.message); } }
     $("#fn-ok").disabled=true;
     try{ await api("/api/finanzas/venta/"+encodeURIComponent(id),{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({importe:String(imp),costeCompra:String(compra),fecha:$("#fn-fecha").value,igicPct:$("#fn-imp").value,comprador:$("#fn-cli").value,factura:$("#fn-fact").value})});
       const met=$("#fn-met")?fnSegVal("fn-met"):""; let aviso="";
-      if(met){ try{ await fnCobroPost(`/api/finanzas/cobro/venta/${encodeURIComponent(id)}`,{importe:String(imp),metodo:met,fecha:$("#fn-fecha").value}); }catch(err){ aviso=" · el cobro no se pudo guardar: "+err.message; } }
+      if(mx){ try{ await fnCobroMixto(`/api/finanzas/cobro/venta/${encodeURIComponent(id)}`,mx,$("#fn-fecha").value); }catch(err){ aviso=" · "+err.message; } }
+      else if(met){ try{ await fnCobroPost(`/api/finanzas/cobro/venta/${encodeURIComponent(id)}`,{importe:String(imp),metodo:met,fecha:$("#fn-fecha").value}); }catch(err){ aviso=" · el cobro no se pudo guardar: "+err.message; } }
       d.close(); toast("Venta registrada"+aviso); if(!$("#s-fin").hidden) fnCargar(); if(typeof alTerminar==="function") await alTerminar(); }catch(err){ fnErr(err.message); }
     $("#fn-ok").disabled=false; };
 }
@@ -9763,6 +9796,8 @@ async function guiaPDF(solo){
 <script src="/erp-logic.js" defer></script>
 <script src="/panel-erp.js" defer></script>
 <script src="/panel-erp2.js" defer></script>
+<script src="/panel-devoluciones.js" defer></script>
+<script src="/panel-orden.js" defer></script>
 <script src="/panel-conta.js" defer></script>
 <script src="/panel-diagnostico.js" defer></script>
 <script src="/panel-plus.js" defer></script>

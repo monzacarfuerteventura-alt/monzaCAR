@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { store, json, mismoOrigen } from "../lib/shared.mts";
 import { quien, leerEquipo, hoyCanarias, horaCanarias, pinOk } from "../lib/taller.mts";
 import { herramientasPendientes } from "../lib/almacen.mts";
-import { s, str, cent, eur, esFoto, rid, ahora, leerDesglose, libro, alerta, listar, movsDe, teorico, turnoAbierto, leerMov, crearMovimiento, TXT_CAT, type Conteo, type Turno, type Mov } from "../lib/caja.mts";
+import { s, str, cent, eur, esFoto, rid, ahora, leerDesglose, libro, alerta, listar, movsDe, teorico, turnoAbierto, leerMov, crearMovimiento, TXT_CAT, CAT_E, CAT_I, type Conteo, type Turno, type Mov } from "../lib/caja.mts";
 import { exigirJornada } from "../lib/jornada.mts";
 
 /*
@@ -213,6 +213,38 @@ export default async (req: Request) => {
     await s().setJSON("t/" + t.id, t);
     await libro(q, "descuadre-corregido", { donde, importe: parte.diferencia, motivo }, t.id);
     return json({ ok: true });
+  }
+
+  // ---------- Actualización 74 · el gerente corrige cualquier número de la caja (queda en el libro con el antes y el después) ----------
+  if (accion === "movimiento-editar" && req.method === "POST") {
+    if (!q.admin) return json({ error: "Solo el gerente corrige la caja." }, 403);
+    const r = await leerMov(id); if (!r) return json({ error: "Movimiento no encontrado." }, 404);
+    if (r.m.anulado) return json({ error: "Está anulado: no se puede corregir." }, 409);
+    const importe = cent(body.importe); if (!Number.isFinite(importe) || importe <= 0) return json({ error: "Escribe el importe." }, 400);
+    const antes = { importe: r.m.importe, concepto: r.m.concepto, categoria: r.m.categoria, ref: r.m.ref };
+    r.m.importe = importe;
+    if (body.concepto !== undefined) { const c = str(body.concepto, 200); if (c.length < 2) return json({ error: "Escribe el concepto." }, 400); r.m.concepto = c; }
+    if ((r.m.tipo === "ingreso" ? CAT_I : CAT_E).includes(body.categoria)) r.m.categoria = body.categoria;
+    if (body.ref !== undefined) r.m.ref = str(body.ref, 60);
+    await s().setJSON(r.key, r.m);
+    await libro(q, "movimiento-editado", { antes, despues: { importe, concepto: r.m.concepto, categoria: r.m.categoria, ref: r.m.ref } }, r.m.turno, r.m.id);
+    return json({ ok: true });
+  }
+  if (accion === "turno-editar" && req.method === "POST") {
+    if (!q.admin) return json({ error: "Solo el gerente corrige la caja." }, 403);
+    const t = (await s().get("t/" + id, { type: "json" }).catch(() => null)) as Turno | null; if (!t) return json({ error: "Turno no encontrado." }, 404);
+    const donde = body.donde === "apertura" ? "apertura" : body.donde === "cierre" ? "cierre" : "";
+    const parte: any = donde === "apertura" ? t.apertura : donde === "cierre" ? t.cierre : null; if (!parte) return json({ error: "Ese turno no tiene " + (donde || "esa parte") + "." }, 400);
+    const contado = cent(body.contado); if (!Number.isFinite(contado) || contado < 0) return json({ error: "Escribe lo contado (0 o más)." }, 400);
+    const antes = { contado: parte.contado, diferencia: parte.diferencia };
+    parte.contado = contado; parte.editado = { t: ahora(), por: q.nombre, antes: antes.contado };
+    if (donde === "apertura") parte.diferencia = parte.esperado === null || parte.esperado === undefined ? 0 : contado - parte.esperado;
+    else { const calc = teorico(t, await movsDe(t.id)); parte.teorico = calc.teorico; parte.diferencia = contado - calc.teorico; }
+    delete parte.corregida; if (!parte.diferencia) parte.justificacion = "";
+    await s().setJSON("t/" + t.id, t);
+    const ult = (await s().get("ultimo-cierre", { type: "json" }).catch(() => null)) as any; if (donde === "cierre" && ult && ult.turno === t.id) { ult.contado = contado; await s().setJSON("ultimo-cierre", ult); }
+    await libro(q, "turno-editado", { donde, antes, despues: { contado, diferencia: parte.diferencia } }, t.id);
+    return json({ ok: true, diferencia: parte.diferencia });
   }
 
   if (accion === "alertas-vistas" && req.method === "POST") {

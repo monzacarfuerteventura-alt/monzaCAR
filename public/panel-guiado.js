@@ -260,15 +260,18 @@
   }
   /* ---------- paso 4 · cobro y cierre ---------- */
   const METODOS = [["efectivo", "💵", "Efectivo", "Entra en el cajón de caja"], ["tarjeta", "💳", "Tarjeta / TPV", "Va al banco: NO entra en el cajón"], ["transferencia", "🏦", "Transferencia", "Dinero abonado por Transferencia (En Cuenta Bancaria, NO presente en el cajón físico de caja)"]];
+  const cents = v => { let t = String(v || "").replace(/\s|€/g, ""); if (t.includes(",")) t = t.replace(/\./g, "").replace(",", "."); const n = Number(t); return Number.isFinite(n) ? Math.round(n * 100) : 0; };
+  const mixtoTxt = () => { const T = Math.round(W.fact.total * 100), e = cents(W.mxEf), t = cents(W.mxTr); return `Efectivo ${eur(e / 100)} + transferencia ${eur(t / 100)} = ${eur((e + t) / 100)}` + (e + t !== T ? ` · falta ${eur((T - e - t) / 100)} para llegar a ${eur(T / 100)}` : " ✓"); };
   function p4() {
     const f = W.fact;
     if (W.cobro) return `<h2>Todo listo</h2>
       <div class="gd-box bien">✅ <b>Factura ${E(f.numero)}</b> emitida por ${eur(f.total)}.<br>✅ <b>Cobro registrado:</b> ${E(W.cobro.txt)}.</div>
       <div class="gd-acts"><button type="button" class="btn b-ghost" data-gdver="${E(W.orden.token)}">Ver / imprimir factura</button><button type="button" class="btn b-acc" data-gdcerrar>Terminar</button></div>`;
-    const ger = esGer(), ops = ger ? METODOS : METODOS.slice(0, 1);
+    const ger = esGer(), ops = ger ? [...METODOS, ["mixto", "💵🏦", "Efectivo + transferencia", "Una parte en el cajón y otra en el banco"]] : METODOS.slice(0, 1);
     return `<h2>Cobro y cierre</h2>
       <div class="gd-box bien">✅ <b>Factura ${E(f.numero)}</b> emitida por ${eur(f.total)}.</div>
       <div class="gd-opts">${ops.map(([k, ic, t, h]) => `<button type="button" class="gd-opt" data-gdmet="${k}" aria-pressed="${W.metodo === k}"><i>${ic}</i><span><b>${t}</b><small>${h}</small></span></button>`).join("")}</div>
+      ${W.metodo === "mixto" && ger ? `<div class="t-g2" style="margin-top:8px"><div class="field"><label for="gd-mx-ef">💵 Pagó en efectivo (€)</label><input class="in num" id="gd-mx-ef" inputmode="decimal" placeholder="0,00" value="${E(W.mxEf || "")}"></div><div class="field"><label for="gd-mx-tr">🏦 Pagó por transferencia (€)</label><input class="in num" id="gd-mx-tr" inputmode="decimal" placeholder="0,00" value="${E(W.mxTr || "")}"></div></div><small class="hint" id="gd-mx-h">${mixtoTxt()}</small>` : ""}
       ${ger ? "" : `<p class="hint" style="margin:0">Transferencia o tarjeta: las apunta el Gerente. Si no ha pagado aún, deja el cobro para luego.</p>`}
       <div class="gd-box mal" id="gd-err" hidden></div>
       <div class="gd-acts"><button type="button" class="btn b-ghost" data-gdcerrar>Cobrar más tarde</button><button type="button" class="btn b-acc" data-gdcobrar ${W.metodo ? "" : "disabled"}>Cobrar ${eur(f.total)} y cerrar</button></div>`;
@@ -277,6 +280,12 @@
   function error(t, extra) { const e = $("#gd-err"); if (!e) return aviso(t); e.innerHTML = E(t) + (extra || ""); e.hidden = false; e.scrollIntoView({ block: "nearest" }); }
   function enlazar(d) {
     $$("[data-gdf]", d).forEach(i => i.oninput = () => { W[i.dataset.gdf] = i.value; if (i.dataset.gdf === "dtoG" || i.dataset.gdf === "igicOtro") refrescaTotal(); if (i.dataset.gdf === "mat" || i.dataset.gdf === "tel") { clearTimeout(enlazar.t); enlazar.t = setTimeout(() => { const foco = document.activeElement && document.activeElement.id, pos = document.activeElement && document.activeElement.selectionStart; pinta(); const n = foco && $("#" + foco); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (_) { } } }, 450); } });
+    const mxe = $("#gd-mx-ef", d), mxt = $("#gd-mx-tr", d);
+    if (mxe && mxt) {
+      const T = () => Math.round(W.fact.total * 100), pon = (el, c) => { el.value = c > 0 ? (c / 100).toFixed(2).replace(".", ",") : ""; };
+      mxe.oninput = () => { W.mxEf = mxe.value; pon(mxt, T() - cents(mxe.value)); W.mxTr = mxt.value; $("#gd-mx-h").textContent = mixtoTxt(); };
+      mxt.oninput = () => { W.mxTr = mxt.value; pon(mxe, T() - cents(mxt.value)); W.mxEf = mxe.value; $("#gd-mx-h").textContent = mixtoTxt(); };
+    }
     const q = $("#gd-q", d); if (q) q.oninput = () => { W.q = q.value; clearTimeout(enlazar.t); enlazar.t = setTimeout(() => { pinta(); const n = $("#gd-q"); n.focus(); n.setSelectionRange(n.value.length, n.value.length); }, 300); };
     $$("[data-gdl]", d).forEach(i => { i.oninput = i.onchange = () => { W.lineas[+i.dataset.i][i.dataset.gdl] = i.value; refrescaTotal(); }; });
     const doc = $("#gd-doc", d); if (doc) doc.oninput = () => { W.doc = doc.value; };
@@ -336,8 +345,21 @@
   }
   async function cobrar() {
     if (W.busy || !W.metodo) return; W.busy = true; const b = $("[data-gdcobrar]"); if (b) { b.disabled = true; b.textContent = "Cobrando…"; }
-    const f = W.fact, t = W.orden.token, desc = { efectivo: "Efectivo (entra en el cajón)", tarjeta: "Tarjeta / TPV (va al banco)", transferencia: "Transferencia (en cuenta bancaria, NO en el cajón físico)" }[W.metodo];
+    const f = W.fact, t = W.orden.token, desc = { efectivo: "Efectivo (entra en el cajón)", tarjeta: "Tarjeta / TPV (va al banco)", transferencia: "Transferencia (en cuenta bancaria, NO en el cajón físico)", mixto: "Efectivo + transferencia" }[W.metodo];
     try {
+      if (W.metodo === "mixto") {
+        // Act. 74 · pago dividido: la parte en efectivo entra en la caja abierta y la de transferencia en Finanzas (banco)
+        const T = Math.round(f.total * 100), e = cents(W.mxEf), tr = cents(W.mxTr);
+        if (!(e > 0) || !(tr > 0)) throw new Error("Escribe las dos partes (efectivo y transferencia), las dos mayores que 0. Si pagó todo de una forma, elige solo esa.");
+        if (e + tr !== T) throw new Error(`Efectivo (${eur(e / 100)}) + transferencia (${eur(tr / 100)}) suman ${eur((e + tr) / 100)}, no ${eur(T / 100)}.`);
+        const caja = await api("/api/caja/estado"); if (!caja.abierta) throw new Error("La caja está cerrada: ábrela en Control de Caja para anotar la parte en efectivo.");
+        await post(`/api/finanzas/cobro/taller/${t}`, { importe: (e / 100).toFixed(2), metodo: "efectivo", fecha: hoy() });
+        try { await post(`/api/finanzas/cobro/taller/${t}`, { importe: (tr / 100).toFixed(2), metodo: "transferencia", fecha: hoy() }); }
+        catch (e2) { throw new Error(`La parte en EFECTIVO (${eur(e / 100)}) SÍ se registró, pero la TRANSFERENCIA no: ${e2.message} Regístrala en Finanzas → Registrar cobro (solo la transferencia).`); }
+        W.cobro = { txt: `${eur(e / 100)} en efectivo + ${eur(tr / 100)} por transferencia` }; W.busy = false;
+        try { if (typeof FN !== "undefined" && FN && visible("s-fin")) fnCargar(); } catch (_) { }
+        return pinta();
+      }
       if (esGer()) await post(`/api/finanzas/cobro/taller/${t}`, { importe: String(f.total.toFixed(2)), metodo: W.metodo, fecha: hoy() });
       else await post("/api/caja/movimiento", { tipo: "ingreso", importe: String(f.total.toFixed(2)), categoria: "taller", concepto: `Cobro factura ${f.numero} · ${W.mat.toUpperCase()}`, ref: f.numero, orden: t, metodo: "efectivo" });
       W.cobro = { txt: `${eur(f.total)} · ${desc}` }; W.busy = false;
@@ -476,6 +498,93 @@
     fn.appendChild(d); d.addEventListener("toggle", () => { if (d.open) cargarAuditoria($("#gd-aud-c")); });
   }
   new MutationObserver(auditoriaEnFinanzas).observe(document.body, { childList: true, subtree: true });
+
+  /* ================= 4b. EMPEZAR DE CERO (Act. 74): borra los datos de prueba de Finanzas y Caja, con copia de seguridad ================= */
+  function reiniciarEnFinanzas() {
+    const fn = $("#fn"); if (!fn || !esGer() || !fn.querySelector(".fn-kpis") || $("#gd-reset")) return;
+    const rein = (typeof FN !== "undefined" && FN && FN.ajustes && FN.ajustes.reinicio) || "";
+    const d = document.createElement("details"); d.id = "gd-reset"; d.className = "card gd-aud";
+    d.innerHTML = `<summary style="cursor:pointer;font-weight:800;min-height:44px;display:flex;align-items:center">Empezar de cero (borrar los datos de prueba)</summary>
+      <div id="gd-reset-c">
+        ${rein ? `<p class="gd-box bien">Ya se empezó de cero el ${E(new Date(rein).toLocaleString("es-ES", { timeZone: "Atlantic/Canary", dateStyle: "short", timeStyle: "short" }))}. Todo lo que ves desde entonces es real.</p>` : ""}
+        <p class="hint">Úsalo cuando termines las pruebas. <b>Se borra</b>: gastos, ingresos, ventas y cobros de Finanzas, banco, asientos de Contabilidad, facturas de proveedor, <b>el registro de facturas emitidas (la numeración vuelve a F-AAAA-0001)</b> y todos los turnos y movimientos de Caja. <b>Antes de borrar se guarda una copia de seguridad completa.</b></p>
+        <p class="hint"><b>NO se borra</b>: coches, clientes, órdenes del taller, inventario, equipo ni documentos. Las órdenes de taller de antes de hoy dejan de contar en Finanzas (siguen en Taller).</p>
+        <div class="field"><label for="gd-reset-txt">Para confirmar, escribe exactamente: <b>EMPEZAR DE CERO</b></label><input class="in" id="gd-reset-txt" autocomplete="off" autocapitalize="characters" spellcheck="false"></div>
+        <div class="gd-box mal" id="gd-reset-err" hidden></div>
+        <div class="gd-acts"><button type="button" class="btn b-acc" id="gd-reset-go" disabled>Empezar de cero</button></div>
+      </div>`;
+    fn.appendChild(d);
+    const txt = $("#gd-reset-txt", d), go = $("#gd-reset-go", d), err = $("#gd-reset-err", d);
+    txt.oninput = () => { go.disabled = txt.value.trim().toUpperCase() !== "EMPEZAR DE CERO"; };
+    go.onclick = async () => {
+      if (go.disabled) return; go.disabled = true; go.textContent = "Guardando copia y borrando…"; err.hidden = true;
+      try {
+        const r = await post("/api/finanzas/reiniciar", { confirmar: txt.value.trim() });
+        try { window.PE && window.PE.invalidar && window.PE.invalidar(); } catch (_) { }
+        aviso(`Finanzas y Caja a cero. Copia guardada (${(r.borrados && (r.borrados.finanzas + r.borrados.caja)) || 0} registros borrados).`);
+        try { await fnCargar(); } catch (_) { }
+      } catch (e) { err.textContent = e.message || "No se ha podido empezar de cero."; err.hidden = false; go.textContent = "Empezar de cero"; go.disabled = txt.value.trim().toUpperCase() !== "EMPEZAR DE CERO"; }
+    };
+  }
+  new MutationObserver(reiniciarEnFinanzas).observe(document.body, { childList: true, subtree: true });
+
+  /* ================= 4c. CORREGIR (Act. 74): el gerente corrige cualquier número de Finanzas y Caja desde el panel ================= */
+  const eurIn = c => (c / 100).toFixed(2).replace(".", ",");
+  const opts = (lista, sel) => lista.map(([k, t]) => `<option value="${E(k)}" ${String(k) === String(sel) ? "selected" : ""}>${E(t)}</option>`).join("");
+  function dlgCorr(titulo, ayuda, campos, enviar) {
+    const d = fnDlg(`<form id="f-corr" novalidate><h2>${E(titulo)}</h2><p class="hint">${ayuda}</p>${campos}<div class="msg bad" id="fn-err" hidden></div><div class="t-dlg-acts"><button type="button" class="btn b-ghost" data-fncancel>Cancelar</button><button type="submit" class="btn b-acc" id="co-ok">Guardar corrección</button></div></form>`);
+    $("#f-corr").onsubmit = async ev => {
+      ev.preventDefault(); const ok = $("#co-ok"); ok.disabled = true; $("#fn-err").hidden = true;
+      try { await enviar(d); try { window.PE && window.PE.invalidar && window.PE.invalidar(); } catch (_) { } d.close(); } catch (e) { fnErr(e.message || "No se ha podido guardar."); }
+      ok.disabled = false;
+    };
+    return d;
+  }
+  const fld = (id, etq, val, extra = "") => `<div class="field"><label for="${id}">${etq}</label><input class="in" id="${id}" value="${E(val)}" ${extra}></div>`;
+  function totalVivo() { const b = cents($("#co-base").value), p = Number($("#co-imp").value) || 0; $("#co-tot").textContent = `Total con impuesto: ${eur((b + Math.round(b * p / 100)) / 100)}`; }
+  function editarApunte(tipo, id) {
+    const esG = tipo === "gasto", x = esG ? (FN.recibidas || []).find(g => g.id === id && g.origen === "gasto") : (FN.emitidas || []).find(d => d.ref === id && d.tipo === "manual");
+    if (!x) return aviso("No encuentro ese apunte: recarga Finanzas.");
+    const cats = FN_CAT.flatMap(g => g[2].map(([k, t]) => [k, g[1] + " · " + t])), mets = esG ? ["efectivo", "tarjeta", "transferencia", "domiciliacion"] : ["efectivo", "tarjeta", "transferencia", "financiacion"];
+    const imps = FN_IMP.some(([v]) => Number(v) === Number(x.impuestoPct)) ? FN_IMP : [...FN_IMP, [String(x.impuestoPct), x.impuestoPct + " %"]];
+    dlgCorr(esG ? "Corregir gasto" : "Corregir ingreso", "Cambia lo que esté mal. Queda anotado en el libro con el antes y el después. Si salió de la caja, el movimiento de caja se corrige solo.",
+      `<div class="t-g2">${fld("co-fecha", "Fecha", x.fecha, 'type="date"')}${esG ? fld("co-prov", "Proveedor", x.proveedor) : fld("co-cli", "Cliente", x.cliente || "")}</div>
+       ${fld("co-conc", "Concepto", x.concepto)}${fld("co-fact", "Nº de factura", x.factura || "")}
+       ${esG ? `<div class="field"><label for="co-cat">Categoría</label><select class="in" id="co-cat">${opts(cats, x.categoria)}</select></div>` : ""}
+       <div class="t-g2"><div class="field"><label for="co-area">Parte del negocio</label><select class="in" id="co-area">${opts(Object.entries(FN_AREA), x.area)}</select></div><div class="field"><label for="co-met">Forma de ${esG ? "pago" : "cobro"}</label><select class="in" id="co-met">${opts(mets.map(m => [m, FN_MTXT[m] || m]), x.metodo)}</select></div></div>
+       <div class="t-g2"><div class="field"><label for="co-base">Base sin impuesto (€)</label><input class="in num" id="co-base" inputmode="decimal" value="${eurIn(x.base)}"></div><div class="field"><label for="co-imp">Impuesto</label><select class="in" id="co-imp">${opts(imps, String(x.impuestoPct))}</select></div></div><small class="hint" id="co-tot"></small>`,
+      async () => {
+        await post(`/api/finanzas/${tipo}-editar/${encodeURIComponent(id)}`, { fecha: $("#co-fecha").value, ...(esG ? { proveedor: $("#co-prov").value, categoria: $("#co-cat").value } : { cliente: $("#co-cli").value }), concepto: $("#co-conc").value, factura: $("#co-fact").value, area: $("#co-area").value, metodo: $("#co-met").value, base: $("#co-base").value, impuestoPct: $("#co-imp").value });
+        aviso("Corregido y anotado en el libro."); await fnCargar();
+      });
+    $("#co-base").oninput = totalVivo; $("#co-imp").onchange = totalVivo; totalVivo();
+  }
+  function editarCobro(b) {
+    const mets = ["efectivo", "tarjeta", "transferencia", "financiacion"].map(m => [m, FN_MTXT[m] || m]);
+    dlgCorr("Corregir cobro", "Cambia el importe, la forma de pago o la fecha. Si era en efectivo, el movimiento de la caja se corrige a la vez.",
+      `<div class="t-g2"><div class="field"><label for="co-imp2">Importe cobrado (€)</label><input class="in num" id="co-imp2" inputmode="decimal" value="${eurIn(+b.dataset.imp)}"></div>${fld("co-fecha", "Fecha", b.dataset.fec, 'type="date"')}</div>
+       <div class="field"><label for="co-met">Forma de pago</label><select class="in" id="co-met">${opts(mets, b.dataset.met)}</select></div>`,
+      async () => { await post(`/api/finanzas/cobro-editar/${b.dataset.fncobroedit}/${encodeURIComponent(b.dataset.ref)}`, { cobro: b.dataset.cobro, importe: $("#co-imp2").value, metodo: $("#co-met").value, fecha: $("#co-fecha").value }); aviso("Cobro corregido."); await fnCargar(); });
+  }
+  function editarMovCaja(b) {
+    const ing = b.dataset.tipo === "ingreso";
+    dlgCorr("Corregir movimiento de caja", "Cambia el importe o el concepto. La caja recalcula lo que debería haber y queda anotado en el libro. Si ya estaba cerrado el turno, corrige también «Contado» si hace falta.",
+      `<div class="field"><label for="co-imp2">Importe (€)</label><input class="in num" id="co-imp2" inputmode="decimal" value="${eurIn(+b.dataset.imp)}"></div>${fld("co-conc", "Concepto", b.dataset.con)}${fld("co-ref", "Referencia / nº de factura", b.dataset.ref || "")}
+       <div class="field"><label for="co-cat">Categoría</label><select class="in" id="co-cat">${opts(ing ? CJ_CAT_I : CJ_CAT_E, b.dataset.cat)}</select></div>`,
+      async () => { await post(`/api/caja/movimiento-editar/${encodeURIComponent(b.dataset.cjedit)}`, { importe: $("#co-imp2").value, concepto: $("#co-conc").value, ref: $("#co-ref").value, categoria: $("#co-cat").value }); aviso("Movimiento corregido."); try { await cjCargar(true); } catch (_) { } try { const t = b.closest("[data-cjt]"); } catch (_) { } });
+  }
+  function editarTurno(b) {
+    const ap = b.dataset.donde === "apertura";
+    dlgCorr(ap ? "Corregir lo contado al abrir" : "Corregir lo contado al cerrar", "Escribe lo que de verdad había en el cajón. La diferencia se recalcula sola y queda anotado en el libro con el antes y el después.",
+      `<div class="field"><label for="co-con">Contado (€)</label><input class="in num" id="co-con" inputmode="decimal" value="${eurIn(+b.dataset.val)}"></div>`,
+      async () => { await post(`/api/caja/turno-editar/${encodeURIComponent(b.dataset.cjtedit)}`, { donde: b.dataset.donde, contado: $("#co-con").value }); aviso("Caja corregida."); try { await cjCargar(true); cjTurno(b.dataset.cjtedit); } catch (_) { } });
+  }
+  document.addEventListener("click", ev => {
+    const a = ev.target.closest("[data-fnedit],[data-fncobroedit],[data-cjedit],[data-cjtedit]"); if (!a) return;
+    ev.preventDefault(); ev.stopPropagation();
+    if (!esGer()) return aviso("Solo el Gerente puede corregir.");
+    if (a.dataset.fnedit) editarApunte(a.dataset.fnedit, a.dataset.id); else if (a.dataset.fncobroedit) editarCobro(a); else if (a.dataset.cjedit) editarMovCaja(a); else editarTurno(a);
+  }, true);
 
   /* ================= 5. ANTIDUPLICADOS: un formulario no se envía dos veces seguidas ================= */
   /* Bloquea el 2.º envío seguido (doble toque). Si el formulario deshabilita su botón mientras guarda, el bloqueo dura hasta que acabe;

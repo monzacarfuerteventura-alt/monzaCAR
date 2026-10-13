@@ -33,7 +33,7 @@
      ------------------------------------------------------------------ */
   const SIS = [
     ["01", "A", "Taller: de la recepción a la entrega", "Recepción · Inspección · Presupuesto · Tiempos · Calidad · Factura y cobro", "VolcanoCars-S01-Taller-recepcion-a-entrega", ["FORM-01", "FORM-02", "FORM-04", "FORM-05", "FORM-06", "FORM-03"], "hecho"],
-    ["02", "A", "Recambios, almacén, cascos y abonos", "Pedir · recibir · dar salida · devolver cascos · cobrar abonos", "VolcanoCars-S02-Recambios-almacen-cascos-abonos", ["FORM-07"], "nuevo"],
+    ["02", "A", "Recambios, almacén y devoluciones", "Pedir · recibir · dar salida · devolver piezas · cobrar abonos", "VolcanoCars-S02-Recambios-almacen-cascos-abonos", ["FORM-07"], "nuevo"],
     ["03", "A", "Instalaciones, seguridad y 5S", "Taller ordenado, seguro y en regla", "VolcanoCars-S03-Instalaciones-seguridad-5S", ["FORM-08"], "nuevo"],
     ["04", "B", "Preparación y detailing anti-salitre", "Del taller al escaparate: coche impecable y protegido", "VolcanoCars-S04-Preparacion-detailing-anti-salitre", ["FORM-09"], "nuevo"],
     ["05", "B", "El método de venta", "6 pasos · Chuleta · Anexo A prueba en carretera", "", ["Anexo A", "FORM-11", "FORM-10"], "hecho"],
@@ -63,7 +63,7 @@
   const OKNO = (k, items) => ({ k, type: "ok", items });
   const FORMS = {
     "FORM-07": {
-      t: "Cascos y abonos", sis: "02", ger: false, uno: "casco o devolución",
+      t: "Devoluciones a proveedor", sis: "02", ger: false, uno: "devolución",
       ayuda: "Una ficha por pieza. Se cierra (firma) solo cuando el abono está cobrado o descontado con su número.",
       campos: [
         { k: "fecha", l: "Fecha (montaje o recepción)", type: "date", req: 1, def: hoy },
